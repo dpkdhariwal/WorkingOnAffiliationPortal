@@ -1277,7 +1277,7 @@ const Header = ({ local_varaiable, ThemeChanger }) => {
                   <i className="fe fe-headphones fs-16 align-middle me-2"></i>
                   Support
                 </Dropdown.Item>
-                <Dropdown.Item as={Link} to="#signout" className="d-flex">
+                <Dropdown.Item as={Link} to="/" className="d-flex">
                   <i className="fe fe-power fs-16 align-middle me-2"></i>Log Out
                 </Dropdown.Item>
               </Dropdown.Menu>

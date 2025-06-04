@@ -417,7 +417,7 @@ export const BuildingPlanView = () => {
 
 // Action for Assessment
 
-export const AssessorRemarkHistory = ({title}) => {
+export const AssessorRemarkHistory = ({ title }) => {
   return (
     <Card className="custom-card">
       {/* <Card.Header>
@@ -432,7 +432,7 @@ export const AssessorRemarkHistory = ({title}) => {
       <Card.Body>
         <Row className="mb-3">
           <Form.Label>
-            <b>Whether {title ? title : 'Document'} is as per norms?:</b>{" "}
+            <b>Whether {title ? title : "Document"} is as per norms?:</b>{" "}
             <u>
               <span>No</span>
             </u>
@@ -591,7 +591,7 @@ export const BuildingPlanAction = () => {
       text: "Hello!",
       datetime: "10:30 AM",
       isUser: true,
-      comp: ()=> <AssessorRemarkHistory title="Building Plan" />,
+      comp: () => <AssessorRemarkHistory title="Building Plan" />,
     },
     {
       userType: "Applicant",
@@ -607,7 +607,7 @@ export const BuildingPlanAction = () => {
       text: "Hello!",
       datetime: "10:30 AM",
       isUser: true,
-      comp: ()=> <AssessorRemarkHistory title="Building Plan" />,
+      comp: () => <AssessorRemarkHistory title="Building Plan" />,
     },
   ];
 
@@ -975,14 +975,15 @@ export const BccView = () => {
   );
 };
 export const BccViewAction = () => {
-
-  const [entityTitle, setEntityTitle] = useState("Building Completion Certificate (BCC)");
-
+  const [entityTitle, setEntityTitle] = useState(
+    "Building Completion Certificate (BCC)"
+  );
 
   const [reviewState, setReviewState] = useState("Reviewed"); // Given || Awaiting for Review || Reviewed
   const MaxData = [
     {
-      value: "Document lacks required information (name of institute/ date/ issuance authority)",
+      value:
+        "Document lacks required information (name of institute/ date/ issuance authority)",
       label:
         "Document lacks required information (name of institute/ date/ issuance authority)",
     },
@@ -995,14 +996,19 @@ export const BccViewAction = () => {
       label: "Address on document does not match institute’s address",
     },
     {
-      value: "Document is not approved/signed by the competent authority in the State/ UT",
+      value:
+        "Document is not approved/signed by the competent authority in the State/ UT",
       label:
         "Document is not approved/signed by the competent authority in the State/ UT",
     },
-    { value: "Construction of the building is incomplete", label: "Construction of the building is incomplete" },
-    { value: "Any other reason, please specify", label: "Any other reason, please specify" },
-
-    
+    {
+      value: "Construction of the building is incomplete",
+      label: "Construction of the building is incomplete",
+    },
+    {
+      value: "Any other reason, please specify",
+      label: "Any other reason, please specify",
+    },
   ];
 
   const [isHidden, setisHidden] = useState([true]);
@@ -1052,7 +1058,6 @@ export const BccViewAction = () => {
   const [formData, setFormData] = useState({});
   const [formSubmited, setFormSubmited] = useState(false);
 
-  
   const messages = [
     {
       userType: "Assessor",
@@ -1060,8 +1065,10 @@ export const BccViewAction = () => {
       text: "Hello!",
       datetime: "10:30 AM",
       isUser: true,
-      comp: ()=> <AssessorRemarkHistory title="Building Completion Certificate (BCC)" />,
-      entityTitle:entityTitle
+      comp: () => (
+        <AssessorRemarkHistory title="Building Completion Certificate (BCC)" />
+      ),
+      entityTitle: entityTitle,
     },
     {
       userType: "Applicant",
@@ -1070,7 +1077,7 @@ export const BccViewAction = () => {
       datetime: "10:31 AM",
       isUser: false,
       comp: ItiRemarkHistory,
-      entityTitle:entityTitle
+      entityTitle: entityTitle,
     },
     {
       userType: "Assessor",
@@ -1078,7 +1085,9 @@ export const BccViewAction = () => {
       text: "Hello!",
       datetime: "10:30 AM",
       isUser: true,
-      comp: ()=> <AssessorRemarkHistory title="Building Completion Certificate (BCC)" />,
+      comp: () => (
+        <AssessorRemarkHistory title="Building Completion Certificate (BCC)" />
+      ),
     },
   ];
   return (
@@ -1099,9 +1108,7 @@ export const BccViewAction = () => {
           </div>
         </Col>
         <Col xl={6} lg={6} md={6} sm={6}>
-
-
-        <div style={{ padding: 2, background: "#E0ECF5", borderRadius: 6 }}>
+          <div style={{ padding: 2, background: "#E0ECF5", borderRadius: 6 }}>
             <div className="bg-body-secondary p-3">
               {messages.map((msg, index) => (
                 <ChatMessage
@@ -1182,7 +1189,8 @@ export const BccViewAction = () => {
                           <Row className="mb-3">
                             <Form.Group>
                               <Form.Label>
-                                Whether Building Completion Certificate (BCC) is as per norms?
+                                Whether Building Completion Certificate (BCC) is
+                                as per norms?
                                 <span style={{ color: "red" }}>*</span>
                               </Form.Label>
                               <div>
@@ -1321,7 +1329,10 @@ export const BccViewAction = () => {
                   <Card.Body>
                     <Row className="mb-3">
                       <Col md={12}>
-                        <b>Whether Building Completion Certificate (BCC) is as per norms?:</b>{" "}
+                        <b>
+                          Whether Building Completion Certificate (BCC) is as
+                          per norms?:
+                        </b>{" "}
                         <span style={{ textTransform: "capitalize" }}>
                           {formData.as_per_norms}
                         </span>
@@ -1361,281 +1372,299 @@ export const BccViewAction = () => {
               )}
             </div>
           </div>
-          
-          {false && (<><div className="trails">
-            <Card className="custom-card shadow border-info">
-              <Card.Header>
-                <label
-                  className="main-content-label my-auto"
-                  style={{ textTransform: "none" }}
-                >
-                  Assessor Comments
-                </label>
-                <div className="ms-auto  d-flex">20th April 2025:10:20PM</div>
-              </Card.Header>
-              <Card.Body>
-                <Row className="mb-3">
-                  <Form.Label>
-                    <b>Whether BCC is as per norms?:</b>{" "}
-                    <u>
-                      <span>No</span>
-                    </u>
-                  </Form.Label>
-                  <Form.Label>
-                    <b>Reason:</b>{" "}
-                    <u>
-                      <span>
-                        Document lacks required information (name of institute/
-                        date/ issuance authority)
-                      </span>
-                    </u>
-                  </Form.Label>
-                  <Form.Label>
-                    <b>Remark:</b>{" "}
-                    <u>
-                      <span>Not Ok</span>
-                    </u>
-                  </Form.Label>
-                </Row>
-              </Card.Body>
-            </Card>
-            <Card className="custom-card shadow border-info">
-              <Card.Header>
-                <label
-                  className="main-content-label my-auto"
-                  style={{ textTransform: "none" }}
-                >
-                  ITI Applicant Comments
-                </label>
-                <div className="ms-auto  d-flex">25th April 2025:10:20PM</div>
-              </Card.Header>
-              <Card.Body>
-                <Row className="mb-3">
-                  <Form.Label>
-                    <b>Remark:</b> <span>Document Uploaded</span>
-                  </Form.Label>
-                </Row>
-              </Card.Body>
-            </Card>
-          </div>
-          <div className="form-container">
-            {formSubmited == false ? (
-              <Formik
-                validationSchema={yup.object().shape({
-                  as_per_norms: yup
-                    .string()
-                    .required("Select whether Building plan is as per norms"),
 
-                  category: yup.string().when("as_per_norms", {
-                    is: "no", // 🔄 change to "no" since category and comments are required when it's "no"
-                    then: () =>
-                      yup.string().required("Please select a category"),
-                    otherwise: () => yup.string().notRequired(),
-                  }),
+          {false && (
+            <>
+              <div className="trails">
+                <Card className="custom-card shadow border-info">
+                  <Card.Header>
+                    <label
+                      className="main-content-label my-auto"
+                      style={{ textTransform: "none" }}
+                    >
+                      Assessor Comments
+                    </label>
+                    <div className="ms-auto  d-flex">
+                      20th April 2025:10:20PM
+                    </div>
+                  </Card.Header>
+                  <Card.Body>
+                    <Row className="mb-3">
+                      <Form.Label>
+                        <b>Whether BCC is as per norms?:</b>{" "}
+                        <u>
+                          <span>No</span>
+                        </u>
+                      </Form.Label>
+                      <Form.Label>
+                        <b>Reason:</b>{" "}
+                        <u>
+                          <span>
+                            Document lacks required information (name of
+                            institute/ date/ issuance authority)
+                          </span>
+                        </u>
+                      </Form.Label>
+                      <Form.Label>
+                        <b>Remark:</b>{" "}
+                        <u>
+                          <span>Not Ok</span>
+                        </u>
+                      </Form.Label>
+                    </Row>
+                  </Card.Body>
+                </Card>
+                <Card className="custom-card shadow border-info">
+                  <Card.Header>
+                    <label
+                      className="main-content-label my-auto"
+                      style={{ textTransform: "none" }}
+                    >
+                      ITI Applicant Comments
+                    </label>
+                    <div className="ms-auto  d-flex">
+                      25th April 2025:10:20PM
+                    </div>
+                  </Card.Header>
+                  <Card.Body>
+                    <Row className="mb-3">
+                      <Form.Label>
+                        <b>Remark:</b> <span>Document Uploaded</span>
+                      </Form.Label>
+                    </Row>
+                  </Card.Body>
+                </Card>
+              </div>
+              <div className="form-container">
+                {formSubmited == false ? (
+                  <Formik
+                    validationSchema={yup.object().shape({
+                      as_per_norms: yup
+                        .string()
+                        .required(
+                          "Select whether Building plan is as per norms"
+                        ),
 
-                  assessor_comments: yup.string().when("as_per_norms", {
-                    is: "no",
-                    then: () =>
-                      yup.string().required("Please provide your comments"),
-                    otherwise: () => yup.string().notRequired(),
-                  }),
-                })}
-                validateOnChange={() => console.log("validateOnChange")}
-                onSubmit={(values) => {
-                  console.log("Form submitted with values:", values);
-                  setFormData(values);
-                  setFormSubmited(true);
-                  console.log(formData);
-                }}
-                initialValues={{
-                  category: "",
-                  as_per_norms: "no",
-                  assessor_comments: "",
-                }}
-              >
-                {({
-                  handleSubmit,
-                  handleChange,
-                  submitForm,
-                  values,
-                  errors,
-                  touched,
-                }) => (
-                  <Card className="custom-card shadow border-info bg-body-secondary">
+                      category: yup.string().when("as_per_norms", {
+                        is: "no", // 🔄 change to "no" since category and comments are required when it's "no"
+                        then: () =>
+                          yup.string().required("Please select a category"),
+                        otherwise: () => yup.string().notRequired(),
+                      }),
+
+                      assessor_comments: yup.string().when("as_per_norms", {
+                        is: "no",
+                        then: () =>
+                          yup.string().required("Please provide your comments"),
+                        otherwise: () => yup.string().notRequired(),
+                      }),
+                    })}
+                    validateOnChange={() => console.log("validateOnChange")}
+                    onSubmit={(values) => {
+                      console.log("Form submitted with values:", values);
+                      setFormData(values);
+                      setFormSubmited(true);
+                      console.log(formData);
+                    }}
+                    initialValues={{
+                      category: "",
+                      as_per_norms: "no",
+                      assessor_comments: "",
+                    }}
+                  >
+                    {({
+                      handleSubmit,
+                      handleChange,
+                      submitForm,
+                      values,
+                      errors,
+                      touched,
+                    }) => (
+                      <Card className="custom-card shadow border-info bg-body-secondary">
+                        <Card.Header>
+                          <label
+                            className="main-content-label my-auto"
+                            style={{ textTransform: "none" }}
+                          >
+                            Review Form
+                          </label>
+                          <div className="ms-auto  d-flex">
+                            <Button
+                              size="sm"
+                              onClick={() => handleShowModal("xl")}
+                              type="button"
+                              className="rounded-pill btn-wave btn-success-gradient"
+                              variant="success"
+                            >
+                              Review Instructions
+                            </Button>
+                          </div>
+                        </Card.Header>
+                        <Card.Body>
+                          <Form
+                            ref={formRef2}
+                            onSubmit={handleSubmit}
+                            validated
+                          >
+                            <Row className="mb-3">
+                              <Form.Group>
+                                <Form.Label>
+                                  Whether BCC is as per norms?
+                                  <span style={{ color: "red" }}>*</span>
+                                </Form.Label>
+                                <div>
+                                  <Form.Check
+                                    inline
+                                    type="radio"
+                                    label="Yes"
+                                    name="as_per_norms"
+                                    value="yes"
+                                    onChange={handleChange}
+                                    checked={values.as_per_norms === "yes"}
+                                    isInvalid={
+                                      touched.as_per_norms &&
+                                      !!errors.as_per_norms
+                                    }
+                                  />
+                                  <Form.Check
+                                    inline
+                                    type="radio"
+                                    label="No"
+                                    name="as_per_norms"
+                                    value="no"
+                                    onChange={handleChange}
+                                    checked={values.as_per_norms === "no"}
+                                    isInvalid={
+                                      touched.as_per_norms &&
+                                      !!errors.as_per_norms
+                                    }
+                                  />
+                                </div>
+
+                                <Form.Control.Feedback type="invalid">
+                                  {errors.category}
+                                </Form.Control.Feedback>
+                              </Form.Group>
+                            </Row>
+                            {values.as_per_norms === "no" && (
+                              <Row className="mb-3">
+                                <Form.Group
+                                  as={Col}
+                                  md="12"
+                                  controlId="validationCustom02"
+                                >
+                                  <Form.Label>
+                                    Select the Reason(s) and Raise
+                                    Non-Conformities (NC)
+                                    <span style={{ color: "red" }}>*</span>
+                                  </Form.Label>
+                                  <Field
+                                    required
+                                    name="category"
+                                    as="select"
+                                    className="form-control"
+                                  >
+                                    <option value="">Select</option>
+                                    {MaxData.map((lang, i) => {
+                                      return (
+                                        <option key={i} value={lang.value}>
+                                          {lang.label}
+                                        </option>
+                                      );
+                                    })}
+                                  </Field>
+                                  <Form.Control.Feedback>
+                                    Looks good!
+                                  </Form.Control.Feedback>
+                                </Form.Group>
+
+                                <Form.Group
+                                  required
+                                  as={Col}
+                                  md="12"
+                                  controlId="text-area"
+                                  style={{ marginTop: "1rem" }}
+                                >
+                                  <Form.Label>
+                                    Any other reason, please specify{" "}
+                                    <span style={{ color: "red" }}>*</span>
+                                  </Form.Label>
+                                  <Form.Control
+                                    name="assessor_comments"
+                                    required
+                                    as="textarea"
+                                    rows={3}
+                                    className={`form-control ${
+                                      touched.assessor_comments &&
+                                      errors.assessor_comments
+                                        ? "is-invalid"
+                                        : ""
+                                    }`}
+                                    value={values.assessor_comments}
+                                    onChange={handleChange}
+                                    isInvalid={
+                                      touched.assessor_comments &&
+                                      !!errors.assessor_comments
+                                    }
+                                  />
+                                  {touched.assessor_comments &&
+                                    errors.assessor_comments && (
+                                      <div className="invalid-feedback">
+                                        {errors.assessor_comments}
+                                      </div>
+                                    )}
+                                </Form.Group>
+                              </Row>
+                            )}
+                            <Button variant="primary" onClick={submitForm}>
+                              Submit
+                            </Button>
+                          </Form>
+                        </Card.Body>
+                        <Card.Footer></Card.Footer>
+                      </Card>
+                    )}
+                  </Formik>
+                ) : formSubmited == true ? (
+                  <Card className="custom-card shadow border-info bg-success-gradient">
                     <Card.Header>
                       <label
                         className="main-content-label my-auto"
                         style={{ textTransform: "none" }}
                       >
-                        Review Form
+                        Assessor Comments
                       </label>
                       <div className="ms-auto  d-flex">
-                        <Button
-                          size="sm"
-                          onClick={() => handleShowModal("xl")}
-                          type="button"
-                          className="rounded-pill btn-wave btn-success-gradient"
-                          variant="success"
-                        >
-                          Review Instructions
-                        </Button>
+                        25th April 2025:10:20PM
                       </div>
                     </Card.Header>
                     <Card.Body>
-                      <Form ref={formRef2} onSubmit={handleSubmit} validated>
-                        <Row className="mb-3">
-                          <Form.Group>
-                            <Form.Label>
-                              Whether BCC is as per norms?
-                              <span style={{ color: "red" }}>*</span>
-                            </Form.Label>
-                            <div>
-                              <Form.Check
-                                inline
-                                type="radio"
-                                label="Yes"
-                                name="as_per_norms"
-                                value="yes"
-                                onChange={handleChange}
-                                checked={values.as_per_norms === "yes"}
-                                isInvalid={
-                                  touched.as_per_norms && !!errors.as_per_norms
-                                }
-                              />
-                              <Form.Check
-                                inline
-                                type="radio"
-                                label="No"
-                                name="as_per_norms"
-                                value="no"
-                                onChange={handleChange}
-                                checked={values.as_per_norms === "no"}
-                                isInvalid={
-                                  touched.as_per_norms && !!errors.as_per_norms
-                                }
-                              />
-                            </div>
-
-                            <Form.Control.Feedback type="invalid">
-                              {errors.category}
-                            </Form.Control.Feedback>
-                          </Form.Group>
-                        </Row>
-                        {values.as_per_norms === "no" && (
-                          <Row className="mb-3">
-                            <Form.Group
-                              as={Col}
-                              md="12"
-                              controlId="validationCustom02"
-                            >
-                              <Form.Label>
-                                Select the Reason(s) and Raise Non-Conformities
-                                (NC)
-                                <span style={{ color: "red" }}>*</span>
-                              </Form.Label>
-                              <Field
-                                required
-                                name="category"
-                                as="select"
-                                className="form-control"
-                              >
-                                <option value="">Select</option>
-                                {MaxData.map((lang, i) => {
-                                  return (
-                                    <option key={i} value={lang.value}>
-                                      {lang.label}
-                                    </option>
-                                  );
-                                })}
-                              </Field>
-                              <Form.Control.Feedback>
-                                Looks good!
-                              </Form.Control.Feedback>
-                            </Form.Group>
-
-                            <Form.Group
-                              required
-                              as={Col}
-                              md="12"
-                              controlId="text-area"
-                              style={{ marginTop: "1rem" }}
-                            >
-                              <Form.Label>
-                                Any other reason, please specify{" "}
-                                <span style={{ color: "red" }}>*</span>
-                              </Form.Label>
-                              <Form.Control
-                                name="assessor_comments"
-                                required
-                                as="textarea"
-                                rows={3}
-                                className={`form-control ${
-                                  touched.assessor_comments &&
-                                  errors.assessor_comments
-                                    ? "is-invalid"
-                                    : ""
-                                }`}
-                                value={values.assessor_comments}
-                                onChange={handleChange}
-                                isInvalid={
-                                  touched.assessor_comments &&
-                                  !!errors.assessor_comments
-                                }
-                              />
-                              {touched.assessor_comments &&
-                                errors.assessor_comments && (
-                                  <div className="invalid-feedback">
-                                    {errors.assessor_comments}
-                                  </div>
-                                )}
-                            </Form.Group>
-                          </Row>
-                        )}
-                        <Button variant="primary" onClick={submitForm}>
-                          Submit
-                        </Button>
-                      </Form>
+                      <Row className="mb-3">
+                        <Form.Label>
+                          <b>Remark:</b> <span>Document Uploaded</span>
+                        </Form.Label>
+                      </Row>
                     </Card.Body>
-                    <Card.Footer></Card.Footer>
-                  </Card>
-                )}
-              </Formik>
-            ) : formSubmited == true ? (
-              <Card className="custom-card shadow border-info bg-success-gradient">
-                <Card.Header>
-                  <label
-                    className="main-content-label my-auto"
-                    style={{ textTransform: "none" }}
-                  >
-                    Assessor Comments
-                  </label>
-                  <div className="ms-auto  d-flex">25th April 2025:10:20PM</div>
-                </Card.Header>
-                <Card.Body>
-                  <Row className="mb-3">
-                    <Form.Label>
-                      <b>Remark:</b> <span>Document Uploaded</span>
-                    </Form.Label>
-                  </Row>
-                </Card.Body>
-                <Card.Footer className="d-flex justify-content-between">
-                  <Button
-                    variant="primary"
-                    onClick={() => {
-                      setFormSubmited(false);
-                      setFormData({});
-                    }}
-                  >
-                    Edit
-                  </Button>
+                    <Card.Footer className="d-flex justify-content-between">
+                      <Button
+                        variant="primary"
+                        onClick={() => {
+                          setFormSubmited(false);
+                          setFormData({});
+                        }}
+                      >
+                        Edit
+                      </Button>
 
-                  <Button variant="primary">Submit</Button>
-                </Card.Footer>
-              </Card>
-            ) : (
-              <h1>No Data</h1>
-            )}
-          </div></>)}
+                      <Button variant="primary">Submit</Button>
+                    </Card.Footer>
+                  </Card>
+                ) : (
+                  <h1>No Data</h1>
+                )}
+              </div>
+            </>
+          )}
         </Col>
       </Row>
 

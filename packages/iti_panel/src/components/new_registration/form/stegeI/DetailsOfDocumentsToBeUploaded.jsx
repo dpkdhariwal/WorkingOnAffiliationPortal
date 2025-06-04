@@ -57,6 +57,10 @@ const DetailsOfDocumentsToBeUploaded = () => {
 
   const designation = ["Secretary", "Chairperson", "President"];
 
+  const saveApplciation = () => {
+    console.log("sdfafsdf");
+    dispatch({ type: "setAsSubmitApplicationStageI", payload: {} });
+  };
   return (
     <Fragment>
       <Formik
@@ -489,14 +493,14 @@ const DetailsOfDocumentsToBeUploaded = () => {
                           Email Id<span style={{ color: "red" }}>*</span>
                         </Form.Label>
                         <div className="d-flex align-items-center gap-2">
-                                                 <Form.Control
+                          <Form.Control
                             required
                             type="email"
                             placeholder="Email Id"
                             name="email_id_of_authorized_signatory"
                           />
-                                                <Button variant="primary">Verify</Button>
-                                              </div>
+                          <Button variant="primary">Verify</Button>
+                        </div>
                         {/* <InputGroup>
                           <Form.Control
                             required
@@ -524,15 +528,15 @@ const DetailsOfDocumentsToBeUploaded = () => {
                           Mobile Number
                           <span style={{ color: "red" }}>*</span>
                         </Form.Label>
-                         <div className="d-flex align-items-center gap-2">
-                                                 <Form.Control
+                        <div className="d-flex align-items-center gap-2">
+                          <Form.Control
                             required
                             type="tel"
                             placeholder="Mobile Number"
                             name="mobile_number_of_authorized_signatory"
                           />
-                                                <Button variant="primary">Verify</Button>
-                                              </div>
+                          <Button variant="primary">Verify</Button>
+                        </div>
 
                         {/* <InputGroup>
                           <Form.Control
@@ -619,7 +623,7 @@ const DetailsOfDocumentsToBeUploaded = () => {
                 </Card>
               </Card.Body>
             </Card>
-{/* 
+            {/* 
             <Row className="mb-3">
               <Col md="12">
                 <Card className="border border-info custom-card">
@@ -886,8 +890,7 @@ const DetailsOfDocumentsToBeUploaded = () => {
                   <Col md={6}>
                     <Form.Group>
                       <Form.Label>
-                        View Format for `Resolution for starting ITI`
-                        Annexure-3
+                        View Format for `Resolution for starting ITI` Annexure-3
                       </Form.Label>
                       <Link to="/new_registration/annexure-3" target="_blank">
                         <Button
@@ -1011,6 +1014,16 @@ const DetailsOfDocumentsToBeUploaded = () => {
                   </Col>
                 </Row>
               </Card.Body>
+              <Card.Footer className="d-flex justify-content-end">
+                <Button
+                  onClick={saveApplciation}
+                  size="lg"
+                  variant="success"
+                  className="btn-wave"
+                >
+                  Submit Application
+                </Button>
+              </Card.Footer>
             </Card>
           </Form>
         )}

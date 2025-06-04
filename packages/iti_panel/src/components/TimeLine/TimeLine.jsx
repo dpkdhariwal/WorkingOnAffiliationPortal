@@ -6,7 +6,9 @@ import "react-vertical-timeline-component/style.min.css";
 import WorkIcon from "@mui/icons-material/Work";
 import SchoolIcon from "@mui/icons-material/School";
 import StarIcon from "@mui/icons-material/Star";
-import { Fragment, useEffect, useState } from "react";
+import { act, Fragment, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 
 import {
   Button,
@@ -22,15 +24,23 @@ import {
 } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import Pageheader from "../../layouts/Pageheader";
-import { textTransform } from "@mui/system";
 
 import { Stage1Actions } from "./Actions";
 import { ApplicationFlow, AppFlow } from "./json";
 
+import initSqlJs from "sql.js";
+
 export const TimeLine = () => {
   const [selectedUser, setSelectedUser] = useState("applicant");
 
-  const [timeline, setTimeline] = useState(AppFlow);
+  const timeLine = useSelector((state) => state.timeLine);
+
+  const [timeline, setTimeline] = useState(timeLine);
+
+  useEffect(() => {
+    console.log("Updated");
+    setTimeline(timeLine);
+  }, [timeLine]);
 
   const handleChange = (event) => {
     setSelectedUser(event.target.value);
@@ -46,20 +56,42 @@ export const TimeLine = () => {
     boxShadow: "none",
   };
 
-  const getSetAction = (info, info2) => {
-    switch (info.stage) {
-      case "Stage-I":
-        switch (info2.assignedTo) {
-          case "Applicant":
-            return <Stage1Actions />;
+  const currentType = localStorage.getItem("userType");
+  const currentUserId = localStorage.getItem("userId");
+  
+  const navigate = useNavigate(); // initialize navigation
+
+  const handleAction = (info, info2, action, indexTimeline) => {
+    console.log(info, info2, action);
+
+    switch (action.assignedTo) {
+      case "applicant":
+        switch (action.action) {
+          case "form-submit":
+            console.log(timeLine.timeline[indexTimeline]);
+            navigate("/dashboard/new_registration/");
+            break;
+
           default:
             break;
         }
         break;
-      case "Stage-II":
-        return null;
+
+      default:
+        break;
     }
   };
+
+  // const async  runSQLite() {
+  //   const SQL = await initSqlJs({ locateFile: file => `https://sql.js.org/dist/${file}` });
+
+  //   const db = new SQL.Database();
+  //   db.run("CREATE TABLE test (col1, col2);");
+  //   db.run("INSERT INTO test VALUES (?, ?);", ["Hello", "World"]);
+
+  //   const result = db.exec("SELECT * FROM test");
+  //   console.log(result[0].values); // [['Hello', 'World']]
+  // }
 
   return (
     <Fragment>
@@ -68,26 +100,9 @@ export const TimeLine = () => {
         parentfolder="Dashboard"
         activepage="TimeLine Example"
       />
-      <Form.Group controlId="exampleSelect" className="mb-3">
-        <Form.Label>Select Current User</Form.Label>
-        <Form.Select value={selectedUser} onChange={handleChange}>
-          <option value="">-- Select --</option>
-          <option value="applicant">Applicant</option>
-          <option value="state">State</option>
-          <option value="rdsde">RDSDE</option>
-          <option value="DGT-ADMIN">DGT-ADMIN</option>
-        </Form.Select>
-
-        {selectedUser && (
-          <p className="mt-2">
-            Current User:{" "}
-            <strong style={{ textTransform: "capitalize" }}>
-              {selectedUser}
-            </strong>
-          </p>
-        )}
-      </Form.Group>
-
+      <h2>
+        Current User: <i>{currentType}</i>
+      </h2>
       <Row>
         <Col md={6}>
           <Table className="text-nowrap table-bordered border-primary dashboard-table">
@@ -102,9 +117,10 @@ export const TimeLine = () => {
             <tbody>
               <tr>
                 <td>
-                  <VerticalTimeline layout="1-column-left">
-                    {timeline.timeline.map((info, index) => {
+                  <VerticalTimeline animate={false} layout="1-column-left">
+                    {timeline.timeline.map((info, indexTimeline) => {
                       return info.subStages.map((info2, i) => {
+                        console.log(info2.assignedTo, currentType);
                         return (
                           <VerticalTimelineElement
                             key={i}
@@ -115,7 +131,6 @@ export const TimeLine = () => {
                             icon={<WorkIcon />}
                             contentStyle={cardStyles}
                           >
-
                             <Card className="custom-card shadow">
                               <Card.Header>
                                 <div className="card-title">{info2.title}</div>
@@ -127,29 +142,46 @@ export const TimeLine = () => {
                                 <p className="card-text mb-4">{info2.desc}</p>
                               </Card.Body>
 
-                              <Card.Footer>
-                                <div
-                                  className="d-flex justify-content-between"
-                                  style={{ alignItems: "center" }}
-                                >
-                                  <b>
-                                    <span style={{ fontSize: "medium" }}>
-                                      {" "}
-                                      12/12/2025 3:00PM
-                                    </span>
-                                  </b>
-                                  <div className="btn-list">
-                                    {info2.actionsAllow.map((action, i)=>{
-                                      return (<Button key={i}
-                                      size="sm"
-                                      className="btn btn-secondary"
-                                    >
-                                      {action.actionName}
-                                    </Button>)
-                                    })}
+                              {info2.status == "Pending" && info2.assignedTo==currentType  && (
+                                <Card.Footer>
+                                  <div
+                                    className="d-flex justify-content-between"
+                                    style={{ alignItems: "center" }}
+                                  >
+                                    <b>
+                                      <span style={{ fontSize: "medium" }}>
+                                        {" "}
+                                        12/12/2025 3:00PM
+                                      </span>
+                                    </b>
+                                    <div className="btn-list">
+                                      {info2.actionsAllow.map((action, i) => {
+                                        if (currentType === action.assignedTo) {
+                                          return (
+                                            <Button
+                                              onClick={() =>
+                                                handleAction(
+                                                  info,
+                                                  info2,
+                                                  action,
+                                                  indexTimeline
+                                                )
+                                              }
+                                              key={i}
+                                              size="sm"
+                                              className="btn btn-secondary"
+                                            >
+                                              {action.actionName}
+                                            </Button>
+                                          );
+                                        } else {
+                                          return "";
+                                        }
+                                      })}
+                                    </div>
                                   </div>
-                                </div>
-                              </Card.Footer>
+                                </Card.Footer>
+                              )}
 
                               {/* {getSetAction(info, info2)} */}
                               {/* <Card.Footer>

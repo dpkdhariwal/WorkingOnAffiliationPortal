@@ -33,11 +33,11 @@ export const AppFlow = {
           desc: "Stage-I Form Filing",
           status: "Pending", // Pending | Completed
           assignedDateTime: "2025-08-20 13:24:00",
-          assignedTo: "Applicant",
           actionsAllow: [
             {
               action: "form-submit",
               actionName: "Fill Application Stage-I Form",
+              assignedTo: "Applicant",
             },
           ],
         },
