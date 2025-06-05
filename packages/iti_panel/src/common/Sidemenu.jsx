@@ -1,40 +1,99 @@
-
 export const MENUITEMS = [
-	{
-		menutitle: "DASHBOARD",
-	},
-	{
-		path: `${import.meta.env.BASE_URL}dashboard/dashboard`, title: "Dashboard", icon: 'ti-home', type: "link", active: false, selected: false, dirchange: false
-	},
-	{
-		menutitle: "NEW REGISTRATION",
-	},
-	{
-		path: `${import.meta.env.BASE_URL}dashboard/new_registration`, title: "New Application", icon: 'ti-file', type: "link", active: false, selected: false, dirchange: false
-	},
-	{
-		path: `${import.meta.env.BASE_URL}dashboard/form_stageII`, title: "stage II Form", icon: 'ti-file', type: "link", active: false, selected: false, dirchange: false
-	},
+  {
+    allowTo: "all",
+    menutitle: "DASHBOARD",
+  },
+  {
+    allowTo: "all",
+    path: `${import.meta.env.BASE_URL}dashboard/dashboard`,
+    title: "Dashboard",
+    icon: "ti-home",
+    type: "link",
+    active: false,
+    selected: false,
+    dirchange: false,
+  },
+  {
+    allowTo: "applicant",
+    menutitle: "NEW REGISTRATION",
+  },
+   {
+    allowTo: "applicant",
+    path: `${import.meta.env.BASE_URL}dashboard/new_registration2`,
+    title: "Application",
+    icon: "ti-file",
+    type: "link",
+    active: false,
+    selected: false,
+    dirchange: false,
+  },
+  {
+    allowTo: "applicant",
+    path: `${import.meta.env.BASE_URL}dashboard/new_registration`,
+    title: "New Application",
+    icon: "ti-file",
+    type: "link",
+    active: false,
+    selected: false,
+    dirchange: false,
+  },
+  {
+    allowTo: "applicant",
+    path: `${import.meta.env.BASE_URL}dashboard/form_stageII`,
+    title: "stage II Form",
+    icon: "ti-file",
+    type: "link",
+    active: false,
+    selected: false,
+    dirchange: false,
+  },
 
-	{
-		menutitle: "Example",
-	},
-	{
-		path: `${import.meta.env.BASE_URL}dashboard/geoTaggedSample`, title: "Geo Tagged Sample", icon: 'ti-file', type: "link", active: false, selected: false, dirchange: false
-	},
-	{
-		menutitle: "Assessment",
-	},
-	{
-		path: `${import.meta.env.BASE_URL}dashboard/Assessment`, title: "Assessment", icon: 'ti-file', type: "link", active: false, selected: false, dirchange: false
-	},
-	{
-		path: `${import.meta.env.BASE_URL}dashboard/AssessmentII`, title: "AssessmentII", icon: 'ti-file', type: "link", active: false, selected: false, dirchange: false
-	},
-	{
-		path: `${import.meta.env.BASE_URL}dashboard/TimeLine`, title: "TimeLine", icon: 'ti-file', type: "link", active: false, selected: false, dirchange: false
-	},
-
-	
-
+//   {
+//     allowTo: "applicant",
+//     menutitle: "Example",
+//   },
+  {
+    allowTo: "all",
+    path: `${import.meta.env.BASE_URL}dashboard/geoTaggedSample`,
+    title: "Geo Tagged Sample",
+    icon: "ti-file",
+    type: "link",
+    active: false,
+    selected: false,
+    dirchange: false,
+  },
+  {
+    allowTo: ["state", "rdsde"],
+    menutitle: "Assessment",
+  },
+  {
+    allowTo: ["state", "rdsde"],
+    path: `${import.meta.env.BASE_URL}dashboard/Assessment`,
+    title: "Assessment",
+    icon: "ti-file",
+    type: "link",
+    active: false,
+    selected: false,
+    dirchange: false,
+  },
+  {
+    allowTo: ["state", "rdsde"],
+    path: `${import.meta.env.BASE_URL}dashboard/AssessmentII`,
+    title: "AssessmentII",
+    icon: "ti-file",
+    type: "link",
+    active: false,
+    selected: false,
+    dirchange: false,
+  },
+  {
+    allowTo: "all",
+    path: `${import.meta.env.BASE_URL}dashboard/TimeLine`,
+    title: "TimeLine",
+    icon: "ti-file",
+    type: "link",
+    active: false,
+    selected: false,
+    dirchange: false,
+  },
 ];
