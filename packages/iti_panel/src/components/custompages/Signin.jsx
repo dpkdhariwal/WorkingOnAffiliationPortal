@@ -192,7 +192,7 @@ const Signin = () => {
                               Forgot password?
                             </Link>
                           </div>
-                          {/* <div>Don't have an account? <Link to={`${import.meta.env.BASE_URL}Custompages/Signup/`}>Register Here</Link></div> */}
+                          <div>Don't have an account? <Link to={`${import.meta.env.BASE_URL}Signup`}>Register Here</Link></div>
                         </div>
                       </Card.Body>
                     </Row>

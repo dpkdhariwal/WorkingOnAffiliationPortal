@@ -104,11 +104,15 @@ input[type="checkbox"].form-check-input:checked {
 
 
 .vertical-timeline::before{
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 18px;
-    height: 100%;
-    width: 4px;
-    background: blue !important;
+    width: 3px !important;
+    background: #38f1e7 !important;
   }
+  .vertical-timeline{
+    padding:0% !important;
+  }
+  .vertical-timeline-element-content-arrow{
+        border-right: 7px solid #7afd46 !important;
+  }
+
+
+

@@ -1,4 +1,5 @@
 let initialState = {
+  reg_category: false,
   steps: [
     {
       step: 1,
@@ -50,7 +51,6 @@ let initialState = {
       inputs: {},
     },
   ],
-
   stepsII: [
     {
       step: 1,
@@ -99,7 +99,7 @@ let initialState = {
         },
       ],
     },
-     {
+    {
       step: 4,
       label: "Fee Payment For StageII",
       active: false,
@@ -121,7 +121,6 @@ let initialState = {
       filled: false,
       inputs: {},
     },
-   
   ],
 };
 
@@ -137,6 +136,11 @@ const RegApp = (state = initialState, action) => {
         })),
       };
       return state;
+    case "set_reg_cat":
+      return {
+        ...state,
+        regCategory: true,
+      };
     default:
       return state;
   }

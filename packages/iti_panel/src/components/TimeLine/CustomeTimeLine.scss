@@ -1,0 +1,86 @@
+  // Custome TimeLine
+.timeline-container {
+  display: inline-block;
+  flex-direction: column;
+  position: relative;
+  margin-left: 40px;
+  padding-left: 20px;
+}
+
+.timeline-item {
+  display: flex;
+  position: relative;
+  margin-bottom: 40px;
+}
+
+.timeline-line {
+    position: relative;
+    width: 50px;
+    display: flex;
+    justify-content: center;
+    background-color: #00ffff;
+    border-radius: 5px 6px 5px 5px;
+}
+
+// .timeline-line::before {
+//   content: "";
+//   position: absolute;
+//   top: 0;
+//   left: 9px;
+//   width: 2px;
+//   height: 100%;
+//   background: #ccc;
+//   z-index: 1;
+// }
+
+/* Colors for status-based progress lines */
+.timeline-item.completed .timeline-line::before {
+  background: green;
+}
+.timeline-item.current .timeline-line::before {
+  background: dodgerblue;
+}
+.timeline-item.upcoming .timeline-line::before {
+  background: lightgray;
+}
+
+/* Dot styles */
+.timeline-dot {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    position: absolute;
+    z-index: 2;
+    margin-top: 0;
+    border: 2px solid white;
+}
+
+/* Dot colors */
+.timeline-dot.completed {
+  background: green;
+}
+.timeline-dot.current {
+  background: dodgerblue;
+}
+.timeline-dot.upcoming {
+  background: lightgray;
+}
+
+.timeline-content {
+  padding-left: 10px;
+      background-color: #b8c6d2;
+    margin-left: 15px;
+    border-radius: 6px;
+}
+
+.timeline-content h4 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.timeline-content p {
+  margin: 5px 0 0;
+  font-size: 0.95rem;
+  color: #555;
+}
+

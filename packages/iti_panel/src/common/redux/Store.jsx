@@ -4,8 +4,11 @@ import Reducer from "./Reducer";
 import RegApp from "./RegApp";
 import TimeLine from "./TimeLine";
 
-
-const rootReducer = combineReducers({ theme: Reducer, reg: RegApp , timeLine:TimeLine });
+const rootReducer = combineReducers({
+  theme: Reducer,
+  reg: RegApp,
+  timeLine: TimeLine,
+});
 
 const middleware = [thunk];
 

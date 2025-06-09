@@ -19,7 +19,7 @@ export const MENUITEMS = [
   },
    {
     allowTo: "applicant",
-    path: `${import.meta.env.BASE_URL}dashboard/new_registration2`,
+    path: `${import.meta.env.BASE_URL}dashboard/Application`,
     title: "Application",
     icon: "ti-file",
     type: "link",

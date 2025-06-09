@@ -9,7 +9,7 @@ import { Customlayout } from "./components/Customlayout";
 import { Routedata } from "./common/Routingdata";
 import Error505 from "./components/custompages/Error505";
 import Signin from "./components/custompages/Signin.jsx";
-
+import Signup from "./components/custompages/Signup";
 
 
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -18,7 +18,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
       <BrowserRouter>
         <React.Suspense fallback={<Loader />}>
           <Routes>
-            <Route path={`${import.meta.env.BASE_URL}`} element={<Signin />}></Route>
+            <Route path={`${import.meta.env.BASE_URL}/Signin`} element={<Signin />}></Route>
+            <Route path={`${import.meta.env.BASE_URL}/Signup`} element={<Signup />}></Route>
+            
             <Route path={`${import.meta.env.BASE_URL}`} element={<App />}>
               {Routedata.map((idx) => (
                 <Route key={idx.id} path={idx.path} element={idx.elementName} />
