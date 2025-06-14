@@ -1,7 +1,7 @@
 import React, { Children } from "react";
 import "./CustomeTimeLine.scss";
 import WorkIcon from "@mui/icons-material/Work";
-
+import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
 // export const AffliationTimeLine = ({ children }) => {
 //   return (
 //     <div className="timeline-container">
@@ -69,7 +69,7 @@ export const AffTimeLine = ({ children }) => {
               Lorem Ipsum.
             </p>
           </div>
-        </div>
+        </div> 
       ))} */}
       {Children.map(children, (child) => (
         <div
@@ -90,38 +90,40 @@ export const AffTimeLineItem = ({ children }) => {
       {Children.map(children, (child) => (
         <>
           <div
-            className="timline"
             style={{
-              backgroundColor: "aquamarine",
-              width: "5px",
+              // backgroundColor: "aquamarine",
+              width: 5,
               position: "relative",
+              display: "flex",
+              justifyContent: "center",
             }}
           >
             <div
-              className="timeline-progress"
+              className="bg-success timeline-progress"
               style={{
-                width: 5,
-                backgroundColor: "aqua",
+                width: 8,
                 height: "120%",
                 position: "absolute",
+                borderRadius: 5,
+                boxShadow: "rgb(111, 142, 202) 0px 0px 3px 0px",
               }}
             />
             <div
-              className="timeline-icon-container"
+              className="bg-success border border-1 border-dashed timeline-icon-container"
               style={{
                 position: "absolute",
                 top: 5,
-                left: "-7px",
-                backgroundColor: "aqua",
-                borderRadius: 14,
+                /* left: '-6px', */ borderRadius: 14,
                 padding: 3,
-                width: 20,
-                height: 20,
+                width: 25,
+                height: 25,
                 display: "flex",
-                alignContent: "center",
+                placeContent: "center",
+                borderWidth: 7,
+                alignItems: "center",
               }}
             >
-              <WorkIcon fontSize="xsmall" />
+              <HourglassBottomIcon fontSize="xsmall" />
             </div>
           </div>
           {/* <div
@@ -138,8 +140,7 @@ export const AffTimeLineItem = ({ children }) => {
             }}
           /> */}
 
-
-           <div style={{ marginLeft: '15px'}} >{child}</div>
+          <div style={{ marginLeft: "32px", width: "100%" }}>{child}</div>
           {/* <div className="border border-primary card"
             style={{
               // backgroundColor: "grey",

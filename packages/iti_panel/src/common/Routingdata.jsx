@@ -11,52 +11,50 @@ import Assessment from "../components/Assessment/Assessment";
 import AssessmentII from "../components/Assessment/AssessmentII";
 import { TimeLine } from "../components/TimeLine/TimeLine";
 
+
 export const Routedata = [
   {
     id: 1,
-    path: `${import.meta.env.BASE_URL}/`,
+    path: `${import.meta.env.BASE_URL}dashboard/`,
     elementName: <Dashboard />,
-  },
-  {
-    id: 1,
-    path: `${import.meta.env.BASE_URL}dashboard/dashboard`,
-    elementName: <Dashboard />,
-  },
-  {
-    allowTo: "applicant",
-    id: 1,
-    path: `${import.meta.env.BASE_URL}dashboard/Application`,
-    elementName: <Application />,
-  },
-  {
-    id: 1,
-    path: `${import.meta.env.BASE_URL}dashboard/new_registration`,
-    elementName: <New_registration />,
-  },
-
-  {
-    id: 1,
-    path: `${import.meta.env.BASE_URL}dashboard/form_stageII`,
-    elementName: <Form_stageII />,
-  },
-  {
-    id: 1,
-    path: `${import.meta.env.BASE_URL}dashboard/geoTaggedSample`,
-    elementName: <GeoTaggedPhoto />,
-  },
-  {
-    id: 1,
-    path: `${import.meta.env.BASE_URL}dashboard/Assessment`,
-    elementName: <Assessment />,
-  },
-  {
-    id: 1,
-    path: `${import.meta.env.BASE_URL}dashboard/AssessmentII`,
-    elementName: <AssessmentII />,
-  },
-  {
-    id: 1,
-    path: `${import.meta.env.BASE_URL}dashboard/TimeLine`,
-    elementName: <TimeLine />,
+    children: [
+      {
+        allowTo: "applicant",
+        id: 1,
+        path: `Application`,
+        elementName: <Application />,
+      },
+      {
+        id: 1,
+        path: `new_registration`,
+        elementName: <New_registration />,
+      },
+      {
+        id: 1,
+        path: `form_stageII`,
+        elementName: <Form_stageII />,
+      },
+      {
+        id: 1,
+        path: `geoTaggedSample`,
+        elementName: <GeoTaggedPhoto />,
+      },
+      {
+        allowTo: "applicant",
+        id: 1,
+        path: `Assessment`,
+        elementName: <Assessment />,
+      },
+      {
+        id: 1,
+        path: `AssessmentII`,
+        elementName: <AssessmentII />,
+      },
+      {
+        id: 1,
+        path: `TimeLine`,
+        elementName: <TimeLine />,
+      },
+    ],
   },
 ];

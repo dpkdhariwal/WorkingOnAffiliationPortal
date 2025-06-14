@@ -5,7 +5,7 @@ export const MENUITEMS = [
   },
   {
     allowTo: "all",
-    path: `${import.meta.env.BASE_URL}dashboard/dashboard`,
+    path: `${import.meta.env.BASE_URL}dashboard`,
     title: "Dashboard",
     icon: "ti-home",
     type: "link",
@@ -17,7 +17,7 @@ export const MENUITEMS = [
     allowTo: "applicant",
     menutitle: "NEW REGISTRATION",
   },
-   {
+  {
     allowTo: "applicant",
     path: `${import.meta.env.BASE_URL}dashboard/Application`,
     title: "Application",
@@ -48,10 +48,10 @@ export const MENUITEMS = [
     dirchange: false,
   },
 
-//   {
-//     allowTo: "applicant",
-//     menutitle: "Example",
-//   },
+  //   {
+  //     allowTo: "applicant",
+  //     menutitle: "Example",
+  //   },
   {
     allowTo: "all",
     path: `${import.meta.env.BASE_URL}dashboard/geoTaggedSample`,
@@ -63,11 +63,11 @@ export const MENUITEMS = [
     dirchange: false,
   },
   {
-    allowTo: ["state", "rdsde"],
+    allowTo: ["state", "rdsde", "all"],
     menutitle: "Assessment",
   },
   {
-    allowTo: ["state", "rdsde"],
+    allowTo: ["state", "rdsde", "all"],
     path: `${import.meta.env.BASE_URL}dashboard/Assessment`,
     title: "Assessment",
     icon: "ti-file",
@@ -77,7 +77,7 @@ export const MENUITEMS = [
     dirchange: false,
   },
   {
-    allowTo: ["state", "rdsde"],
+    allowTo: ["state", "rdsde", "all"],
     path: `${import.meta.env.BASE_URL}dashboard/AssessmentII`,
     title: "AssessmentII",
     icon: "ti-file",

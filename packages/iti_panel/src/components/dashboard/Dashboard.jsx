@@ -2,6 +2,8 @@ import React, { Fragment } from 'react';
 import Pageheader from '../../layouts/Pageheader';
 import { Card, Col, Row, Button, Form, Dropdown, Table, Pagination } from 'react-bootstrap';
 import ALLImages from '../../common/Imagedata';
+import { useSelector, useDispatch } from "react-redux";
+  const currentType = localStorage.getItem("userType");
 
 const Dashboard = () => {
 
@@ -63,7 +65,7 @@ const Dashboard = () => {
   return (
     <Fragment>
       <Pageheader mainheading='Welcome To Dashboard' parentfolder='Home' activepage='Project Dashboard' />
-
+      {currentType}
       {/* <!--Row--> */}
       <Row className="row-sm">
         <Col sm={12} lg={12} xl={8}>

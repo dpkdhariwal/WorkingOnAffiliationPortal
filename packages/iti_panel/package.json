@@ -9,7 +9,8 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "sass": "sass ./src/assets/scss:./src/assets/css/",
     "sass-min": "sass ./src/assets/scss:./src/assets/css/ --style compressed",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "db": "node ./src/dbMockup/db.js"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

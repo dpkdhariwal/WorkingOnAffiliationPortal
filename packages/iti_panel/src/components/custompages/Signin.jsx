@@ -11,6 +11,9 @@ import * as formik from "formik";
 import * as yup from "yup";
 import { Provider } from "react-redux";
 import Store from "../../common/redux/Store";
+
+import { tryLogin } from "../../services/index";
+
 const Signin = () => {
   const navigate = useNavigate(); // initialize navigation
 
@@ -20,24 +23,34 @@ const Signin = () => {
   // const dispatch = useDispatch();
   // const userTyp = useSelector((state) => state.AuthUser.userTyp);
 
-  const LoginNow = (values) => {
+  const [showOtp, setShowOtp] = useState(false);
+  const [animation, setAnimation] = useState("animate__flipInY");
+
+  const LoginNow = async (values) => {
     const { userid, password } = values;
-    console.log(userid, password);
-    switch (userid) {
-      case "applicant@gmail.com":
+    //API Required for Login
+    tryLogin(userid, password)
+      .then(() => {
         localStorage.setItem("userId", userid);
         localStorage.setItem("userType", "applicant");
-        break;
-      case "assessor@gmail.com":
-        localStorage.setItem("userId", userid);
-        localStorage.setItem("userType", "state_assessor");
-        break;
-      default:
-        break;
-    }
+        navigate("/dashboard/");
+      })
+      .catch((e) => {
+        console.log(e);
+      });
 
-    // Redirect to dashboard
-    navigate("/dashboard/dashboard/");
+    // switch (userid) {
+    //   case "applicant@gmail.com":
+    //     localStorage.setItem("userId", userid);
+    //     localStorage.setItem("userType", "applicant");
+    //     break;
+    //   case "assessor@gmail.com":
+    //     localStorage.setItem("userId", userid);
+    //     localStorage.setItem("userType", "state_assessor");
+    //     break;
+    //   default:
+    //     break;
+    // }
   };
 
   useEffect(() => {
@@ -47,7 +60,9 @@ const Signin = () => {
 
   return (
     <Fragment>
-      <div className="page main-signin-wrapper">
+      <div
+        className={`page main-signin-wrapper animate__animated ${animation}`}
+      >
         <Row className="signpages text-center">
           <Col md={12}>
             <Card className="mb-0">
@@ -129,7 +144,7 @@ const Signin = () => {
                           }) => (
                             <Form noValidate onSubmit={handleSubmit}>
                               <h5 className="text-start mb-2">
-                                Signin to Your Account
+                                DGT Affiliation 2025
                               </h5>
                               <p className="mb-4 text-muted fs-13 ms-0 text-start">
                                 Signin to create, discover and connect with the
@@ -185,14 +200,17 @@ const Signin = () => {
                         <div className="text-start mt-5 ms-0">
                           <div className="mb-1">
                             <Link
-                              to={`${
-                                import.meta.env.BASE_URL
-                              }custompages/resetpassword/`}
+                              to={`${import.meta.env.BASE_URL}Forgetpassword/`}
                             >
                               Forgot password?
                             </Link>
                           </div>
-                          <div>Don't have an account? <Link to={`${import.meta.env.BASE_URL}Signup`}>Register Here</Link></div>
+                          <div>
+                            Don't have an account?{" "}
+                            <Link to={`${import.meta.env.BASE_URL}Signup`}>
+                              Register Here
+                            </Link>
+                          </div>
                         </div>
                       </Card.Body>
                     </Row>

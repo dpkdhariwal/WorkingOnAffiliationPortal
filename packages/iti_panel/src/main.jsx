@@ -10,22 +10,47 @@ import { Routedata } from "./common/Routingdata";
 import Error505 from "./components/custompages/Error505";
 import Signin from "./components/custompages/Signin.jsx";
 import Signup from "./components/custompages/Signup";
-
-
+import Forgetpassword from "./components/custompages/Forgetpassword.jsx";
+import LandingPage from "./landingpage/Landingpage.jsx";
+import "animate.css";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Fragment>
     <HelmetProvider>
       <BrowserRouter>
         <React.Suspense fallback={<Loader />}>
           <Routes>
-            <Route path={`${import.meta.env.BASE_URL}/Signin`} element={<Signin />}></Route>
-            <Route path={`${import.meta.env.BASE_URL}/Signup`} element={<Signup />}></Route>
-            
-            <Route path={`${import.meta.env.BASE_URL}`} element={<App />}>
-              {Routedata.map((idx) => (
+            <Route
+              path={`${import.meta.env.BASE_URL}/SignIn`}
+              element={<Signin />}
+            ></Route>
+            <Route
+              path={`${import.meta.env.BASE_URL}/SignUp`}
+              element={<Signup />}
+            ></Route>
+            <Route
+              path={`${import.meta.env.BASE_URL}/Forgetpassword`}
+              element={<Forgetpassword />}
+            ></Route>
+
+            <Route
+              path={`${import.meta.env.BASE_URL}`}
+              element={<Signin />}
+            ></Route>
+            {/* <Route index element={<Signin />} /> */}
+            {Routedata.map((idx) => (
+              <Route key={idx.id} path={idx.path} element={<App />}>
                 <Route key={idx.id} path={idx.path} element={idx.elementName} />
-              ))}
-            </Route>
+                {idx.children &&
+                  idx.children.map((route, index) => (
+                    <Route
+                      key={index}
+                      path={idx.path + route.path}
+                      element={route.elementName}
+                    />
+                  ))}
+              </Route>
+            ))}
+            {/* </Route> */}
             <Route
               path={`${import.meta.env.BASE_URL}`}
               element={<Customlayout />}

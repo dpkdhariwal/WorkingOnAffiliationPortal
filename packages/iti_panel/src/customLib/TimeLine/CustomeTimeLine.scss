@@ -1,4 +1,4 @@
-  // Custome TimeLine
+// Custome TimeLine
 .timeline-container {
   display: inline-block;
   flex-direction: column;
@@ -14,12 +14,12 @@
 }
 
 .timeline-line {
-    position: relative;
-    width: 50px;
-    display: flex;
-    justify-content: center;
-    background-color: #00ffff;
-    border-radius: 5px 6px 5px 5px;
+  position: relative;
+  width: 50px;
+  display: flex;
+  justify-content: center;
+  background-color: #00ffff;
+  border-radius: 5px 6px 5px 5px;
 }
 
 // .timeline-line::before {
@@ -46,13 +46,13 @@
 
 /* Dot styles */
 .timeline-dot {
-    width: 25px;
-    height: 25px;
-    border-radius: 50%;
-    position: absolute;
-    z-index: 2;
-    margin-top: 0;
-    border: 2px solid white;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  position: absolute;
+  z-index: 2;
+  margin-top: 0;
+  border: 2px solid white;
 }
 
 /* Dot colors */
@@ -68,9 +68,9 @@
 
 .timeline-content {
   padding-left: 10px;
-      background-color: #b8c6d2;
-    margin-left: 15px;
-    border-radius: 6px;
+  background-color: #b8c6d2;
+  margin-left: 15px;
+  border-radius: 6px;
 }
 
 .timeline-content h4 {
@@ -93,4 +93,28 @@
 //   height: 0;
 //   border-top: 30px solid #ff4c4c;   /* Triangle color */
 //   border-right: 30px solid transparent;
+// }
+
+.f-timeline-container::before {
+      content: "";
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-right: 15px solid #1AAF4B;
+    border-left: 0;
+    position: absolute;
+    left: -15px;
+    top: 7px;
+}
+
+// .triangle {
+//   width: 0;
+//   height: 0;
+// border-style: solid;
+// border-top: 50px solid transparent;
+// border-bottom: 50px solid transparent;
+// border-right: 60px solid #555555;
+// border-left: 0;
 // }

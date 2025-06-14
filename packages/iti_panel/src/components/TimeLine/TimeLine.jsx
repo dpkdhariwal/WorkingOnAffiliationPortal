@@ -100,122 +100,40 @@ export const TimeLine = () => {
   //   console.log(result[0].values); // [['Hello', 'World']]
   // }
 
+  const [show, setShow] = useState(true);
+
   return (
     <Fragment>
-      <Pageheader
-        mainheading={`TimeLine Example`}
-        parentfolder="Dashboard"
-        activepage="TimeLine Example"
-      />
-      <h2>
-        Current User: <i>{currentType}</i>
-      </h2>
-      <Row>
-        <Col md={6}>
-          <Table className="text-nowrap table-bordered border-primary dashboard-table">
-            <thead>
-              <tr>
-                <th>Time Line</th>
-                {/* <th scope="col">Applicant - Actor</th>
-            <th scope="col">State - Actor</th>
-            <th scope="col">RDSDE - Actor</th> */}
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <VerticalTimeline animate={false} layout="1-column-left">
-                    {timeline.timeline.map((info, indexTimeline) => {
-                      return info.subStages.map((info2, i) => {
-                        console.log(info2.assignedTo, currentType);
-                        return (
-                          <VerticalTimelineElement
-                            key={i}
-                            iconStyle={{
-                              background: "rgb(33, 150, 243)",
-                              color: "#fff",
-                            }}
-                            icon={<WorkIcon fontSize="small" />}
-                            contentStyle={cardStyles}
-                          >
-                            <Card className="custom-card border border-primary">
-                              <Card.Body style={{ padding: "5px" }}>
-                                <div className="card-title">{info2.title}</div>
-                                <h6 className="card-title fw-semibold mb-2">
-                                  {info2.Subtitle}
-                                </h6>
-                                <p className="card-text mb-4">{info2.desc}</p>
-                              </Card.Body>
-
-                              {info2.status == "Pending" &&
-                                info2.assignedTo == currentType && (
-                                  <Card.Footer>
-                                    <div
-                                      className="d-flex justify-content-between"
-                                      style={{ alignItems: "center" }}
-                                    >
-                                      <b>
-                                        <span style={{ fontSize: "medium" }}>
-                                          {" "}
-                                          12/12/2025 3:00PM
-                                        </span>
-                                      </b>
-                                      <div className="btn-list">
-                                        {info2.actionsAllow.map((action, i) => {
-                                          if (
-                                            currentType === action.assignedTo
-                                          ) {
-                                            return (
-                                              <Button
-                                                onClick={() =>
-                                                  handleAction(
-                                                    info,
-                                                    info2,
-                                                    action,
-                                                    indexTimeline
-                                                  )
-                                                }
-                                                key={i}
-                                                size="sm"
-                                                className="btn btn-secondary"
-                                              >
-                                                {action.actionName}
-                                              </Button>
-                                            );
-                                          } else {
-                                            return "";
-                                          }
-                                        })}
-                                      </div>
-                                    </div>
-                                  </Card.Footer>
-                                )}
-
-                              {/* {getSetAction(info, info2)} */}
-                              {/* <Card.Footer>
-                            <div className="d-flex justify-content-between">
-                              <Button className="btn btn-primary mt-2 me-2">
-                                Go to Form
-                              </Button>
-                            </div>
-                          </Card.Footer> */}
-                            </Card>
-                          </VerticalTimelineElement>
-                        );
-                      });
-                    })}
-                  </VerticalTimeline>
-                </td>
-                {/* <td>sdfdf</td>
-            <td>sdfasdf</td>
-            <td>sdfsdf</td> */}
-              </tr>
-            </tbody>
-          </Table>
-        </Col>
-        <Col md={6}>
-          <AffTimeLine>
-            {/* <AffTimeLineItem>
+      <br />
+      {show ? (
+        <Card className="border border-primary card custom-card">
+          <div className="border-bottom border-primary bott card-header justify-content-between">
+            <div className="card-title">
+              10XXXXX <span>:</span> <span>MNP Govt ITI</span>
+            </div>
+            <Link
+              to="#"
+              data-bs-toggle="card-remove"
+              onClick={() => setShow(false)}
+            >
+              <i className="ri-close-line fs-18"></i>
+            </Link>
+          </div>
+          <Card.Body style={{padding:'0.563rem'}}>
+            <div
+              style={{
+                backgroundColor: "aliceblue",
+                padding: 9,
+                borderRadius: 7,
+                marginBottom: 10,
+              }}
+            >
+              <h5>
+                Appllicant Name : <span>Mr. Deepak Dhariwal</span>
+              </h5>
+            </div>
+            <AffTimeLine>
+              {/* <AffTimeLineItem>
               <div>
                 <Card className="custom-card border border-primary">
                   <Card.Body style={{ padding: "5px" }}>ddfadsfafd</Card.Body>
@@ -228,86 +146,83 @@ export const TimeLine = () => {
                 <Card.Body style={{ padding: "5px" }}>ddfadsfafd</Card.Body>
               </Card>
             </AffTimeLineItem> */}
-            {timeline.timeline.map((info, indexTimeline) => {
-              return info.subStages.map((info2, i) => {
-                console.log(info2.assignedTo, currentType);
-                return (
-                  <AffTimeLineItem
-                    key={i}
-                    iconStyle={{
-                      background: "rgb(33, 150, 243)",
-                      color: "#fff",
-                    }}
-                    icon={<WorkIcon fontSize="small" />}
-                    contentStyle={cardStyles}
-                  >
-                    <Card className="custom-card border border-primary">
-                      <Card.Body style={{ padding: "5px" }}>
-                        <div className="card-title">{info2.title}</div>
-                        <h6 className="card-title fw-semibold mb-2">
-                          {info2.Subtitle}
-                        </h6>
-                        <p className="card-text mb-4">{info2.desc}</p>
-                      </Card.Body>
+              {timeline.timeline.map((info, indexTimeline) => {
+                return info.subStages.map((info2, i) => {
+                  console.log(info2.assignedTo, currentType);
+                  return (
+                    <AffTimeLineItem
+                      key={i}>
+                      <Card className="f-timeline-container border border-2 border-primary border-success card custom-card shadow-size-small shadow-success" style={{position: 'relative'}} >
+                        <Card.Body style={{ padding: "5px" }}>
+                          <div className="card-title">{info2.title}</div>
+                          <h6 className="card-title fw-semibold mb-2">
+                            {info2.Subtitle}
+                          </h6>
+                          <p className="card-text mb-4">{info2.desc}</p>
+                        </Card.Body>
 
-                      {info2.status == "Pending" &&
-                        info2.assignedTo == currentType && (
-                          <Card.Footer>
-                            <div
-                              className="d-flex justify-content-between"
-                              style={{ alignItems: "center" }}
-                            >
-                              <b>
-                                <span style={{ fontSize: "medium" }}>
-                                  {" "}
-                                  12/12/2025 3:00PM
-                                </span>
-                              </b>
-                              <div className="btn-list">
-                                {info2.actionsAllow.map((action, i) => {
-                                  if (currentType === action.assignedTo) {
-                                    return (
-                                      <Button
-                                        onClick={() =>
-                                          handleAction(
-                                            info,
-                                            info2,
-                                            action,
-                                            indexTimeline
-                                          )
-                                        }
-                                        key={i}
-                                        size="sm"
-                                        className="btn btn-secondary"
-                                      >
-                                        {action.actionName}
-                                      </Button>
-                                    );
-                                  } else {
-                                    return "";
-                                  }
-                                })}
+                        {info2.status == "Pending" &&
+                          info2.assignedTo == currentType && (
+                            <Card.Footer>
+                              <div
+                                className="d-flex justify-content-between"
+                                style={{ alignItems: "center" }}
+                              >
+                                <b>
+                                  <span style={{ fontSize: "medium" }}>
+                                    {" "}
+                                    12/12/2025 3:00PM
+                                  </span>
+                                </b>
+                                <div className="btn-list">
+                                  {info2.actionsAllow.map((action, i) => {
+                                    if (currentType === action.assignedTo) {
+                                      return (
+                                        <Button
+                                          onClick={() =>
+                                            handleAction(
+                                              info,
+                                              info2,
+                                              action,
+                                              indexTimeline
+                                            )
+                                          }
+                                          key={i}
+                                          size="sm"
+                                          className="btn btn-secondary"
+                                        >
+                                          {action.actionName}
+                                        </Button>
+                                      );
+                                    } else {
+                                      return "";
+                                    }
+                                  })}
+                                </div>
                               </div>
-                            </div>
-                          </Card.Footer>
-                        )}
+                            </Card.Footer>
+                          )}
 
-                      {/* {getSetAction(info, info2)} */}
-                      {/* <Card.Footer>
+                        {/* {getSetAction(info, info2)} */}
+                        {/* <Card.Footer>
                             <div className="d-flex justify-content-between">
                               <Button className="btn btn-primary mt-2 me-2">
                                 Go to Form
                               </Button>
                             </div>
                           </Card.Footer> */}
-                    </Card>
-                  </AffTimeLineItem>
-                );
-              });
-            })}
-          </AffTimeLine>
-        </Col>
-      </Row>
+                      </Card>
+                    </AffTimeLineItem>
+                  );
+                });
+              })}
+            </AffTimeLine>
+          </Card.Body>
+          {/* <div className="card-footer">
+            <button className="btn btn-primary">Read More</button>
+          </div> */}
+        </Card>
+      ) : null}
     </Fragment>
   );
 };
