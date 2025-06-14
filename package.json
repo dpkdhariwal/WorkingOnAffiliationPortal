@@ -5,7 +5,8 @@
     "packages/*"
   ],
   "scripts": {
-    "dev": "npx lerna run dev"
+    "dev": "npx lerna run dev",
+    "start": "npx lerna run start --scope=server"   
   },
   "dependencies": {
     "animate.css": "^4.1.1",
