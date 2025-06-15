@@ -13,7 +13,6 @@
     "dexie": "^4.0.11",
     "lowdb": "^7.0.1",
     "react-countup": "^6.5.3",
-    "sql.js": "^1.13.0",
     "swiper": "^11.2.8"
   },
   "devDependencies": {

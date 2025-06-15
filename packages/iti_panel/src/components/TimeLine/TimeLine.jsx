@@ -35,7 +35,6 @@ import Pageheader from "../../layouts/Pageheader";
 import { Stage1Actions } from "./Actions";
 import { ApplicationFlow, AppFlow } from "./json";
 
-import initSqlJs from "sql.js";
 
 export const TimeLine = () => {
   const [selectedUser, setSelectedUser] = useState("applicant");
