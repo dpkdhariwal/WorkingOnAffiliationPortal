@@ -21,6 +21,7 @@
     "@reduxjs/toolkit": "^1.9.7",
     "@simonwep/pickr": "^1.9.0",
     "bootstrap": "^5.3.3",
+    "crypto-js": "^4.2.0",
     "formik": "^2.4.6",
     "helmet": "^7.1.0",
     "primereact": "^10.9.5",

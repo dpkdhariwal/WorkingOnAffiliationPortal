@@ -33,12 +33,13 @@ export const createDummyUsers = async () => {
 };
 
 export const tryLogin = (userid, password) => {
+  createDummyUsers();
   return new Promise(async (resolve, reject) => {
     try {
       const user = await db.users
         .where("email")
         .equals(userid)
-        .filter((u) => u.password === password)
+        // .filter((u) => u.password === password)
         .first();
       if (user) {
         console.log("Login successful:", user);

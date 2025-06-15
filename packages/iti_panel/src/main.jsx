@@ -13,6 +13,10 @@ import Signup from "./components/custompages/Signup";
 import Forgetpassword from "./components/custompages/Forgetpassword.jsx";
 import LandingPage from "./landingpage/Landingpage.jsx";
 import "animate.css";
+
+import sha256 from 'crypto-js/sha256';
+
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Fragment>
     <HelmetProvider>
