@@ -1,13 +1,22 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import thunk from "redux-thunk";
-import Reducer from "./Reducer";
-import RegApp from "./RegApp";
-import TimeLine from "./TimeLine";
+import theme from "./Reducer";
+import reg from "./RegApp";
+import timeLine from "./TimeLine";
+
+import {
+  registerUserReducer,
+  loginUserReducer,
+  getAllUsersReducer,
+} from "../../reducers/userReducer";
 
 const rootReducer = combineReducers({
-  theme: Reducer,
-  reg: RegApp,
-  timeLine: TimeLine,
+  theme,
+  reg,
+  timeLine,
+  registerUserReducer,
+  loginUserReducer,
+  getAllUsersReducer,
 });
 
 const middleware = [thunk];

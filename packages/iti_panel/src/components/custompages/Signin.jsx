@@ -4,7 +4,7 @@ import { Card, Col, Form, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import ALLImages from "../../common/Imagedata";
 import { Formik, Field, FieldArray } from "formik";
-// import { useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import * as formik from "formik";
@@ -13,6 +13,7 @@ import { Provider } from "react-redux";
 import Store from "../../common/redux/Store";
 
 import { tryLogin } from "../../services/index";
+import { loginUser } from "../../actions/userAuth";
 
 const Signin = () => {
   const navigate = useNavigate(); // initialize navigation
@@ -20,14 +21,23 @@ const Signin = () => {
   const { Formik } = formik;
   const [formData, setFormData] = useState({});
   const [formSubmited, setFormSubmited] = useState(false);
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   // const userTyp = useSelector((state) => state.AuthUser.userTyp);
-
   const [showOtp, setShowOtp] = useState(false);
   const [animation, setAnimation] = useState("animate__flipInY");
 
   const LoginNow = async (values) => {
     const { userid, password } = values;
+
+    // console.log(userid, password);
+
+    // const user = {
+    //   userid,
+    //   password,
+    // };
+
+    // dispatch(loginUser(user));
+
     //API Required for Login
     tryLogin(userid, password)
       .then(() => {
@@ -116,8 +126,8 @@ const Signin = () => {
                               .string()
                               .required("Enter Correct User ID or Email")
                               .oneOf(
-                                ["applicant@gmail.com", "assessor@gmail.com"],
-                                "Only applicant@gmail.com or assessor@gmail.com is allowed"
+                                ["applicant@gmail.com", "state_admin@gmail.com"],
+                                "Only applicant@gmail.com or state_admin@gmail.com is allowed"
                               ),
                             password: yup
                               .string()
@@ -133,6 +143,7 @@ const Signin = () => {
                             userid: "",
                             password: "",
                           }}
+                            validateOnBlur={true}     // ✅ validate only when blurred
                         >
                           {({
                             handleSubmit,

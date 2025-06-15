@@ -1,0 +1,37 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "rest api",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon ./server.mjs",
+    "testConnection": "nodemon ./testConnectionsPooling.mjs"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/socket.io": "^3.0.2",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "mariadb": "^3.3.0",
+    "mysql": "^2.18.1",
+    "mysql2": "^3.9.4",
+    "nodemon": "^3.1.7",
+    "sequelize": "^6.37.2",
+    "socket.io": "^4.7.5",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/node": "^20.12.7",
+    "sequelize-cli": "^6.6.2",
+    "tsx": "^4.7.2",
+    "typescript": "^5.4.5"
+  }
+}

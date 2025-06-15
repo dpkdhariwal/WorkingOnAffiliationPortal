@@ -1,0 +1,17 @@
+npm i crypto-js
+
+npm install crypto-js --workspace=packages/spruha_js
+
+npx lerna add crypto-js --scope=spruha_js
+
+
+
+npm install crypto-js --workspace=packages/iti_panel
+
+npm install redux-devtools-extension --workspace=packages/iti_panel
+
+npm i redux-devtools-extension
+
+#instal package for specific workspace/project
+npm install --workspace=packages/server
+

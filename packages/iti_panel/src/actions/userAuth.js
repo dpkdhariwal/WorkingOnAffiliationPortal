@@ -1,6 +1,11 @@
 import axios from "../axios";
 
 export const loginUser = (user) => async (dispatch) => {
+
+
+  console.log("User login action called with user:", user);
+
+
   dispatch({ type: "USER_LOGIN_REQUEST" });
 
   try {

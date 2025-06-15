@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 import { Provider } from "react-redux";
 import { useLocation } from "react-router-dom";
 import Store from "../common/redux/Store";
+// import Store from "../store/store_example";
 import Switcher from "../layouts/Switcher";
 import Header from './../layouts/Header';
 import SideBar from './../layouts/sidebar/SideBar';
@@ -19,7 +20,7 @@ const App = () => {
 
   return (
     <Fragment>
-      <Provider store={Store}>
+      {/* <Provider store={Store}> */}
         <div className="horizontalMenucontainer">
           <Switcher />
           <div className="page">
@@ -34,7 +35,7 @@ const App = () => {
           </div>
           <Backtotop />
         </div>
-      </Provider>
+      {/* </Provider> */}
     </Fragment>
   );
 };

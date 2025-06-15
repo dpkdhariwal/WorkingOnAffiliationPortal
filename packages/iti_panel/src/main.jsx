@@ -13,12 +13,12 @@ import Signup from "./components/custompages/Signup";
 import Forgetpassword from "./components/custompages/Forgetpassword.jsx";
 import LandingPage from "./landingpage/Landingpage.jsx";
 import "animate.css";
-
-import sha256 from 'crypto-js/sha256';
-
+import { Provider } from "react-redux";
+import Store from "./common/redux/Store.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Fragment>
+    <Provider store={Store}>
     <HelmetProvider>
       <BrowserRouter>
         <React.Suspense fallback={<Loader />}>
@@ -69,5 +69,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         </React.Suspense>
       </BrowserRouter>
     </HelmetProvider>
+     </Provider>
   </Fragment>
 );
