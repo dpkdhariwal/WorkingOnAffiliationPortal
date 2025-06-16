@@ -9,8 +9,6 @@ import { useNavigate } from "react-router-dom";
 
 import * as formik from "formik";
 import * as yup from "yup";
-import { Provider } from "react-redux";
-import Store from "../../common/redux/Store";
 
 import { tryLogin } from "../../services/index";
 import { loginUser } from "../../actions/userAuth";
@@ -29,7 +27,7 @@ const Signin = () => {
   const LoginNow = async (values) => {
     const { userid, password } = values;
 
-    // console.log(userid, password);
+    console.log(userid, password);
 
     // const user = {
     //   userid,

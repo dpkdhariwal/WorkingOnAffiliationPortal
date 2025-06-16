@@ -8,7 +8,7 @@ import App from "./components/App";
 import { Customlayout } from "./components/Customlayout";
 import { Routedata } from "./common/Routingdata";
 import Error505 from "./components/custompages/Error505";
-import Signin from "./components/custompages/Signin.jsx";
+import Signin from "./screens/Auth/Signin.jsx";
 import Signup from "./components/custompages/Signup";
 import Forgetpassword from "./components/custompages/Forgetpassword.jsx";
 import LandingPage from "./landingpage/Landingpage.jsx";
