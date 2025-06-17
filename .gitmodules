@@ -1,0 +1,3 @@
+[submodule "packages/ui_layouts_collaborate"]
+	path = packages/ui_layouts_collaborate
+	url = https://github.com/dpkdhariwal/ui_layouts_collaborate.git
