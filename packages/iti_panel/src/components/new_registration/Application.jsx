@@ -15,8 +15,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { Link, useNavigate } from "react-router-dom";
 
-import {TimeLine} from "../TimeLine/TimeLine";
+import { TimeLine } from "../TimeLine/TimeLine";
 
+import {SAVE_APP_CATEGORY} from "../../constants";
 const Start = () => {
   const regCategory = useSelector((state) => state.reg.regCategory);
 
@@ -50,7 +51,7 @@ const Start = () => {
           </Card.Body>
         </Card>
       ) : regCategory ? (
-        <TimeLine/>
+        <TimeLine />
       ) : (
         "<h2>Deepak</h2>"
       )}
@@ -59,21 +60,19 @@ const Start = () => {
 };
 
 function SelectCategoryModal(props) {
-  const catList = [
-    { name: "Category1" },
-    { name: "Category2" },
-    { name: "Category3" },
-    { name: "Category4" },
+  const AffiliationCategory = [
+    { name: "Category1", type: "Category1" },
+    { name: "Category2", type: "Category2" },
+    { name: "Category3", type: "Category3" },
+    { name: "Category4", type: "Category4" },
   ];
 
   const [selectedIndex, setSelectedIndex] = useState(2); // Default selected index
   const regCategory = useSelector((state) => state.reg.regCategory);
   const dispatch = useDispatch();
-
   const saveRegCat = () => {
-    console.log("Before:", regCategory);
     dispatch({ type: "set_reg_cat", payload: "true" });
-    console.log("After:", regCategory);
+    dispatch({type:SAVE_APP_CATEGORY, payload:{appCategory:selectedIndex}});
   };
 
   return (
@@ -90,7 +89,7 @@ function SelectCategoryModal(props) {
       </Modal.Header>
       <Modal.Body className="p-1">
         <ListGroup>
-          {catList.map((item, index) => (
+          {AffiliationCategory.map((item, index) => (
             <ListGroup.Item
               className="d-flex align-items-center"
               key={index}

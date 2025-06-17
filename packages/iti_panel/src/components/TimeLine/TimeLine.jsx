@@ -35,7 +35,6 @@ import Pageheader from "../../layouts/Pageheader";
 import { Stage1Actions } from "./Actions";
 import { ApplicationFlow, AppFlow } from "./json";
 
-
 export const TimeLine = () => {
   const [selectedUser, setSelectedUser] = useState("applicant");
 
@@ -106,19 +105,7 @@ export const TimeLine = () => {
       <br />
       {show ? (
         <Card className="border border-primary card custom-card">
-          <div className="border-bottom border-primary bott card-header justify-content-between">
-            <div className="card-title">
-              10XXXXX <span>:</span> <span>MNP Govt ITI</span>
-            </div>
-            <Link
-              to="#"
-              data-bs-toggle="card-remove"
-              onClick={() => setShow(false)}
-            >
-              <i className="ri-close-line fs-18"></i>
-            </Link>
-          </div>
-          <Card.Body style={{padding:'0.563rem'}}>
+          <Card.Body style={{ padding: "0.563rem" }}>
             <div
               style={{
                 backgroundColor: "aliceblue",
@@ -127,6 +114,9 @@ export const TimeLine = () => {
                 marginBottom: 10,
               }}
             >
+              <h5>
+                10XXXXX <span>:</span> <span>MNP Govt ITI</span>
+              </h5>
               <h5>
                 Appllicant Name : <span>Mr. Deepak Dhariwal</span>
               </h5>
@@ -149,9 +139,11 @@ export const TimeLine = () => {
                 return info.subStages.map((info2, i) => {
                   console.log(info2.assignedTo, currentType);
                   return (
-                    <AffTimeLineItem
-                      key={i}>
-                      <Card className="f-timeline-container border border-2 border-primary border-success card custom-card shadow-size-small shadow-success" style={{position: 'relative'}} >
+                    <AffTimeLineItem key={i}>
+                      <Card
+                        className="f-timeline-container border border-2 border-primary border-success card custom-card shadow-size-small shadow-success"
+                        style={{ position: "relative" }}
+                      >
                         <Card.Body style={{ padding: "5px" }}>
                           <div className="card-title">{info2.title}</div>
                           <h6 className="card-title fw-semibold mb-2">

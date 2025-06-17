@@ -12,6 +12,7 @@ import * as yup from "yup";
 
 import { tryLogin } from "../../services/index";
 import { loginUser } from "../../actions/userAuth";
+import toast, { Toaster } from "react-hot-toast";
 
 const Signin = () => {
   const navigate = useNavigate(); // initialize navigation
@@ -26,39 +27,26 @@ const Signin = () => {
 
   const LoginNow = async (values) => {
     const { userid, password } = values;
-
-    console.log(userid, password);
-
-    // const user = {
-    //   userid,
-    //   password,
-    // };
-
-    // dispatch(loginUser(user));
-
-    //API Required for Login
     tryLogin(userid, password)
-      .then(() => {
-        localStorage.setItem("userId", userid);
-        localStorage.setItem("userType", "applicant");
+      .then((userInfo) => {
+        dispatch({ type: "USER_SIGNED_IN_SUCCESS", payload: userInfo.user });
+        toast.success(userInfo.message, {
+          position: "top-right",
+        });
         navigate("/dashboard/");
       })
       .catch((e) => {
-        console.log(e);
+        console.log(e.message);
+        toast.error(e.message, {
+          position: "top-right",
+        });
       });
-
-    // switch (userid) {
-    //   case "applicant@gmail.com":
-    //     localStorage.setItem("userId", userid);
-    //     localStorage.setItem("userType", "applicant");
-    //     break;
-    //   case "assessor@gmail.com":
-    //     localStorage.setItem("userId", userid);
-    //     localStorage.setItem("userType", "state_assessor");
-    //     break;
-    //   default:
-    //     break;
-    // }
+    // dispatch(
+    //   loginUser({
+    //     userid,
+    //     password,
+    //   })
+    // );
   };
 
   useEffect(() => {
@@ -124,7 +112,10 @@ const Signin = () => {
                               .string()
                               .required("Enter Correct User ID or Email")
                               .oneOf(
-                                ["applicant@gmail.com", "state_admin@gmail.com"],
+                                [
+                                  "applicant@gmail.com",
+                                  "state_admin@gmail.com",
+                                ],
                                 "Only applicant@gmail.com or state_admin@gmail.com is allowed"
                               ),
                             password: yup
@@ -141,7 +132,7 @@ const Signin = () => {
                             userid: "",
                             password: "",
                           }}
-                            validateOnBlur={true}     // ✅ validate only when blurred
+                          validateOnBlur={true} // ✅ validate only when blurred
                         >
                           {({
                             handleSubmit,
@@ -229,6 +220,27 @@ const Signin = () => {
             </Card>
           </Col>
         </Row>
+        <Toaster
+          reverseOrder={false}
+          gutter={8}
+          containerClassName=""
+          containerStyle={{}}
+          toastOptions={{
+            // Define default options
+            className: "",
+            duration: 5000,
+            style: {
+              background: "rgb(var(--light-rgb))",
+              color: "var(--default-text-color)",
+              border: "1px solid var(--default-border)",
+            },
+
+            // Default options for specific types
+            success: {
+              duration: 3000,
+            },
+          }}
+        />
       </div>
     </Fragment>
   );

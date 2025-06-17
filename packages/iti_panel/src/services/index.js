@@ -1,26 +1,28 @@
 import Dexie from "dexie";
 
-const db = new Dexie("UserDB");
+const db = new Dexie("AffiliationDB");
 
 db.version(1).stores({
   users: "++id, userid, password, role, email", // define indexes
+  userRoles: "++id, userid, assignedRole", // define indexes
 });
 
 export const createDummyUsers = async () => {
   const roleList = [
-    { role: "applicant", email: "applicant@gmail.com", password: "Abcd@123" },
-    { role: "dgt", email: "dgt@gmail.com", password: "Abcd@123" },
+    { role: ["applicant"], email: "applicant@gmail.com", password: "12345678" },
+    { role: ["dgt"], email: "dgt@gmail.com", password: "12345678" },
     {
-      role: "state_admin",
+      role: ["state_admin", "state_assessor"],
       email: "state_admin@gmail.com",
-      password: "Abcd@123",
+      password: "12345678",
     },
     {
-      role: "state_assessor",
+      role: ["state_assessor"],
       email: "state_assessor@gmail.com",
-      password: "Abcd@123",
+      password: "12345678",
     },
   ];
+  console.log("creating dummy users.");
   for (const u of roleList) {
     const uniqueId = Date.now() + Math.floor(Math.random() * 1000);
     await db.users.add({
@@ -29,20 +31,33 @@ export const createDummyUsers = async () => {
       role: u.role,
       email: u.email,
     });
+
+    console.log("creating dummy roles.");
+    for (const role of u.role) {
+      await db.userRoles.add({
+        userid: uniqueId,
+        assignedRole: role,
+      });
+    }
   }
 };
 
 export const tryLogin = (userid, password) => {
-  createDummyUsers();
+  console.log("Attempting to login with userid:", typeof password);
   return new Promise(async (resolve, reject) => {
     try {
+      const userCount = await db.users.count();
+      if (userCount === 0) {
+        console.log("No users found, creating dummy users.");
+        await createDummyUsers();
+      }
+
       const user = await db.users
         .where("email")
         .equals(userid)
-        // .filter((u) => u.password === password)
+        .filter((u) => u.password == password)
         .first();
-      if (user) {
-        console.log("Login successful:", user);
+        if (user) {
         resolve({ success: true, user });
       } else {
         console.log("Login failed: No matching user found.");

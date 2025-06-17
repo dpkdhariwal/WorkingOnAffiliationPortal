@@ -7,7 +7,23 @@ const privateKey = fs.readFileSync(pKeyPath, "utf8");
 
 import { createPoolCluster } from "mysql";
 import { rejects } from "assert";
+import { initDB } from "../../dbMockup/db.js";
+
 export const checkUser = (req) => {
+  const { userid, password } = req.body;
+
+  // return new Promise(async (resolve, reject) => {
+
+  //   const db = await initDB()
+
+  //   console.log(db)               // Should show the loaded data
+  //   console.log(db.data.users)    // Should show the users array
+
+  //   const user = db.data.users.find((u) => u.email === userid);
+  //   console.log(user);
+  //   resolve(user);
+  // });
+
   try {
     const { email, password } = req.body;
     return new Promise(async (resolve, reject) => {

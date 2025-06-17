@@ -11,7 +11,8 @@ import { checkUser } from "../database/models/auth.js";
 import { authenticateToken } from "../database/models/token.js";
 
 router.post("/login", async (req, res) => {
-  checkUser(req)
+  let result = checkUser(req);
+  result
     .then((data) => {
       res.status(200);
       res.json(data);

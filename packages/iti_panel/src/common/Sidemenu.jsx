@@ -63,11 +63,11 @@ export const MENUITEMS = [
     dirchange: false,
   },
   {
-    allowTo: ["state", "rdsde", "all"],
+    allowTo: ["state"],
     menutitle: "Assessment",
   },
   {
-    allowTo: ["state", "rdsde", "all"],
+    allowTo: ["state"],
     path: `${import.meta.env.BASE_URL}dashboard/Assessment`,
     title: "Assessment",
     icon: "ti-file",
@@ -77,7 +77,7 @@ export const MENUITEMS = [
     dirchange: false,
   },
   {
-    allowTo: ["state", "rdsde", "all"],
+    allowTo: ["state"],
     path: `${import.meta.env.BASE_URL}dashboard/AssessmentII`,
     title: "AssessmentII",
     icon: "ti-file",

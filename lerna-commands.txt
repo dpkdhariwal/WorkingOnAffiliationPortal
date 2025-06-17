@@ -10,8 +10,21 @@ npm install crypto-js --workspace=packages/iti_panel
 
 npm install redux-devtools-extension --workspace=packages/iti_panel
 
+npm install react-hot-toast --workspace=packages/iti_panel
+
+
+
 npm i redux-devtools-extension
 
 #instal package for specific workspace/project
 npm install --workspace=packages/server
+
+
+npm install lowdb --workspace=packages/server
+
+
+git submodule add https://github.com/your-org/package-a.git packages/package-a
+git submodule add https://github.com/your-org/package-b.git packages/package-b
+
+git submodule add https://github.com/dpkdhariwal/ui_layouts_collaborate.git packages/ui_layouts_collaborate
 
