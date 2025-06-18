@@ -1,10 +1,10 @@
 export const MENUITEMS = [
   {
-    allowTo: "all",
+    allowTo: ["all"],
     menutitle: "DASHBOARD",
   },
   {
-    allowTo: "all",
+    allowTo: ["all"],
     path: `${import.meta.env.BASE_URL}dashboard`,
     title: "Dashboard",
     icon: "ti-home",
@@ -14,11 +14,11 @@ export const MENUITEMS = [
     dirchange: false,
   },
   {
-    allowTo: "applicant",
+    allowTo: ["applicant"],
     menutitle: "NEW REGISTRATION",
   },
   {
-    allowTo: "applicant",
+    allowTo: ["applicant"],
     path: `${import.meta.env.BASE_URL}dashboard/Application`,
     title: "Application",
     icon: "ti-file",
@@ -28,7 +28,7 @@ export const MENUITEMS = [
     dirchange: false,
   },
   {
-    allowTo: "applicant",
+    allowTo: ["applicant"],
     path: `${import.meta.env.BASE_URL}dashboard/new_registration`,
     title: "New Application",
     icon: "ti-file",
@@ -38,7 +38,7 @@ export const MENUITEMS = [
     dirchange: false,
   },
   {
-    allowTo: "applicant",
+    allowTo: ["applicant"],
     path: `${import.meta.env.BASE_URL}dashboard/form_stageII`,
     title: "stage II Form",
     icon: "ti-file",
@@ -53,7 +53,7 @@ export const MENUITEMS = [
   //     menutitle: "Example",
   //   },
   {
-    allowTo: "all",
+    allowTo: ["all"],
     path: `${import.meta.env.BASE_URL}dashboard/geoTaggedSample`,
     title: "Geo Tagged Sample",
     icon: "ti-file",
@@ -87,7 +87,7 @@ export const MENUITEMS = [
     dirchange: false,
   },
   {
-    allowTo: "all",
+    allowTo: ["all"],
     path: `${import.meta.env.BASE_URL}dashboard/TimeLine`,
     title: "TimeLine",
     icon: "ti-file",

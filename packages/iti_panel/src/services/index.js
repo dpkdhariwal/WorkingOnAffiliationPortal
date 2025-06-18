@@ -5,6 +5,7 @@ const db = new Dexie("AffiliationDB");
 db.version(1).stores({
   users: "++id, userid, password, role, email", // define indexes
   userRoles: "++id, userid, assignedRole", // define indexes
+  portalInfo: "++id, is_open, startDate, endDate", // define indexes
 });
 
 export const createDummyUsers = async () => {
@@ -40,10 +41,16 @@ export const createDummyUsers = async () => {
       });
     }
   }
+
+  // Adding a dummy portal info
+  await db.portalInfo.add({
+    is_open: true,
+    startDate: new Date("2025-06-01"),
+    endDate: new Date("2025-06-30"),
+  });
 };
 
 export const tryLogin = (userid, password) => {
-  console.log("Attempting to login with userid:", typeof password);
   return new Promise(async (resolve, reject) => {
     try {
       const userCount = await db.users.count();
@@ -57,7 +64,7 @@ export const tryLogin = (userid, password) => {
         .equals(userid)
         .filter((u) => u.password == password)
         .first();
-        if (user) {
+      if (user) {
         resolve({ success: true, user });
       } else {
         console.log("Login failed: No matching user found.");

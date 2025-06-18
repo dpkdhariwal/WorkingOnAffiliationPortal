@@ -6,13 +6,14 @@
   ],
   "scripts": {
     "dev": "npx lerna run dev",
-    "start": "npx lerna run start --scope=server"   
+    "start": "npx lerna run start --scope=server"
   },
   "dependencies": {
     "animate.css": "^4.1.1",
     "dexie": "^4.0.11",
     "lowdb": "^7.0.1",
     "react-countup": "^6.5.3",
+    "redux-persist": "^6.0.0",
     "swiper": "^11.2.8"
   },
   "devDependencies": {
