@@ -10,14 +10,27 @@ db.version(1).stores({
 
 export const createDummyUsers = async () => {
   const roleList = [
-    { role: ["applicant"], email: "applicant@gmail.com", password: "12345678" },
-    { role: ["dgt"], email: "dgt@gmail.com", password: "12345678" },
     {
+      userType: "applicant",
+      role: ["applicant"],
+      email: "applicant@gmail.com",
+      password: "12345678",
+      total_applications: 0,
+    },
+    {
+      userType: "dgt",
+      role: ["dgt"],
+      email: "dgt@gmail.com",
+      password: "12345678",
+    },
+    {
+      userType: "state_admin",
       role: ["state_admin", "state_assessor"],
       email: "state_admin@gmail.com",
       password: "12345678",
     },
     {
+      userType: "state_assessor",
       role: ["state_assessor"],
       email: "state_assessor@gmail.com",
       password: "12345678",

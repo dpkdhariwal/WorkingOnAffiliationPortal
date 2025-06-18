@@ -7,17 +7,20 @@ import {
   Button,
   Modal,
   ListGroup,
+  Alert,
 } from "react-bootstrap";
 
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import { useLocation } from "react-router-dom";
 import { Link, useNavigate } from "react-router-dom";
 
 import { TimeLine } from "../TimeLine/TimeLine";
+import * as yup from "yup";
+import { Formik, Field, FieldArray } from "formik";
 
-import {SAVE_APP_CATEGORY} from "../../constants";
+import { SAVE_APP_CATEGORY } from "../../constants";
 const Start = () => {
   const regCategory = useSelector((state) => state.reg.regCategory);
 
@@ -59,58 +62,191 @@ const Start = () => {
   );
 };
 
+// import { useRef, useState } from "react";
+// import { Modal, Button, Form, Row, Col } from "react-bootstrap";
+// import { Formik } from "formik";
+// import * as yup from "yup";
+// import { useSelector, useDispatch } from "react-redux";
+
 function SelectCategoryModal(props) {
   const AffiliationCategory = [
-    { name: "Category1", type: "Category1" },
-    { name: "Category2", type: "Category2" },
-    { name: "Category3", type: "Category3" },
-    { name: "Category4", type: "Category4" },
+    { name: "Application for Establishment of New ITIs", master: "01" },
+    {
+      name: "Application for opening Mini Skill Training Institute",
+      master: "02",
+    },
+    {
+      name: "Establishment of New Age ITIs or Adoption of existing ITIs by industry entities",
+      master: "03",
+    },
+    {
+      name: "Application from Existing ITIs",
+      master: "04",
+      subCate: [
+        { name: "Addition of New Trades/Units", master: "01" },
+        { name: "Name Change of the ITI", master: "02" },
+        { name: "Shifting/Relocation or Merger of ITIs", master: "03" },
+        {
+          name: "SCVT to NCVET conversion of Trades (for existing Government ITIs)",
+          master: "04",
+        },
+        { name: "Renewal of Affiliation", master: "05" },
+        {
+          name: "Affiliation under the Dual System of Training (DST)",
+          master: "06",
+        },
+        { name: "Surrender of Trade/Units", master: "07" },
+      ],
+    },
   ];
 
-  const [selectedIndex, setSelectedIndex] = useState(2); // Default selected index
+  const [selectedIndex, setSelectedIndex] = useState(2);
   const regCategory = useSelector((state) => state.reg.regCategory);
   const dispatch = useDispatch();
-  const saveRegCat = () => {
-    dispatch({ type: "set_reg_cat", payload: "true" });
-    dispatch({type:SAVE_APP_CATEGORY, payload:{appCategory:selectedIndex}});
+
+  const formikRef = useRef();
+
+  const saveRegCat = (values) => {
+    const { aff_category, aff_sub_category } = values;
+    console.log(aff_category, aff_sub_category);
+
+    // console.log("Form values to save:", values);
+    // dispatch({ type: "set_reg_cat", payload: "true" });
+    // dispatch({
+    //   type: "SAVE_APP_CATEGORY",
+    //   payload: { appCategory: selectedIndex },
+    // });
+    // props.onHide(); // Optional: close modal
   };
 
   return (
-    <Modal
-      {...props}
-      size="sm"
-      aria-labelledby="contained-modal-title-vcenter"
-      centered
-    >
+    <Modal {...props} size="md" centered>
       <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter" as="h6">
+        <Modal.Title as="h6">
           Select Affiliation Category {regCategory}
         </Modal.Title>
       </Modal.Header>
-      <Modal.Body className="p-1">
-        <ListGroup>
-          {AffiliationCategory.map((item, index) => (
-            <ListGroup.Item
-              className="d-flex align-items-center"
-              key={index}
-              onClick={() => setSelectedIndex(index)}
-              style={{ cursor: "pointer" }}
-            >
-              <Form.Check
-                type="radio"
-                id={`custom-switch${index + 1}`}
-                name="radioGroup"
-                className="me-2 fw-semibold"
-                checked={selectedIndex === index}
-                onChange={() => setSelectedIndex(index)}
-              />
-              {item.name}
-            </ListGroup.Item>
-          ))}
-        </ListGroup>
+      <Modal.Body className="p-2">
+        <Formik
+          innerRef={formikRef}
+          initialValues={{ aff_category: "", aff_sub_category: "" }}
+          validationSchema={yup.object().shape({
+            aff_category: yup.string().required("Select Affiliation Category"),
+            aff_sub_category: yup.string().when("aff_category", {
+              is: "04", // 🔄 change to "no" since category and comments are required when it's "no"
+              then: () => yup.string().required("Please select a Sub category"),
+              otherwise: () => yup.string().notRequired(),
+            }),
+          })}
+          onSubmit={(values) => saveRegCat(values)}
+        >
+          {({
+            handleSubmit,
+            handleChange,
+            values,
+            errors,
+            touched,
+            setFieldValue,
+          }) => (
+            <>
+              {/* 🔔 Alert box for validation errors */}
+              {/* {Object.keys(errors).length > 0 &&
+                Object.keys(touched).length > 0 && (
+                  <Alert variant="danger">
+                    Please fix the errors below before submitting the form.
+                  </Alert>
+                )} */}
+
+              <Form onSubmit={handleSubmit}>
+                <Row className="mb-3">
+                  <div>
+                    <ListGroup as="ul">
+                      {AffiliationCategory.map((category, index) => (
+                        <ListGroup.Item
+                          as="li"
+                          key={category.master}
+                          style={{ padding: "5px" }}
+                        >
+                          <Form.Group>
+                            <Form.Check
+                              inline
+                              type="radio"
+                              label={`${category.name}`}
+                              name="aff_category"
+                              value={category.master}
+                              onChange={handleChange}
+                              checked={values.aff_category === category.master}
+                              isInvalid={
+                                touched.aff_category && !!errors.aff_category
+                              }
+                            />
+                          </Form.Group>
+                          {category.master === "04" &&
+                            values.aff_category === "04" &&
+                            category.subCate && (
+                              <ListGroup
+                                as="ul"
+                                className="ms-4 mt-2"
+                                style={{
+                                  listStyleType: "none",
+                                  paddingLeft: "1rem",
+                                }}
+                              >
+                                {category.subCate.map((sub, subIndex) => (
+                                  <ListGroup.Item
+                                    as="li"
+                                    key={subIndex}
+                                    style={{ padding: "5px" }}
+                                  >
+                                    <Form.Group>
+                                      <Form.Check
+                                        inline
+                                        type="radio"
+                                        label={sub.name}
+                                        name="aff_sub_category"
+                                        value={sub.master}
+                                        onChange={handleChange}
+                                        checked={
+                                          values.aff_sub_category === sub.master
+                                        }
+                                        isInvalid={
+                                          touched.aff_sub_category &&
+                                          !!errors.aff_sub_category
+                                        }
+                                      />
+                                    </Form.Group>
+                                  </ListGroup.Item>
+                                ))}
+                              </ListGroup>
+                            )}
+                        </ListGroup.Item>
+                      ))}
+                    </ListGroup>
+                  </div>
+
+                  <div style={{ marginTop: "5px" }}>
+                    {touched.aff_category && errors.aff_category && (
+                      <Alert variant="danger">{errors.aff_category}</Alert>
+                    )}
+                  </div>
+                  <div style={{ marginTop: "5px" }}>
+                    {touched.aff_sub_category && errors.aff_sub_category && (
+                      <Alert variant="danger">{errors.aff_sub_category}</Alert>
+                    )}
+                  </div>
+                </Row>
+              </Form>
+            </>
+          )}
+        </Formik>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={saveRegCat}>Select</Button>
+        <Button
+          variant="primary"
+          onClick={() => formikRef.current?.submitForm()}
+        >
+          Submit
+        </Button>
       </Modal.Footer>
     </Modal>
   );

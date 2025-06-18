@@ -2,8 +2,10 @@ export const MENUITEMS = [
   {
     allowTo: ["all"],
     menutitle: "DASHBOARD",
+    menuGroup:"dashboard",
   },
   {
+    
     allowTo: ["all"],
     path: `${import.meta.env.BASE_URL}dashboard`,
     title: "Dashboard",
@@ -12,10 +14,12 @@ export const MENUITEMS = [
     active: false,
     selected: false,
     dirchange: false,
+    menuGroup:"dashboard",
   },
   {
     allowTo: ["applicant"],
     menutitle: "NEW REGISTRATION",
+    menuGroup:"new_registration",
   },
   {
     allowTo: ["applicant"],
@@ -26,9 +30,10 @@ export const MENUITEMS = [
     active: false,
     selected: false,
     dirchange: false,
+    menuGroup:"new_registration",
   },
   {
-    allowTo: ["applicant"],
+    allowTo: [],
     path: `${import.meta.env.BASE_URL}dashboard/new_registration`,
     title: "New Application",
     icon: "ti-file",
@@ -38,7 +43,7 @@ export const MENUITEMS = [
     dirchange: false,
   },
   {
-    allowTo: ["applicant"],
+    allowTo: [],
     path: `${import.meta.env.BASE_URL}dashboard/form_stageII`,
     title: "stage II Form",
     icon: "ti-file",
@@ -53,7 +58,7 @@ export const MENUITEMS = [
   //     menutitle: "Example",
   //   },
   {
-    allowTo: ["all"],
+    allowTo: [],
     path: `${import.meta.env.BASE_URL}dashboard/geoTaggedSample`,
     title: "Geo Tagged Sample",
     icon: "ti-file",
@@ -63,11 +68,11 @@ export const MENUITEMS = [
     dirchange: false,
   },
   {
-    allowTo: ["state"],
+    allowTo: ["state_assessor"],
     menutitle: "Assessment",
   },
   {
-    allowTo: ["state"],
+    allowTo: ["state_assessor"],
     path: `${import.meta.env.BASE_URL}dashboard/Assessment`,
     title: "Assessment",
     icon: "ti-file",
@@ -77,7 +82,7 @@ export const MENUITEMS = [
     dirchange: false,
   },
   {
-    allowTo: ["state"],
+    allowTo: ["state_assessor"],
     path: `${import.meta.env.BASE_URL}dashboard/AssessmentII`,
     title: "AssessmentII",
     icon: "ti-file",
@@ -87,7 +92,7 @@ export const MENUITEMS = [
     dirchange: false,
   },
   {
-    allowTo: ["all"],
+    allowTo: [],
     path: `${import.meta.env.BASE_URL}dashboard/TimeLine`,
     title: "TimeLine",
     icon: "ti-file",

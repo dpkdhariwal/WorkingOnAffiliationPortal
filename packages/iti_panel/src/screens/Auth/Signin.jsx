@@ -25,22 +25,65 @@ const Signin = () => {
   const [showOtp, setShowOtp] = useState(false);
   const [animation, setAnimation] = useState("animate__flipInY");
 
+  const sampleUserList = [
+    {
+      userType: "applicant",
+      role: ["applicant"],
+      email: "applicant@gmail.com",
+      password: "12345678",
+      total_applications: 0,
+    },
+    {
+      userType: "dgt",
+      role: ["dgt"],
+      email: "dgt@gmail.com",
+      password: "12345678",
+    },
+    {
+      userType: "state_admin",
+      role: ["state_admin", "state_assessor"],
+      email: "state_admin@gmail.com",
+      password: "12345678",
+    },
+    {
+      userType: "state_assessor",
+      role: ["state_assessor"],
+      email: "state_assessor@gmail.com",
+      password: "12345678",
+    },
+  ];
+
   const LoginNow = async (values) => {
     const { userid, password } = values;
-    tryLogin(userid, password)
-      .then((userInfo) => {
-        dispatch({ type: "USER_SIGNED_IN_SUCCESS", payload: userInfo.user });
-        toast.success(userInfo.message, {
-          position: "top-right",
-        });
-        navigate("/dashboard/");
-      })
-      .catch((e) => {
-        console.log(e.message);
-        toast.error(e.message, {
-          position: "top-right",
-        });
+    const user = sampleUserList.find(
+      (u) => u.email === userid && u.password === password
+    );
+    if (user) {
+      dispatch({ type: "USER_SIGNED_IN_SUCCESS", payload: user });
+      toast.success("Logged in successfully", {
+        position: "top-right",
       });
+      navigate("/dashboard/");
+    } else {
+      toast.error("User Not Found", {
+        position: "top-right",
+      });
+    }
+
+    // tryLogin(userid, password)
+    //   .then((userInfo) => {
+    //     dispatch({ type: "USER_SIGNED_IN_SUCCESS", payload: userInfo.user });
+    //     toast.success(userInfo.message, {
+    //       position: "top-right",
+    //     });
+    //     navigate("/dashboard/");
+    //   })
+    //   .catch((e) => {
+    //     console.log(e.message);
+    //     toast.error(e.message, {
+    //       position: "top-right",
+    //     });
+    //   });
     // dispatch(
     //   loginUser({
     //     userid,

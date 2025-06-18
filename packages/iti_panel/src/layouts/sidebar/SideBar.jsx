@@ -8,45 +8,40 @@ import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import Menuloop from "./Menuloop";
 import Store from "../../common/redux/Store";
 import { ThemeChanger } from "../../common/redux/Action";
-const history = [];
-
 import { useSelector, useDispatch } from "react-redux";
 
+const history = [];
 const SideBar = ({ local_varaiable, ThemeChanger }) => {
   const userInfo = useSelector((state) => state.loginUserReducer);
-
-  useEffect(() => {
-    console.log(userInfo.role);
-  }, []);
-
   const FILTEREDMENU = () => {
     let result = MENUITEMS.filter((menu) => {
-      console.log(userInfo);
-
       const userRoles = userInfo.role;
       const allowedRoles = menu.allowTo;
-      console.log(userRoles, allowedRoles);
+      const hasMatch = userRoles.some((role) => {
+        switch (userInfo.userType) {
+          case "applicant":
+            if (userInfo.total_applications > 0) {
+              return (
+                allowedRoles.includes(role) || allowedRoles.includes("all")
+              );
+            } else {
+              menu.active = true;
+              return menu.menuGroup === "new_registration";
+            }
+          case "dgt":
+          case "state_admin":
+          case "state_assessor":
+            return allowedRoles.includes(role) || allowedRoles.includes("all");
+          default:
+            return false;
+        }
+      });
 
-      const hasMatch = userRoles.some(
-        (role) => allowedRoles.includes(role) || allowedRoles.includes("all")
-      );
-      console.log(hasMatch); // true (because "applicant" is in both arrays)
       if (hasMatch) {
         return true;
       } else {
         return false;
       }
-
-      // if (typeof menu.allowTo === "string") {
-      //   return menu.allowTo === "applicant" || menu.allowTo === "all";
-      // }
-
-      // if (Array.isArray(menu.allowTo)) {
-      //   return (
-      //     menu.allowTo.includes("applicant") || menu.allowTo.includes("all")
-      //   );
-      // }
-      // return false;
     });
     console.log(result);
     return result;
