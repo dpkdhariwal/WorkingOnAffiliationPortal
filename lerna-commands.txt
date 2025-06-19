@@ -14,6 +14,7 @@ npm install react-hot-toast --workspace=packages/iti_panel
 
 npm install redux-persist --workspace=packages/iti_panel
 
+npm i --workspace=packages/ui_layouts_collaborate
 
 
 npm i redux-devtools-extension
@@ -30,5 +31,13 @@ git submodule add https://github.com/your-org/package-a.git packages/package-a
 git submodule add https://github.com/your-org/package-b.git packages/package-b
 
 git submodule add https://github.com/dpkdhariwal/ui_layouts_collaborate.git packages/ui_layouts_collaborate
+
+
+
+npx lerna run dev --scope=affiliation_portal
+npx lerna run dev --scope=layout
+
+
+
 
 

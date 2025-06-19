@@ -60,10 +60,24 @@ const Signin = () => {
     );
     if (user) {
       dispatch({ type: "USER_SIGNED_IN_SUCCESS", payload: user });
+
       toast.success("Logged in successfully", {
         position: "top-right",
       });
-      navigate("/dashboard/");
+
+      switch (user.userType) {
+        case "applicant":
+          if (user.total_applications == 0) {
+            navigate("/dashboard/Application/");
+          } else {
+            navigate("/dashboard/");
+          }
+
+          break;
+        default:
+          navigate("/dashboard/");
+          break;
+      }
     } else {
       toast.error("User Not Found", {
         position: "top-right",
@@ -154,13 +168,14 @@ const Signin = () => {
                             userid: yup
                               .string()
                               .required("Enter Correct User ID or Email")
-                              .oneOf(
-                                [
-                                  "applicant@gmail.com",
-                                  "state_admin@gmail.com",
-                                ],
-                                "Only applicant@gmail.com or state_admin@gmail.com is allowed"
-                              ),
+                              // .oneOf(
+                              //   [
+                              //     "applicant@gmail.com",
+                              //     "state_admin@gmail.com",
+                              //   ],
+                              //   "Only applicant@gmail.com or state_admin@gmail.com is allowed"
+                              // )
+                              ,
                             password: yup
                               .string()
                               .required("Enter Correct Password"),

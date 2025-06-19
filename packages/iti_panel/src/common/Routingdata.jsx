@@ -1,7 +1,10 @@
 import Dashboard from "./../components/dashboard/Dashboard";
 // import New_registration from './../components/new_registration/new_registration';
+
+// Applicant Screens
+import { Start, SelectCategory } from "../screens/Applicant/Application";
+
 import New_registration from "./../components/new_registration/new_registration_test";
-import Application from "../components/new_registration/Application";
 
 import Form_stageII from "../components/new_registration/form_stageII";
 
@@ -10,7 +13,6 @@ import GeoTaggedPhoto from "../components/geotagged";
 import Assessment from "../components/Assessment/Assessment";
 import AssessmentII from "../components/Assessment/AssessmentII";
 import { TimeLine } from "../components/TimeLine/TimeLine";
-
 
 export const Routedata = [
   {
@@ -22,7 +24,7 @@ export const Routedata = [
         allowTo: "applicant",
         id: 1,
         path: `Application`,
-        elementName: <Application />,
+        elementName: <Start />,
       },
       {
         id: 1,

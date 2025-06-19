@@ -16,16 +16,22 @@ import { useSelector, useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
 import { Link, useNavigate } from "react-router-dom";
 
-import { TimeLine } from "../TimeLine/TimeLine";
+import { TimeLine } from "../../components/TimeLine/TimeLine";
 import * as yup from "yup";
 import { Formik, Field, FieldArray } from "formik";
 
 import { SAVE_APP_CATEGORY } from "../../constants";
 const Start = () => {
   const regCategory = useSelector((state) => state.reg.regCategory);
+  const appCat = useSelector((state) => state.appCat);
+  const navigate = useNavigate();
+  console.log(appCat.selected);
 
   useEffect(() => {
-    console.log(regCategory);
+    if (appCat.selected === true) {
+      navigate("/dashboard/new_registration");
+    }
+    console.log(regCategory, appCat.selected);
   }, [regCategory]);
 
   return (
@@ -68,7 +74,7 @@ const Start = () => {
 // import * as yup from "yup";
 // import { useSelector, useDispatch } from "react-redux";
 
-function SelectCategoryModal(props) {
+const SelectCategoryModal = (props) => {
   const AffiliationCategory = [
     { name: "Application for Establishment of New ITIs", master: "01" },
     {
@@ -99,24 +105,26 @@ function SelectCategoryModal(props) {
       ],
     },
   ];
-
+  const navigate = useNavigate();
   const [selectedIndex, setSelectedIndex] = useState(2);
   const regCategory = useSelector((state) => state.reg.regCategory);
+  const appCat = useSelector((state) => state.appCat);
+  // if (appCat.selected === true) {
+  //   navigate("/dashboard/new_registration");
+  // }
+
+  console.log(Object.keys(appCat.cat).length);
   const dispatch = useDispatch();
 
   const formikRef = useRef();
 
   const saveRegCat = (values) => {
     const { aff_category, aff_sub_category } = values;
-    console.log(aff_category, aff_sub_category);
-
-    // console.log("Form values to save:", values);
-    // dispatch({ type: "set_reg_cat", payload: "true" });
-    // dispatch({
-    //   type: "SAVE_APP_CATEGORY",
-    //   payload: { appCategory: selectedIndex },
-    // });
-    // props.onHide(); // Optional: close modal
+    dispatch({
+      type: "SAVE_APP_CATEGORY",
+      payload: { cat: aff_category, sub_cat: aff_sub_category },
+    });
+    navigate("/dashboard/new_registration");
   };
 
   return (
@@ -250,9 +258,9 @@ function SelectCategoryModal(props) {
       </Modal.Footer>
     </Modal>
   );
-}
+};
 
-function SelectCategory() {
+const SelectCategory = () => {
   const [modalShow, setModalShow] = useState(false);
   return (
     <div>
@@ -265,6 +273,6 @@ function SelectCategory() {
       />
     </div>
   );
-}
+};
 
-export default Start;
+export { Start, SelectCategoryModal, SelectCategory };

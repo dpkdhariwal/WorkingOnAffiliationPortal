@@ -20,7 +20,7 @@ import {
   loginUserReducer,
   getAllUsersReducer,
 } from "../../reducers/userReducer";
-import { reg, appCategoryReducer } from "../../reducers/newAppReducer";
+import { reg, appCat } from "../../reducers/newAppReducer";
 
 // 👇 Combine all reducers
 const rootReducer = combineReducers({
@@ -30,7 +30,7 @@ const rootReducer = combineReducers({
   loginUserReducer,
   getAllUsersReducer,
   reg,
-  appCategoryReducer,
+  appCat,
 });
 
 // 👇 Redux persist configuration

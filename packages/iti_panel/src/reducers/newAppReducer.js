@@ -1,4 +1,88 @@
-import { SAVE_APP_CATEGORY, UPDATE_APP_CATEGORY } from "../constants";
+import { SAVE_APP_CATEGORY, UPDATE_APP_CATEGORY, SAVE_APPLICANT_ENTITY_DETAILS, UPDATE_APPLICANT_ENTITY_DETAILS } from "../constants";
+
+// App Category Reducer
+let initialAppCat = { selected: false, cat: {} };
+export const appCat = (state = initialAppCat, action) => {
+  let { type, payload } = action;
+  switch (type) {
+    case SAVE_APP_CATEGORY:
+      return { ...state, ...{ selected: true, cat: payload } };
+    case UPDATE_APP_CATEGORY:
+      return { ...state, ...{ selected: true, cat: payload } };
+    default:
+      return state;
+  }
+};
+
+//Applicant Entity Details
+let ApplicantEntityDetails = {
+  CategoryOfApplicantEntity: null,
+  NameOfApplicantEntity: null,
+  
+  // Address of Applicant Entity
+  ApplicantEntityState: null,
+  ApplicantEntityDistrict: null,
+  ApplicantEntityTown_City: null,
+  ApplicantEntityBlock_Tehsil: null,
+  ApplicantEntitySector_Village: null,
+  ApplicantEntityPincode: null,
+  ApplicantEntityPlotNumber_KhasaraNumber_GataNumber: null,
+  ApplicantEntityLandmark: null,
+  ApplicantEntityEmailId: null,
+  ApplicantContactNumber: null,
+
+  // Conditional Fields
+  IsTheApplicantRunningAnyOtherITI: false,
+  run_ITIName: [],
+  run_MISCode: [],
+  run_State: [],
+  run_District: [],
+  run_TownCity: [],
+  run_BlockTehsil: [],
+  run_Pincode: [],
+  run_PlotNumber_KhasaraNumber: [],
+  run_Landmark: [],
+};
+export const ApplicantEntityDetailsReducer = (
+  state = ApplicantEntityDetails,
+  action
+) => {
+  let { type, payload } = action;
+  const {
+    CategoryOfApplicantEntity,
+    NameOfApplicantEntity,
+    ApplicantEntityState,
+    ApplicantEntityDistrict,
+    ApplicantEntityTown_City,
+    ApplicantEntityBlock_Tehsil,
+    ApplicantEntitySector_Village,
+    ApplicantEntityPincode,
+    ApplicantEntityPlotNumber_KhasaraNumber_GataNumber,
+    ApplicantEntityLandmark,
+    ApplicantEntityEmailId,
+    ApplicantContactNumber,
+    IsTheApplicantRunningAnyOtherITI,
+    run_ITIName,
+    run_MISCode,
+    run_State,
+    run_District,
+    run_TownCity,
+    run_BlockTehsil,
+    run_Pincode,
+    run_PlotNumber_KhasaraNumber,
+    run_Landmark,
+  } = payload;
+
+  switch (type) {
+    case SAVE_APPLICANT_ENTITY_DETAILS:
+      return { ...state, ...payload };
+    case UPDATE_APPLICANT_ENTITY_DETAILS:
+      return { ...state, ...{ selected: true, cat: payload } };
+    default:
+      return state;
+  }
+};
+
 let initialState = {
   reg_category: false,
   steps: [
@@ -141,23 +225,6 @@ export const reg = (state = initialState, action) => {
       return {
         ...state,
         regCategory: true,
-      };
-    default:
-      return state;
-  }
-};
-
-export const appCategoryReducer = (state = {}, action) => {
-  console.log("appCategoryReducer", action);
-  let { type, payload } = action;
-  switch (type) {
-    case SAVE_APP_CATEGORY:
-      return {
-        appCategory: payload.appCategory,
-      };
-    case UPDATE_APP_CATEGORY:
-      return {
-        appCategory: payload.appCategory,
       };
     default:
       return state;
