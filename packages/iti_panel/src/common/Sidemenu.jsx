@@ -1,12 +1,12 @@
 export const MENUITEMS = [
   {
-    allowTo: ["all"],
+    allowTo: ["all", "test"],
     menutitle: "DASHBOARD",
     menuGroup:"dashboard",
   },
   {
     
-    allowTo: ["all"],
+    allowTo: ["all", "test"],
     path: `${import.meta.env.BASE_URL}dashboard`,
     title: "Dashboard",
     icon: "ti-home",
@@ -17,12 +17,12 @@ export const MENUITEMS = [
     menuGroup:"dashboard",
   },
   {
-    allowTo: ["applicant"],
+    allowTo: ["applicant", "test"],
     menutitle: "NEW REGISTRATION",
     menuGroup:"new_registration",
   },
   {
-    allowTo: ["applicant"],
+    allowTo: ["applicant", "test"],
     path: `${import.meta.env.BASE_URL}dashboard/Application`,
     title: "Application",
     icon: "ti-file",
@@ -33,7 +33,7 @@ export const MENUITEMS = [
     menuGroup:"new_registration",
   },
   {
-    allowTo: [],
+    allowTo: ["test"],
     path: `${import.meta.env.BASE_URL}dashboard/new_registration`,
     title: "New Application",
     icon: "ti-file",
@@ -43,7 +43,7 @@ export const MENUITEMS = [
     dirchange: false,
   },
   {
-    allowTo: [],
+    allowTo: ["test"],
     path: `${import.meta.env.BASE_URL}dashboard/form_stageII`,
     title: "stage II Form",
     icon: "ti-file",
@@ -58,7 +58,7 @@ export const MENUITEMS = [
   //     menutitle: "Example",
   //   },
   {
-    allowTo: [],
+    allowTo: ["test"],
     path: `${import.meta.env.BASE_URL}dashboard/geoTaggedSample`,
     title: "Geo Tagged Sample",
     icon: "ti-file",
@@ -68,11 +68,11 @@ export const MENUITEMS = [
     dirchange: false,
   },
   {
-    allowTo: ["state_assessor"],
+    allowTo: ["state_assessor", "test"],
     menutitle: "Assessment",
   },
   {
-    allowTo: ["state_assessor"],
+    allowTo: ["state_assessor", "test"],
     path: `${import.meta.env.BASE_URL}dashboard/Assessment`,
     title: "Assessment",
     icon: "ti-file",
@@ -82,7 +82,7 @@ export const MENUITEMS = [
     dirchange: false,
   },
   {
-    allowTo: ["state_assessor"],
+    allowTo: ["state_assessor", "test"],
     path: `${import.meta.env.BASE_URL}dashboard/AssessmentII`,
     title: "AssessmentII",
     icon: "ti-file",
@@ -92,7 +92,7 @@ export const MENUITEMS = [
     dirchange: false,
   },
   {
-    allowTo: [],
+    allowTo: ["test"],
     path: `${import.meta.env.BASE_URL}dashboard/TimeLine`,
     title: "TimeLine",
     icon: "ti-file",

@@ -55,12 +55,7 @@ const New_registration = () => {
         })}
       </Stepper>
 
-      <Card className="custom-card">
-        {/* <Card.Header>
-                    <div className="card-title">Application Preview</div>
-                  </Card.Header> */}
-        <Card.Body>
-          {activeStep.label === "Applicant Entity Details" ? (
+       {activeStep.label === "Applicant Entity Details" ? (
             <BasicDetailsofApplicantOrganization />
           ) : activeStep.label === "Applicant Entity Details" ? (
             <BasicDetailsofApplicantOrganization />
@@ -85,8 +80,6 @@ const New_registration = () => {
             // To be Work
             <p>Something Went Wrong</p>
           )}
-        </Card.Body>
-      </Card>
     </Fragment>
   );
 };

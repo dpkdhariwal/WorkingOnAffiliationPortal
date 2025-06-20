@@ -35,6 +35,9 @@ git submodule add https://github.com/dpkdhariwal/ui_layouts_collaborate.git pack
 
 
 npx lerna run dev --scope=affiliation_portal
+npx lerna run build --scope=affiliation_portal
+
+
 npx lerna run dev --scope=layout
 
 

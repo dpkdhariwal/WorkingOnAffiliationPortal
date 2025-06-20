@@ -48,36 +48,12 @@ export const ApplicantEntityDetailsReducer = (
   action
 ) => {
   let { type, payload } = action;
-  const {
-    CategoryOfApplicantEntity,
-    NameOfApplicantEntity,
-    ApplicantEntityState,
-    ApplicantEntityDistrict,
-    ApplicantEntityTown_City,
-    ApplicantEntityBlock_Tehsil,
-    ApplicantEntitySector_Village,
-    ApplicantEntityPincode,
-    ApplicantEntityPlotNumber_KhasaraNumber_GataNumber,
-    ApplicantEntityLandmark,
-    ApplicantEntityEmailId,
-    ApplicantContactNumber,
-    IsTheApplicantRunningAnyOtherITI,
-    run_ITIName,
-    run_MISCode,
-    run_State,
-    run_District,
-    run_TownCity,
-    run_BlockTehsil,
-    run_Pincode,
-    run_PlotNumber_KhasaraNumber,
-    run_Landmark,
-  } = payload;
-
+  
   switch (type) {
     case SAVE_APPLICANT_ENTITY_DETAILS:
       return { ...state, ...payload };
     case UPDATE_APPLICANT_ENTITY_DETAILS:
-      return { ...state, ...{ selected: true, cat: payload } };
+      return { ...state, ...payload };
     default:
       return state;
   }

@@ -30,27 +30,36 @@ const Signin = () => {
       userType: "applicant",
       role: ["applicant"],
       email: "applicant@gmail.com",
-      password: "12345678",
+      password: "123",
       total_applications: 0,
     },
     {
       userType: "dgt",
       role: ["dgt"],
       email: "dgt@gmail.com",
-      password: "12345678",
+      password: "123",
     },
     {
       userType: "state_admin",
       role: ["state_admin", "state_assessor"],
       email: "state_admin@gmail.com",
-      password: "12345678",
+      password: "123",
     },
     {
       userType: "state_assessor",
       role: ["state_assessor"],
       email: "state_assessor@gmail.com",
-      password: "12345678",
+      password: "123",
     },
+    {
+      userType: "state_assessor",
+      role: ["test"],
+      email: "vivek@gmail.com",
+      password: "123",
+    },
+
+    
+
   ];
 
   const LoginNow = async (values) => {
@@ -168,13 +177,16 @@ const Signin = () => {
                             userid: yup
                               .string()
                               .required("Enter Correct User ID or Email")
-                              // .oneOf(
-                              //   [
-                              //     "applicant@gmail.com",
-                              //     "state_admin@gmail.com",
-                              //   ],
-                              //   "Only applicant@gmail.com or state_admin@gmail.com is allowed"
-                              // )
+                              .oneOf(
+                                [
+                                  "applicant@gmail.com",
+                                  "dgt@gmail.com",
+                                  "state_admin@gmail.com",
+                                  "state_assessor@gmail.com",
+                                  "vivek@gmail.com"
+                                ],
+                                "Only applicant@gmail.com OR dgt@gmail.com OR state_admin@gmail.com OR state_assessor@gmail.com OR vivek@gmail.com is allowed"
+                              )
                               ,
                             password: yup
                               .string()

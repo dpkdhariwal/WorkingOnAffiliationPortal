@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
 import { label } from "yet-another-react-lightbox";
-
+import { entityCategories } from "../../../../constants";
 // import Exclamation from "../comp/PrimeReact/PrimeReact";
 
 const BasicDetailsofApplicantOrganization = () => {
@@ -113,47 +113,7 @@ const BasicDetailsofApplicantOrganization = () => {
                   <span style={{ color: "red" }}>*</span>
                 </Form.Label>
                 <Row className="mb-3">
-                  {[
-                    {
-                      label: "Society / Trust",
-                      metaInfo: {
-                        i: "An entity registered under the Societies Registration Act, 1860 as amended from time to time or any other relevant Acts, through the Chairman/ Secretary of Society.",
-                      },
-                    },
-                    {
-                      label: "Private Limited Company",
-                      metaInfo: {
-                        i: "A company incorporated under the Companies Act, 2013, having limited liability, where ownership is restricted to a small group of shareholders, primarily for non-governmental, commercial, or educational initiatives.",
-                      },
-                    },
-                    {
-                      label: "Public Limited Company",
-                      metaInfo: {
-                        i: "A company incorporated under the Companies Act, 2013, where shares are publicly traded on stock exchanges.",
-                      },
-                    },
-                    {
-                      label: "Sole Proprietor",
-                      metaInfo: {
-                        i: "An individual owning, managing, and controlling an unincorporated business, assuming full responsibility for liabilities and operations, including running an ITI",
-                      },
-                    },
-                    {
-                      label: "Private Institution / Individual",
-                      metaInfo: { i: "" },
-                    },
-                    {
-                      label: "Public Sector Undertaking",
-                      metaInfo: {
-                        i: "A Public Sector Undertaking (PSU) is a governmentowned corporation, company, or statutory body in which the Central Government, State Government, or Union Territory Government holds more than 51% of the paid-up share capital",
-                      },
-                    },
-                    {
-                      label:
-                        "Central / State Government / Union Territory Administration",
-                      metaInfo: { i: "" },
-                    },
-                  ].map(
+                  {entityCategories.map(
                     (label, index) => (
                       console.log(label),
                       (
@@ -995,9 +955,9 @@ const BasicDetailsofApplicantOrganization = () => {
                 )}
               </Form>
             </Card.Body>
-            {/* <Card.Footer>
-              <Button>dsfdf</Button>
-            </Card.Footer> */}
+            <Card.Footer>
+              <Button  variant="success">Save & Continue</Button>
+            </Card.Footer>
           </Card>
         )}
       </Formik>
