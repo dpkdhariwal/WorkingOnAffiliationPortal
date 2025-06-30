@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
 
-const DetailsOfTheProposedInstitute = () => {
+const DetailsOfTheProposedInstitute = ({ setActive }) => {
   const [isHidden, setisHidden] = useState([true]);
 
   const { Formik } = formik;
@@ -28,14 +28,22 @@ const DetailsOfTheProposedInstitute = () => {
   const navigate = useNavigate();
   // const updateQuery = () => { navigate("?stage=1&form_id=Basic Details of Applicant  Organization"); };
 
+  const gotoPrev = () => {
+    setActive(reg.steps[0]);
+  }
   const gotoNext = () => {
     console.log("gotoNext called");
     navigate("?stage=1&form_id=Details of the Proposed Institute");
   };
 
+  const formikRef = useRef();
+  const reg = useSelector((state) => state.reg);
+
   return (
     <Fragment>
       <Formik
+        innerRef={formikRef}
+
         validationSchema={yup.object().shape({
           category: yup.string().required("Please select a category"),
           Is_the_applicant_running_any_other_iti: yup
@@ -143,7 +151,7 @@ const DetailsOfTheProposedInstitute = () => {
                         </Form.Control.Feedback>
                       </Form.Group></div>
                     </div>
-                   
+
                   </Col>
                 </Row>
 
@@ -407,14 +415,14 @@ const DetailsOfTheProposedInstitute = () => {
                                 name="institute_location"
                                 value="Urban"
                                 onChange={handleChange}
-                                // checked={
-                                //   values.Is_the_applicant_running_any_other_iti ===
-                                //   "yes"
-                                // }
-                                // isInvalid={
-                                //   touched.Is_the_applicant_running_any_other_iti &&
-                                //   !!errors.Is_the_applicant_running_any_other_iti
-                                // }
+                              // checked={
+                              //   values.Is_the_applicant_running_any_other_iti ===
+                              //   "yes"
+                              // }
+                              // isInvalid={
+                              //   touched.Is_the_applicant_running_any_other_iti &&
+                              //   !!errors.Is_the_applicant_running_any_other_iti
+                              // }
                               />
                               <Form.Check
                                 inline
@@ -423,13 +431,13 @@ const DetailsOfTheProposedInstitute = () => {
                                 name="institute_location"
                                 value="Rural"
                                 onChange={handleChange}
-                                // checked={
-                                //   values.Is_the_applicant_running_any_other_iti === "no"
-                                // }
-                                // isInvalid={
-                                //   touched.Is_the_applicant_running_any_other_iti &&
-                                //   !!errors.Is_the_applicant_running_any_other_iti
-                                // }
+                              // checked={
+                              //   values.Is_the_applicant_running_any_other_iti === "no"
+                              // }
+                              // isInvalid={
+                              //   touched.Is_the_applicant_running_any_other_iti &&
+                              //   !!errors.Is_the_applicant_running_any_other_iti
+                              // }
                               />
                             </div>
                             <Form.Control.Feedback type="invalid">
@@ -469,8 +477,86 @@ const DetailsOfTheProposedInstitute = () => {
                               <div className="p-2 flex-fill">
                                 {values.is_falls_under_hill_area_hill ===
                                   "yes" && (
+                                    <div className="p-2 flex-fill">
+                                      <Form.Group controlId="validationCustom02">
+                                        <Form.Label>
+                                          If Yes, Upload Supporting Government
+                                          Notification/Order/Circular
+                                          <span style={{ color: "red" }}>*</span>
+                                        </Form.Label>
+                                        <Form.Control
+                                          required
+                                          type="file"
+                                          name="name_of_other_iti"
+                                          onChange={handleChange} // if using Formik or handling file upload
+                                          isInvalid={
+                                            touched.name_of_other_iti &&
+                                            !!errors.name_of_other_iti
+                                          }
+                                        />
+                                        <Form.Control.Feedback type="invalid">
+                                          {errors.name_of_other_iti}
+                                        </Form.Control.Feedback>
+                                      </Form.Group>
+                                    </div>
+                                  )}
+                              </div>
+                            </div>
+                          </Col>
+
+                          <Col md={4}>
+                            <Form.Group>
+                              <Form.Label>
+                                Falls Under Border District?
+                                <span style={{ color: "red" }}>*</span>
+                              </Form.Label>
+                              <div>
+                                <Form.Check
+                                  inline
+                                  type="radio"
+                                  label="Yes"
+                                  name="is_falls_under_border_district"
+                                  value="yes"
+                                  onChange={handleChange}
+                                // checked={
+                                //   values.Is_the_applicant_running_any_other_iti ===
+                                //   "yes"
+                                // }
+                                // isInvalid={
+                                //   touched.Is_the_applicant_running_any_other_iti &&
+                                //   !!errors.Is_the_applicant_running_any_other_iti
+                                // }
+                                />
+                                <Form.Check
+                                  inline
+                                  type="radio"
+                                  label="No"
+                                  name="is_falls_under_border_district"
+                                  value="no"
+                                  onChange={handleChange}
+                                // checked={
+                                //   values.Is_the_applicant_running_any_other_iti ===
+                                //   "no"
+                                // }
+                                // isInvalid={
+                                //   touched.Is_the_applicant_running_any_other_iti &&
+                                //   !!errors.Is_the_applicant_running_any_other_iti
+                                // }
+                                />
+                              </div>
+                              <Form.Control.Feedback type="invalid">
+                                {errors.category}
+                              </Form.Control.Feedback>
+                            </Form.Group>
+                            <div className="d-flex">
+                              {values.is_falls_under_border_district ===
+                                "yes" && (
                                   <div className="p-2 flex-fill">
-                                    <Form.Group controlId="validationCustom02">
+                                    <Form.Group
+                                      as={Col}
+                                      md="12"
+                                      controlId="validationCustom02"
+                                    >
                                       <Form.Label>
                                         If Yes, Upload Supporting Government
                                         Notification/Order/Circular
@@ -492,84 +578,6 @@ const DetailsOfTheProposedInstitute = () => {
                                     </Form.Group>
                                   </div>
                                 )}
-                              </div>
-                            </div>
-                          </Col>
-
-                          <Col md={4}>
-                            <Form.Group>
-                              <Form.Label>
-                                Falls Under Border District?
-                                <span style={{ color: "red" }}>*</span>
-                              </Form.Label>
-                              <div>
-                                <Form.Check
-                                  inline
-                                  type="radio"
-                                  label="Yes"
-                                  name="is_falls_under_border_district"
-                                  value="yes"
-                                  onChange={handleChange}
-                                  // checked={
-                                  //   values.Is_the_applicant_running_any_other_iti ===
-                                  //   "yes"
-                                  // }
-                                  // isInvalid={
-                                  //   touched.Is_the_applicant_running_any_other_iti &&
-                                  //   !!errors.Is_the_applicant_running_any_other_iti
-                                  // }
-                                />
-                                <Form.Check
-                                  inline
-                                  type="radio"
-                                  label="No"
-                                  name="is_falls_under_border_district"
-                                  value="no"
-                                  onChange={handleChange}
-                                  // checked={
-                                  //   values.Is_the_applicant_running_any_other_iti ===
-                                  //   "no"
-                                  // }
-                                  // isInvalid={
-                                  //   touched.Is_the_applicant_running_any_other_iti &&
-                                  //   !!errors.Is_the_applicant_running_any_other_iti
-                                  // }
-                                />
-                              </div>
-                              <Form.Control.Feedback type="invalid">
-                                {errors.category}
-                              </Form.Control.Feedback>
-                            </Form.Group>
-                            <div className="d-flex">
-                              {values.is_falls_under_border_district ===
-                                "yes" && (
-                                <div className="p-2 flex-fill">
-                                  <Form.Group
-                                    as={Col}
-                                    md="12"
-                                    controlId="validationCustom02"
-                                  >
-                                    <Form.Label>
-                                      If Yes, Upload Supporting Government
-                                      Notification/Order/Circular
-                                      <span style={{ color: "red" }}>*</span>
-                                    </Form.Label>
-                                    <Form.Control
-                                      required
-                                      type="file"
-                                      name="name_of_other_iti"
-                                      onChange={handleChange} // if using Formik or handling file upload
-                                      isInvalid={
-                                        touched.name_of_other_iti &&
-                                        !!errors.name_of_other_iti
-                                      }
-                                    />
-                                    <Form.Control.Feedback type="invalid">
-                                      {errors.name_of_other_iti}
-                                    </Form.Control.Feedback>
-                                  </Form.Group>
-                                </div>
-                              )}
                             </div>
                           </Col>
                         </Row>
@@ -601,14 +609,14 @@ const DetailsOfTheProposedInstitute = () => {
                         name="WhetherapplyingUnderMiniSkillTrainingInstitute(MSTI)Category"
                         value="yes"
                         onChange={handleChange}
-                        // checked={
-                        //   values.Is_the_applicant_running_any_other_iti ===
-                        //   "yes"
-                        // }
-                        // isInvalid={
-                        //   touched.Is_the_applicant_running_any_other_iti &&
-                        //   !!errors.Is_the_applicant_running_any_other_iti
-                        // }
+                      // checked={
+                      //   values.Is_the_applicant_running_any_other_iti ===
+                      //   "yes"
+                      // }
+                      // isInvalid={
+                      //   touched.Is_the_applicant_running_any_other_iti &&
+                      //   !!errors.Is_the_applicant_running_any_other_iti
+                      // }
                       />
                       <Form.Check
                         inline
@@ -617,13 +625,13 @@ const DetailsOfTheProposedInstitute = () => {
                         name="WhetherapplyingUnderMiniSkillTrainingInstitute(MSTI)Category"
                         value="no"
                         onChange={handleChange}
-                        // checked={
-                        //   values.Is_the_applicant_running_any_other_iti === "no"
-                        // }
-                        // isInvalid={
-                        //   touched.Is_the_applicant_running_any_other_iti &&
-                        //   !!errors.Is_the_applicant_running_any_other_iti
-                        // }
+                      // checked={
+                      //   values.Is_the_applicant_running_any_other_iti === "no"
+                      // }
+                      // isInvalid={
+                      //   touched.Is_the_applicant_running_any_other_iti &&
+                      //   !!errors.Is_the_applicant_running_any_other_iti
+                      // }
                       />
                     </div>
                     <Form.Control.Feedback type="invalid">
@@ -646,14 +654,14 @@ const DetailsOfTheProposedInstitute = () => {
                         name="Whether_the_institute_is_exclusive_for_women_trainees"
                         value="yes"
                         onChange={handleChange}
-                        // checked={
-                        //   values.Is_the_applicant_running_any_other_iti ===
-                        //   "yes"
-                        // }
-                        // isInvalid={
-                        //   touched.Is_the_applicant_running_any_other_iti &&
-                        //   !!errors.Is_the_applicant_running_any_other_iti
-                        // }
+                      // checked={
+                      //   values.Is_the_applicant_running_any_other_iti ===
+                      //   "yes"
+                      // }
+                      // isInvalid={
+                      //   touched.Is_the_applicant_running_any_other_iti &&
+                      //   !!errors.Is_the_applicant_running_any_other_iti
+                      // }
                       />
                       <Form.Check
                         inline
@@ -662,13 +670,13 @@ const DetailsOfTheProposedInstitute = () => {
                         name="Whether_the_institute_is_exclusive_for_women_trainees"
                         value="no"
                         onChange={handleChange}
-                        // checked={
-                        //   values.Is_the_applicant_running_any_other_iti === "no"
-                        // }
-                        // isInvalid={
-                        //   touched.Is_the_applicant_running_any_other_iti &&
-                        //   !!errors.Is_the_applicant_running_any_other_iti
-                        // }
+                      // checked={
+                      //   values.Is_the_applicant_running_any_other_iti === "no"
+                      // }
+                      // isInvalid={
+                      //   touched.Is_the_applicant_running_any_other_iti &&
+                      //   !!errors.Is_the_applicant_running_any_other_iti
+                      // }
                       />
                     </div>
                     <Form.Control.Feedback type="invalid">
@@ -685,8 +693,8 @@ const DetailsOfTheProposedInstitute = () => {
                           className="card-title"
                           style={{ textTransform: "none" }}
                         >
-                          Coordinates of institute <span style={{'font-weight': 'normal'}}>(For example Delhi - 28.7041°
-                          N, 77.1025° E)</span>
+                          Coordinates of institute <span style={{ 'font-weight': 'normal' }}>(For example Delhi - 28.7041°
+                            N, 77.1025° E)</span>
                         </div>
                       </Card.Header>
                       <Card.Body>
@@ -751,6 +759,25 @@ const DetailsOfTheProposedInstitute = () => {
                 </Row>
               </Form>
             </Card.Body>
+            <Card.Footer>
+              <div className="d-flex justify-content-between mb-3">
+                <Button onClick={() => {
+                  setActive(reg.steps[0]);
+                }}
+                  className="p-2" variant="warning">
+                  Previous
+                </Button>
+
+                <Button className="p-2"
+                  variant="success"
+                  onClick={() => formikRef.current?.submitForm()}
+                >
+                  Save & Continue
+                </Button>
+              </div>
+
+
+            </Card.Footer>
           </Card>
         )}
       </Formik>

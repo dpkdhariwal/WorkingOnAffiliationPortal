@@ -86,10 +86,10 @@ input[type="radio"].form-check-input {
   background-color: #f2b2b2; /* Bootstrap secondary */
   border-color: #ee2525;
 }
-input[type="radio"].form-check-input:checked {
-  background-color: #48de0d; /* Bootstrap secondary */
-  border-color: #aef685;
-}
+// input[type="radio"].form-check-input:checked {
+//   background-color: #48de0d; /* Bootstrap secondary */
+//   border-color: #aef685;
+// }
 
 
 
@@ -116,3 +116,9 @@ input[type="checkbox"].form-check-input:checked {
 
 
 
+
+
+  .stepper_completed {
+    background-color: #57e65e !important;
+    color: #250505 !important;
+  }

@@ -16,6 +16,9 @@ npm install redux-persist --workspace=packages/iti_panel
 
 npm i --workspace=packages/ui_layouts_collaborate
 
+npm i react-bootstrap-icons --workspace=packages/ui_layouts_collaborate
+
+
 
 npm i redux-devtools-extension
 
@@ -39,6 +42,8 @@ npx lerna run build --scope=affiliation_portal
 
 
 npx lerna run dev --scope=layout
+
+
 
 
 

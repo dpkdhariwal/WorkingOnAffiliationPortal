@@ -25,7 +25,7 @@ const New_registration = () => {
     console.log(activeStep);
   }, [reg]);
 
-  const goToSection = (step, index) => {
+  const goToSection = (step, index = null) => {
     setActiveStep(step);
   };
   return (
@@ -47,7 +47,8 @@ const New_registration = () => {
                 key={index}
                 label={item.label || "Step " + (index + 1)}
                 active={item.active === true || index < activeStep.step}
-                completed={false} // You might want to base this on actual state
+                completed={item.filled} // You might want to base this on actual state
+                className={item.filled === true ? "stepper_completed" : ''} // Correct ternary operator syntax
                 index={index}
               />
             </div>
@@ -55,31 +56,31 @@ const New_registration = () => {
         })}
       </Stepper>
 
-       {activeStep.label === "Applicant Entity Details" ? (
-            <BasicDetailsofApplicantOrganization />
-          ) : activeStep.label === "Applicant Entity Details" ? (
-            <BasicDetailsofApplicantOrganization />
-          ) : activeStep.label === "Details of the Proposed Institute" ? (
-            <DetailsOfTheProposedInstitute />
-          ) : activeStep.label ===
-            "Details of Trade(s)/Unit(s) for Affiliation" ? (
-            <DetailsOfTradeUnitForAffiliation />
-          ) : // To be Work
-          activeStep.label === "Details of the Land to be used for the ITI" ? (
-            <DetailsOfTheLandToBeUsedForTheITI />
-          ) : // To be Work
+      {activeStep.label === "Applicant Entity Details" ? (
+        <BasicDetailsofApplicantOrganization setActive={goToSection} />
+      ) : activeStep.label === "Applicant Entity Details" ? (
+        <BasicDetailsofApplicantOrganization setActive={goToSection} />
+      ) : activeStep.label === "Details of the Proposed Institute" ? (
+        <DetailsOfTheProposedInstitute setActive={goToSection} />
+      ) : activeStep.label ===
+        "Details of Trade(s)/Unit(s) for Affiliation" ? (
+        <DetailsOfTradeUnitForAffiliation />
+      ) : // To be Work
+        activeStep.label === "Details of the Land to be used for the ITI" ? (
+          <DetailsOfTheLandToBeUsedForTheITI />
+        ) : // To be Work
           activeStep.label === "Preview of Application" ? (
             <PreviewOfApplication />
           ) : // To be Work
-          activeStep.label === "Fee Payment" ? (
-            <FeePayment />
-          ) : // To be Work
-          activeStep.label === "Documents Upload" ? (
-            <DetailsOfDocumentsToBeUploaded />
-          ) : (
-            // To be Work
-            <p>Something Went Wrong</p>
-          )}
+            activeStep.label === "Fee Payment" ? (
+              <FeePayment />
+            ) : // To be Work
+              activeStep.label === "Documents Upload" ? (
+                <DetailsOfDocumentsToBeUploaded />
+              ) : (
+                // To be Work
+                <p>Something Went Wrong</p>
+              )}
     </Fragment>
   );
 };
