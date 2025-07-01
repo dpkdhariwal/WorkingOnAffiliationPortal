@@ -1,11 +1,7 @@
-import { Fragment, useRef, useEffect } from "react";
-import {
-  Row,
-  Col,
-  Card,
-  Form,
-  Button,
-} from "react-bootstrap";
+import { Fragment, useRef, useEffect, useState } from "react";
+import { Row, Col, Card, Form, Button } from "react-bootstrap";
+import { Form as BootstrapForm } from "react-bootstrap";
+
 import * as formik from "formik";
 import * as yup from "yup";
 import { useSelector, useDispatch } from "react-redux";
@@ -14,17 +10,18 @@ import { entityCategories } from "../../../../constants";
 // import Exclamation from "../comp/PrimeReact/PrimeReact";
 import { yupObject, initialValues } from "../../../../reducers/newAppReducer";
 import PropTypes from "prop-types";
-
+import Select from "react-select";
+import { IndianStates } from "../../../../constants";
 
 const BasicDetailsofApplicantOrganization = ({ setActive }) => {
   const dispatch = useDispatch();
   const reg = useSelector((state) => state.reg);
   const stepInfo = reg.steps[0];
+  const [district, setDistrict] = useState([]);
 
   useEffect(() => {
     console.log(stepInfo.filled);
-  }, [])
-
+  }, []);
 
   const { Formik } = formik;
   const formRef2 = useRef();
@@ -32,10 +29,6 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
   //Custom Validation
   const stageI1_info = useSelector((state) => state.theme.new_registration);
   // useEffect(() => { console.log("stageI1_info", stageI1_info); }, []);
-
-
-
-
 
   const submit = (values) => {
     Swal.fire({
@@ -66,7 +59,7 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
                 type: "reg_set_active_step",
                 payload: { step: 1 },
               });
-              setActive(reg.steps[1])
+              setActive(reg.steps[1]);
             }, 1000); // optional delay
           },
         });
@@ -74,7 +67,6 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
         console.log("User cancelled save");
       }
     });
-
   };
 
   const formikRef = useRef();
@@ -88,8 +80,11 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
           console.log("Form submitted with values:", values);
           submit(values);
         }}
-        validateOnChange={() => console.log("validateOnChange")}
+        validateOnChange={(data1, data2) =>
+          console.log(data1, data2, "validateOnChange")
+        }
         initialValues={initialValues}
+        validateOnBlur={true}
       >
         {({ handleSubmit, handleChange, values, errors, touched }) => (
           <Card className="custom-card shadow">
@@ -99,7 +94,7 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
               </div>
             </Card.Header>
             <Card.Body>
-              <Form ref={formRef2} onSubmit={handleSubmit} validated>
+              <Form ref={formRef2} onSubmit={handleSubmit}>
                 <Form.Label>
                   Category of Applicant Entity
                   <span style={{ color: "red" }}>*</span>
@@ -200,91 +195,51 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
                   </Col>
                   <Col md={12}>
                     <Row className="mb-3">
-                      <Form.Group
+                      <BootstrapForm.Group
                         as={Col}
                         md="3"
-                        controlId="validationCustom02"
+                        controlId="ApplicantEntityState"
                       >
-                        <Form.Label>
-                          Applicant Entity State
+                        <BootstrapForm.Label>
+                          Applicant Entity State{" "}
                           <span style={{ color: "red" }}>*</span>
-                        </Form.Label>
-
-                        <Form.Control
-                          required
-                          as="select"
-                          name="state_of_other_iti"
-                          value={values.state_of_other_iti}
+                        </BootstrapForm.Label>
+                        <BootstrapForm.Select
+                          size="lg"
+                          name="ApplicantEntityState"
+                          value={values.ApplicantEntityState}
                           onChange={handleChange}
+                          isInvalid={
+                            touched.ApplicantEntityState &&
+                            !!errors.ApplicantEntityState
+                          }
                         >
-                          <option value="">Select State</option>
-                          <option value="Andhra Pradesh">Andhra Pradesh</option>
-                          <option value="Arunachal Pradesh">
-                            Arunachal Pradesh
-                          </option>
-                          <option value="Assam">Assam</option>
-                          <option value="Bihar">Bihar</option>
-                          <option value="Chhattisgarh">Chhattisgarh</option>
-                          <option value="Goa">Goa</option>
-                          <option value="Gujarat">Gujarat</option>
-                          <option value="Haryana">Haryana</option>
-                          <option value="Himachal Pradesh">
-                            Himachal Pradesh
-                          </option>
-                          <option value="Jharkhand">Jharkhand</option>
-                          <option value="Karnataka">Karnataka</option>
-                          <option value="Kerala">Kerala</option>
-                          <option value="Madhya Pradesh">Madhya Pradesh</option>
-                          <option value="Maharashtra">Maharashtra</option>
-                          <option value="Manipur">Manipur</option>
-                          <option value="Meghalaya">Meghalaya</option>
-                          <option value="Mizoram">Mizoram</option>
-                          <option value="Nagaland">Nagaland</option>
-                          <option value="Odisha">Odisha</option>
-                          <option value="Punjab">Punjab</option>
-                          <option value="Rajasthan">Rajasthan</option>
-                          <option value="Sikkim">Sikkim</option>
-                          <option value="Tamil Nadu">Tamil Nadu</option>
-                          <option value="Telangana">Telangana</option>
-                          <option value="Tripura">Tripura</option>
-                          <option value="Uttar Pradesh">Uttar Pradesh</option>
-                          <option value="Uttarakhand">Uttarakhand</option>
-                          <option value="West Bengal">West Bengal</option>
-                          <option value="Andaman and Nicobar Islands">
-                            Andaman and Nicobar Islands
-                          </option>
-                          <option value="Chandigarh">Chandigarh</option>
-                          <option value="Dadra and Nagar Haveli and Daman and Diu">
-                            Dadra and Nagar Haveli and Daman and Diu
-                          </option>
-                          <option value="Delhi">Delhi</option>
-                          <option value="Jammu and Kashmir">
-                            Jammu and Kashmir
-                          </option>
-                          <option value="Ladakh">Ladakh</option>
-                          <option value="Lakshadweep">Lakshadweep</option>
-                          <option value="Puducherry">Puducherry</option>
-                        </Form.Control>
+                          {IndianStates.map((state) => (
+                            <option key={state.value} value={state.value}>
+                              {state.label}
+                            </option>
+                          ))}
+                        </BootstrapForm.Select>
 
-                        {touched.state_of_other_iti &&
-                          errors.state_of_other_iti ? (
-                          <Form.Control.Feedback type="invalid">
-                            {errors.state_of_other_iti}
-                          </Form.Control.Feedback>
-                        ) : (
-                          <Form.Control.Feedback>
-                            Looks good!
-                          </Form.Control.Feedback>
-                        )}
-                      </Form.Group>
-                      <Form.Group as={Col} md="3">
-                        <Form.Label>
-                          Applicant Entity District
+                        {touched.ApplicantEntityState &&
+                          errors.ApplicantEntityState && (
+                            <BootstrapForm.Control.Feedback type="invalid">
+                              {errors.ApplicantEntityState}
+                            </BootstrapForm.Control.Feedback>
+                          )}
+                      </BootstrapForm.Group>
+
+                      <BootstrapForm.Group
+                        as={Col}
+                        md="3"
+                        controlId="ApplicantEntityDistrict"
+                      >
+                        <BootstrapForm.Label>
+                          Applicant Entity District{" "}
                           <span style={{ color: "red" }}>*</span>
-                        </Form.Label>
-                        <Form.Control
-                          required
-                          as="select"
+                        </BootstrapForm.Label>
+                        <BootstrapForm.Select
+                          size="lg"
                           name="ApplicantEntityDistrict"
                           value={values.ApplicantEntityDistrict}
                           onChange={handleChange}
@@ -293,34 +248,20 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
                             !!errors.ApplicantEntityDistrict
                           }
                         >
-                          <option value="" selected>
-                            Select
-                          </option>
-                          {[
-                            "Ahmedabad",
-                            "Bengaluru",
-                            "Chennai",
-                            "Delhi",
-                            "Hyderabad",
-                            "Jaipur",
-                            "Kolkata",
-                            "Lucknow",
-                            "Mumbai",
-                            "Pune",
-                          ].map((district, idx) => (
-                            <option key={idx} value={district}>
-                              {district}
+                          {district.map((district) => (
+                            <option key={district.value} value={district.value}>
+                              {district.label}
                             </option>
                           ))}
-                        </Form.Control>
+                        </BootstrapForm.Select>
 
-                        {touched.ApplicantEntityDistrict &&
-                          errors.ApplicantEntityDistrict && (
-                            <Form.Control.Feedback type="invalid">
-                              {errors.ApplicantEntityDistrict}
-                            </Form.Control.Feedback>
+                        {touched.ApplicantEntityState &&
+                          errors.ApplicantEntityState && (
+                            <BootstrapForm.Control.Feedback type="invalid">
+                              {errors.ApplicantEntityState}
+                            </BootstrapForm.Control.Feedback>
                           )}
-                      </Form.Group>
+                      </BootstrapForm.Group>
 
                       <Form.Group
                         as={Col}
@@ -1001,25 +942,27 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
               </Form>
             </Card.Body>
             <Card.Footer>
-
               <div className="d-flex justify-content-between mb-3">
-                <Button className="p-2"
+                <Button
+                  className="p-2"
                   variant="success"
                   onClick={() => formikRef.current?.submitForm()}
                 >
                   Save & Continue
                 </Button>
 
-
-                {stepInfo.filled === true && (<Button className="p-2"
-                  variant="warning"
-                  onClick={() => { setActive(reg.steps[1]) }}
-                >
-                  Next
-                </Button>)}
+                {stepInfo.filled === true && (
+                  <Button
+                    className="p-2"
+                    variant="warning"
+                    onClick={() => {
+                      setActive(reg.steps[1]);
+                    }}
+                  >
+                    Next
+                  </Button>
+                )}
               </div>
-
-
             </Card.Footer>
           </Card>
         )}

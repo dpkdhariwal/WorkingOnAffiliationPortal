@@ -34,6 +34,12 @@ const Signin = () => {
       total_applications: 0,
     },
     {
+      userType: "rdsde",
+      role: ["rdsde"],
+      email: "rdsde@gmail.com",
+      password: "123",
+    },
+    {
       userType: "dgt",
       role: ["dgt"],
       email: "dgt@gmail.com",
@@ -41,7 +47,7 @@ const Signin = () => {
     },
     {
       userType: "state_admin",
-      role: ["state_admin", "state_assessor"],
+      role: ["state_admin"],
       email: "state_admin@gmail.com",
       password: "123",
     },
@@ -58,7 +64,7 @@ const Signin = () => {
       password: "123",
     },
 
-    
+
 
   ];
 
@@ -81,8 +87,13 @@ const Signin = () => {
           } else {
             navigate("/dashboard/");
           }
-
           break;
+        case "rdsde":
+          navigate("/dashboard/rdsde");
+          break;
+        case 'state_admin':
+          navigate("/dashboard/state_admin");
+        break;  
         default:
           navigate("/dashboard/");
           break;
@@ -183,11 +194,12 @@ const Signin = () => {
                                   "dgt@gmail.com",
                                   "state_admin@gmail.com",
                                   "state_assessor@gmail.com",
-                                  "vivek@gmail.com"
+                                  "vivek@gmail.com",
+                                  "rdsde@gmail.com"
                                 ],
-                                "Only applicant@gmail.com OR dgt@gmail.com OR state_admin@gmail.com OR state_assessor@gmail.com OR vivek@gmail.com is allowed"
+                                "Only applicant@gmail.com OR dgt@gmail.com OR state_admin@gmail.com OR state_assessor@gmail.com OR rdsde@gmail.com OR vivek@gmail.com is allowed"
                               )
-                              ,
+                            ,
                             password: yup
                               .string()
                               .required("Enter Correct Password"),

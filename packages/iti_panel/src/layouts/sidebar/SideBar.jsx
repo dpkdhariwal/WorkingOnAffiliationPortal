@@ -31,6 +31,7 @@ const SideBar = ({ local_varaiable, ThemeChanger }) => {
           case "dgt":
           case "state_admin":
           case "state_assessor":
+          case "rdsde":
             return allowedRoles.includes(role) || allowedRoles.includes("all");
           default:
             return false;
@@ -565,10 +566,10 @@ const SideBar = ({ local_varaiable, ThemeChanger }) => {
             if (theme.dir == "rtl") {
               if (
                 siblingULRect.left - siblingULRect.width - outterUlWidth + 150 <
-                  0 &&
+                0 &&
                 outterUlWidth < window.innerWidth &&
                 outterUlWidth + siblingULRect.width + siblingULRect.width <
-                  window.innerWidth
+                window.innerWidth
               ) {
                 targetObject.dirchange = true;
               } else {
@@ -577,10 +578,10 @@ const SideBar = ({ local_varaiable, ThemeChanger }) => {
             } else {
               if (
                 outterUlWidth + siblingULRect.right + siblingULRect.width + 50 >
-                  window.innerWidth &&
+                window.innerWidth &&
                 siblingULRect.right >= 0 &&
                 outterUlWidth + siblingULRect.width + siblingULRect.width <
-                  window.innerWidth
+                window.innerWidth
               ) {
                 targetObject.dirchange = true;
               } else {
@@ -742,11 +743,10 @@ const SideBar = ({ local_varaiable, ThemeChanger }) => {
                   <li
                     className={`${levelone.menutitle ? "slide__category" : ""} 
 									                ${levelone.type === "link" ? "slide" : ""}
-                                                    ${
-                                                      levelone.type === "sub"
-                                                        ? "slide has-sub"
-                                                        : ""
-                                                    } 
+                                                    ${levelone.type === "sub"
+                        ? "slide has-sub"
+                        : ""
+                      } 
 													${levelone?.active ? "open" : ""} 
 													${levelone?.selected ? "active" : ""}`}
                   >
@@ -761,9 +761,8 @@ const SideBar = ({ local_varaiable, ThemeChanger }) => {
                     {levelone.type === "link" ? (
                       <Link
                         to={levelone.path + "/"}
-                        className={`side-menu__item ${
-                          levelone.selected ? "active" : ""
-                        }`}
+                        className={`side-menu__item ${levelone.selected ? "active" : ""
+                          }`}
                       >
                         {/* In case of doublemenu style the icon contains tooltip here is the style for single menu items */}
                         {/* Note: for doublemenu style if contains tooltip kindly refer Menuloop.jsx for more info. refer line no. 20 in Menuloop.jsx component */}

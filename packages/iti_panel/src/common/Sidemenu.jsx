@@ -1,12 +1,12 @@
 export const MENUITEMS = [
   {
-    allowTo: ["all", "test"],
+    allowTo: ["applicant", "test"],
     menutitle: "DASHBOARD",
-    menuGroup:"dashboard",
+    menuGroup: "dashboard",
   },
   {
-    
-    allowTo: ["all", "test"],
+
+    allowTo: ["applicant", "test"],
     path: `${import.meta.env.BASE_URL}dashboard`,
     title: "Dashboard",
     icon: "ti-home",
@@ -14,12 +14,12 @@ export const MENUITEMS = [
     active: false,
     selected: false,
     dirchange: false,
-    menuGroup:"dashboard",
+    menuGroup: "dashboard",
   },
   {
     allowTo: ["applicant", "test"],
     menutitle: "NEW REGISTRATION",
-    menuGroup:"new_registration",
+    menuGroup: "new_registration",
   },
   {
     allowTo: ["applicant", "test"],
@@ -30,7 +30,7 @@ export const MENUITEMS = [
     active: false,
     selected: false,
     dirchange: false,
-    menuGroup:"new_registration",
+    menuGroup: "new_registration",
   },
   {
     allowTo: ["test"],
@@ -101,4 +101,92 @@ export const MENUITEMS = [
     selected: false,
     dirchange: false,
   },
+  {
+    allowTo: ["test"],
+    path: `${import.meta.env.BASE_URL}dashboard/TimeLine`,
+    title: "TimeLine",
+    icon: "ti-file",
+    type: "link",
+    active: false,
+    selected: false,
+    dirchange: false,
+  },
+
+
+  // RDSDE
+  {
+    allowTo: ["rdsde"],
+    menutitle: "DASHBOARD",
+    menuGroup: "dashboard",
+  },
+  {
+    allowTo: ["rdsde"],
+    path: `${import.meta.env.BASE_URL}dashboard/rdsde`,
+    title: "Dashboard",
+    icon: "ti-home",
+    type: "link",
+    active: false,
+    selected: false,
+    dirchange: false,
+    menuGroup: "dashboard",
+  },
+  {
+    allowTo: ["rdsde"],
+    path: `${import.meta.env.BASE_URL}dashboard/rdsde/compliances`,
+    title: "Compliances",
+    icon: "ti-home",
+    type: "link",
+    active: false,
+    selected: false,
+    dirchange: false,
+    menuGroup: "dashboard",
+  },
+
+  {
+    allowTo: ["rdsde"],
+		title: "Members", 
+    icon: 'ti-wallet', 
+    type: "sub", 
+    active: false, 
+    selected: false, 
+    dirchange: false,
+		
+    children: [
+			{ path: `${import.meta.env.BASE_URL}dashboard/rdsde/AddIcvcMember`, type: "link", active: false, selected: false, dirchange: false, title: "Add ICVC Member" },
+      { path: `${import.meta.env.BASE_URL}dashboard/rdsde/MemberList`, type: "link", active: false, selected: false, dirchange: false, title: "Member List" },
+      
+		],
+	},
+
+
+  //STATE ADMIN
+  {
+    allowTo: ["state_admin"],
+    menutitle: "DASHBOARD",
+    menuGroup: "dashboard",
+  },
+  {
+    allowTo: ["state_admin"],
+    path: `${import.meta.env.BASE_URL}dashboard/state_admin`,
+    title: "Dashboard",
+    icon: "ti-home",
+    type: "link",
+    active: false,
+    selected: false,
+    dirchange: false,
+    menuGroup: "dashboard",
+  },
+
+  {
+    allowTo: ["state_admin"],
+		title: "Members", 
+    icon: 'ti-wallet', 
+    type: "sub", 
+    active: false, 
+    selected: false, 
+    dirchange: false,
+    children: [
+			{ path: `${import.meta.env.BASE_URL}dashboard/state_admin/AddStateMembers`, type: "link", active: false, selected: false, dirchange: false, title: "Add State Members" },
+		],
+	},
 ];

@@ -13,6 +13,12 @@ import GeoTaggedPhoto from "../components/geotagged";
 import Assessment from "../components/Assessment/Assessment";
 import AssessmentII from "../components/Assessment/AssessmentII";
 import { TimeLine } from "../components/TimeLine/TimeLine";
+import RdDashboard from "../../../ui_layouts_collaborate/src/components/Assessment/RdDashboard";
+import Compliance from "../../../ui_layouts_collaborate/src/components/Assessment/Compliance";
+import StateDashboard from "../../../ui_layouts_collaborate/src/components/Assessment/StateDashboard";
+import AddIcMember from "../../../ui_layouts_collaborate/src/components/Assessment/AddIcMember";
+
+import RdUser from"../../../ui_layouts_collaborate/src/components/Assessment/RdUser";
 
 export const Routedata = [
   {
@@ -56,6 +62,38 @@ export const Routedata = [
         id: 1,
         path: `TimeLine`,
         elementName: <TimeLine />,
+      },
+      {
+        id: 1,
+        path: `rdsde`,
+        elementName: <RdDashboard />,
+      },
+      {
+        id: 1,
+        path: `rdsde/compliances`,
+        elementName: <Compliance />,
+      },
+      {
+        id: 1,
+        path: `rdsde/AddIcvcMember`,
+        elementName: <AddIcMember />,
+      },
+      {
+        id: 1,
+        path: `rdsde/MemberList`,
+        elementName: <RdUser />,
+      },
+
+      // State Admin
+       {
+        id: 1,
+        path: `state_admin`,
+        elementName: <StateDashboard />,
+      },
+       {
+        id: 1,
+        path: `state_admin/AddStateMembers`,
+        elementName: <AddIcMember />,
       },
     ],
   },

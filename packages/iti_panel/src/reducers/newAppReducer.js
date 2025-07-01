@@ -50,14 +50,15 @@ let ApplicantEntityDetails = {
   run_Landmark: [],
 };
 export const initialValues = {
-  // category: "",
+  category: "",
+  name_of_applicant_entity: "",
+
   // Is_the_applicant_running_any_other_iti: "no",
-  // name_of_applicant_entity: "",
-  // state_of_other_iti: "",
+  state_of_other_iti: "",
   // CategoryOfApplicantEntity: "",
   // NameOfApplicantEntity: "",
-  // ApplicantEntityState: "",
-  // ApplicantEntityDistrict: "",
+  ApplicantEntityState: "",
+  ApplicantEntityDistrict: "",
   // ApplicantEntityTown_City: "",
   // ApplicantEntityBlock_Tehsil: "",
   // ApplicantEntitySector_Village: "",
@@ -80,11 +81,11 @@ export const initialValues = {
 
 export const yupObject = {
   category: yup.string().required("Please select a category"),
-  // name_of_applicant_entity: yup
-  //   .string()
-  //   .required("Please enter name of applicant entity")
-  //   .matches(/^[a-zA-Z ]+$/, "Only alphabets are allowed"),
-  // state_of_other_iti: yup.string().required("Please select state"),
+  name_of_applicant_entity: yup
+    .string()
+    .required("Please enter name of applicant entity")
+    .matches(/^[a-zA-Z ]+$/, "Only alphabets are allowed"),
+  ApplicantEntityState: yup.string().required("Please select state"),
   // ApplicantEntityDistrict: yup.string().required("Please select district"),
   // ApplicantEntityTown_City: yup.string().required("Please enter town/city"),
   // ApplicantEntityBlock_Tehsil: yup
