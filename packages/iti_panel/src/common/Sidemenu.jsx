@@ -83,6 +83,16 @@ export const MENUITEMS = [
   },
   {
     allowTo: ["state_assessor", "test"],
+    path: `${import.meta.env.BASE_URL}dashboard/AssessmentI`,
+    title: "AssessmentI",
+    icon: "ti-file",
+    type: "link",
+    active: false,
+    selected: false,
+    dirchange: false,
+  },
+  {
+    allowTo: ["state_assessor", "test"],
     path: `${import.meta.env.BASE_URL}dashboard/AssessmentII`,
     title: "AssessmentII",
     icon: "ti-file",
@@ -91,6 +101,7 @@ export const MENUITEMS = [
     selected: false,
     dirchange: false,
   },
+    
   {
     allowTo: ["test"],
     path: `${import.meta.env.BASE_URL}dashboard/TimeLine`,

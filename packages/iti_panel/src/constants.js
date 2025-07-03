@@ -558,3 +558,7 @@ export const IndianStates = [
     ],
   },
 ];
+export const getDistrictsByState = (state) => {
+  const stateObj = IndianStates.find((s) => s.value === state);
+  return stateObj ? stateObj.districts : [];
+}

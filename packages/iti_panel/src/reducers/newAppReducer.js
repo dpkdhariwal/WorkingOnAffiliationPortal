@@ -53,30 +53,31 @@ export const initialValues = {
   category: "",
   name_of_applicant_entity: "",
 
-  // Is_the_applicant_running_any_other_iti: "no",
   state_of_other_iti: "",
   // CategoryOfApplicantEntity: "",
   // NameOfApplicantEntity: "",
   ApplicantEntityState: "",
   ApplicantEntityDistrict: "",
-  // ApplicantEntityTown_City: "",
-  // ApplicantEntityBlock_Tehsil: "",
-  // ApplicantEntitySector_Village: "",
-  // ApplicantEntityPincode: "",
-  // ApplicantEntityPlotNumber_KhasaraNumber_GataNumber: "",
-  // ApplicantEntityLandmark: "",
-  // ApplicantEntityEmailId: "",
-  // ApplicantContactNumber: "",
-  // IsTheApplicantRunningAnyOtherITI: "",
-  // run_ITIName: "",
-  // run_MISCode: "",
-  // run_State: "",
-  // run_District: "",
-  // run_TownCity: "",
-  // run_BlockTehsil: "",
-  // run_Pincode: "",
-  // run_PlotNumber_KhasaraNumber: "",
-  // run_Landmark: "",
+  ApplicantEntityTown_City: "",
+  ApplicantEntityBlock_Tehsil: "",
+  ApplicantEntitySector_Village: "",
+  ApplicantEntityPincode: "",
+  ApplicantEntityPlotNumber_KhasaraNumber_GataNumber: "",
+  ApplicantEntityLandmark: "",
+  ApplicantEntityEmailId: "",
+  ApplicantContactNumber: "",
+
+  Is_the_applicant_running_any_other_iti: "",
+
+  run_ITIName: "",
+  run_MISCode: "",
+  run_State: "",
+  run_District: "",
+  run_TownCity: "",
+  run_BlockTehsil: "",
+  run_Pincode: "",
+  run_PlotNumber_KhasaraNumber: "",
+  run_Landmark: "",
 };
 
 export const yupObject = {
@@ -86,34 +87,49 @@ export const yupObject = {
     .required("Please enter name of applicant entity")
     .matches(/^[a-zA-Z ]+$/, "Only alphabets are allowed"),
   ApplicantEntityState: yup.string().required("Please select state"),
-  // ApplicantEntityDistrict: yup.string().required("Please select district"),
-  // ApplicantEntityTown_City: yup.string().required("Please enter town/city"),
-  // ApplicantEntityBlock_Tehsil: yup
-  //   .string()
-  //   .required("Please enter Block/Tehsil"),
-  // ApplicantEntitySector_Village: yup
-  //   .string()
-  //   .required("Please enter Sector/Village"),
-  // ApplicantEntityPincode: yup.string().required("Please enter Pincode"),
-  // ApplicantEntityPlotNumber_KhasaraNumber_GataNumber: yup
-  //   .string()
-  //   .required("Please enter Plot Number/Khasara Number/Gata Number"),
-  // ApplicantEntityLandmark: yup.string().required("Please enter Landmark"),
-  // ApplicantEntityEmailId: yup
-  //   .string()
-  //   .required("Please enter email")
-  //   .email("Please enter a valid email"),
-  // ApplicantContactNumber: yup.string().required("Please enter contact number"),
+  ApplicantEntityDistrict: yup.string().required("Please select district"),
+  ApplicantEntityTown_City: yup.string().required("Please enter town/city"),
+  ApplicantEntityBlock_Tehsil: yup
+    .string()
+    .required("Please enter Block/Tehsil"),
+  ApplicantEntitySector_Village: yup
+    .string()
+    .required("Please enter Sector/Village"),
+  ApplicantEntityPincode: yup.string().required("Please enter Pincode"),
+  ApplicantEntityPlotNumber_KhasaraNumber_GataNumber: yup
+    .string()
+    .required("Please enter Plot Number/Khasara Number/Gata Number"),
+  ApplicantEntityLandmark: yup.string().required("Please enter Landmark"),
+  ApplicantEntityEmailId: yup
+    .string()
+    .required("Please enter email")
+    .email("Please enter a valid email"),
+  ApplicantContactNumber: yup.string().required("Please enter contact number"),
 
   // Is_the_applicant_running_any_other_iti: yup
   //   .string()
-  //   .required("Please select if applicant is running any other ITI"),
+  //   .required("Please enter contact number"),
 
-  // run_ITIName: yup.string().when("Is_the_applicant_running_any_other_iti", {
-  //   is: "Yes",
-  //   then: () => yup.string().required("Please enter ITI Name"),
-  //   otherwise: () => yup.string().notRequired(),
-  // }),
+  Is_the_applicant_running_any_other_iti: yup.string().when("category", {
+    is: (val) =>
+      [
+        "Society / Trust",
+        "Private Limited Company",
+        "Public Limited Company",
+        "Public Sector Undertaking",
+      ].includes(val),
+    then: () =>
+      yup
+        .string()
+        .required("Please Select if applicant is running any other ITI"),
+    otherwise: () => yup.string().notRequired(),
+  }),
+
+  run_ITIName: yup.string().when("Is_the_applicant_running_any_other_iti", {
+    is: "Yes",
+    then: () => yup.string().required("Please enter ITI Name"),
+    otherwise: () => yup.string().notRequired(),
+  }),
 
   // run_MISCode: yup.string().when("Is_the_applicant_running_any_other_iti", {
   //   is: "Yes",

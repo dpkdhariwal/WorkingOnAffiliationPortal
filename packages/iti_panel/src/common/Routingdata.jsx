@@ -12,6 +12,8 @@ import GeoTaggedPhoto from "../components/geotagged";
 
 import Assessment from "../components/Assessment/Assessment";
 import AssessmentII from "../components/Assessment/AssessmentII";
+import AssessmentI from "../components/Assessment/AssessmentI";
+
 import { TimeLine } from "../components/TimeLine/TimeLine";
 import RdDashboard from "../../../ui_layouts_collaborate/src/components/Assessment/RdDashboard";
 import Compliance from "../../../ui_layouts_collaborate/src/components/Assessment/Compliance";
@@ -52,6 +54,11 @@ export const Routedata = [
         id: 1,
         path: `Assessment`,
         elementName: <Assessment />,
+      },
+      {
+        id: 1,
+        path: `AssessmentI`,
+        elementName: <AssessmentI />,
       },
       {
         id: 1,
