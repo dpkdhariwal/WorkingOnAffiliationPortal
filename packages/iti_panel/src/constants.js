@@ -562,3 +562,84 @@ export const getDistrictsByState = (state) => {
   const stateObj = IndianStates.find((s) => s.value === state);
   return stateObj ? stateObj.districts : [];
 }
+
+
+// Form Applicant Entity Details
+export const UPDATE_ENTITY_DETAILS = "UPDATE_ENTITY_DETAILS";
+export const UPDATE_PURPOSED_INSTI_INFO = "UPDATE_PURPOSED_INSTI_INFO";
+
+// Details of Trade(s)/Unit(s) for Affiliation
+export const ADD_MORE_TRADE = "ADD_MORE_TRADE";
+export const UPDATE_TRADE_UNIT = "UPDATE_TRADE_UNIT";
+
+
+// Details of the Land to be used for the ITI
+export const UPDATE_LAND_INFO = "UPDATE_LAND_INFO";
+
+
+
+
+
+
+  export const languages = [
+    "",
+    "Hindi",
+    "English",
+    "Bengali",
+    "Telugu",
+    "Marathi",
+    "Tamil",
+    "Urdu",
+    "Gujarati",
+    "Kannada",
+    "Odia",
+    "Malayalam",
+    "Punjabi",
+  ];
+
+  export const ID_Proof_Doc_list = [
+    "Aadhaar Card",
+    "PAN Card",
+    "Passport",
+    "Voter ID Card",
+    "Driving License",
+  ];
+
+  export const designation = ["Secretary", "Chairperson", "President"];
+
+   export const ctsTrades = [
+    "Select Trade",
+    "Electrician",
+    "Fitter",
+    "Turner",
+    "Machinist",
+    "Welder (Gas and Electric)",
+    "Mechanic (Motor Vehicle)",
+    "Mechanic Diesel",
+    "Electronics Mechanic",
+    "Refrigeration and Air Conditioning Technician",
+    "Instrument Mechanic",
+    "Information & Communication Technology System Maintenance",
+    "Computer Operator and Programming Assistant (COPA)",
+    "Draughtsman (Mechanical)",
+    "Draughtsman (Civil)",
+    "Wireman",
+    "Surveyor",
+    "Tool and Die Maker (Press Tools, Jigs & Fixtures)",
+    "Plumber",
+    "Carpenter",
+    "Foundryman",
+    "Painter (General)",
+    "Sheet Metal Worker",
+    "Mechanic (Tractor)",
+    "Mechanic (Auto Electrical and Electronics)",
+    "Fashion Design & Technology",
+    "Dress Making",
+    "Stenographer & Secretarial Assistant (English)",
+    "Stenographer & Secretarial Assistant (Hindi)",
+    "Baker and Confectioner",
+    "Food Production (General)",
+    "Health Sanitary Inspector",
+    "Hair & Skin Care",
+    "Sewing Technology",
+  ];

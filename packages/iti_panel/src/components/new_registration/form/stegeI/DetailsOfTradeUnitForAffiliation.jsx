@@ -2,6 +2,8 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { Row, Col, Card, Form, Button } from "react-bootstrap";
 import { InputGroup, Modal } from "react-bootstrap";
 import { ChatMessage } from "../../../Assessment/ReviewTrail";
+import { Form as BootstrapForm } from "react-bootstrap";
+
 
 import { Formik, Field, FieldArray } from "formik";
 import * as formik from "formik";
@@ -11,103 +13,60 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
 
-const schema = yup.object().shape({
-  tradeList: yup.array().of(
-    yup.object().shape({
-      title: yup.string().required("Title is required"),
-      language: yup.string().required("Language is required"),
-      file: yup.mixed().required("File is required"),
-    })
-  ),
-  lease_deed_document: yup.array().of(
-    yup.object().shape({
-      title: yup.string().required("Title is required"),
-      language: yup.string().required("Language is required"),
-      file: yup.mixed().required("File is required"),
-    })
-  ),
-});
+import { ADD_MORE_TRADE } from "../../../../constants";
 
-const DetailsOfDocumentsToBeUploaded = () => {
-  const stage = useSelector((state) => state.theme.new_registration);
+import { trade_unit_reducer_yupObject } from "../../../../reducers/newAppReducer";
+import { ctsTrades, UPDATE_TRADE_UNIT } from "../../../../constants";
+
+const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  const submit = (values) => {
+    console.log(values);
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to save the form data?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes, save it!",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // User confirmed – now show loading or save directly
+        Swal.fire({
+          title: "Saving...",
+          didOpen: () => {
+            Swal.showLoading();
 
-  const initialTradeList = stage.stage_I.tradeList || [];
+            // simulate async save (remove setTimeout if dispatch is sync)
+            setTimeout(() => {
+              dispatch({ type: UPDATE_TRADE_UNIT, payload: values });
+              Swal.close(); // close loading alert
+            }, 1000); // optional delay
+          },
+        });
+      } else {
+        console.log("User cancelled save");
+      }
+    });
+  };
 
-  const ctsTrades = [
-    "Select Trade",
-    "Electrician",
-    "Fitter",
-    "Turner",
-    "Machinist",
-    "Welder (Gas and Electric)",
-    "Mechanic (Motor Vehicle)",
-    "Mechanic Diesel",
-    "Electronics Mechanic",
-    "Refrigeration and Air Conditioning Technician",
-    "Instrument Mechanic",
-    "Information & Communication Technology System Maintenance",
-    "Computer Operator and Programming Assistant (COPA)",
-    "Draughtsman (Mechanical)",
-    "Draughtsman (Civil)",
-    "Wireman",
-    "Surveyor",
-    "Tool and Die Maker (Press Tools, Jigs & Fixtures)",
-    "Plumber",
-    "Carpenter",
-    "Foundryman",
-    "Painter (General)",
-    "Sheet Metal Worker",
-    "Mechanic (Tractor)",
-    "Mechanic (Auto Electrical and Electronics)",
-    "Fashion Design & Technology",
-    "Dress Making",
-    "Stenographer & Secretarial Assistant (English)",
-    "Stenographer & Secretarial Assistant (Hindi)",
-    "Baker and Confectioner",
-    "Food Production (General)",
-    "Health Sanitary Inspector",
-    "Hair & Skin Care",
-    "Sewing Technology",
-  ];
-
-  const ID_Proof_Doc_list = [
-    "Aadhaar Card",
-    "PAN Card",
-    "Passport",
-    "Voter ID Card",
-    "Driving License",
-  ];
-
-  const designation = ["Secretary", "Chairperson", "President"];
+  const formikRef = useRef();
+  const trade_unit_values = useSelector((state) => state.trade_unit_reducer);
 
   return (
     <Fragment>
       <Formik
-        initialValues={{
-          tradeList: initialTradeList,
-        }}
-        validationSchema={schema}
+        enableReinitialize={true} // 👈 key line to re-sync with Redux
+        innerRef={formikRef}
+        initialValues={trade_unit_values}
+        validationSchema={trade_unit_reducer_yupObject}
         onSubmit={(values) => {
           console.log("Form Values", values);
-          // Swal.fire({
-          //   title: "Saving on Local Storage",
-          //   html: "Please wait...",
-          //   timer: 2000,
-          //   timerProgressBar: true,
-          //   didOpen: () => {
-          //     Swal.showLoading();
-          //     dispatch({ type: "set_comp_stateI_III", payload: values });
-          //   },
-          // }).then(() => {
-          //   navigate(
-          //     "?stage=1&form_id=Basic Details of Applicant  Organization"
-          //   );
-          // });
+          submit(values);
         }}
+        validateOnChange={true}
       >
-        {({ handleSubmit, setFieldValue, values, errors, touched }) => (
+        {({ handleSubmit, handleChange, setFieldValue, values, errors, touched }) => (
           <Form noValidate onSubmit={handleSubmit}>
             <Card className="custom-card border border-primary">
               <Card.Header>
@@ -117,103 +76,96 @@ const DetailsOfDocumentsToBeUploaded = () => {
               </Card.Header>
               <Card.Body>
                 <FieldArray name="tradeList">
-                  {({ push }) => (
-                    <Fragment>
-                      {values.tradeList.map((doc, index) => (
-                        <div key={index}>
-                          <Row style={{ marginTop: "1rem" }}>
-                            <Col md={4}>
-                              <Form.Group>
-                                <Form.Label>Select Trade<span style={{ color: 'red' }}>*</span><i
-                                  className="fe fe-help-circle"
-                                  style={{ cursor: "pointer", color: "#6c757d" }}
-                                  title="Trade: A trade is a specialized skill or occupation imparted through training at an ITI in accordance with a defined curriculum of DGT. Examples of trades include Electrician, Fitter, Welder, and Computer Operator and Programming Assistant (COPA) etc. as listed on the DGT website."
-                                ></i></Form.Label>
-                                <Field
-                                  required
-                                  name={`tradeList[${index}].language`}
-                                  as="select"
-                                  className="form-control"
-                                // isInvalid={
-                                //   touched.tradeList?.[index]?.language &&
-                                //   !!errors.tradeList?.[index]?.language
-                                // }
-                                >
-                                  {ctsTrades.map((trade, i) => (
-                                    <option key={i} value={trade}>
-                                      {trade}
-                                    </option>
-                                  ))}
-                                </Field>
-                                <Form.Control.Feedback type="invalid">
-                                  {errors.tradeList?.[index]?.language}
-                                </Form.Control.Feedback>
-                              </Form.Group>
-                            </Col>
-                            <Col md={4}>
-                              <Form.Group>
-                                <Form.Label>Unit in Shift 1<span style={{ color: 'red' }}>*</span><i
-                                  className="fe fe-help-circle"
-                                  style={{ cursor: "pointer", color: "#6c757d" }}
-                                  title="Unit: It is the smallest functional division of a trade in an ITI, consisting of a fixed number of trainees. The strength of each unit, typically ranging from 16 to 24 students, is defined in the course curriculum of the respective trade."
-                                ></i></Form.Label>
-                                <Field
-                                  type="number"
-                                  name={`unit_in_shift1[${index}]`}
-                                  as={Form.Control}
-                                  placeholder="Enter in Shift 1"
-                                // isInvalid={
-                                //   touched.tradeList?.[index]?.title &&
-                                //   !!errors.tradeList?.[index]?.title
-                                // }
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                  {errors.tradeList?.[index]?.title}
-                                </Form.Control.Feedback>
-                              </Form.Group>
-                            </Col>
-                            <Col md={4}>
-                              <Form.Group>
-                                <Form.Label>Unit in Shift 2<span style={{ color: 'red' }}>*</span> <i
-                                  className="fe fe-help-circle"
-                                  style={{ cursor: "pointer", color: "#6c757d" }}
-                                  title="Unit: It is the smallest functional division of a trade in an ITI, consisting of a fixed number of trainees. The strength of each unit, typically ranging from 16 to 24 students, is defined in the course curriculum of the respective trade."
-                                ></i></Form.Label>
-                                <Field
-                                  type="number"
-                                  name={`unit_in_shift2[${index}]`}
-                                  as={Form.Control}
-                                  placeholder="Enter in Shift 2"
-                                // isInvalid={
-                                //   touched.tradeList?.[index]?.title &&
-                                //   !!errors.tradeList?.[index]?.title
-                                // }
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                  {errors.tradeList?.[index]?.title}
-                                </Form.Control.Feedback>
-                              </Form.Group>
-                            </Col>
-                          </Row>
-                        </div>
-                      ))}
-                      <div className="d-flex flex-row-reverse">
-                        <div className="p-2">
-                          {" "}
-                          <Button
-                            className="mb-3"
-                            onClick={() =>
-                              push({ title: "", language: "", file: null })
+                  <>
+                    {values.tradeList.map((_, index) => (
+                      <Row key={index} className="mb-3">
+                        <Col md={4}>
+                          <BootstrapForm.Select
+                            size="lg"
+                            name={`tradeList[${index}]`}
+                            value={values.tradeList[index]}
+                            onChange={handleChange}
+                            isInvalid={
+                              touched.tradeList &&
+                              !!errors.tradeList
                             }
                           >
-                            Add More
-                          </Button>
-                        </div>
+                            <option value="">Select Trade</option>
+                            {ctsTrades.map((trade, i) => (
+                              <option key={i} value={trade}>{trade}</option>
+                            ))}
+                          </BootstrapForm.Select>
+                          <BootstrapForm.Control.Feedback type="invalid">
+                            {errors.tradeList?.[index]}
+                          </BootstrapForm.Control.Feedback>
+                        </Col>
+
+                        <Col md={4}>
+                          <BootstrapForm.Control
+                            type="number"
+                            name={`unit_in_shift1[${index}]`}
+                            value={values.unit_in_shift1[index]}
+                            onChange={handleChange}
+                            isInvalid={
+                              touched.unit_in_shift1?.[index] && !!errors.unit_in_shift1?.[index]
+                            }
+                            placeholder="Enter Trade Number"
+                          />
+                          <BootstrapForm.Control.Feedback type="invalid">
+                            {errors.unit_in_shift1?.[index]}
+                          </BootstrapForm.Control.Feedback>
+                        </Col>
+
+                        <Col md={4}>
+
+                          <BootstrapForm.Control
+                            type="number"
+                            name={`unit_in_shift2[${index}]`}
+                            value={values.unit_in_shift2[index]}
+                            onChange={handleChange}
+                            isInvalid={
+                              touched.unit_in_shift2?.[index] && !!errors.unit_in_shift2?.[index]
+                            }
+                            placeholder="Enter Trade Number"
+                          />
+                          <BootstrapForm.Control.Feedback type="invalid">
+                            {errors.unit_in_shift2?.[index]}
+                          </BootstrapForm.Control.Feedback>
+                        </Col>
+                      </Row>
+                    ))}
+
+                    <div className="d-flex flex-row-reverse">
+                      <div className="p-2">
+                        {" "}
+                        <Button
+                          type="button"
+                          className="mb-3"
+                          onClick={() => dispatch({ type: ADD_MORE_TRADE })}
+                        >
+                          Add More
+                        </Button>
                       </div>
-                    </Fragment>
-                  )}
+                    </div>
+                  </>
                 </FieldArray>
               </Card.Body>
+              <Card.Footer>
+                <div className="d-flex justify-content-between mb-3">
+                  <Button onClick={() => {
+                    // setActive(reg.steps[0]);
+                  }}
+                    className="p-2" variant="warning">
+                    Previous
+                  </Button>
+                  <Button className="p-2"
+                    variant="success"
+                    onClick={() => formikRef.current?.submitForm()}
+                  >
+                    Save & Continue
+                  </Button>
+                </div>
+              </Card.Footer>
             </Card>
           </Form>
         )}
@@ -309,13 +261,14 @@ export const Assessment_DetailsOfDocumentsToBeUploaded = () => {
       comp: () => <AssessorRemarkHistory title="Building Plan" />,
     },
   ];
-  const stageI1_info = useSelector((state) => state.theme.new_registration);
+  // const stageI1_info = useSelector((state) => state.theme.new_registration);
   const index = 1;
   return (
     <>
 
       {["Electrician", "Fitter", "Welder", "COPA"].map((trade, idx) => (
         <Row
+          key={idx}
           style={{
             backgroundColor: "rgb(245, 245, 245)",
             margin: "10px 0px 0px",

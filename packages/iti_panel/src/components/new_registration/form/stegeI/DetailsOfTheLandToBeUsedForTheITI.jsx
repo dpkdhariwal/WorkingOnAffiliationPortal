@@ -6,87 +6,49 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
+import { UPDATE_LAND_INFO } from "../../../../constants";
+
+import { land_info_yupObject } from "../../../../reducers/newAppReducer";
 
 const DetailsOfTheLandToBeUsedForTheITI = () => {
-  const [isHidden, setisHidden] = useState([true]);
-
   const { Formik } = formik;
   const formRef2 = useRef();
   const dispatch = useDispatch();
+  const formikRef = useRef();
+  const land_info_reducer = useSelector((state) => state.land_info_reducer);
 
-  //Custom Validation
-  const stageI1_info = useSelector((state) => state.theme.new_registration);
-  // useEffect(() => { console.log("stageI1_info", stageI1_info); }, []);
-
-  const handleExternalSubmit = () => {
-    if (formRef2.current) {
-      console.log(formRef2.current);
-      formRef2.current.requestSubmit(); // Better than .submit() — triggers onSubmit properly
-    }
-  };
-
-  const navigate = useNavigate();
-  // const updateQuery = () => { navigate("?stage=1&form_id=Basic Details of Applicant  Organization"); };
-
-  const gotoNext = () => {
-    console.log("gotoNext called");
-    navigate("?stage=1&form_id=Details of the Proposed Institute");
+  const submit = (values) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to save the form data?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes, save it!",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // User confirmed – now show loading or save directly
+        Swal.fire({
+          title: "Saving...",
+          didOpen: () => {
+            Swal.showLoading();
+            dispatch({ type: UPDATE_LAND_INFO, payload: values });
+          },
+        });
+      } else {
+        console.log("User cancelled save");
+      }
+    });
   };
 
   return (
     <Fragment>
       <Formik
-        validationSchema={yup.object().shape({
-          category: yup.string().required("Please select a category"),
-          Is_the_applicant_running_any_other_iti: yup
-            .string()
-            .required("Please select if applicant is running any other ITI"),
-        })}
-        validateOnChange={() => console.log("validateOnChange")}
-        onSubmit={(values) => {
-          console.log("Form submitted with values:", values);
-          setisHidden(false); // Show "Next" button after submission
-          let timerInterval;
-          Swal.fire({
-            title: "Saving on Local Storage",
-            html: "Please wait...",
-            timer: 2000,
-            timerProgressBar: true,
-            didOpen: () => {
-              Swal.showLoading();
-              const b = Swal.getHtmlContainer()?.querySelector("b");
-              if (b) {
-                timerInterval = setInterval(() => {
-                  const remainingTime = Swal.getTimerLeft();
-                  if (remainingTime) {
-                    b.textContent = remainingTime.toString();
-                  }
-                }, 100);
-              }
-              dispatch({ type: "set_comp_stateI_III", payload: values });
-            },
-            willClose: () => {
-              clearInterval(timerInterval);
-            },
-          })
-            .then((result) => {
-              // throw new Error("Error saving to local storage");
-              /* Read more about handling dismissals below */
-              if (result.dismiss === Swal.DismissReason.timer) {
-                // Do something when the timer expires
-              }
-              navigate(
-                "?stage=1&form_id=Basic Details of Applicant  Organization"
-              );
-            })
-            .catch((error) => {
-              console.error("Error saving to local storage:", error);
-            });
-        }}
-        initialValues={{
-          category: "",
-          Is_the_applicant_running_any_other_iti: "yes",
-        }}
+        innerRef={formikRef}
+        validateOnChange={true}
+        initialValues={land_info_reducer}
+        validationSchema={yup.object().shape(land_info_yupObject)}
+        onSubmit={(values) => { submit(values) }}
       >
         {({ handleSubmit, handleChange, values, errors, touched }) => (
           <Card className="custom-card shadow">
@@ -106,18 +68,12 @@ const DetailsOfTheLandToBeUsedForTheITI = () => {
                       <Form.Check
                         inline
                         type="radio"
-                        label="Owned "
+                        label="Owned"
                         name="possession_of_land"
-                        value="owned "
+                        value="owned"
                         onChange={handleChange}
-                        // checked={
-                        //   values.Is_the_applicant_running_any_other_iti ===
-                        //   "yes"
-                        // }
-                        // isInvalid={
-                        //   touched.Is_the_applicant_running_any_other_iti &&
-                        //   !!errors.Is_the_applicant_running_any_other_iti
-                        // }
+                        checked={values.possession_of_land === "owned"}
+                        isInvalid={touched.possession_of_land && !!errors.possession_of_land}
                       />
                       <Form.Check
                         inline
@@ -126,22 +82,22 @@ const DetailsOfTheLandToBeUsedForTheITI = () => {
                         name="possession_of_land"
                         value="leased"
                         onChange={handleChange}
-                        // checked={
-                        //   values.Is_the_applicant_running_any_other_iti === "no"
-                        // }
-                        // isInvalid={
-                        //   touched.Is_the_applicant_running_any_other_iti &&
-                        //   !!errors.Is_the_applicant_running_any_other_iti
-                        // }
+                        checked={values.possession_of_land === "leased"}
+                        isInvalid={touched.possession_of_land && !!errors.possession_of_land}
                       />
                     </div>
-                    <Form.Control.Feedback type="invalid">
-                      {errors.Is_the_applicant_running_any_other_iti}
-                    </Form.Control.Feedback>
+                    {touched.possession_of_land && errors.possession_of_land && (
+                      <Form.Control.Feedback
+                        type="invalid"
+                        className="d-block"
+                      >
+                        {errors.possession_of_land}
+                      </Form.Control.Feedback>
+                    )}
                   </Form.Group>
                 </Row>
 
-                <Row className="mb-3">
+                {values.possession_of_land === "owned" ? (<Row className="mb-3">
                   <Col md="12">
                     <Card className="border border-info custom-card">
                       <Card.Header>
@@ -167,11 +123,19 @@ const DetailsOfTheLandToBeUsedForTheITI = () => {
                               required
                               type="text"
                               placeholder="Land Owner’s Name"
-                              name="town_or_city_of_other_iti"
+                              name="land_owner_name"
+                              onChange={handleChange}
+                              value={values.land_owner_name}
+                              isInvalid={touched.land_owner_name && !!errors.land_owner_name}
                             />
-                            <Form.Control.Feedback>
-                              Looks good!
-                            </Form.Control.Feedback>
+                            {touched.land_owner_name && errors.land_owner_name && (
+                              <Form.Control.Feedback
+                                type="invalid"
+                                className="d-block"
+                              >
+                                {errors.land_owner_name}
+                              </Form.Control.Feedback>
+                            )}
                           </Form.Group>
 
                           <Form.Group
@@ -187,19 +151,25 @@ const DetailsOfTheLandToBeUsedForTheITI = () => {
                               required
                               type="text"
                               placeholder="Land Registration Number"
-                              name="block_or_tehsil_of_other_iti"
+                              name="land_registration_number"
+                              onChange={handleChange}
+                              value={values.land_registration_number}
+                              isInvalid={touched.land_registration_number && !!errors.land_registration_number}
                             />
-                            <Form.Control.Feedback>
-                              Looks good!
-                            </Form.Control.Feedback>
+                            {touched.land_registration_number && errors.land_registration_number && (
+                              <Form.Control.Feedback
+                                type="invalid"
+                                className="d-block"
+                              >
+                                {errors.land_registration_number}
+                              </Form.Control.Feedback>
+                            )}
                           </Form.Group>
                         </Row>
                       </Card.Body>
                     </Card>
                   </Col>
-                </Row>
-
-                <Row className="mb-3">
+                </Row>) : values.possession_of_land === "leased" ? (<Row className="mb-3">
                   <Col md="12">
                     <Card className="border border-info custom-card">
                       <Card.Header>
@@ -244,11 +214,19 @@ const DetailsOfTheLandToBeUsedForTheITI = () => {
                               required
                               type="text"
                               placeholder="Enter Name of Lessor"
-                              name="town_or_city_of_other_iti"
+                              name="name_of_lessor"
+                              onChange={handleChange}
+                              value={values.name_of_lessor}
+                              isInvalid={touched.name_of_lessor && !!errors.name_of_lessor}
                             />
-                            <Form.Control.Feedback>
-                              Looks good!
-                            </Form.Control.Feedback>
+                            {touched.name_of_lessor && errors.name_of_lessor && (
+                              <Form.Control.Feedback
+                                type="invalid"
+                                className="d-block"
+                              >
+                                {errors.name_of_lessor}
+                              </Form.Control.Feedback>
+                            )}
                           </Form.Group>
 
                           <Form.Group
@@ -275,11 +253,19 @@ const DetailsOfTheLandToBeUsedForTheITI = () => {
                               required
                               type="text"
                               placeholder="Enter Name of Lessee"
-                              name="town_or_city_of_other_iti"
+                              name="name_of_lessee"
+                              onChange={handleChange}
+                              value={values.name_of_lessee}
+                              isInvalid={touched.name_of_lessee && !!errors.name_of_lessee}
                             />
-                            <Form.Control.Feedback>
-                              Looks good!
-                            </Form.Control.Feedback>
+                            {touched.name_of_lessee && errors.name_of_lessee && (
+                              <Form.Control.Feedback
+                                type="invalid"
+                                className="d-block"
+                              >
+                                {errors.name_of_lessee}
+                              </Form.Control.Feedback>
+                            )}
                           </Form.Group>
                           <Form.Group
                             as={Col}
@@ -307,11 +293,19 @@ of the lease agreement between the property owner and the lessee."
                               required
                               type="text"
                               placeholder="Lease Deed Number"
-                              name="town_or_city_of_other_iti"
+                              name="lease_deed_number"
+                              onChange={handleChange}
+                              value={values.lease_deed_number}
+                              isInvalid={touched.lease_deed_number && !!errors.lease_deed_number}
                             />
-                            <Form.Control.Feedback>
-                              Looks good!
-                            </Form.Control.Feedback>
+                            {touched.lease_deed_number && errors.lease_deed_number && (
+                              <Form.Control.Feedback
+                                type="invalid"
+                                className="d-block"
+                              >
+                                {errors.lease_deed_number}
+                              </Form.Control.Feedback>
+                            )}
                           </Form.Group>
                           <Form.Group
                             as={Col}
@@ -326,11 +320,19 @@ of the lease agreement between the property owner and the lessee."
                               required
                               type="date"
                               placeholder="Date of Commencement"
-                              name="town_or_city_of_other_iti"
+                              name="date_of_commencement"
+                              onChange={handleChange}
+                              value={values.date_of_commencement}
+                              isInvalid={touched.date_of_commencement && !!errors.date_of_commencement}
                             />
-                            <Form.Control.Feedback>
-                              Looks good!
-                            </Form.Control.Feedback>
+                            {touched.date_of_commencement && errors.date_of_commencement && (
+                              <Form.Control.Feedback
+                                type="invalid"
+                                className="d-block"
+                              >
+                                {errors.date_of_commencement}
+                              </Form.Control.Feedback>
+                            )}
                           </Form.Group>
                           <Form.Group
                             as={Col}
@@ -344,18 +346,26 @@ of the lease agreement between the property owner and the lessee."
                             <Form.Control
                               required
                               type="date"
-                              placeholder="Date of Commencement"
-                              name="town_or_city_of_other_iti"
+                              placeholder="Date of Expiry"
+                              name="date_of_expiry"
+                              onChange={handleChange}
+                              value={values.date_of_expiry}
+                              isInvalid={touched.date_of_expiry && !!errors.date_of_expiry}
                             />
-                            <Form.Control.Feedback>
-                              Looks good!
-                            </Form.Control.Feedback>
+                            {touched.date_of_expiry && errors.date_of_expiry && (
+                              <Form.Control.Feedback
+                                type="invalid"
+                                className="d-block"
+                              >
+                                {errors.date_of_expiry}
+                              </Form.Control.Feedback>
+                            )}
                           </Form.Group>
                         </Row>
                       </Card.Body>
                     </Card>
                   </Col>
-                </Row>
+                </Row>) : ''}
 
                 <Row className="mb-3">
                   <Form.Group as={Col} md="6" controlId="validationCustom02">
@@ -369,16 +379,31 @@ of the lease agreement between the property owner and the lessee."
                         type="number"
                         placeholder="Land Area (in Square Metres)"
                         name="land_area_in_square_metres"
+                        onChange={handleChange}
+                        value={values.land_area_in_square_metres}
+                        isInvalid={touched.land_area_in_square_metres && !!errors.land_area_in_square_metres}
                       />
                       <Button variant="outline-secondary">
                         In Square Metres
                       </Button>
                     </InputGroup>
-                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                    {touched.land_area_in_square_metres && errors.land_area_in_square_metres && (
+                      <Form.Control.Feedback
+                        type="invalid"
+                        className="d-block"
+                      >
+                        {errors.land_area_in_square_metres}
+                      </Form.Control.Feedback>
+                    )}
                   </Form.Group>
                 </Row>
               </Form>
             </Card.Body>
+            <Card.Footer>
+              <div className="d-flex justify-content-between mb-3">
+                <Button className="p-2" variant="success" onClick={() => formikRef.current?.submitForm()} >Save & Continue </Button>
+              </div>
+            </Card.Footer>
           </Card>
         )}
       </Formik>

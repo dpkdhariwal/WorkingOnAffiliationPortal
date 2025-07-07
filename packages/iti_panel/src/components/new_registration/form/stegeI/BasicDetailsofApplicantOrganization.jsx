@@ -15,12 +15,15 @@ import PropTypes from "prop-types";
 import Select from "react-select";
 import { IndianStates, getDistrictsByState } from "../../../../constants";
 import { ChatMessage } from "../../../Assessment/ReviewTrail";
+import { UPDATE_ENTITY_DETAILS } from "../../../../constants";
 
 const BasicDetailsofApplicantOrganization = ({ setActive }) => {
   const dispatch = useDispatch();
   const reg = useSelector((state) => state.reg);
   const stepInfo = reg.steps[0];
   const [district, setDistrict] = useState([]);
+
+  const EntityDetails = useSelector((state) => state.EntityDetails);
 
   // useEffect(() => {
   //   console.log(stepInfo.filled);
@@ -48,22 +51,25 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
           title: "Saving...",
           didOpen: () => {
             Swal.showLoading();
-            dispatch({ type: "set_comp_stateI_III", payload: values });
+            dispatch({ type: UPDATE_ENTITY_DETAILS, payload: values });
+            console.log(values, EntityDetails);
 
-            // simulate async save (remove setTimeout if dispatch is sync)
-            setTimeout(() => {
-              Swal.close(); // close loading alert
-              console.log(reg.steps[0]);
-              dispatch({
-                type: "set_filled_step",
-                payload: { step: 0 },
-              });
-              dispatch({
-                type: "reg_set_active_step",
-                payload: { step: 1 },
-              });
-              setActive(reg.steps[1]);
-            }, 1000); // optional delay
+            // dispatch({ type: "set_comp_stateI_III", payload: values });
+
+            // // simulate async save (remove setTimeout if dispatch is sync)
+            // setTimeout(() => {
+            //   Swal.close(); // close loading alert
+            //   console.log(reg.steps[0]);
+            //   dispatch({
+            //     type: "set_filled_step",
+            //     payload: { step: 0 },
+            //   });
+            //   dispatch({
+            //     type: "reg_set_active_step",
+            //     payload: { step: 1 },
+            //   });
+            //   setActive(reg.steps[1]);
+            // }, 1000); // optional delay
           },
         });
       } else {
@@ -88,7 +94,7 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
           console.log("Form submitted with values:", values);
           submit(values);
         }}
-        initialValues={initialValues}
+        initialValues={EntityDetails}
         validateOnBlur={true}
         validateOnChange={true} // Enable validation on every field change
       >
@@ -147,7 +153,6 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
                     )
                   )}
                 </Row>
-
                 <Row className="mb-3">
                   <Form.Group as={Col} md="4">
                     <Form.Label>
@@ -247,6 +252,7 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
                           Applicant Entity District{" "}
                           <span style={{ color: "red" }}>*</span>
                         </BootstrapForm.Label>
+
                         <BootstrapForm.Select
                           size="lg"
                           name="ApplicantEntityDistrict"
@@ -264,10 +270,10 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
                           ))}
                         </BootstrapForm.Select>
 
-                        {touched.ApplicantEntityState &&
-                          errors.ApplicantEntityState && (
+                        {touched.ApplicantEntityDistrict &&
+                          errors.ApplicantEntityDistrict && (
                             <BootstrapForm.Control.Feedback type="invalid">
-                              {errors.ApplicantEntityState}
+                              {errors.ApplicantEntityDistrict}
                             </BootstrapForm.Control.Feedback>
                           )}
                       </BootstrapForm.Group>
@@ -286,6 +292,8 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
                           type="text"
                           placeholder="Town/City"
                           name="ApplicantEntityTown_City"
+                          value={values.ApplicantEntityTown_City}
+
                           onChange={handleChange}
                           isInvalid={
                             touched.ApplicantEntityTown_City &&
@@ -314,6 +322,8 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
                           type="text"
                           placeholder="Block/Tehsil"
                           name="ApplicantEntityBlock_Tehsil"
+                          value={values.ApplicantEntityBlock_Tehsil}
+
                           onChange={handleChange}
                           isInvalid={
                             touched.ApplicantEntityBlock_Tehsil &&
@@ -342,6 +352,8 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
                           type="text"
                           placeholder="Sector/Village"
                           name="ApplicantEntitySector_Village"
+                          value={values.ApplicantEntitySector_Village}
+
                           onChange={handleChange}
                           isInvalid={
                             touched.ApplicantEntitySector_Village &&
@@ -370,8 +382,9 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
                           type="text"
                           placeholder="Pincode"
                           name="ApplicantEntityPincode"
-                          onChange={handleChange}
+                          value={values.ApplicantEntityPincode}
 
+                          onChange={handleChange}
                           isInvalid={
                             touched.ApplicantEntityPincode &&
                             !!errors.ApplicantEntityPincode
@@ -400,6 +413,8 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
                           type="text"
                           placeholder="Plot Number/Khasara Number/Gata Number"
                           name="ApplicantEntityPlotNumber_KhasaraNumber_GataNumber"
+                          value={values.ApplicantEntityPlotNumber_KhasaraNumber_GataNumber}
+
                           onChange={handleChange}
                           isInvalid={
                             touched.ApplicantEntityPlotNumber_KhasaraNumber_GataNumber &&
@@ -429,6 +444,8 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
                           type="text"
                           placeholder="Landmark"
                           name="ApplicantEntityLandmark"
+                          value={values.ApplicantEntityLandmark}
+
                           onChange={handleChange}
                           isInvalid={
                             touched.ApplicantEntityLandmark &&
@@ -458,7 +475,8 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
                         type="email"
                         name="ApplicantEntityEmailId"
                         placeholder="Applicant Entity Email Id"
-                        defaultValue=""
+                        value={values.ApplicantEntityEmailId}
+
                         onChange={handleChange}
                         isInvalid={
                           touched.ApplicantEntityEmailId &&
@@ -503,7 +521,7 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
                         type="text"
                         name="ApplicantContactNumber"
                         placeholder="Applicant Contact Number"
-                        defaultValue=""
+                        value={values.ApplicantContactNumber}
                         onChange={handleChange}
                         isInvalid={
                           touched.ApplicantContactNumber &&
@@ -730,6 +748,8 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
                                       type="text"
                                       placeholder="Enter Running ITI Name"
                                       name="run_ITIName"
+                                      value={values.run_ITIName}
+
                                       onChange={handleChange}
                                       isInvalid={
                                         touched.run_ITIName &&
@@ -745,28 +765,34 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
                                   </BootstrapForm.Group>
 
 
-                                  <Form.Group
+                                  <BootstrapForm.Group
                                     as={Col}
                                     md="6"
                                     controlId="validationCustom02"
                                   >
-                                    <Form.Label>
+                                    <BootstrapForm.Label>
                                       MIS Code
                                       <span style={{ color: "red" }}>*</span>
-                                    </Form.Label>
-                                    <Form.Control
+                                    </BootstrapForm.Label>
+                                    <BootstrapForm.Control
                                       required
                                       type="text"
                                       name="run_MISCode"
                                       placeholder="MIS Code"
-                                      defaultValue=""
+                                      value={values.run_MISCode}
+
+                                      onChange={handleChange}
+                                      isInvalid={
+                                        touched.run_ITIName &&
+                                        !!errors.run_ITIName
+                                      }
                                     />
                                     {touched.run_MISCode && errors.run_MISCode && (
-                                      <Form.Control.Feedback type="invalid">
+                                      <BootstrapForm.Control.Feedback type="invalid">
                                         {errors.run_MISCode}
-                                      </Form.Control.Feedback>
+                                      </BootstrapForm.Control.Feedback>
                                     )}
-                                  </Form.Group>
+                                  </BootstrapForm.Group>
 
                                   <Form.Group
                                     as={Col}
@@ -780,6 +806,12 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
                                       as="select"
                                       required
                                       name="run_State"
+                                      value={values.run_State}
+                                      onChange={handleChange}
+                                      isInvalid={
+                                        touched.run_State &&
+                                        !!errors.run_State
+                                      }
                                     >
                                       <option value="">Select State</option>
                                       <option value="Andhra Pradesh">
@@ -865,6 +897,12 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
                                       as="select"
                                       required
                                       name="run_District"
+                                      value={values.run_District}
+                                      onChange={handleChange}
+                                      isInvalid={
+                                        touched.run_District &&
+                                        !!errors.run_District
+                                      }
                                     >
                                       <option value="" selected>
                                         Select District
@@ -897,6 +935,12 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
                                       type="text"
                                       placeholder="Town/City"
                                       name="run_TownCity"
+                                      value={values.run_TownCity}
+                                      onChange={handleChange}
+                                      isInvalid={
+                                        touched.run_TownCity &&
+                                        !!errors.run_TownCity
+                                      }
                                     />
                                     {touched.run_TownCity &&
                                       errors.run_TownCity && (
@@ -920,6 +964,12 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
                                       type="text"
                                       placeholder="Block/Tehsil"
                                       name="run_BlockTehsil"
+                                      value={values.run_BlockTehsil}
+                                      onChange={handleChange}
+                                      isInvalid={
+                                        touched.run_BlockTehsil &&
+                                        !!errors.run_BlockTehsil
+                                      }
                                     />
                                     {touched.run_BlockTehsil &&
                                       errors.run_BlockTehsil && (
@@ -941,6 +991,12 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
                                       type="text"
                                       placeholder="Pincode"
                                       name="run_Pincode"
+                                      value={values.run_Pincode}
+                                      onChange={handleChange}
+                                      isInvalid={
+                                        touched.run_Pincode &&
+                                        !!errors.run_Pincode
+                                      }
                                     />
                                     {touched.run_Pincode && errors.run_Pincode && (
                                       <Form.Control.Feedback type="invalid">
@@ -963,6 +1019,12 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
                                       type="text"
                                       placeholder="address"
                                       name="run_PlotNumber_KhasaraNumber"
+                                      value={values.run_PlotNumber_KhasaraNumber}
+                                      onChange={handleChange}
+                                      isInvalid={
+                                        touched.run_PlotNumber_KhasaraNumber &&
+                                        !!errors.run_PlotNumber_KhasaraNumber
+                                      }
                                     />
                                     {touched.run_PlotNumber_KhasaraNumber &&
                                       errors.run_PlotNumber_KhasaraNumber && (
@@ -986,6 +1048,12 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
                                       type="text"
                                       placeholder="Landmark"
                                       name="run_Landmark"
+                                      value={values.run_Landmark}
+                                      onChange={handleChange}
+                                      isInvalid={
+                                        touched.run_Landmark &&
+                                        !!errors.run_Landmark
+                                      }
                                     />
                                     {touched.run_Landmark &&
                                       errors.run_Landmark && (
@@ -1161,7 +1229,7 @@ export const Assessment_Basic_Detail = () => {
                 Name of Applicant Entity{" "}
                 <span style={{ color: "red" }}>*</span>
               </Form.Label>
-              
+
               <Form.Control
                 error="Enter Name of Applicant"
                 required
@@ -1214,8 +1282,8 @@ export const Assessment_Basic_Detail = () => {
                     value=""
                   >
                     <option value="">
-                        abcd
-                      </option>
+                      abcd
+                    </option>
                   </BootstrapForm.Select>
 
                 </BootstrapForm.Group>
@@ -1740,7 +1808,7 @@ export const Assessment_Basic_Detail = () => {
                                 placeholder="address"
                                 name="run_PlotNumber_KhasaraNumber"
                               />
-                             
+
                             </Form.Group>
 
                             <Form.Group
@@ -1758,7 +1826,7 @@ export const Assessment_Basic_Detail = () => {
                                 placeholder="Landmark"
                                 name="run_Landmark"
                               />
-                            
+
                             </Form.Group>
                           </Row>
                         )}

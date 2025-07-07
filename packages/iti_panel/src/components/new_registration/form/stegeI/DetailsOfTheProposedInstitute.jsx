@@ -9,6 +9,9 @@ import Swal from "sweetalert2";
 import { ChatMessage } from "../../../Assessment/ReviewTrail";
 import { Formik, Field, FieldArray } from "formik";
 
+import { dpi_initialValues, dpi_yupObject } from "../../../../reducers/newAppReducer";
+import { UPDATE_PURPOSED_INSTI_INFO } from "../../../../constants";
+
 const DetailsOfTheProposedInstitute = ({ setActive }) => {
   const [isHidden, setisHidden] = useState([true]);
 
@@ -41,64 +44,62 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
   const formikRef = useRef();
   const reg = useSelector((state) => state.reg);
 
+  const submit = (values) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to save the form data?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes, save it!",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // User confirmed – now show loading or save directly
+        Swal.fire({
+          title: "Saving...",
+          didOpen: () => {
+            Swal.showLoading();
+            // dispatch({ type: "set_comp_stateI_III", payload: values });
+
+            // simulate async save (remove setTimeout if dispatch is sync)
+            setTimeout(() => {
+              Swal.close(); // close loading alert
+              console.log(reg.steps[0]);
+              dispatch({ type: UPDATE_PURPOSED_INSTI_INFO, payload: values });
+
+              dispatch({
+                type: "set_filled_step",
+                payload: { step: 2 },
+              });
+              dispatch({
+                type: "reg_set_active_step",
+                payload: { step: 2 },
+              });
+              setActive(reg.steps[1]);
+            }, 1000); // optional delay
+          },
+        });
+      } else {
+        console.log("User cancelled save");
+      }
+    });
+  };
+
+  const PropInstiInfo = useSelector((state) => state.ProposedInstituteInfo);
+
+
   return (
     <Fragment>
       <Formik
         innerRef={formikRef}
 
-        validationSchema={yup.object().shape({
-          category: yup.string().required("Please select a category"),
-          Is_the_applicant_running_any_other_iti: yup
-            .string()
-            .required("Please select if applicant is running any other ITI"),
-        })}
-        validateOnChange={() => console.log("validateOnChange")}
+        validationSchema={yup.object().shape(dpi_yupObject)}
+        validateOnChange={true}
         onSubmit={(values) => {
           console.log("Form submitted with values:", values);
-          setisHidden(false); // Show "Next" button after submission
-          let timerInterval;
-          Swal.fire({
-            title: "Saving on Local Storage",
-            html: "Please wait...",
-            timer: 2000,
-            timerProgressBar: true,
-            didOpen: () => {
-              Swal.showLoading();
-              const b = Swal.getHtmlContainer()?.querySelector("b");
-              if (b) {
-                timerInterval = setInterval(() => {
-                  const remainingTime = Swal.getTimerLeft();
-                  if (remainingTime) {
-                    b.textContent = remainingTime.toString();
-                  }
-                }, 100);
-              }
-              dispatch({ type: "set_comp_stateI_III", payload: values });
-            },
-            willClose: () => {
-              clearInterval(timerInterval);
-            },
-          })
-            .then((result) => {
-              // throw new Error("Error saving to local storage");
-              /* Read more about handling dismissals below */
-              if (result.dismiss === Swal.DismissReason.timer) {
-                // Do something when the timer expires
-              }
-              navigate(
-                "?stage=1&form_id=Basic Details of Applicant  Organization"
-              );
-            })
-            .catch((error) => {
-              console.error("Error saving to local storage:", error);
-            });
+          submit(values);
         }}
-        initialValues={{
-          category: "",
-          Is_the_applicant_running_any_other_iti: "yes",
-          is_falls_under_hill_area_hill: "no",
-          is_falls_under_border_district: "no",
-        }}
+        initialValues={PropInstiInfo}
       >
         {({ handleSubmit, handleChange, values, errors, touched }) => (
           <Card className="custom-card shadow">
@@ -119,9 +120,21 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
                       required
                       type="text"
                       name="name_of_applicant_institute"
-                      placeholder="Name of the applicant Institute "
+                      value={values.name_of_applicant_institute}
+                      placeholder="Name of the applicant Institute"
+                      onChange={handleChange}
+                      isInvalid={touched.name_of_applicant_institute && !!errors.name_of_applicant_institute}
                     />
-                    <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+
+                    {touched.name_of_applicant_institute && errors.name_of_applicant_institute && (
+                      <Form.Control.Feedback
+                        type="invalid"
+                        className="d-block"
+                      >
+                        {errors.name_of_applicant_institute}
+                      </Form.Control.Feedback>
+                    )}
+
                   </Form.Group>
                   <Col md={6}>
                     <div className="d-flex justify-content-center mb-3">
@@ -138,6 +151,9 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
                             name="type_of_institute"
                             value="Government"
                             onChange={handleChange}
+                            isInvalid={touched.type_of_institute && !!errors.type_of_institute}
+                            checked={values.type_of_institute === 'Government'}
+
                           />
                           <Form.Check
                             inline
@@ -146,11 +162,19 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
                             name="type_of_institute"
                             value="Private"
                             onChange={handleChange}
+                            isInvalid={touched.type_of_institute && !!errors.type_of_institute}
+                            checked={values.type_of_institute === 'Private'}
+
                           />
                         </div>
-                        <Form.Control.Feedback type="invalid">
-                          {errors.Is_the_applicant_running_any_other_iti}
-                        </Form.Control.Feedback>
+                        {touched.type_of_institute && errors.type_of_institute && (
+                          <Form.Control.Feedback
+                            type="invalid"
+                            className="d-block"
+                          >
+                            {errors.type_of_institute}
+                          </Form.Control.Feedback>
+                        )}
                       </Form.Group></div>
                     </div>
 
@@ -181,7 +205,11 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
                             <Form.Control
                               as="select"
                               required
-                              name="state_of_other_iti"
+                              name="cmp_post_state"
+                              value={values.cmp_post_state}
+                              onChange={handleChange}
+                              isInvalid={touched.cmp_post_state && !!errors.cmp_post_state}
+
                             >
                               <option value="" selected>
                                 Select State
@@ -239,9 +267,14 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
                               <option value="Lakshadweep">Lakshadweep</option>
                               <option value="Puducherry">Puducherry</option>
                             </Form.Control>
-                            <Form.Control.Feedback>
-                              Looks good!
-                            </Form.Control.Feedback>
+                            {touched.cmp_post_state && errors.cmp_post_state && (
+                              <Form.Control.Feedback
+                                type="invalid"
+                                className="d-block"
+                              >
+                                {errors.cmp_post_state}
+                              </Form.Control.Feedback>
+                            )}
                           </Form.Group>
 
                           <Form.Group
@@ -255,20 +288,29 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
                             <Form.Control
                               as="select"
                               required
-                              name="district_of_other_iti"
+                              name="cmp_post_district"
+                              onChange={handleChange}
+                              isInvalid={touched.cmp_post_district && !!errors.cmp_post_district}
+                              value={values.cmp_post_district}
+
                             >
                               <option value="" selected>
                                 Select District
                               </option>
-                              {/* <option value="Delhi">Delhi</option>
+                              <option value="Delhi">Delhi</option>
                               <option value="Mumbai">Mumbai</option>
                               <option value="Bengaluru">Bengaluru</option>
                               <option value="Chennai">Chennai</option>
-                              <option value="Kolkata">Kolkata</option> */}
+                              <option value="Kolkata">Kolkata</option>
                             </Form.Control>
-                            <Form.Control.Feedback>
-                              Looks good!
-                            </Form.Control.Feedback>
+                            {touched.cmp_post_district && errors.cmp_post_district && (
+                              <Form.Control.Feedback
+                                type="invalid"
+                                className="d-block"
+                              >
+                                {errors.cmp_post_district}
+                              </Form.Control.Feedback>
+                            )}
                           </Form.Group>
 
                           <Form.Group
@@ -283,11 +325,21 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
                               required
                               type="text"
                               placeholder="Town/City"
-                              name="town_or_city_of_other_iti"
+                              name="cmp_post_city"
+                              onChange={handleChange}
+                              isInvalid={touched.cmp_post_city && !!errors.cmp_post_city}
+                              value={values.cmp_post_city}
+
                             />
-                            <Form.Control.Feedback>
-                              Looks good!
-                            </Form.Control.Feedback>
+
+                            {touched.cmp_post_city && errors.cmp_post_city && (
+                              <Form.Control.Feedback
+                                type="invalid"
+                                className="d-block"
+                              >
+                                {errors.cmp_post_city}
+                              </Form.Control.Feedback>
+                            )}
                           </Form.Group>
 
                           <Form.Group
@@ -303,11 +355,20 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
                               required
                               type="text"
                               placeholder="Block/Tehsil"
-                              name="block_or_tehsil_of_other_iti"
+                              name="cmp_post_block_or_tehsil"
+                              onChange={handleChange}
+                              isInvalid={touched.cmp_post_block_or_tehsil && !!errors.cmp_post_block_or_tehsil}
+                              value={values.cmp_post_block_or_tehsil}
+
                             />
-                            <Form.Control.Feedback>
-                              Looks good!
-                            </Form.Control.Feedback>
+                            {touched.cmp_post_block_or_tehsil && errors.cmp_post_block_or_tehsil && (
+                              <Form.Control.Feedback
+                                type="invalid"
+                                className="d-block"
+                              >
+                                {errors.cmp_post_block_or_tehsil}
+                              </Form.Control.Feedback>
+                            )}
                           </Form.Group>
 
                           <Form.Group
@@ -323,11 +384,21 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
                               required
                               type="text"
                               placeholder="Sector/Village"
-                              name="block_or_tehsil_of_other_iti"
+                              name="cmp_post_sector_village"
+                              onChange={handleChange}
+                              isInvalid={touched.cmp_post_sector_village && !!errors.cmp_post_sector_village}
+                              value={values.cmp_post_sector_village}
+
                             />
-                            <Form.Control.Feedback>
-                              Looks good!
-                            </Form.Control.Feedback>
+
+                            {touched.cmp_post_sector_village && errors.cmp_post_sector_village && (
+                              <Form.Control.Feedback
+                                type="invalid"
+                                className="d-block"
+                              >
+                                {errors.cmp_post_sector_village}
+                              </Form.Control.Feedback>
+                            )}
                           </Form.Group>
 
                           <Form.Group
@@ -342,11 +413,20 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
                               required
                               type="text"
                               placeholder="Pincode"
-                              name="pincode_of_other_iti"
+                              name="cmp_post_pincode"
+                              onChange={handleChange}
+                              isInvalid={touched.cmp_post_pincode && !!errors.cmp_post_pincode}
+                              value={values.cmp_post_pincode}
+
                             />
-                            <Form.Control.Feedback>
-                              Looks good!
-                            </Form.Control.Feedback>
+                            {touched.cmp_post_pincode && errors.cmp_post_pincode && (
+                              <Form.Control.Feedback
+                                type="invalid"
+                                className="d-block"
+                              >
+                                {errors.cmp_post_pincode}
+                              </Form.Control.Feedback>
+                            )}
                           </Form.Group>
 
                           <Form.Group
@@ -362,11 +442,20 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
                               required
                               type="text"
                               placeholder="Plot Number/Khasara Number/Gata Number"
-                              name="plot_number_khasara_number_of_other_iti"
+                              name="cmp_post_plot_number_khasara_number"
+                              onChange={handleChange}
+                              isInvalid={touched.cmp_post_plot_number_khasara_number && !!errors.cmp_post_plot_number_khasara_number}
+                              value={values.cmp_post_pincode}
+
                             />
-                            <Form.Control.Feedback>
-                              Looks good!
-                            </Form.Control.Feedback>
+                            {touched.cmp_post_plot_number_khasara_number && errors.cmp_post_plot_number_khasara_number && (
+                              <Form.Control.Feedback
+                                type="invalid"
+                                className="d-block"
+                              >
+                                {errors.cmp_post_plot_number_khasara_number}
+                              </Form.Control.Feedback>
+                            )}
                           </Form.Group>
                           <Form.Group
                             as={Col}
@@ -380,11 +469,19 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
                               required
                               type="text"
                               placeholder="Landmark"
-                              name="Landmark"
+                              name="cmp_post_landmark"
+                              onChange={handleChange}
+                              isInvalid={touched.cmp_post_landmark && !!errors.cmp_post_landmark}
+                              value={values.cmp_post_landmark}
                             />
-                            <Form.Control.Feedback>
-                              Looks good!
-                            </Form.Control.Feedback>
+                            {touched.cmp_post_landmark && errors.cmp_post_landmark && (
+                              <Form.Control.Feedback
+                                type="invalid"
+                                className="d-block"
+                              >
+                                {errors.cmp_post_landmark}
+                              </Form.Control.Feedback>
+                            )}
                           </Form.Group>
                         </Row>
                       </Card.Body>
@@ -417,14 +514,14 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
                                 name="institute_location"
                                 value="Urban"
                                 onChange={handleChange}
-                              // checked={
-                              //   values.Is_the_applicant_running_any_other_iti ===
-                              //   "yes"
-                              // }
-                              // isInvalid={
-                              //   touched.Is_the_applicant_running_any_other_iti &&
-                              //   !!errors.Is_the_applicant_running_any_other_iti
-                              // }
+                                checked={
+                                  values.institute_location ===
+                                  "Urban"
+                                }
+                                isInvalid={
+                                  touched.institute_location &&
+                                  !!errors.institute_location
+                                }
                               />
                               <Form.Check
                                 inline
@@ -433,18 +530,23 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
                                 name="institute_location"
                                 value="Rural"
                                 onChange={handleChange}
-                              // checked={
-                              //   values.Is_the_applicant_running_any_other_iti === "no"
-                              // }
-                              // isInvalid={
-                              //   touched.Is_the_applicant_running_any_other_iti &&
-                              //   !!errors.Is_the_applicant_running_any_other_iti
-                              // }
+                                checked={
+                                  values.institute_location === "Rural"
+                                }
+                                isInvalid={
+                                  touched.institute_location &&
+                                  !!errors.institute_location
+                                }
                               />
                             </div>
-                            <Form.Control.Feedback type="invalid">
-                              {errors.Is_the_applicant_running_any_other_iti}
-                            </Form.Control.Feedback>
+                            {touched.institute_location && errors.institute_location && (
+                              <Form.Control.Feedback
+                                type="invalid"
+                                className="d-block"
+                              >
+                                {errors.institute_location}
+                              </Form.Control.Feedback>
+                            )}
                           </Form.Group>
 
                           <Col md={4}>
@@ -461,6 +563,14 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
                                   name="is_falls_under_hill_area_hill"
                                   value="yes"
                                   onChange={handleChange}
+
+                                  checked={
+                                    values.is_falls_under_hill_area_hill === "yes"
+                                  }
+                                  isInvalid={
+                                    touched.is_falls_under_hill_area_hill &&
+                                    !!errors.is_falls_under_hill_area_hill
+                                  }
                                 />
                                 <Form.Check
                                   inline
@@ -469,12 +579,26 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
                                   name="is_falls_under_hill_area_hill"
                                   value="no"
                                   onChange={handleChange}
+
+                                  checked={
+                                    values.is_falls_under_hill_area_hill === "no"
+                                  }
+                                  isInvalid={
+                                    touched.is_falls_under_hill_area_hill &&
+                                    !!errors.is_falls_under_hill_area_hill
+                                  }
                                 />
                               </div>
-                              <Form.Control.Feedback type="invalid">
-                                {errors.category}
-                              </Form.Control.Feedback>
+                              {touched.is_falls_under_hill_area_hill && errors.is_falls_under_hill_area_hill && (
+                                <Form.Control.Feedback
+                                  type="invalid"
+                                  className="d-block"
+                                >
+                                  {errors.is_falls_under_hill_area_hill}
+                                </Form.Control.Feedback>
+                              )}
                             </Form.Group>
+
                             <div className="d-flex">
                               <div className="p-2 flex-fill">
                                 {values.is_falls_under_hill_area_hill ===
@@ -489,16 +613,21 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
                                         <Form.Control
                                           required
                                           type="file"
-                                          name="name_of_other_iti"
+                                          name="Falls_Under_Hill_Area_Hill__Supporting_Doc"
                                           onChange={handleChange} // if using Formik or handling file upload
                                           isInvalid={
-                                            touched.name_of_other_iti &&
-                                            !!errors.name_of_other_iti
+                                            touched.Falls_Under_Hill_Area_Hill__Supporting_Doc &&
+                                            !!errors.Falls_Under_Hill_Area_Hill__Supporting_Doc
                                           }
                                         />
-                                        <Form.Control.Feedback type="invalid">
-                                          {errors.name_of_other_iti}
-                                        </Form.Control.Feedback>
+                                        {touched.Falls_Under_Hill_Area_Hill__Supporting_Doc && errors.Falls_Under_Hill_Area_Hill__Supporting_Doc && (
+                                          <Form.Control.Feedback
+                                            type="invalid"
+                                            className="d-block"
+                                          >
+                                            {errors.Falls_Under_Hill_Area_Hill__Supporting_Doc}
+                                          </Form.Control.Feedback>
+                                        )}
                                       </Form.Group>
                                     </div>
                                   )}
@@ -520,14 +649,14 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
                                   name="is_falls_under_border_district"
                                   value="yes"
                                   onChange={handleChange}
-                                // checked={
-                                //   values.Is_the_applicant_running_any_other_iti ===
-                                //   "yes"
-                                // }
-                                // isInvalid={
-                                //   touched.Is_the_applicant_running_any_other_iti &&
-                                //   !!errors.Is_the_applicant_running_any_other_iti
-                                // }
+                                  checked={
+                                    values.is_falls_under_border_district ===
+                                    "yes"
+                                  }
+                                  isInvalid={
+                                    touched.is_falls_under_border_district &&
+                                    !!errors.is_falls_under_border_district
+                                  }
                                 />
                                 <Form.Check
                                   inline
@@ -536,19 +665,24 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
                                   name="is_falls_under_border_district"
                                   value="no"
                                   onChange={handleChange}
-                                // checked={
-                                //   values.Is_the_applicant_running_any_other_iti ===
-                                //   "no"
-                                // }
-                                // isInvalid={
-                                //   touched.Is_the_applicant_running_any_other_iti &&
-                                //   !!errors.Is_the_applicant_running_any_other_iti
-                                // }
+                                  checked={
+                                    values.is_falls_under_border_district ===
+                                    "no"
+                                  }
+                                  isInvalid={
+                                    touched.is_falls_under_border_district &&
+                                    !!errors.is_falls_under_border_district
+                                  }
                                 />
                               </div>
-                              <Form.Control.Feedback type="invalid">
-                                {errors.category}
-                              </Form.Control.Feedback>
+                              {touched.is_falls_under_border_district && errors.is_falls_under_border_district && (
+                                <Form.Control.Feedback
+                                  type="invalid"
+                                  className="d-block"
+                                >
+                                  {errors.is_falls_under_border_district}
+                                </Form.Control.Feedback>
+                              )}
                             </Form.Group>
                             <div className="d-flex">
                               {values.is_falls_under_border_district ===
@@ -567,16 +701,22 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
                                       <Form.Control
                                         required
                                         type="file"
-                                        name="name_of_other_iti"
+                                        name="Falls_Under_Border_District__Supporting_Doc"
                                         onChange={handleChange} // if using Formik or handling file upload
                                         isInvalid={
-                                          touched.name_of_other_iti &&
-                                          !!errors.name_of_other_iti
+                                          touched.Falls_Under_Border_District__Supporting_Doc &&
+                                          !!errors.Falls_Under_Border_District__Supporting_Doc
                                         }
+
                                       />
-                                      <Form.Control.Feedback type="invalid">
-                                        {errors.name_of_other_iti}
-                                      </Form.Control.Feedback>
+                                      {touched.Falls_Under_Border_District__Supporting_Doc && errors.Falls_Under_Border_District__Supporting_Doc && (
+                                        <Form.Control.Feedback
+                                          type="invalid"
+                                          className="d-block"
+                                        >
+                                          {errors.Falls_Under_Border_District__Supporting_Doc}
+                                        </Form.Control.Feedback>
+                                      )}
                                     </Form.Group>
                                   </div>
                                 )}
@@ -608,37 +748,42 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
                         inline
                         type="radio"
                         label="Yes"
-                        name="WhetherapplyingUnderMiniSkillTrainingInstitute(MSTI)Category"
+                        name="under_msti_category"
                         value="yes"
                         onChange={handleChange}
-                      // checked={
-                      //   values.Is_the_applicant_running_any_other_iti ===
-                      //   "yes"
-                      // }
-                      // isInvalid={
-                      //   touched.Is_the_applicant_running_any_other_iti &&
-                      //   !!errors.Is_the_applicant_running_any_other_iti
-                      // }
+                        checked={
+                          values.under_msti_category ===
+                          "yes"
+                        }
+                        isInvalid={
+                          touched.under_msti_category &&
+                          !!errors.under_msti_category
+                        }
                       />
                       <Form.Check
                         inline
                         type="radio"
                         label="No"
-                        name="WhetherapplyingUnderMiniSkillTrainingInstitute(MSTI)Category"
+                        name="under_msti_category"
                         value="no"
                         onChange={handleChange}
-                      // checked={
-                      //   values.Is_the_applicant_running_any_other_iti === "no"
-                      // }
-                      // isInvalid={
-                      //   touched.Is_the_applicant_running_any_other_iti &&
-                      //   !!errors.Is_the_applicant_running_any_other_iti
-                      // }
+                        checked={
+                          values.under_msti_category === "no"
+                        }
+                        isInvalid={
+                          touched.under_msti_category &&
+                          !!errors.under_msti_category
+                        }
                       />
                     </div>
-                    <Form.Control.Feedback type="invalid">
-                      {errors.Is_the_applicant_running_any_other_iti}
-                    </Form.Control.Feedback>
+                    {touched.under_msti_category && errors.under_msti_category && (
+                      <Form.Control.Feedback
+                        type="invalid"
+                        className="d-block"
+                      >
+                        {errors.under_msti_category}
+                      </Form.Control.Feedback>
+                    )}
                   </Form.Group>
                 </Row>
 
@@ -656,14 +801,14 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
                         name="Whether_the_institute_is_exclusive_for_women_trainees"
                         value="yes"
                         onChange={handleChange}
-                      // checked={
-                      //   values.Is_the_applicant_running_any_other_iti ===
-                      //   "yes"
-                      // }
-                      // isInvalid={
-                      //   touched.Is_the_applicant_running_any_other_iti &&
-                      //   !!errors.Is_the_applicant_running_any_other_iti
-                      // }
+                        checked={
+                          values.Whether_the_institute_is_exclusive_for_women_trainees ===
+                          "yes"
+                        }
+                        isInvalid={
+                          touched.Whether_the_institute_is_exclusive_for_women_trainees &&
+                          !!errors.Whether_the_institute_is_exclusive_for_women_trainees
+                        }
                       />
                       <Form.Check
                         inline
@@ -672,18 +817,23 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
                         name="Whether_the_institute_is_exclusive_for_women_trainees"
                         value="no"
                         onChange={handleChange}
-                      // checked={
-                      //   values.Is_the_applicant_running_any_other_iti === "no"
-                      // }
-                      // isInvalid={
-                      //   touched.Is_the_applicant_running_any_other_iti &&
-                      //   !!errors.Is_the_applicant_running_any_other_iti
-                      // }
+                        checked={
+                          values.Whether_the_institute_is_exclusive_for_women_trainees === "no"
+                        }
+                        isInvalid={
+                          touched.Whether_the_institute_is_exclusive_for_women_trainees &&
+                          !!errors.Whether_the_institute_is_exclusive_for_women_trainees
+                        }
                       />
                     </div>
-                    <Form.Control.Feedback type="invalid">
-                      {errors.Is_the_applicant_running_any_other_iti}
-                    </Form.Control.Feedback>
+                    {touched.Whether_the_institute_is_exclusive_for_women_trainees && errors.Whether_the_institute_is_exclusive_for_women_trainees && (
+                      <Form.Control.Feedback
+                        type="invalid"
+                        className="d-block"
+                      >
+                        {errors.Whether_the_institute_is_exclusive_for_women_trainees}
+                      </Form.Control.Feedback>
+                    )}
                   </Form.Group>
                 </Row>
 
@@ -716,6 +866,12 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
                                 type="text"
                                 placeholder="Latitude"
                                 name="latitude"
+                                onChange={handleChange}
+                                value={values.latitude}
+                                isInvalid={
+                                  touched.latitude &&
+                                  !!errors.latitude
+                                }
                               />
                               <Button variant="outline-secondary">
                                 Degree
@@ -723,9 +879,15 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
                               <Button variant="outline-secondary">N</Button>
                             </InputGroup>
 
-                            <Form.Control.Feedback>
-                              Looks good!
-                            </Form.Control.Feedback>
+
+                            {touched.latitude && errors.latitude && (
+                              <Form.Control.Feedback
+                                type="invalid"
+                                className="d-block"
+                              >
+                                {errors.latitude}
+                              </Form.Control.Feedback>
+                            )}
                           </Form.Group>
 
                           <Form.Group
@@ -743,6 +905,12 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
                                 type="text"
                                 placeholder="Longitude"
                                 name="Longitude"
+                                onChange={handleChange}
+                                value={values.Longitude}
+                                isInvalid={
+                                  touched.Longitude &&
+                                  !!errors.Longitude
+                                }
                               />
                               <Button variant="outline-secondary">
                                 Degree
@@ -750,9 +918,14 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
                               <Button variant="outline-secondary">E</Button>
                             </InputGroup>
 
-                            <Form.Control.Feedback>
-                              Looks good!
-                            </Form.Control.Feedback>
+                            {touched.Longitude && errors.Longitude && (
+                              <Form.Control.Feedback
+                                type="invalid"
+                                className="d-block"
+                              >
+                                {errors.Longitude}
+                              </Form.Control.Feedback>
+                            )}
                           </Form.Group>
                         </Row>
                       </Card.Body>
