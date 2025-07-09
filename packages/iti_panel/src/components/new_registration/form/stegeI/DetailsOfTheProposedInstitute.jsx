@@ -1828,16 +1828,6 @@ export const Assessment_Proposed_Institute = () => {
           </div>
         </Col>)}
       </Row>
-
-      <Modal show={showXlModal} onHide={handleCloseModal} size="xl">
-        <Modal.Header closeButton>
-          <Modal.Title as="h6">Review Instructions</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          This section is to guide Desktop Assessor in Desktop Assessment. This
-          will act as guide to him. DGT admin can provide sample documents also.
-        </Modal.Body>
-      </Modal>
     </>
   );
 };

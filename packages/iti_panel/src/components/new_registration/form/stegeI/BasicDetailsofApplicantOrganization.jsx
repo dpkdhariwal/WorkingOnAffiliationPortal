@@ -1107,90 +1107,6 @@ BasicDetailsofApplicantOrganization.propTypes = {
 export default BasicDetailsofApplicantOrganization;
 
 export const Assessment_Basic_Detail = () => {
-  const MaxData = [
-    { value: "Document is not legible", label: "Document is not legible" },
-    { value: "Document is irrelevant", label: "Document is irrelevant" },
-    {
-      value: "Document lacks required information",
-      label: "Document lacks required information",
-    },
-    {
-      value:
-        "Document is not approved by the competent authority in the State/ UT",
-      label:
-        "Document is not approved by the competent authority in the State/ UT",
-    },
-    {
-      value:
-        "Address on the document does not match with the proposed land/ building address",
-      label:
-        "Address on the document does not match with the proposed land/ building address",
-    },
-    {
-      value:
-        "Document does not indicate the workshop for all trade/units, classrooms, IT Lab, Administrative area, Amenities area etc.",
-      label:
-        "Document does not indicate the workshop for all trade/units, classrooms, IT Lab, Administrative area, Amenities area etc.",
-    },
-    {
-      value: "Any other reason, please specify",
-      label: "Any other reason, please specify",
-    },
-  ];
-
-  const { Formik } = formik;
-  const formRef2 = useRef();
-  const dispatch = useDispatch();
-
-  const [showXlModal, setShowXlModal] = useState(false);
-  const [selectedSize, setSelectedSize] = useState("");
-
-  const handleShowModal = (size) => {
-    switch (size) {
-      case "xl":
-        setShowXlModal(true);
-        break;
-      default:
-        break;
-    }
-    setSelectedSize(size);
-  };
-
-  const handleCloseModal = () => {
-    setShowXlModal(false);
-    setSelectedSize("");
-  };
-
-  const [formData, setFormData] = useState({});
-  const [formSubmited, setFormSubmited] = useState(false);
-
-  const messages = [
-    {
-      userType: "Assessor",
-      username: "Alice",
-      text: "Hello!",
-      datetime: "10:30 AM",
-      isUser: true,
-      comp: () => <AssessorRemarkHistory title="Building Plan" />,
-    },
-    {
-      userType: "Applicant",
-      username: "You",
-      text: "Hi Alice!",
-      datetime: "10:31 AM",
-      isUser: false,
-      comp: ItiRemarkHistory,
-    },
-    {
-      userType: "Assessor",
-      username: "Alice",
-      text: "Hello!",
-      datetime: "10:30 AM",
-      isUser: true,
-      comp: () => <AssessorRemarkHistory title="Building Plan" />,
-    },
-  ];
-  const stageI1_info = useSelector((state) => state.theme.new_registration);
 
   return (
     <>
@@ -1201,913 +1117,148 @@ export const Assessment_Basic_Detail = () => {
           borderRadius: 6,
           borderStyle: "dashed",
           borderWidth: "thin",
-          padding: "10px",
+          padding: "2px",
         }}
       >
         <Col xl={12} lg={12} md={12} sm={12}>
-          <Form.Label>
-            Category of Applicant Entity
-            <span style={{ color: "red" }}>*</span>
-          </Form.Label>
-          <Row className="mb-3">
-            <Form.Group as={Col} md="3">
-              <div className="d-flex align-items-center gap-2">
-                <Form.Check
-                  type="radio"
-                  // label={label.label}
-                  name="category"
-                  value="yes"
-                />
-              </div>
+          <table
+            width="98%"
+            border={1}
+            style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
+            align="center"
+            cellPadding="5px"
+          >
+            <tbody>
+              <tr>
+                <td colSpan={7} style={{ border: "1px solid black" }}><b>Applicant Entity Details</b></td>
+              </tr>
+              <tr>
+                <td style={{ colSpan: 2 }}><b>Category of Applicant Entity:</b> <span>Cat 1</span> </td>
+                <td><b>Name of Applicant Entity:</b> <span>Deepak Dhariwal</span> </td>
+              </tr>
+            </tbody>
+          </table>
+          <table
+            width="98%"
+            border={1}
+            style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
+            align="center"
+            cellPadding="5px"
+          >
+            <tbody>
+              <tr>
+                <td colSpan={7} style={{ border: "1px solid black" }}><b>Address of Applicant Entity</b></td>
+              </tr>
+              <tr style={{ border: "1px solid black" }}>
+                <th style={{ border: "1px solid black" }}>Applicant Entity State</th>
+                <th style={{ border: "1px solid black" }}>Applicant Entity District</th>
+                <th style={{ border: "1px solid black" }}>Applicant Entity Town/City</th>
+                <th style={{ border: "1px solid black" }}>Applicant Entity Block/Tehsil</th>
+              </tr>
+              <tr>
+                <td style={{ border: "1px solid black" }}>value 1</td>
+                <td style={{ border: "1px solid black" }}>value 1</td>
+                <td style={{ border: "1px solid black" }}>value 1</td>
+                <td style={{ border: "1px solid black" }}>value 1</td>
+              </tr>
 
-            </Form.Group>
-          </Row>
+              <tr style={{ border: "1px solid black" }}>
+                <th style={{ border: "1px solid black" }}>Applicant Entity Sector/Village</th>
+                <th style={{ border: "1px solid black" }}>Applicant Entity Pincode</th>
+                <th style={{ border: "1px solid black" }}>Applicant Entity Plot Number/Khasara Number/Gata Number</th>
+                <th style={{ border: "1px solid black" }}>Applicant Entity Landmark</th>
+              </tr>
+              <tr>
+                <td style={{ border: "1px solid black" }}>value 1</td>
+                <td style={{ border: "1px solid black" }}>value 1</td>
+                <td style={{ border: "1px solid black" }}>value 1</td>
+                <td style={{ border: "1px solid black" }}>value 1</td>
+              </tr>
 
-          <Row className="mb-3">
-            <Form.Group as={Col} md="4">
-              <Form.Label>
-                Name of Applicant Entity{" "}
-                <span style={{ color: "red" }}>*</span>
-              </Form.Label>
+              <tr style={{ border: "1px solid black" }}>
+                <th style={{ border: "1px solid black" }} colSpan={2}>Applicant Entity Email Id</th>
+                <th style={{ border: "1px solid black" }} colSpan={2}>Applicant Contact Number</th>
+              </tr>
+              <tr>
+                <td style={{ border: "1px solid black" }} colSpan={2}>value 1</td>
+                <td style={{ border: "1px solid black" }} colSpan={2}>value 1</td>
+              </tr>
+            </tbody>
+          </table>
 
-              <Form.Control
-                error="Enter Name of Applicant"
-                required
-                type="text"
-                name="name_of_applicant_entity"
-                value=""
-                placeholder={`Enter Here`}
-              />
-            </Form.Group>
-          </Row>
-          <Row className="mb-3">
-            <Col md={12}>
-              <h6>
-                Address of Applicant Entity{" "}
-                <span style={{ color: "red" }}>*</span>
-              </h6>
-              <hr></hr>
-            </Col>
-            <Col md={12}>
-              <Row className="mb-3">
-                <BootstrapForm.Group
-                  as={Col}
-                  md="3"
-                  controlId="ApplicantEntityState"
-                >
-                  <BootstrapForm.Label>
-                    Applicant Entity State{" "}
-                    <span style={{ color: "red" }}>*</span>
-                  </BootstrapForm.Label>
-                  <BootstrapForm.Select
-                    size="lg"
-                    name="ApplicantEntityState"
-                    value=""
+
+          <table
+            width="98%"
+            border={1}
+            style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
+            align="center"
+            cellPadding="5px"
+          >
+            <tbody>
+              <tr>
+                <td colSpan={7} style={{ border: "1px solid black" }}><b>Running Other ITI Information</b></td>
+              </tr>
+              <tr style={{ border: "1px solid black" }}>
+                <td>
+                  <table
+                    width="98%"
+                    border={1}
+                    style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
+                    align="center"
+                    cellPadding="5px"
                   >
-                  </BootstrapForm.Select>
-                </BootstrapForm.Group>
+                    <tbody>
+                      <tr>
+                        <td width={'1%'} rowSpan={8} style={{ border: "1px solid black" }}><b>1</b></td>
+                      </tr>
+                      <tr>
+                        <td colSpan={7} style={{ border: "1px solid black" }}><b>Running ITI Info</b></td>
+                      </tr>
 
-                <BootstrapForm.Group
-                  as={Col}
-                  md="3"
-                  controlId="ApplicantEntityDistrict"
-                >
-                  <BootstrapForm.Label>
-                    Applicant Entity District{" "}
-                    <span style={{ color: "red" }}>*</span>
-                  </BootstrapForm.Label>
-                  <BootstrapForm.Select
-                    size="lg"
-                    name="ApplicantEntityDistrict"
-                    value=""
-                  >
-                    <option value="">
-                      abcd
-                    </option>
-                  </BootstrapForm.Select>
+                      <tr style={{ border: "1px solid black" }}>
+                        <th style={{ border: "1px solid black" }}>ITI Name</th>
+                        <th style={{ border: "1px solid black" }}>MIS Code</th>
+                        <th style={{ border: "1px solid black" }}>State</th>
+                        <th style={{ border: "1px solid black" }}>District</th>
+                      </tr>
+                      <tr>
+                        <td style={{ border: "1px solid black" }}>value 1</td>
+                        <td style={{ border: "1px solid black" }}>value 1</td>
+                        <td style={{ border: "1px solid black" }}>value 1</td>
+                        <td style={{ border: "1px solid black" }}>value 1</td>
+                      </tr>
 
-                </BootstrapForm.Group>
+                      <tr style={{ border: "1px solid black" }}>
+                        <th style={{ border: "1px solid black" }}>Town/City</th>
+                        <th style={{ border: "1px solid black" }}>Block/Tehsil</th>
+                        <th style={{ border: "1px solid black" }}>Pincode</th>
+                        <th style={{ border: "1px solid black" }}>Plot Number/Khasara Number</th>
+                      </tr>
+                      <tr>
+                        <td style={{ border: "1px solid black" }}>value 1</td>
+                        <td style={{ border: "1px solid black" }}>value 1</td>
+                        <td style={{ border: "1px solid black" }}>value 1</td>
+                        <td style={{ border: "1px solid black" }}>value 1</td>
+                      </tr>
 
-                <BootstrapForm.Group
-                  as={Col}
-                  md="3"
-                  controlId="validationCustom02"
-                >
-                  <BootstrapForm.Label>
-                    Applicant Entity Town/City
-                    <span style={{ color: "red" }}>*</span>
-                  </BootstrapForm.Label>
-                  <BootstrapForm.Control
-                    required
-                    type="text"
-                    placeholder="Town/City"
-                    name="ApplicantEntityTown_City"
-                  />
-                </BootstrapForm.Group>
+                      <tr style={{ border: "1px solid black" }}>
+                        <th style={{ border: "1px solid black" }} colSpan={2}>Landmark</th>
+                      </tr>
+                      <tr>
+                        <td style={{ border: "1px solid black" }} colSpan={2}>value 1</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
 
-                <Form.Group
-                  as={Col}
-                  md="3"
-                  controlId="validationCustom02"
-                >
-                  <Form.Label>
-                    Applicant Entity Block/Tehsil
-                    <span style={{ color: "red" }}>*</span>
-                  </Form.Label>
-                  <Form.Control
-                    required
-                    type="text"
-                    placeholder="Block/Tehsil"
-                    name="ApplicantEntityBlock_Tehsil"
-                  />
-                </Form.Group>
-
-                <Form.Group
-                  as={Col}
-                  md="3"
-                  controlId="validationCustom02"
-                >
-                  <Form.Label>
-                    Applicant Entity Sector/Village
-                    <span style={{ color: "red" }}>*</span>
-                  </Form.Label>
-                  <Form.Control
-                    required
-                    type="text"
-                    placeholder="Sector/Village"
-                    name="ApplicantEntitySector_Village"
-                  />
-                </Form.Group>
-
-                <Form.Group
-                  as={Col}
-                  md="3"
-                  controlId="validationCustom02"
-                >
-                  <Form.Label>
-                    Applicant Entity Pincode
-                    <span style={{ color: "red" }}>*</span>
-                  </Form.Label>
-                  <Form.Control
-                    required
-                    type="text"
-                    placeholder="Pincode"
-                    name="ApplicantEntityPincode"
-                  />
-                </Form.Group>
-
-                <Form.Group
-                  as={Col}
-                  md="6"
-                  controlId="validationCustom02"
-                >
-                  <Form.Label>
-                    Applicant Entity Plot Number/Khasara Number/Gata
-                    Number
-                    <span style={{ color: "red" }}>*</span>
-                  </Form.Label>
-                  <Form.Control
-                    required
-                    type="text"
-                    placeholder="Plot Number/Khasara Number/Gata Number"
-                    name="ApplicantEntityPlotNumber_KhasaraNumber_GataNumber"
-                  />
-                </Form.Group>
-                <Form.Group
-                  as={Col}
-                  md="3"
-                  controlId="validationCustom02"
-                >
-                  <Form.Label>
-                    Applicant Entity Landmark
-                    <span style={{ color: "red" }}>*</span>
-                  </Form.Label>
-                  <Form.Control
-                    required
-                    type="text"
-                    placeholder="Landmark"
-                    name="ApplicantEntityLandmark"
-                  />
-                </Form.Group>
-              </Row>
-            </Col>
-          </Row>
-          <Row className="mb-3">
-            <Form.Group as={Col} md="6" controlId="validationCustom02">
-              <Form.Label>
-                Applicant Entity Email Id{" "}
-                <span style={{ color: "red" }}>*</span>
-              </Form.Label>
-
-              <div className="d-flex align-items-center gap-2">
-                <Form.Control
-                  required
-                  type="email"
-                  name="ApplicantEntityEmailId"
-                  placeholder="Applicant Entity Email Id"
-                  defaultValue=""
-                />
-              </div>
-            </Form.Group>
-
-            <Form.Group as={Col} md="6" controlId="validationCustom02">
-              <Form.Label>
-                Applicant Contact Number
-                <span style={{ color: "red" }}>*</span>
-              </Form.Label>
-              <div className="d-flex align-items-center gap-2">
-                <Form.Control
-                  required
-                  type="text"
-                  name="ApplicantContactNumber"
-                  placeholder="Applicant Contact Number"
-                  defaultValue=""
-                />
-              </div>
-            </Form.Group>
-          </Row>
-
-          {[
-            "Society / Trust",
-            "Private Limited Company",
-            "Public Limited Company",
-            "Union Territory Administration / Society / Trust registered by them",
-          ].includes(
-            stageI1_info?.stage_I
-              ?.section_category_of_applicant_organization
-              ?.category_of_applicant_organization
-          ) && (
-              <Row className="mb-3">
-                <Col md="12">
-                  <Card className="border border-info custom-card">
-                    <Card.Header>
-                      <div className="card-title">
-                        Details of Secretary/Chairperson/President
-                        <span style={{ color: "red" }}>*</span>
-                      </div>
-                    </Card.Header>
-                    <Card.Body>
-                      <Row className="mb-3">
-                        <Form.Group
-                          as={Col}
-                          md="3"
-                          controlId="validationCustom02"
-                        >
-                          <Form.Label>Name</Form.Label>
-                          <Form.Control
-                            required
-                            type="text"
-                            name="name_of_secretary_chairperson_president"
-                            placeholder="Name"
-                            defaultValue=""
-                          />
-                          <Form.Control.Feedback>
-                            Looks good!
-                          </Form.Control.Feedback>
-                        </Form.Group>
-                        <Form.Group
-                          as={Col}
-                          md="3"
-                          controlId="validationCustom02"
-                        >
-                          <Form.Label>
-                            Designation
-                            <span style={{ color: "red" }}>*</span>
-                          </Form.Label>
-                          <Form.Control
-                            required
-                            type="text"
-                            name="designation_of_secretary_chairperson_president"
-                            placeholder="Designation"
-                            defaultValue=""
-                          />
-                          <Form.Control.Feedback>
-                            Looks good!
-                          </Form.Control.Feedback>
-                        </Form.Group>
-                        <Form.Group
-                          as={Col}
-                          md="3"
-                          controlId="validationCustom02"
-                        >
-                          <Form.Label>
-                            Email Id <span style={{ color: "red" }}>*</span>
-                          </Form.Label>
-                          <Form.Control
-                            required
-                            type="text"
-                            name="email_id_of_secretary_chairperson_president"
-                            placeholder="Email Id"
-                            defaultValue=""
-                          />
-                          <Form.Control.Feedback>
-                            Looks good!
-                          </Form.Control.Feedback>
-                        </Form.Group>
-                        <Form.Group
-                          as={Col}
-                          md="3"
-                          controlId="validationCustom02"
-                        >
-                          <Form.Label>
-                            Mobile Number
-                            <span style={{ color: "red" }}>*</span>
-                          </Form.Label>
-                          <Form.Control
-                            required
-                            type="text"
-                            name="mobile_number_of_secretary_chairperson_president"
-                            placeholder="Mobile Number"
-                            defaultValue=""
-                          />
-                          <Form.Control.Feedback>
-                            Looks good!
-                          </Form.Control.Feedback>
-                        </Form.Group>
-                        <Form.Group
-                          as={Col}
-                          md="3"
-                          controlId="validationCustom02"
-                        >
-                          <Form.Label>
-                            ID proof <span style={{ color: "red" }}>*</span>
-                          </Form.Label>
-                          <Form.Control
-                            required
-                            type="text"
-                            name="id_proof_of_secretary_chairperson_president"
-                            placeholder="ID proof"
-                            defaultValue=""
-                          />
-                          <Form.Control.Feedback>
-                            Looks good!
-                          </Form.Control.Feedback>
-                        </Form.Group>
-                      </Row>
-                    </Card.Body>
-                  </Card>
-                </Col>
-              </Row>
-            )}
-
-          {[
-            "Society / Trust",
-            "Private Limited Company",
-            "Public Limited Company",
-            "Public Sector Undertaking"
-          ].includes('values.category') && (
-              <Row className="mb-3">
-                <Col md="12">
-                  <Card className="border border-info custom-card">
-                    {/* <Card.Header>
-                        <div className="card-title">
-                          provide details of applicant running any other ITI
-                        </div>
-                      </Card.Header> */}
-                    <Card.Body>
-                      <Row className="mb-3">
-                        <Form.Group>
-                          <Form.Label>
-                            Is the Applicant Running Any Other ITI?
-                            <span style={{ color: "red" }}>*</span>
-                          </Form.Label>
-                          <div>
-                            <Form.Check
-                              inline
-                              type="radio"
-                              label="Yes"
-                              name="Is_the_applicant_running_any_other_iti"
-                              value="yes"
-                            />
-                            <Form.Check
-                              inline
-                              type="radio"
-                              label="No"
-                              name="Is_the_applicant_running_any_other_iti"
-                              value="no"
-                            />
-                          </div>
-                        </Form.Group>
-
-                      </Row>
-                      {values.Is_the_applicant_running_any_other_iti ===
-                        "yes" && (
-                          <Row className="mb-3">
-                            <Form.Group as={Col} md={12}>
-                              <label className="form-label">
-                                If Yes, Please Provide Details of the ITI
-                              </label>
-                            </Form.Group>
-                            <BootstrapForm.Group
-                              as={Col}
-                              md="6"
-                            >
-                              <BootstrapForm.Label>
-                                ITI Name
-                                <span style={{ color: "red" }}>*</span>
-                              </BootstrapForm.Label>
-
-                              <BootstrapForm.Control
-                                required
-                                type="text"
-                                placeholder="Enter Running ITI Name"
-                                name="run_ITIName"
-                              />
-                            </BootstrapForm.Group>
-
-
-                            <Form.Group
-                              as={Col}
-                              md="6"
-                              controlId="validationCustom02"
-                            >
-                              <Form.Label>
-                                MIS Code
-                                <span style={{ color: "red" }}>*</span>
-                              </Form.Label>
-                              <Form.Control
-                                required
-                                type="text"
-                                name="run_MISCode"
-                                placeholder="MIS Code"
-                                defaultValue=""
-                              />
-                            </Form.Group>
-
-                            <Form.Group
-                              as={Col}
-                              md="3"
-                              controlId="validationCustom02"
-                            >
-                              <Form.Label>
-                                State<span style={{ color: "red" }}>*</span>
-                              </Form.Label>
-                              <Form.Control
-                                as="select"
-                                required
-                                name="run_State"
-                              >
-                                <option value="">Select State</option>
-                                <option value="Andhra Pradesh">
-                                  Andhra Pradesh
-                                </option>
-                                <option value="Arunachal Pradesh">
-                                  Arunachal Pradesh
-                                </option>
-                                <option value="Assam">Assam</option>
-                                <option value="Bihar">Bihar</option>
-                                <option value="Chhattisgarh">
-                                  Chhattisgarh
-                                </option>
-                                <option value="Goa">Goa</option>
-                                <option value="Gujarat">Gujarat</option>
-                                <option value="Haryana">Haryana</option>
-                                <option value="Himachal Pradesh">
-                                  Himachal Pradesh
-                                </option>
-                                <option value="Jharkhand">Jharkhand</option>
-                                <option value="Karnataka">Karnataka</option>
-                                <option value="Kerala">Kerala</option>
-                                <option value="Madhya Pradesh">
-                                  Madhya Pradesh
-                                </option>
-                                <option value="Maharashtra">
-                                  Maharashtra
-                                </option>
-                                <option value="Manipur">Manipur</option>
-                                <option value="Meghalaya">Meghalaya</option>
-                                <option value="Mizoram">Mizoram</option>
-                                <option value="Nagaland">Nagaland</option>
-                                <option value="Odisha">Odisha</option>
-                                <option value="Punjab">Punjab</option>
-                                <option value="Rajasthan">Rajasthan</option>
-                                <option value="Sikkim">Sikkim</option>
-                                <option value="Tamil Nadu">Tamil Nadu</option>
-                                <option value="Telangana">Telangana</option>
-                                <option value="Tripura">Tripura</option>
-                                <option value="Uttar Pradesh">
-                                  Uttar Pradesh
-                                </option>
-                                <option value="Uttarakhand">
-                                  Uttarakhand
-                                </option>
-                                <option value="West Bengal">
-                                  West Bengal
-                                </option>
-                                <option value="Andaman and Nicobar Islands">
-                                  Andaman and Nicobar Islands
-                                </option>
-                                <option value="Chandigarh">Chandigarh</option>
-                                <option value="Dadra and Nagar Haveli and Daman and Diu">
-                                  Dadra and Nagar Haveli and Daman and Diu
-                                </option>
-                                <option value="Delhi">Delhi</option>
-                                <option value="Jammu and Kashmir">
-                                  Jammu and Kashmir
-                                </option>
-                                <option value="Ladakh">Ladakh</option>
-                                <option value="Lakshadweep">
-                                  Lakshadweep
-                                </option>
-                                <option value="Puducherry">Puducherry</option>
-                              </Form.Control>
-                            </Form.Group>
-
-                            <Form.Group
-                              as={Col}
-                              md="3"
-                              controlId="validationCustom02"
-                            >
-                              <Form.Label>
-                                District
-                                <span style={{ color: "red" }}>*</span>
-                              </Form.Label>
-                              <Form.Control
-                                as="select"
-                                required
-                                name="run_District"
-                              >
-                                <option value="" selected>
-                                  Select District
-                                </option>
-                                <option value="Delhi">Delhi</option>
-                                <option value="Mumbai">Mumbai</option>
-                                <option value="Bengaluru">Bengaluru</option>
-                                <option value="Chennai">Chennai</option>
-                                <option value="Kolkata">Kolkata</option>
-                              </Form.Control>
-                              {touched.run_District &&
-                                errors.run_District && (
-                                  <Form.Control.Feedback type="invalid">
-                                    {errors.run_District}
-                                  </Form.Control.Feedback>
-                                )}
-                            </Form.Group>
-
-                            <Form.Group
-                              as={Col}
-                              md="3"
-                              controlId="validationCustom02"
-                            >
-                              <Form.Label>
-                                Town/City
-                                <span style={{ color: "red" }}>*</span>
-                              </Form.Label>
-                              <Form.Control
-                                required
-                                type="text"
-                                placeholder="Town/City"
-                                name="run_TownCity"
-                              />
-                            </Form.Group>
-
-                            <Form.Group
-                              as={Col}
-                              md="3"
-                              controlId="validationCustom02"
-                            >
-                              <Form.Label>
-                                Block/Tehsil
-                                <span style={{ color: "red" }}>*</span>
-                              </Form.Label>
-                              <Form.Control
-                                required
-                                type="text"
-                                placeholder="Block/Tehsil"
-                                name="run_BlockTehsil"
-                              />
-                            </Form.Group>
-                            <Form.Group
-                              as={Col}
-                              md="3"
-                              controlId="validationCustom02"
-                            >
-                              <Form.Label>
-                                Pincode<span style={{ color: "red" }}>*</span>
-                              </Form.Label>
-                              <Form.Control
-                                required
-                                type="text"
-                                placeholder="Pincode"
-                                name="run_Pincode"
-                              />
-                            </Form.Group>
-
-                            <Form.Group
-                              as={Col}
-                              md="3"
-                              controlId="validationCustom02"
-                            >
-                              <Form.Label>
-                                Plot Number/Khasara Number
-                                <span style={{ color: "red" }}>*</span>
-                              </Form.Label>
-                              <Form.Control
-                                required
-                                type="text"
-                                placeholder="address"
-                                name="run_PlotNumber_KhasaraNumber"
-                              />
-
-                            </Form.Group>
-
-                            <Form.Group
-                              as={Col}
-                              md="3"
-                              controlId="validationCustom02"
-                            >
-                              <Form.Label>
-                                Landmark
-                                <span style={{ color: "red" }}>*</span>
-                              </Form.Label>
-                              <Form.Control
-                                required
-                                type="text"
-                                placeholder="Landmark"
-                                name="run_Landmark"
-                              />
-
-                            </Form.Group>
-                          </Row>
-                        )}
-                    </Card.Body>
-                  </Card>
-                </Col>
-              </Row>
-            )}
         </Col>
-        {false && (<Col xl={6} lg={6} md={6} sm={6}>
-          <div style={{ padding: 2, background: "#E0ECF5", borderRadius: 6 }}>
-            <div className="bg-body-secondary p-3">
-              {messages.map((msg, index) => (
-                <ChatMessage
-                  key={index}
-                  message={msg}
-                  isUser={msg.isUser}
-                  Msg={msg.comp}
-                  data={msg}
-                />
-              ))}
-            </div>
 
-            <div className="form-container">
-              {formSubmited == false ? (
-                <Formik
-                  validationSchema={yup.object().shape({
-                    as_per_norms: yup
-                      .string()
-                      .required("Select whether Building plan is as per norms"),
-
-                    category: yup.string().when("as_per_norms", {
-                      is: "no", // 🔄 change to "no" since category and comments are required when it's "no"
-                      then: () =>
-                        yup.string().required("Please select a category"),
-                      otherwise: () => yup.string().notRequired(),
-                    }),
-
-                    assessor_comments: yup.string().when("as_per_norms", {
-                      is: "no",
-                      then: () =>
-                        yup.string().required("Please provide your comments"),
-                      otherwise: () => yup.string().notRequired(),
-                    }),
-                  })}
-                  validateOnChange={() => console.log("validateOnChange")}
-                  onSubmit={(values) => {
-                    console.log("Form submitted with values:", values);
-                    setFormData(values);
-                    setFormSubmited(true);
-                    console.log(formData);
-                  }}
-                  initialValues={{
-                    category: "",
-                    as_per_norms: "no",
-                    assessor_comments: "",
-                  }}
-                >
-                  {({
-                    handleSubmit,
-                    handleChange,
-                    submitForm,
-                    values,
-                    errors,
-                    touched,
-                  }) => (
-                    <Card style={{ backgroundColor: "#eff3d6" }}>
-                      <Card.Header>
-                        <label
-                          className="main-content-label my-auto"
-                          style={{ textTransform: "none" }}
-                        >
-                          Review Form
-                        </label>
-                        <div className="ms-auto  d-flex">
-                          <Button
-                            size="sm"
-                            onClick={() => handleShowModal("xl")}
-                            type="button"
-                            className="rounded-pill btn-wave btn-outline-dark"
-                            variant="btn-outline-dark"
-                          >
-                            Review Instructions
-                          </Button>
-                        </div>
-                      </Card.Header>
-                      <Card.Body>
-                        <Form ref={formRef2} onSubmit={handleSubmit} validated>
-                          <Row className="mb-3">
-                            <Form.Group>
-                              <Form.Label>
-                                Whether Building plan is as per norms?
-                                <span style={{ color: "red" }}>*</span>
-                              </Form.Label>
-                              <div>
-                                <Form.Check
-                                  inline
-                                  type="radio"
-                                  label="Yes"
-                                  name="as_per_norms"
-                                  value="yes"
-                                  onChange={handleChange}
-                                  checked={values.as_per_norms === "yes"}
-                                  isInvalid={
-                                    touched.as_per_norms &&
-                                    !!errors.as_per_norms
-                                  }
-                                />
-                                <Form.Check
-                                  inline
-                                  type="radio"
-                                  label="No"
-                                  name="as_per_norms"
-                                  value="no"
-                                  onChange={handleChange}
-                                  checked={values.as_per_norms === "no"}
-                                  isInvalid={
-                                    touched.as_per_norms &&
-                                    !!errors.as_per_norms
-                                  }
-                                />
-                              </div>
-
-                              <Form.Control.Feedback type="invalid">
-                                {errors.category}
-                              </Form.Control.Feedback>
-                            </Form.Group>
-                          </Row>
-                          {values.as_per_norms === "no" && (
-                            <Row className="mb-3">
-                              <Form.Group
-                                as={Col}
-                                md="12"
-                                controlId="validationCustom02"
-                              >
-                                <Form.Label>
-                                  Select the Reason(s) and Raise
-                                  Non-Conformities (NC)
-                                  <span style={{ color: "red" }}>*</span>
-                                </Form.Label>
-                                <Field
-                                  required
-                                  name="category"
-                                  as="select"
-                                  className="form-control"
-                                >
-                                  <option value="">Select</option>
-                                  {MaxData.map((lang, i) => {
-                                    return (
-                                      <option key={i} value={lang.value}>
-                                        {lang.label}
-                                      </option>
-                                    );
-                                  })}
-                                </Field>
-                                <Form.Control.Feedback>
-                                  Looks good!
-                                </Form.Control.Feedback>
-                              </Form.Group>
-
-                              <Form.Group
-                                required
-                                as={Col}
-                                md="12"
-                                controlId="text-area"
-                                style={{ marginTop: "1rem" }}
-                              >
-                                <Form.Label>
-                                  Any other reason, please specify{" "}
-                                  <span style={{ color: "red" }}>*</span>
-                                </Form.Label>
-                                <Form.Control
-                                  name="assessor_comments"
-                                  required
-                                  as="textarea"
-                                  rows={3}
-                                  className={`form-control ${touched.assessor_comments &&
-                                    errors.assessor_comments
-                                    ? "is-invalid"
-                                    : ""
-                                    }`}
-                                  value={values.assessor_comments}
-                                  onChange={handleChange}
-                                  isInvalid={
-                                    touched.assessor_comments &&
-                                    !!errors.assessor_comments
-                                  }
-                                />
-                                {touched.assessor_comments &&
-                                  errors.assessor_comments && (
-                                    <div className="invalid-feedback">
-                                      {errors.assessor_comments}
-                                    </div>
-                                  )}
-                              </Form.Group>
-                            </Row>
-                          )}
-                          <Button variant="primary" onClick={submitForm}>
-                            Submit
-                          </Button>
-                        </Form>
-                      </Card.Body>
-                      <Card.Footer></Card.Footer>
-                    </Card>
-                  )}
-                </Formik>
-              ) : formSubmited == true ? (
-                <Card
-                  className="border-info"
-                  style={
-                    formData.as_per_norms == "yes"
-                      ? { backgroundColor: "#d6f3e0" }
-                      : { backgroundColor: "#f3d6d6" }
-                  }
-                >
-                  <Card.Header>
-                    <label
-                      className="main-content-label my-auto"
-                      style={{ textTransform: "none" }}
-                    >
-                      Assessor Comments
-                    </label>
-                    <div className="ms-auto  d-flex">
-                      25th April 2025:10:20PM
-                    </div>
-                  </Card.Header>
-                  <Card.Body>
-                    <Row className="mb-3">
-                      <Col md={12}>
-                        <b>Whether Building plan is as per norms?:</b>{" "}
-                        <span style={{ textTransform: "capitalize" }}>
-                          {formData.as_per_norms}
-                        </span>
-                      </Col>
-                      {formData.as_per_norms == "no" && (
-                        <Col md={12}>
-                          <b>Reason Category:</b>{" "}
-                          <span style={{ textTransform: "capitalize" }}>
-                            {formData.category}
-                          </span>
-                        </Col>
-                      )}
-
-                      {formData.category ==
-                        "Any other reason, please specify" && (
-                          <Col md={12}>
-                            <b>Reason:</b> <p>{formData.assessor_comments}</p>
-                          </Col>
-                        )}
-                    </Row>
-                  </Card.Body>
-                  <Card.Footer className="d-flex justify-content-between">
-                    <Button
-                      variant="primary"
-                      onClick={() => {
-                        setFormSubmited(false);
-                        setFormData({});
-                      }}
-                    >
-                      Edit
-                    </Button>
-                    {/* <Button variant="primary">Submit</Button> */}
-                  </Card.Footer>
-                </Card>
-              ) : (
-                <h1>No Data</h1>
-              )}
-            </div>
-          </div>
-        </Col>)}
       </Row>
 
-      <Modal show={showXlModal} onHide={handleCloseModal} size="xl">
-        <Modal.Header closeButton>
-          <Modal.Title as="h6">Review Instructions</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          This section is to guide Desktop Assessor in Desktop Assessment. This
-          will act as guide to him. DGT admin can provide sample documents also.
-        </Modal.Body>
-      </Modal>
+
     </>
   );
 };

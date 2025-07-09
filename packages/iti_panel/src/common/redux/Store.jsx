@@ -22,6 +22,9 @@ import {
 } from "../../reducers/userReducer";
 import { reg, appCat, EntityDetails, ProposedInstituteInfo, trade_unit_reducer, land_info_reducer } from "../../reducers/newAppReducer";
 
+
+import {land_documents_reducer, lease_deed_document_reducer} from "../../reducers/document_upload";
+
 // 👇 Combine all reducers
 const rootReducer = combineReducers({
   theme,
@@ -34,7 +37,9 @@ const rootReducer = combineReducers({
   EntityDetails,
   ProposedInstituteInfo,
   trade_unit_reducer,
-  land_info_reducer
+  land_info_reducer,
+  land_documents_reducer,
+  lease_deed_document_reducer
 });
 
 // 👇 Redux persist configuration

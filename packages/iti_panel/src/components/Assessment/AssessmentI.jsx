@@ -5,15 +5,20 @@ import "split-pane-react/esm/themes/default.css";
 import { Card, Badge, Row, Col, Form, Tab, Nav } from "react-bootstrap";
 import "./Resizer.css"; // Import your CSS file for custom styles
 
-import {Assessment_Basic_Detail} from "../new_registration/form/stegeI/BasicDetailsofApplicantOrganization";
-import {Assessment_Proposed_Institute} from "../new_registration/form/stegeI/DetailsOfTheProposedInstitute";
-import {Assessment_DetailsOfDocumentsToBeUploaded} from "../new_registration/form/stegeI/DetailsOfTradeUnitForAffiliation";
-import {Assessment_Details_of_Land} from "../Assessment/stage-I/DetailsOfTheLandToBeUsedForTheITI";
+import { Assessment_Basic_Detail } from "../new_registration/form/stegeI/BasicDetailsofApplicantOrganization";
+import { Assessment_Proposed_Institute } from "../new_registration/form/stegeI/DetailsOfTheProposedInstitute";
+import { Assessment_DetailsOfDocumentsToBeUploaded } from "../new_registration/form/stegeI/DetailsOfTradeUnitForAffiliation";
+import { Assessment_Details_of_Land } from "../Assessment/stage-I/DetailsOfTheLandToBeUsedForTheITI";
 
-import {Assessment_stage_I_DetailsOfDocumentsToBeUploaded} from "../Assessment/stage-I/DocumentsUpload";
+import { Assessment_stage_I_DetailsOfDocumentsToBeUploaded } from "../Assessment/stage-I/DocumentsUpload";
+import { Name_of_the_institute } from "../new_registration/form/stegeI/view/stage_1/detail_of_proposed_institute/assessment_view/name_of_the_institute";
+import { AddressOfInstitute } from "../new_registration/form/stegeI/view/stage_1/detail_of_proposed_institute/view/Address_of_Institute";
+import {InstituteLocation} from "../new_registration/form/stegeI/view/stage_1/detail_of_proposed_institute/assessment_view/instituteLocation";
+
+import {LandDocuments} from "../new_registration/form/stegeI/view/stage_1/detail_of_proposed_institute/assessment_view/land_documents"
 
 
-
+import {Documents} from "../new_registration/form/stegeI/view/stage_1/detail_of_proposed_institute/assessment_view/documents"
 
 
 import {
@@ -235,13 +240,12 @@ const Assessment = () => {
           <div className="card-title">Assessment-I</div>
         </Card.Header>
         <Card.Body>
-          <Tab.Container>
+          <Tab.Container defaultActiveKey="Applicant_Entity_Details">
             <Nav
               variant="pills"
               className="nav-tabs tab-style-1 nav-justified mb-3 d-sm-flex d-block align-items-md-center"
               id="myTab1"
               role="tablist"
-              defaultActiveKey="Applicant_Entity_Details"
             >
               <Nav.Item>
                 <Nav.Link
@@ -321,7 +325,6 @@ const Assessment = () => {
                 <Assessment_Basic_Detail />
               </Tab.Pane>
 
-
               <Tab.Pane
                 className="fade text-muted p-0"
                 id="Details_of_the_Proposed_Institute-pane"
@@ -330,7 +333,10 @@ const Assessment = () => {
                 aria-labelledby="Details_of_the_Proposed_Institute-tab"
                 tabIndex={0}
               >
-                <Assessment_Proposed_Institute/>
+                <Name_of_the_institute />
+                <AddressOfInstitute/>
+                <InstituteLocation/>
+                {/* <Assessment_Proposed_Institute/> */}
               </Tab.Pane>
 
               <Tab.Pane
@@ -341,7 +347,7 @@ const Assessment = () => {
                 aria-labelledby="Details_of_Trade__Unit-tab"
                 tabIndex={0}
               >
-                <Assessment_DetailsOfDocumentsToBeUploaded/>
+                <Assessment_DetailsOfDocumentsToBeUploaded />
               </Tab.Pane>
 
 
@@ -353,7 +359,8 @@ const Assessment = () => {
                 aria-labelledby="Details_of_Land-tab"
                 tabIndex={0}
               >
-                <Assessment_Details_of_Land/>
+                <LandDocuments/>
+                {/* <Assessment_Details_of_Land /> */}
               </Tab.Pane>
 
               <Tab.Pane
@@ -364,12 +371,13 @@ const Assessment = () => {
                 aria-labelledby="DocumentsUpload-tab"
                 tabIndex={0}
               >
-                <Assessment_stage_I_DetailsOfDocumentsToBeUploaded/>
+                <Documents/>
+                {/* <Assessment_stage_I_DetailsOfDocumentsToBeUploaded /> */}
               </Tab.Pane>
 
-              
 
-              
+
+
 
             </Tab.Content>
           </Tab.Container>
