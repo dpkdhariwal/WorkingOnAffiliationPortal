@@ -11,7 +11,7 @@ import Error505 from "./components/custompages/Error505";
 import Signin from "./screens/Auth/Signin.jsx";
 import Signup from "./components/custompages/Signup";
 import Forgetpassword from "./components/custompages/Forgetpassword.jsx";
-import LandingPage from "./landingpage/Landingpage.jsx";
+// import LandingPage from "./landingpage/Landingpage.jsx";
 import "animate.css";
 import { Provider } from "react-redux";
 import Store from "./common/redux/Store.jsx";
