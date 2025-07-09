@@ -265,8 +265,48 @@ export const Assessment_DetailsOfDocumentsToBeUploaded = () => {
   const index = 1;
   return (
     <>
+      <div
+        style={{
+          backgroundColor: "rgb(245, 245, 245)",
+          margin: "10px 0px 0px",
+          borderRadius: 6,
+          borderStyle: "dashed",
+          borderWidth: "thin",
+          padding: "10px",
+        }}
+      >
+        <table
+          width="98%"
+          border={1}
+          style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
+          align="center"
+          cellPadding="5px"
+        >
+          <tbody>
+            <tr>
+              <th colSpan={4} style={{ border: "1px solid black" }}>Details of Trade(s)/Unit(s) for Affiliation</th>
+            </tr>
+            <tr>
+              <th style={{ border: "1px solid black" }}>Trade </th>
+              <th style={{ border: "1px solid black" }}>Unit in Shift 1</th>
+              <th style={{ border: "1px solid black" }}>Unit in Shift 2</th>
+              <th style={{ border: "1px solid black" }}>Unit in Shift 3</th>
+            </tr>
+            {["Electrician", "Fitter", "Welder", "COPA"].map((trade, idx) => (
+              <><tr key={idx}>
+                <td style={{ border: "1px solid black" }}>{trade}</td>
+                <td style={{ border: "1px solid black" }}>Unit in Shift 1</td>
+                <td style={{ border: "1px solid black" }}>Unit in Shift 2</td>
+                <td style={{ border: "1px solid black" }}>Unit in Shift 3</td>
+              </tr></>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-      {["Electrician", "Fitter", "Welder", "COPA"].map((trade, idx) => (
+
+
+      {/* {["Electrician", "Fitter", "Welder", "COPA"].map((trade, idx) => (
         <Row
           key={idx}
           style={{
@@ -278,7 +318,7 @@ export const Assessment_DetailsOfDocumentsToBeUploaded = () => {
             padding: "10px",
           }}
         >
-          <Col xl={6} lg={6} md={6} sm={6}>
+          <Col xl={12} lg={12} md={12} sm={12}>
             <Row style={{ marginTop: '1rem' }}>
               <Col md={4}>
                 <Form.Group controlId={`tradeList.${index}.language`}>
@@ -344,7 +384,7 @@ export const Assessment_DetailsOfDocumentsToBeUploaded = () => {
               </Col>
             </Row>
           </Col>
-          {true && (<Col xl={6} lg={6} md={6} sm={6}>
+          {false && (<Col xl={6} lg={6} md={6} sm={6}>
             <div style={{ padding: 2, background: "#E0ECF5", borderRadius: 6 }}>
               {false && (<div className="bg-body-secondary p-3">
                 {messages.map((msg, index) => (
@@ -596,7 +636,7 @@ export const Assessment_DetailsOfDocumentsToBeUploaded = () => {
                       >
                         Edit
                       </Button>
-                      {/* <Button variant="primary">Submit</Button> */}
+                      <Button variant="primary">Submit</Button>
                     </Card.Footer>
                   </Card>
                 ) : (
@@ -606,7 +646,7 @@ export const Assessment_DetailsOfDocumentsToBeUploaded = () => {
             </div>
           </Col>)}
         </Row>
-      ))}
+      ))} */}
 
 
       <Modal show={showXlModal} onHide={handleCloseModal} size="xl">

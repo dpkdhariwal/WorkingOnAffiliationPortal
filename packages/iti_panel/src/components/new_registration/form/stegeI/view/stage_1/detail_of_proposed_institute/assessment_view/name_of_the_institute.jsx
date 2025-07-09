@@ -77,7 +77,7 @@ export const Name_of_the_institute = () => {
           padding: "10px",
         }}
       >
-        <Col xl={6} lg={6} md={6} sm={6}>
+        <Col xl={12} lg={12} md={12} sm={12}>
           <table
             width="98%"
             border={1}
@@ -97,7 +97,7 @@ export const Name_of_the_institute = () => {
             </tbody>
           </table>
         </Col>
-        {true && (<Col xl={6} lg={6} md={6} sm={6}>
+        {false && (<Col xl={6} lg={6} md={6} sm={6}>
           <div className="form-container">
             {formSubmited == false ? (
               <Formik

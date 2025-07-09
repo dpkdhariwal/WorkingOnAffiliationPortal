@@ -76,29 +76,7 @@ export const LandDocuments = () => {
         padding: "10px",
       }}>
         <h5>Details of Land</h5>
-
-        <table
-          width="98%"
-          border={1}
-          style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
-          align="center"
-          cellPadding="5px"
-        >
-          <tbody>
-            <tr>
-              <th style={{ border: "1px solid black" }}>Possession of Land</th>
-              <th style={{ border: "1px solid black" }}>Land Owner Name</th>
-              <th style={{ border: "1px solid black" }}>Land Registration Number</th>
-
-            </tr>
-            <tr>
-              <td style={{ border: "1px solid black" }}>Owned</td>
-              <td style={{ border: "1px solid black" }}>ABCD</td>
-              <td style={{ border: "1px solid black" }}>123456789</td>
-            </tr>
-          </tbody>
-        </table>
-
+        {/* <hr className="custom-hr"/> */}
         <Row
           style={{
             backgroundColor: "rgb(245, 245, 245)",
@@ -106,14 +84,48 @@ export const LandDocuments = () => {
             borderRadius: 6,
             // borderStyle: "dashed",
             // borderWidth: "thin",
-            padding: "10px",
+            // padding: "10px",
+          }}
+        > <Col xl={12} lg={12} md={12} sm={12}>
+            <table
+              width="100%"
+              border={1}
+              style={{ borderCollapse: "collapse", color: 'black' }}
+              align="center"
+              cellPadding="5px"
+            >
+              <tbody>
+                <tr>
+                  <th style={{ border: "1px solid black" }}>Possession of Land</th>
+                  <th style={{ border: "1px solid black" }}>Land Owner Name</th>
+                  <th style={{ border: "1px solid black" }}>Land Registration Number</th>
+
+                </tr>
+                <tr>
+                  <td style={{ border: "1px solid black" }}>Owned</td>
+                  <td style={{ border: "1px solid black" }}>ABCD</td>
+                  <td style={{ border: "1px solid black" }}>123456789</td>
+                </tr>
+              </tbody>
+            </table>
+          </Col>
+
+        </Row>
+        <Row
+          style={{
+            backgroundColor: "rgb(245, 245, 245)",
+            margin: "10px 0px 0px",
+            borderRadius: 6,
+            // borderStyle: "dashed",
+            // borderWidth: "thin",
+            // padding: "10px",
           }}
         >
           <Col xl={6} lg={6} md={6} sm={6}>
             <table
-              width="98%"
+              width="100%"
               border={1}
-              style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
+              style={{ borderCollapse: "collapse", color: 'black' }}
               align="center"
               cellPadding="5px"
             >
@@ -126,7 +138,7 @@ export const LandDocuments = () => {
                 <tr>
                   <td style={{ border: "1px solid black" }}>
                     <table
-                      width="98%"
+                      width="100%"
                       border={1}
                       style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
                       align="center"
@@ -417,14 +429,14 @@ export const LandDocuments = () => {
             borderRadius: 6,
             // borderStyle: "dashed",
             // borderWidth: "thin",
-            padding: "10px",
+            // padding: "10px",
           }}
         >
           <Col xl={6} lg={6} md={6} sm={6}>
             <table
-              width="98%"
+              width="100%"
               border={1}
-              style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
+              style={{ borderCollapse: "collapse", color: 'black' }}
               align="center"
               cellPadding="5px"
             >
@@ -437,7 +449,7 @@ export const LandDocuments = () => {
                 <tr>
                   <td style={{ border: "1px solid black" }}>
                     <table
-                      width="98%"
+                      width="100%"
                       border={1}
                       style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
                       align="center"
@@ -720,9 +732,6 @@ export const LandDocuments = () => {
           </Col>)}
         </Row>
 
-
-
-
         <Row
           style={{
             backgroundColor: "rgb(245, 245, 245)",
@@ -730,14 +739,14 @@ export const LandDocuments = () => {
             borderRadius: 6,
             // borderStyle: "dashed",
             // borderWidth: "thin",
-            padding: "10px",
+            // padding: "10px",
           }}
         >
           <Col xl={6} lg={6} md={6} sm={6}>
             <table
-              width="98%"
+              width="100%"
               border={1}
-              style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
+              style={{ borderCollapse: "collapse", color: 'black' }}
               align="center"
               cellPadding="5px"
             >
@@ -750,7 +759,7 @@ export const LandDocuments = () => {
                 <tr>
                   <td style={{ border: "1px solid black" }}>
                     <table
-                      width="98%"
+                      width="100%"
                       border={1}
                       style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
                       align="center"
@@ -1045,7 +1054,7 @@ export const LandDocuments = () => {
         >
           <Col xl={6} lg={6} md={6} sm={6}>
             <table
-              width="98%"
+              width="100%"
               border={1}
               style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
               align="center"

@@ -13,12 +13,12 @@ import { Assessment_Details_of_Land } from "../Assessment/stage-I/DetailsOfTheLa
 import { Assessment_stage_I_DetailsOfDocumentsToBeUploaded } from "../Assessment/stage-I/DocumentsUpload";
 import { Name_of_the_institute } from "../new_registration/form/stegeI/view/stage_1/detail_of_proposed_institute/assessment_view/name_of_the_institute";
 import { AddressOfInstitute } from "../new_registration/form/stegeI/view/stage_1/detail_of_proposed_institute/view/Address_of_Institute";
-import {InstituteLocation} from "../new_registration/form/stegeI/view/stage_1/detail_of_proposed_institute/assessment_view/instituteLocation";
+import { InstituteLocation } from "../new_registration/form/stegeI/view/stage_1/detail_of_proposed_institute/assessment_view/instituteLocation";
 
-import {LandDocuments} from "../new_registration/form/stegeI/view/stage_1/detail_of_proposed_institute/assessment_view/land_documents"
+import { LandDocuments } from "../new_registration/form/stegeI/view/stage_1/detail_of_proposed_institute/assessment_view/land_documents"
 
 
-import {Documents} from "../new_registration/form/stegeI/view/stage_1/detail_of_proposed_institute/assessment_view/documents"
+import { Documents } from "../new_registration/form/stegeI/view/stage_1/detail_of_proposed_institute/assessment_view/documents"
 
 
 import {
@@ -331,11 +331,11 @@ const Assessment = () => {
                 role="tabpanel"
                 eventKey="Details_of_the_Proposed_Institute"
                 aria-labelledby="Details_of_the_Proposed_Institute-tab"
-                tabIndex={0}
+                tabIndex={1}
               >
                 <Name_of_the_institute />
-                <AddressOfInstitute/>
-                <InstituteLocation/>
+                <AddressOfInstitute />
+                <InstituteLocation />
                 {/* <Assessment_Proposed_Institute/> */}
               </Tab.Pane>
 
@@ -345,11 +345,10 @@ const Assessment = () => {
                 role="tabpanel"
                 eventKey="Details_of_Trade__Unit"
                 aria-labelledby="Details_of_Trade__Unit-tab"
-                tabIndex={0}
+                tabIndex={2}
               >
                 <Assessment_DetailsOfDocumentsToBeUploaded />
               </Tab.Pane>
-
 
               <Tab.Pane
                 className="fade text-muted p-0"
@@ -357,9 +356,9 @@ const Assessment = () => {
                 role="tabpanel"
                 eventKey="Details_of_Land"
                 aria-labelledby="Details_of_Land-tab"
-                tabIndex={0}
+                tabIndex={3}
               >
-                <LandDocuments/>
+                <LandDocuments />
                 {/* <Assessment_Details_of_Land /> */}
               </Tab.Pane>
 
@@ -369,16 +368,28 @@ const Assessment = () => {
                 role="tabpanel"
                 eventKey="DocumentsUpload"
                 aria-labelledby="DocumentsUpload-tab"
-                tabIndex={0}
+                tabIndex={4}
               >
-                <Documents/>
+                <Documents />
                 {/* <Assessment_stage_I_DetailsOfDocumentsToBeUploaded /> */}
               </Tab.Pane>
 
-
-
-
-
+              <Tab.Pane
+                className="fade text-muted p-0"
+                id="ReviewAssessment-pane"
+                role="tabpanel"
+                eventKey="ReviewAssessment"
+                aria-labelledby="ReviewAssessment-tab"
+                tabIndex={5}
+              >
+                <Assessment_Basic_Detail />
+                <Name_of_the_institute />
+                <AddressOfInstitute />
+                <InstituteLocation />
+                <Assessment_DetailsOfDocumentsToBeUploaded />
+                <LandDocuments />
+                <Documents />
+              </Tab.Pane>
             </Tab.Content>
           </Tab.Container>
         </Card.Body>
