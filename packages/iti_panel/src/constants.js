@@ -561,8 +561,7 @@ export const IndianStates = [
 export const getDistrictsByState = (state) => {
   const stateObj = IndianStates.find((s) => s.value === state);
   return stateObj ? stateObj.districts : [];
-}
-
+};
 
 // Form Applicant Entity Details
 export const UPDATE_ENTITY_DETAILS = "UPDATE_ENTITY_DETAILS";
@@ -572,78 +571,115 @@ export const UPDATE_PURPOSED_INSTI_INFO = "UPDATE_PURPOSED_INSTI_INFO";
 export const ADD_MORE_TRADE = "ADD_MORE_TRADE";
 export const UPDATE_TRADE_UNIT = "UPDATE_TRADE_UNIT";
 
-
 // Details of the Land to be used for the ITI
 export const UPDATE_LAND_INFO = "UPDATE_LAND_INFO";
-
 
 export const UPDATE_LAND_DOCUMENT_INFO = "UPDATE_LAND_DOCUMENT_INFO";
 export const ADD_MORE_LAND_DOCUMENT = "ADD_MORE_LAND_DOCUMENT";
 
-
-
-export const UPDATE_LEASE_DEED_DOCUMENT_INFO = "UPDATE_LEASE_DEED_DOCUMENT_INFO";
+export const UPDATE_LEASE_DEED_DOCUMENT_INFO =
+  "UPDATE_LEASE_DEED_DOCUMENT_INFO";
 export const ADD_MORE_LEASE_DOCUMENT = "ADD_MORE_LEASE_DOCUMENT";
 
-  export const languages = [
-    "",
-    "Hindi",
-    "English",
-    "Bengali",
-    "Telugu",
-    "Marathi",
-    "Tamil",
-    "Urdu",
-    "Gujarati",
-    "Kannada",
-    "Odia",
-    "Malayalam",
-    "Punjabi",
-  ];
+export const languages = [
+  "",
+  "Hindi",
+  "English",
+  "Bengali",
+  "Telugu",
+  "Marathi",
+  "Tamil",
+  "Urdu",
+  "Gujarati",
+  "Kannada",
+  "Odia",
+  "Malayalam",
+  "Punjabi",
+];
 
-  export const ID_Proof_Doc_list = [
-    "Aadhaar Card",
-    "PAN Card",
-    "Passport",
-    "Voter ID Card",
-    "Driving License",
-  ];
+export const ID_Proof_Doc_list = [
+  "Aadhaar Card",
+  "PAN Card",
+  "Passport",
+  "Voter ID Card",
+  "Driving License",
+];
 
-  export const designation = ["Secretary", "Chairperson", "President"];
+export const designation = ["Secretary", "Chairperson", "President"];
 
-   export const ctsTrades = [
-    "Select Trade",
-    "Electrician",
-    "Fitter",
-    "Turner",
-    "Machinist",
-    "Welder (Gas and Electric)",
-    "Mechanic (Motor Vehicle)",
-    "Mechanic Diesel",
-    "Electronics Mechanic",
-    "Refrigeration and Air Conditioning Technician",
-    "Instrument Mechanic",
-    "Information & Communication Technology System Maintenance",
-    "Computer Operator and Programming Assistant (COPA)",
-    "Draughtsman (Mechanical)",
-    "Draughtsman (Civil)",
-    "Wireman",
-    "Surveyor",
-    "Tool and Die Maker (Press Tools, Jigs & Fixtures)",
-    "Plumber",
-    "Carpenter",
-    "Foundryman",
-    "Painter (General)",
-    "Sheet Metal Worker",
-    "Mechanic (Tractor)",
-    "Mechanic (Auto Electrical and Electronics)",
-    "Fashion Design & Technology",
-    "Dress Making",
-    "Stenographer & Secretarial Assistant (English)",
-    "Stenographer & Secretarial Assistant (Hindi)",
-    "Baker and Confectioner",
-    "Food Production (General)",
-    "Health Sanitary Inspector",
-    "Hair & Skin Care",
-    "Sewing Technology",
-  ];
+export const ctsTrades = [
+  "Select Trade",
+  "Electrician",
+  "Fitter",
+  "Turner",
+  "Machinist",
+  "Welder (Gas and Electric)",
+  "Mechanic (Motor Vehicle)",
+  "Mechanic Diesel",
+  "Electronics Mechanic",
+  "Refrigeration and Air Conditioning Technician",
+  "Instrument Mechanic",
+  "Information & Communication Technology System Maintenance",
+  "Computer Operator and Programming Assistant (COPA)",
+  "Draughtsman (Mechanical)",
+  "Draughtsman (Civil)",
+  "Wireman",
+  "Surveyor",
+  "Tool and Die Maker (Press Tools, Jigs & Fixtures)",
+  "Plumber",
+  "Carpenter",
+  "Foundryman",
+  "Painter (General)",
+  "Sheet Metal Worker",
+  "Mechanic (Tractor)",
+  "Mechanic (Auto Electrical and Electronics)",
+  "Fashion Design & Technology",
+  "Dress Making",
+  "Stenographer & Secretarial Assistant (English)",
+  "Stenographer & Secretarial Assistant (Hindi)",
+  "Baker and Confectioner",
+  "Food Production (General)",
+  "Health Sanitary Inspector",
+  "Hair & Skin Care",
+  "Sewing Technology",
+];
+
+export const AffiliationCategory = [
+  { name: "Application for Establishment of New ITIs", master: "01" },
+  {
+    name: "Application for opening Mini Skill Training Institute",
+    master: "02",
+  },
+  {
+    name: "Establishment of New Age ITIs or Adoption of existing ITIs by industry entities",
+    master: "03",
+  },
+  {
+    name: "Application from Existing ITIs",
+    master: "04",
+    subCate: [
+      { name: "Addition of New Trades/Units", master: "01" },
+      { name: "Name Change of the ITI", master: "02" },
+      { name: "Shifting/Relocation or Merger of ITIs", master: "03" },
+      {
+        name: "SCVT to NCVET conversion of Trades (for existing Government ITIs)",
+        master: "04",
+      },
+      { name: "Renewal of Affiliation", master: "05" },
+      {
+        name: "Affiliation under the Dual System of Training (DST)",
+        master: "06",
+      },
+      { name: "Surrender of Trade/Units", master: "07" },
+    ],
+  },
+];
+
+export const UPDATE_STAGE_I_FEE_PAID = "UPDATE_STAGE_I_FEE_PAID";
+export const UPDATE_STAGE_II_FEE_PAID = "UPDATE_STAGE_II_FEE_PAID";
+
+export const AppFlow = {
+  feepaid: {
+    status: "Paid", // Paid | Un-paid
+  },
+};

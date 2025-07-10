@@ -9,7 +9,9 @@ import Swal from "sweetalert2";
 import { ViewApplication } from "./Modal/view_application";
 import { Form as BootstrapForm } from 'react-bootstrap';
 
-const FeePayment = () => {
+import { UPDATE_STAGE_I_FEE_PAID } from "../../../../constants"
+
+const FeePayment = ({ setActive }) => {
   const [isHidden, setisHidden] = useState([true]);
 
   const { Formik } = formik;
@@ -37,6 +39,7 @@ const FeePayment = () => {
 
   const PropInstiInfo = useSelector((state) => state.ProposedInstituteInfo);
 
+  const reg = useSelector((state) => state.reg);
 
   const submit = (values) => {
     Swal.fire({
@@ -53,25 +56,31 @@ const FeePayment = () => {
           title: "Saving...",
           didOpen: () => {
             Swal.showLoading();
-            dispatch({ type: UPDATE_ENTITY_DETAILS, payload: values });
-            console.log(values, EntityDetails);
+            dispatch({ type: UPDATE_STAGE_I_FEE_PAID });
+            Swal.close();
 
-            // dispatch({ type: "set_comp_stateI_III", payload: values });
-
-            // // simulate async save (remove setTimeout if dispatch is sync)
-            // setTimeout(() => {
-            //   Swal.close(); // close loading alert
-            //   console.log(reg.steps[0]);
-            //   dispatch({
-            //     type: "set_filled_step",
-            //     payload: { step: 0 },
-            //   });
-            //   dispatch({
-            //     type: "reg_set_active_step",
-            //     payload: { step: 1 },
-            //   });
-            //   setActive(reg.steps[1]);
-            // }, 1000); // optional delay
+            Swal.showLoading();
+            Swal.fire({
+              title: "Fee Payment",
+              text: "You Have Paid Stage-I Fee",
+              icon: "success",
+              confirmButtonText: "Ok, Go Next",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                // User confirmed – now show loading or save directly
+                Swal.fire({
+                  title: "Saving...",
+                  didOpen: () => {
+                    dispatch({ type: "set_filled_step", payload: { step: 4 }, });
+                    dispatch({ type: "reg_set_active_step", payload: { step: 5 } });
+                    setActive(reg.steps[5]);
+                    Swal.close();
+                  },
+                });
+              } else {
+                console.log("User cancelled save");
+              }
+            });
           },
         });
       } else {
@@ -111,13 +120,14 @@ const FeePayment = () => {
                   <li>Please preview the application before fee payment. No editing in
                     application would be allowed after fee payment.</li></ul></p>
               <div className="d-grid gap-2 mb-4">
-                <ViewApplication />
-              </div>
+                {/* <ViewApplication /> */}
+                <Button size="lg" onClick={() => navigate('/dashboard/application_stage_1_form')}>
+                  View Application
+                </Button>              </div>
 
 
               <div className="form-check">
                 <BootstrapForm noValidate onSubmit={handleSubmit}>
-                  
                   <BootstrapForm.Check
                     type="checkbox"
                     id="flexCheckDefault"
@@ -127,13 +137,13 @@ const FeePayment = () => {
                     onChange={handleChange}
                     isInvalid={touched.iaccept && !!errors.iaccept}
                     feedback={errors.iaccept}
-                    // feedbackType="invalid"
+                  // feedbackType="invalid"
                   />
                 </BootstrapForm>
                 <label className="form-check-label" htmlFor="flexCheckDefault">
-                    I have previewed the application and I am sure that all the
-                    details are correct. <span style={{ color: "red" }}>*</span>{" "}
-                  </label>
+                  I have previewed the application and I am sure that all the
+                  details are correct. <span style={{ color: "red" }}>*</span>{" "}
+                </label>
               </div>
 
               {PropInstiInfo.type_of_institute === "Government" ? (<Card

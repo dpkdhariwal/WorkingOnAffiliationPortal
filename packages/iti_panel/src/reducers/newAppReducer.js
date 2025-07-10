@@ -8,8 +8,29 @@ import {
   ADD_MORE_TRADE,
   UPDATE_LAND_INFO,
   UPDATE_TRADE_UNIT,
+  UPDATE_STAGE_I_FEE_PAID,
+  UPDATE_STAGE_II_FEE_PAID,
 } from "../constants";
 import * as yup from "yup";
+
+// Application Info
+export const AppliInfoInitialValues = {
+  applicantId: "XYZ001234567890",
+  app_status: { at: "feepaid", status: "Paid" },
+};
+export const AppliInfo = (state = AppliInfoInitialValues, action) => {
+  let { type, payload } = action;
+  switch (type) {
+    case UPDATE_STAGE_I_FEE_PAID:
+      state = { ...state, ...{ stage_I_fees: "Paid" } };
+      return state;
+    case UPDATE_STAGE_II_FEE_PAID:
+      state = { ...state, ...{ stage_II_fees: "Paid" } };
+      return state;
+    default:
+      return state;
+  }
+};
 
 // App Category Reducer
 let initialAppCat = { selected: false, cat: {} };
@@ -55,6 +76,9 @@ let ApplicantEntityDetails = {
   run_Landmark: [],
 };
 export const initialValues = {
+  aff_category: "",
+  aff_sub_category: "",
+
   category: "",
   name_of_applicant_entity: "",
 
@@ -97,6 +121,13 @@ export const EntityDetails = (state = initialValues, action) => {
   }
 };
 export const yupObject = {
+  aff_category: yup.string().required("Select Affiliation Category"),
+  aff_sub_category: yup.string().when("aff_category", {
+    is: "04", // 🔄 change to "no" since category and comments are required when it's "no"
+    then: () => yup.string().required("Please select a Sub category"),
+    otherwise: () => yup.string().notRequired(),
+  }),
+
   category: yup.string().required("Please select a category"),
   name_of_applicant_entity: yup
     .string()

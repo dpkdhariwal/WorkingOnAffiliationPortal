@@ -10,7 +10,9 @@ import { Formik, Field, FieldArray } from "formik";
 
 
 
-export const Documents = () => {
+export const Documents = ({ view: viewProp = false }) => {
+  const [view, setView] = useState(viewProp);
+
   const MaxData = [
     { value: "Document is not legible", label: "Document is not legible" },
     { value: "Document is irrelevant", label: "Document is irrelevant" },
@@ -85,7 +87,7 @@ export const Documents = () => {
             padding: "10px",
           }}
         >
-          <Col xl={6} lg={6} md={6} sm={6}>
+          <Col xl={view ? 12 : 6} lg={view ? 12 : 6} md={view ? 12 : 6} sm={view ? 12 : 6}>
             <table
               width="98%"
               border={1}
@@ -121,7 +123,7 @@ export const Documents = () => {
               </tbody>
             </table>
           </Col>
-          {true && (<Col xl={6} lg={6} md={6} sm={6}>
+          {true && view != true && (<Col xl={6} lg={6} md={6} sm={6}>
             <div className="form-container">
               {formSubmited == false ? (
                 <Formik
@@ -369,8 +371,6 @@ export const Documents = () => {
             </div>
           </Col>)}
         </Row>
-
-
         <Row
           style={{
             backgroundColor: "rgb(245, 245, 245)",
@@ -381,7 +381,7 @@ export const Documents = () => {
             padding: "10px",
           }}
         >
-          <Col xl={6} lg={6} md={6} sm={6}>
+          <Col xl={view ? 12 : 6} lg={view ? 12 : 6} md={view ? 12 : 6} sm={view ? 12 : 6}>
             <table
               width="98%"
               border={1}
@@ -402,7 +402,7 @@ export const Documents = () => {
               </tbody>
             </table>
           </Col>
-          {true && (<Col xl={6} lg={6} md={6} sm={6}>
+          {true && view != true && (<Col xl={6} lg={6} md={6} sm={6}>
             <div className="form-container">
               {formSubmited == false ? (
                 <Formik
@@ -650,7 +650,6 @@ export const Documents = () => {
             </div>
           </Col>)}
         </Row>
-
         <Row
           style={{
             backgroundColor: "rgb(245, 245, 245)",
@@ -661,7 +660,7 @@ export const Documents = () => {
             padding: "10px",
           }}
         >
-          <Col xl={6} lg={6} md={6} sm={6}>
+          <Col xl={view ? 12 : 6} lg={view ? 12 : 6} md={view ? 12 : 6} sm={view ? 12 : 6}>
             <table
               width="98%"
               border={1}
@@ -704,7 +703,7 @@ export const Documents = () => {
               </tbody>
             </table>
           </Col>
-          {true && (<Col xl={6} lg={6} md={6} sm={6}>
+          {true && view != true && (<Col xl={6} lg={6} md={6} sm={6}>
             <div className="form-container">
               {formSubmited == false ? (
                 <Formik
@@ -952,7 +951,6 @@ export const Documents = () => {
             </div>
           </Col>)}
         </Row>
-
         <Row
           style={{
             backgroundColor: "rgb(245, 245, 245)",
@@ -963,7 +961,7 @@ export const Documents = () => {
             padding: "10px",
           }}
         >
-          <Col xl={6} lg={6} md={6} sm={6}>
+          <Col xl={view ? 12 : 6} lg={view ? 12 : 6} md={view ? 12 : 6} sm={view ? 12 : 6}>
             <table
               width="98%"
               border={1}
@@ -973,7 +971,7 @@ export const Documents = () => {
             >
               <thead>
                 <tr>
-                  <th style={{ border: "1px solid black" }}>Resolution Information</th>
+                  <th style={{ border: "1px solid black" }}>Resolution Certificate</th>
                 </tr>
               </thead>
               <tbody>
@@ -1006,7 +1004,7 @@ export const Documents = () => {
               </tbody>
             </table>
           </Col>
-          {true && (<Col xl={6} lg={6} md={6} sm={6}>
+          {true && view != true && (<Col xl={6} lg={6} md={6} sm={6}>
             <div className="form-container">
               {formSubmited == false ? (
                 <Formik

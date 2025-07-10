@@ -19,6 +19,8 @@ import { trade_unit_reducer_yupObject } from "../../../../reducers/newAppReducer
 import { ctsTrades, UPDATE_TRADE_UNIT } from "../../../../constants";
 
 const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
+    const reg = useSelector((state) => state.reg);
+
   const dispatch = useDispatch();
   const submit = (values) => {
     console.log(values);
@@ -35,13 +37,22 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
         Swal.fire({
           title: "Saving...",
           didOpen: () => {
-            Swal.showLoading();
 
-            // simulate async save (remove setTimeout if dispatch is sync)
-            setTimeout(() => {
-              dispatch({ type: UPDATE_TRADE_UNIT, payload: values });
-              Swal.close(); // close loading alert
-            }, 1000); // optional delay
+            Swal.showLoading();
+            dispatch({ type: UPDATE_TRADE_UNIT, payload: values });
+            dispatch({ type: "set_filled_step", payload: { step: 2 }, });
+            dispatch({ type: "reg_set_active_step", payload: { step: 3 } });
+            setActive(reg.steps[3]);
+            Swal.close();
+
+            // Swal.showLoading();
+            // // simulate async save (remove setTimeout if dispatch is sync)
+            // setTimeout(() => {
+            //   dispatch({ type: UPDATE_TRADE_UNIT, payload: values });
+            //   Swal.close(); // close loading alert
+
+
+            // }, 1000); // optional delay
           },
         });
       } else {
@@ -80,6 +91,9 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
                     {values.tradeList.map((_, index) => (
                       <Row key={index} className="mb-3">
                         <Col md={4}>
+                          <BootstrapForm.Label>
+                            Select Trade
+                          </BootstrapForm.Label>
                           <BootstrapForm.Select
                             size="lg"
                             name={`tradeList[${index}]`}
@@ -101,6 +115,9 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
                         </Col>
 
                         <Col md={4}>
+                          <BootstrapForm.Label>
+                            Enter Unit in Shift 1
+                          </BootstrapForm.Label>
                           <BootstrapForm.Control
                             type="number"
                             name={`unit_in_shift1[${index}]`}
@@ -109,7 +126,7 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
                             isInvalid={
                               touched.unit_in_shift1?.[index] && !!errors.unit_in_shift1?.[index]
                             }
-                            placeholder="Enter Trade Number"
+                            placeholder="Enter Number"
                           />
                           <BootstrapForm.Control.Feedback type="invalid">
                             {errors.unit_in_shift1?.[index]}
@@ -117,7 +134,9 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
                         </Col>
 
                         <Col md={4}>
-
+                          <BootstrapForm.Label>
+                            Enter Unit in Shift 2
+                          </BootstrapForm.Label>
                           <BootstrapForm.Control
                             type="number"
                             name={`unit_in_shift2[${index}]`}
@@ -126,7 +145,7 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
                             isInvalid={
                               touched.unit_in_shift2?.[index] && !!errors.unit_in_shift2?.[index]
                             }
-                            placeholder="Enter Trade Number"
+                            placeholder="Enter Number"
                           />
                           <BootstrapForm.Control.Feedback type="invalid">
                             {errors.unit_in_shift2?.[index]}

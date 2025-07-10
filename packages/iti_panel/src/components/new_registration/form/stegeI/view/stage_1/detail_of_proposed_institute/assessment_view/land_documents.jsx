@@ -10,7 +10,8 @@ import { Formik, Field, FieldArray } from "formik";
 
 
 
-export const LandDocuments = () => {
+export const LandDocuments = ({ view: viewProp = false }) => {
+  const [view, setView] = useState(viewProp);
   const MaxData = [
     { value: "Document is not legible", label: "Document is not legible" },
     { value: "Document is irrelevant", label: "Document is irrelevant" },
@@ -109,19 +110,15 @@ export const LandDocuments = () => {
               </tbody>
             </table>
           </Col>
-
         </Row>
         <Row
           style={{
             backgroundColor: "rgb(245, 245, 245)",
             margin: "10px 0px 0px",
             borderRadius: 6,
-            // borderStyle: "dashed",
-            // borderWidth: "thin",
-            // padding: "10px",
           }}
         >
-          <Col xl={6} lg={6} md={6} sm={6}>
+          <Col xl={view ? 12 : 6} lg={view ? 12 : 6} md={view ? 12 : 6} sm={view ? 12 : 6}>
             <table
               width="100%"
               border={1}
@@ -172,7 +169,7 @@ export const LandDocuments = () => {
               </tbody>
             </table>
           </Col>
-          {true && (<Col xl={6} lg={6} md={6} sm={6}>
+          {true && view != true && (<Col xl={6} lg={6} md={6} sm={6}>
             <div className="form-container">
               {formSubmited == false ? (
                 <Formik
@@ -432,7 +429,7 @@ export const LandDocuments = () => {
             // padding: "10px",
           }}
         >
-          <Col xl={6} lg={6} md={6} sm={6}>
+          <Col xl={view ? 12 : 6} lg={view ? 12 : 6} md={view ? 12 : 6} sm={view ? 12 : 6}>
             <table
               width="100%"
               border={1}
@@ -483,7 +480,7 @@ export const LandDocuments = () => {
               </tbody>
             </table>
           </Col>
-          {true && (<Col xl={6} lg={6} md={6} sm={6}>
+          {true && view != true && (<Col xl={6} lg={6} md={6} sm={6}>
             <div className="form-container">
               {formSubmited == false ? (
                 <Formik
@@ -742,7 +739,7 @@ export const LandDocuments = () => {
             // padding: "10px",
           }}
         >
-          <Col xl={6} lg={6} md={6} sm={6}>
+          <Col xl={view ? 12 : 6} lg={view ? 12 : 6} md={view ? 12 : 6} sm={view ? 12 : 6}>
             <table
               width="100%"
               border={1}
@@ -793,7 +790,7 @@ export const LandDocuments = () => {
               </tbody>
             </table>
           </Col>
-          {true && (<Col xl={6} lg={6} md={6} sm={6}>
+          {true && view != true && (<Col xl={6} lg={6} md={6} sm={6}>
             <div className="form-container">
               {formSubmited == false ? (
                 <Formik
@@ -1052,7 +1049,7 @@ export const LandDocuments = () => {
             padding: "10px",
           }}
         >
-          <Col xl={6} lg={6} md={6} sm={6}>
+          <Col xl={view ? 12 : 6} lg={view ? 12 : 6} md={view ? 12 : 6} sm={view ? 12 : 6}>
             <table
               width="100%"
               border={1}
@@ -1072,7 +1069,7 @@ export const LandDocuments = () => {
               </tbody>
             </table>
           </Col>
-          {true && (<Col xl={6} lg={6} md={6} sm={6}>
+          {true && view != true && (<Col xl={6} lg={6} md={6} sm={6}>
             <div className="form-container">
               {formSubmited == false ? (
                 <Formik

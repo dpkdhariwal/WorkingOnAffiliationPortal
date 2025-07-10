@@ -11,7 +11,7 @@ import DetailsOfTheProposedInstitute from "./DetailsOfTheProposedInstitute";
 import DetailsOfTheLandToBeUsedForTheITI from "./DetailsOfTheLandToBeUsedForTheITI";
 import DetailsOfDocumentsToBeUploaded from "./DetailsOfDocumentsToBeUploaded";
 
-const PreviewOfApplication = () => {
+const PreviewOfApplication = ({ setActive }) => {
   const [isHidden, setisHidden] = useState([true]);
 
   const { Formik } = formik;

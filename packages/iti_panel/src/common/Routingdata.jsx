@@ -4,7 +4,7 @@ import Dashboard from "./../components/dashboard/Dashboard";
 // Applicant Screens
 import { Start, SelectCategory } from "../screens/Applicant/Application";
 
-import New_registration from "./../components/new_registration/new_registration_test";
+import New_registration from "../components/new_registration/new_registration";
 
 import Form_stageII from "../components/new_registration/form_stageII";
 
@@ -20,8 +20,8 @@ import Compliance from "../../../ui_layouts_collaborate/src/components/Assessmen
 import StateDashboard from "../../../ui_layouts_collaborate/src/components/Assessment/StateDashboard";
 import AddIcMember from "../../../ui_layouts_collaborate/src/components/Assessment/AddIcMember";
 
-import RdUser from"../../../ui_layouts_collaborate/src/components/Assessment/RdUser";
-
+import RdUser from "../../../ui_layouts_collaborate/src/components/Assessment/RdUser";
+import ViewApplicationStageOne from "../components/new_registration/application_view_stage_1";
 export const Routedata = [
   {
     id: 1,
@@ -38,6 +38,11 @@ export const Routedata = [
         id: 1,
         path: `new_registration`,
         elementName: <New_registration />,
+      },
+      {
+        id: 1,
+        path: `application_stage_1_form`,
+        elementName: <ViewApplicationStageOne />,
       },
       {
         id: 1,
@@ -92,12 +97,12 @@ export const Routedata = [
       },
 
       // State Admin
-       {
+      {
         id: 1,
         path: `state_admin`,
         elementName: <StateDashboard />,
       },
-       {
+      {
         id: 1,
         path: `state_admin/AddStateMembers`,
         elementName: <AddIcMember />,

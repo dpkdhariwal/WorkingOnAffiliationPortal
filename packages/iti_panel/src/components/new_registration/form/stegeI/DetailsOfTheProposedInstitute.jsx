@@ -58,25 +58,35 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
         Swal.fire({
           title: "Saving...",
           didOpen: () => {
-            Swal.showLoading();
-            // dispatch({ type: "set_comp_stateI_III", payload: values });
 
-            // simulate async save (remove setTimeout if dispatch is sync)
-            setTimeout(() => {
-              Swal.close(); // close loading alert
-              console.log(reg.steps[0]);
-              dispatch({ type: UPDATE_PURPOSED_INSTI_INFO, payload: values });
 
-              dispatch({
-                type: "set_filled_step",
-                payload: { step: 2 },
-              });
-              dispatch({
-                type: "reg_set_active_step",
-                payload: { step: 2 },
-              });
-              setActive(reg.steps[1]);
-            }, 1000); // optional delay
+             Swal.showLoading();
+                        dispatch({ type: UPDATE_PURPOSED_INSTI_INFO, payload: values });
+                        dispatch({type: "set_filled_step", payload: { step: 1 },});
+                        dispatch({type: "reg_set_active_step", payload: { step: 2 }});
+                        setActive(reg.steps[2]);
+                        Swal.close(); 
+                        
+
+
+            // Swal.showLoading();
+            // // dispatch({ type: "set_comp_stateI_III", payload: values });
+            // // simulate async save (remove setTimeout if dispatch is sync)
+            // setTimeout(() => {
+            //   Swal.close(); // close loading alert
+            //   console.log(reg.steps[0]);
+            //   dispatch({ type: UPDATE_PURPOSED_INSTI_INFO, payload: values });
+
+            //   dispatch({
+            //     type: "set_filled_step",
+            //     payload: { step: 2 },
+            //   });
+            //   dispatch({
+            //     type: "reg_set_active_step",
+            //     payload: { step: 2 },
+            //   });
+            //   setActive(reg.steps[2]);
+            // }, 1000); // optional delay
           },
         });
       } else {

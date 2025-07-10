@@ -10,12 +10,13 @@ import { UPDATE_LAND_INFO } from "../../../../constants";
 
 import { land_info_yupObject } from "../../../../reducers/newAppReducer";
 
-const DetailsOfTheLandToBeUsedForTheITI = () => {
+const DetailsOfTheLandToBeUsedForTheITI = ({ setActive }) => {
   const { Formik } = formik;
   const formRef2 = useRef();
   const dispatch = useDispatch();
   const formikRef = useRef();
   const land_info_reducer = useSelector((state) => state.land_info_reducer);
+  const reg = useSelector((state) => state.reg);
 
   const submit = (values) => {
     Swal.fire({
@@ -31,8 +32,14 @@ const DetailsOfTheLandToBeUsedForTheITI = () => {
         Swal.fire({
           title: "Saving...",
           didOpen: () => {
+            // Swal.showLoading();
+            // dispatch({ type: UPDATE_LAND_INFO, payload: values });
             Swal.showLoading();
             dispatch({ type: UPDATE_LAND_INFO, payload: values });
+            dispatch({ type: "set_filled_step", payload: { step: 3 }, });
+            dispatch({ type: "reg_set_active_step", payload: { step: 4 } });
+            setActive(reg.steps[4]);
+            Swal.close();
           },
         });
       } else {

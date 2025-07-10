@@ -20,7 +20,7 @@ import {
   loginUserReducer,
   getAllUsersReducer,
 } from "../../reducers/userReducer";
-import { reg, appCat, EntityDetails, ProposedInstituteInfo, trade_unit_reducer, land_info_reducer } from "../../reducers/newAppReducer";
+import { reg, appCat, EntityDetails, ProposedInstituteInfo, trade_unit_reducer, land_info_reducer, AppliInfo } from "../../reducers/newAppReducer";
 
 
 import {land_documents_reducer, lease_deed_document_reducer} from "../../reducers/document_upload";
@@ -39,7 +39,8 @@ const rootReducer = combineReducers({
   trade_unit_reducer,
   land_info_reducer,
   land_documents_reducer,
-  lease_deed_document_reducer
+  lease_deed_document_reducer,
+  AppliInfo
 });
 
 // 👇 Redux persist configuration
