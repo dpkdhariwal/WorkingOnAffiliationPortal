@@ -655,7 +655,7 @@ export const AffiliationCategory = [
     master: "03",
   },
   {
-    name: "Application from Existing ITIs",
+    name: "Application for Existing ITIs",
     master: "04",
     subCate: [
       { name: "Addition of New Trades/Units", master: "01" },
@@ -675,11 +675,47 @@ export const AffiliationCategory = [
   },
 ];
 
-export const UPDATE_STAGE_I_FEE_PAID = "UPDATE_STAGE_I_FEE_PAID";
-export const UPDATE_STAGE_II_FEE_PAID = "UPDATE_STAGE_II_FEE_PAID";
 
 export const AppFlow = {
   feepaid: {
     status: "Paid", // Paid | Un-paid
   },
 };
+
+export const UPDATE_SET_FEE_STATUS = "UPDATE_SET_FEE_STATUS";
+
+export const UPDATE_STAGE_I_FEE_PAID = "UPDATE_STAGE_I_FEE_PAID";
+export const UPDATE_STAGE_II_FEE_PAID = "UPDATE_STAGE_II_FEE_PAID";
+export const SET_STAGE_I__DOCUMENT_STATUS = "SET_STAGE_I__DOCUMENT_STATUS"; 
+
+
+// App Flow
+export const STAGE_I__NOT_FILLED = "STAGE_I__NOT_FILLED"; 
+export const STAGE_I__FILLED = "STAGE_I__FILLED";  
+
+export const STAGE_I__FEE_PENDING = "STAGE_I__FEE_PENDING"; 
+export const STAGE_I__FEE_PAID = "STAGE_I__FEE_PAID"; 
+
+export const STAGE_I__FEE_EXEMPTED = "STAGE_I__FEE_EXEMPTED"; 
+
+export const STAGE_I__DOCUMENT_PENDING = "STAGE_I__DOCUMENT_PENDING"; 
+export const STAGE_I__DOCUMENT_UPLOADED = "STAGE_I__DOCUMENT_UPLOADED"; 
+
+export const STAGE_I__SUBMIT_PENDING = "STAGE_I__SUBMIT_PENDING"; 
+export const STAGE_I__SUBMITED = "STAGE_I__SUBMITED"; 
+
+
+
+// export const STAGE_I__APP_SUBMIT_PENDING = "STAGE_I__APP_SUBMIT_PENDING"; 
+// export const STAGE_I__APP_SUBMITED = "STAGE_I__APP_SUBMITED"; 
+export const STAGE_I__ASSESSMENT_PENDING = "STAGE_I__ASSESSMENT_PENDING"; 
+export const STAGE_I__ASSESSMENT_COMPLETED = "STAGE_I__ASSESSMENT_COMPLETED"; 
+
+
+
+
+
+
+
+
+

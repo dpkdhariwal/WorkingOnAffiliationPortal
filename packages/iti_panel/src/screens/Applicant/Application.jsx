@@ -86,7 +86,7 @@ const SelectCategoryModal = (props) => {
       master: "03",
     },
     {
-      name: "Application from Existing ITIs",
+      name: "Application for Existing ITIs",
       master: "04",
       subCate: [
         { name: "Addition of New Trades/Units", master: "01" },

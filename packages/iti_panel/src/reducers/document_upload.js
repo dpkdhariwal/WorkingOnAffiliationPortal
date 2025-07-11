@@ -49,22 +49,22 @@ export const land_documents_reducer = (
 };
 
 export const land_documents_yupObject = yup.object().shape({
-  land_documents_title: yup
-    .array()
-    .of(yup.string().required("Document title is required"))
-    .min(1, "At least one land document title is required"),
+  // land_documents_title: yup
+  //   .array()
+  //   .of(yup.string().required("Document title is required"))
+  //   .min(1, "At least one land document title is required"),
 
-  land_original_documents: yup
-    .array()
-    .of(yup.string().required("Document language is required")),
+  // land_original_documents: yup
+  //   .array()
+  //   .of(yup.string().required("Document language is required")),
 
-  land_documents_language: yup
-    .array()
-    .of(fileRequired("Original land document is required")),
+  // land_documents_language: yup
+  //   .array()
+  //   .of(fileRequired("Original land document is required")),
 
-  land_notarised_documents: yup
-    .array()
-    .of(fileRequired("Hindi/English notarised copy is required")),
+  // land_notarised_documents: yup
+  //   .array()
+  //   .of(fileRequired("Hindi/English notarised copy is required")),
 });
 
 

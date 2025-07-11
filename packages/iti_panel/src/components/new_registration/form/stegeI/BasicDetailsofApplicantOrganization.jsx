@@ -15,7 +15,11 @@ import PropTypes from "prop-types";
 import Select from "react-select";
 import { IndianStates, getDistrictsByState } from "../../../../constants";
 import { ChatMessage } from "../../../Assessment/ReviewTrail";
-import { UPDATE_ENTITY_DETAILS, AffiliationCategory } from "../../../../constants";
+import {
+  UPDATE_ENTITY_DETAILS, AffiliationCategory,
+  STAGE_I__FEE_PAID,
+  STAGE_I__FEE_EXEMPTED
+} from "../../../../constants";
 
 
 import { Assessment_Basic_Detail as ABD } from "../../../../components/new_registration/form/stegeI/BasicDetailsofApplicantOrganization";
@@ -79,7 +83,7 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
   }
   return (
     <Fragment>
-      {AppliInfo.stage_I_fees === "Paid" ? (<ABD />) : <Formik
+      {AppliInfo.stage_I_fee_status === STAGE_I__FEE_PAID || AppliInfo.stage_I_fee_status === STAGE_I__FEE_EXEMPTED ? (<ABD />) : <Formik
         innerRef={formikRef}
         validationSchema={yup.object().shape(yupObject)}
         onSubmit={(values) => {

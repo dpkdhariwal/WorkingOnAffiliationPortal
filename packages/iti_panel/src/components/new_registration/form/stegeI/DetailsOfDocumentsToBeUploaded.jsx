@@ -7,16 +7,18 @@ import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
 import { Form as BootstrapForm } from "react-bootstrap";
 
-import { languages, ADD_MORE_LAND_DOCUMENT } from "../../../../constants";
+import { languages, ADD_MORE_LAND_DOCUMENT, SET_STAGE_I__DOCUMENT_STATUS } from "../../../../constants";
 import { land_documents_yupObject } from "../../../../reducers/document_upload";
 
 
-const DetailsOfDocumentsToBeUploaded = () => {
+const DetailsOfDocumentsToBeUploaded = ({setActive}) => {
   const dispatch = useDispatch();
-
   const formikRef = useRef();
   const land_info = useSelector((state) => state.land_info_reducer);
   const land_documents_initial_values = useSelector((state) => state.land_documents_reducer);
+  const reg = useSelector((state) => state.reg);
+
+
 
   const submit = (values) => {
     Swal.fire({
@@ -33,25 +35,11 @@ const DetailsOfDocumentsToBeUploaded = () => {
           title: "Saving...",
           didOpen: () => {
             Swal.showLoading();
-            dispatch({ type: UPDATE_ENTITY_DETAILS, payload: values });
-            console.log(values, EntityDetails);
+            dispatch({ type: SET_STAGE_I__DOCUMENT_STATUS, payload: values });
+            dispatch({ type: "set_filled_step", payload: { step: 5 }, });
+            dispatch({ type: "reg_set_active_step", payload: { step: 5 } });
+            setActive(reg.steps[5]);
 
-            // dispatch({ type: "set_comp_stateI_III", payload: values });
-
-            // // simulate async save (remove setTimeout if dispatch is sync)
-            // setTimeout(() => {
-            //   Swal.close(); // close loading alert
-            //   console.log(reg.steps[0]);
-            //   dispatch({
-            //     type: "set_filled_step",
-            //     payload: { step: 0 },
-            //   });
-            //   dispatch({
-            //     type: "reg_set_active_step",
-            //     payload: { step: 1 },
-            //   });
-            //   setActive(reg.steps[1]);
-            // }, 1000); // optional delay
           },
         });
       } else {
@@ -409,7 +397,6 @@ const DetailsOfDocumentsToBeUploaded = () => {
                       </Card>
                     </Card.Body>
                   </Card>
-
                   <Card className="custom-card border border-primary">
                     <Card.Header>
                       <div className="card-title" style={{ textTransform: "none" }}>

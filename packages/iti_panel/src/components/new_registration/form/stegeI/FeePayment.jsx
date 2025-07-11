@@ -9,7 +9,7 @@ import Swal from "sweetalert2";
 import { ViewApplication } from "./Modal/view_application";
 import { Form as BootstrapForm } from 'react-bootstrap';
 
-import { UPDATE_STAGE_I_FEE_PAID } from "../../../../constants"
+import { UPDATE_SET_FEE_STATUS } from "../../../../constants"
 
 const FeePayment = ({ setActive }) => {
   const [isHidden, setisHidden] = useState([true]);
@@ -56,7 +56,7 @@ const FeePayment = ({ setActive }) => {
           title: "Saving...",
           didOpen: () => {
             Swal.showLoading();
-            dispatch({ type: UPDATE_STAGE_I_FEE_PAID });
+            dispatch({ type: UPDATE_SET_FEE_STATUS, payload: PropInstiInfo });
             Swal.close();
 
             Swal.showLoading();
@@ -260,7 +260,7 @@ const FeePayment = ({ setActive }) => {
                   Save & Next
                 </Button>
               ) : PropInstiInfo.type_of_institute === "Private" ? (
-                <Button size="lg" variant="instagram">
+                <Button size="lg" variant="instagram" onClick={() => formikRef.current?.submitForm()} >
                   Pay
                 </Button>
               ) : ''}

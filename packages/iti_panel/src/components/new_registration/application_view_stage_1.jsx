@@ -14,8 +14,6 @@ import { AddressOfInstitute } from "../new_registration/form/stegeI/view/stage_1
 import { InstituteLocation } from "../new_registration/form/stegeI/view/stage_1/detail_of_proposed_institute/assessment_view/instituteLocation";
 
 import { LandDocuments } from "../new_registration/form/stegeI/view/stage_1/detail_of_proposed_institute/assessment_view/land_documents"
-
-
 import { Documents } from "../new_registration/form/stegeI/view/stage_1/detail_of_proposed_institute/assessment_view/documents"
 
 
@@ -50,7 +48,6 @@ const ViewApplicationStageOne = () => {
       <Assessment_DetailsOfDocumentsToBeUploaded />
 
       <LandDocuments view={true} />
-
       <Documents view={true} />
 
     </Fragment>

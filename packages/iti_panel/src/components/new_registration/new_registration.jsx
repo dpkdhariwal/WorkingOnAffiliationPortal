@@ -16,10 +16,18 @@ import DetailsOfTradeUnitForAffiliation from "./form/stegeI/DetailsOfTradeUnitFo
 import FeePayment from "./form/stegeI/FeePayment";
 import { useLocation } from "react-router-dom";
 import { Link, useNavigate } from "react-router-dom";
- 
+import { LandDocuments } from "../new_registration/form/stegeI/view/stage_1/detail_of_proposed_institute/assessment_view/land_documents"
+
+import { Documents } from "../new_registration/form/stegeI/view/stage_1/detail_of_proposed_institute/assessment_view/documents"
+
+import { STAGE_I__FEE_PAID, STAGE_I__FEE_EXEMPTED, STAGE_I__SUBMIT_PENDING, STAGE_I__FEE_PENDING, STAGE_I__SUBMITED, STAGE_I__DOCUMENT_PENDING } from "../../constants";
+
 const New_registration = () => {
   const reg = useSelector((state) => state.reg);
   const [activeStep, setActiveStep] = useState(reg.steps[0]);
+
+  const AppliInfo = useSelector((state) => state.AppliInfo);
+
 
   useEffect(() => {
     console.log(activeStep);
@@ -28,6 +36,9 @@ const New_registration = () => {
   const goToSection = (step, index = null) => {
     setActiveStep(step);
   };
+
+
+
   return (
     <Fragment>
       <Pageheader
@@ -64,19 +75,25 @@ const New_registration = () => {
         <DetailsOfTheProposedInstitute setActive={goToSection} />
       ) : activeStep.label ===
         "Details of Trade(s)/Unit(s) for Affiliation" ? (
-        <DetailsOfTradeUnitForAffiliation setActive={goToSection}  />
+        <DetailsOfTradeUnitForAffiliation setActive={goToSection} />
       ) : // To be Work
         activeStep.label === "Details of the Land to be used for the ITI" ? (
           <DetailsOfTheLandToBeUsedForTheITI setActive={goToSection} />
         ) : // To be Work
           activeStep.label === "Preview of Application" ? (
-            <PreviewOfApplication setActive={goToSection}  />
+            <PreviewOfApplication setActive={goToSection} />
           ) : // To be Work
             activeStep.label === "Fee Payment" ? (
-              <FeePayment setActive={goToSection}  />
+              AppliInfo.stage_I_fee_status === STAGE_I__FEE_PAID || AppliInfo.stage_I_fee_status === STAGE_I__FEE_EXEMPTED ? (<h6>Fee has {STAGE_I__FEE_EXEMPTED}</h6>) : <FeePayment setActive={goToSection} />
             ) : // To be Work
               activeStep.label === "Documents Upload" ? (
-                <DetailsOfDocumentsToBeUploaded />
+                (AppliInfo.stage_I_fee_status === STAGE_I__FEE_PENDING) ? (<h5>First Complete the Stage-I and Pay the Fee</h5>) :
+                  (AppliInfo.stage_I_fee_status === STAGE_I__FEE_PAID || AppliInfo.stage_I_fee_status === STAGE_I__FEE_EXEMPTED && AppliInfo.app_status_awaiting == STAGE_I__DOCUMENT_PENDING) ? (<DetailsOfDocumentsToBeUploaded setActive={goToSection} />) :
+                    <>
+                      <LandDocuments view={true} />
+                      <Documents view={true} />
+                    </>
+
               ) : (
                 // To be Work
                 <p>Something Went Wrong</p>

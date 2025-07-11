@@ -8,22 +8,67 @@ import {
   ADD_MORE_TRADE,
   UPDATE_LAND_INFO,
   UPDATE_TRADE_UNIT,
-  UPDATE_STAGE_I_FEE_PAID,
+  UPDATE_SET_FEE_STATUS,
   UPDATE_STAGE_II_FEE_PAID,
+  STAGE_I__NOT_FILLED,
+  STAGE_I__FILLED,
+  STAGE_I__FEE_PAID,
+  STAGE_I__FEE_EXEMPTED,
+  STAGE_I__FEE_PENDING,
+  STAGE_I__DOCUMENT_PENDING,
+  SET_STAGE_I__DOCUMENT_STATUS,
+  STAGE_I__DOCUMENT_UPLOADED,
+  STAGE_I__ASSESSMENT_PENDING,
+  STAGE_I__SUBMIT_PENDING,
+  STAGE_I__SUBMITED,
 } from "../constants";
 import * as yup from "yup";
 
 // Application Info
 export const AppliInfoInitialValues = {
   applicantId: "XYZ001234567890",
-  app_status: { at: "feepaid", status: "Paid" },
+  stage_I_fee_status: STAGE_I__FEE_PENDING,
+  stage_I_completion_status: STAGE_I__SUBMIT_PENDING,
+  app_status: STAGE_I__NOT_FILLED,
+  app_status_awaiting: STAGE_I__FILLED,
 };
 export const AppliInfo = (state = AppliInfoInitialValues, action) => {
   let { type, payload } = action;
   switch (type) {
-    case UPDATE_STAGE_I_FEE_PAID:
-      state = { ...state, ...{ stage_I_fees: "Paid" } };
-      return state;
+    case UPDATE_SET_FEE_STATUS:
+      switch (payload.type_of_institute) {
+        case "Government":
+          return (state = {
+            ...state,
+            ...{
+              app_status: STAGE_I__FEE_EXEMPTED,
+              stage_I_fee_status: STAGE_I__FEE_EXEMPTED,
+              app_status_awaiting: STAGE_I__DOCUMENT_PENDING,
+            },
+          });
+        case "Private":
+          return (state = {
+            ...state,
+            ...{
+              app_status: STAGE_I__FEE_PAID,
+              stage_I_fee_status: STAGE_I__FEE_EXEMPTED,
+              app_status_awaiting: STAGE_I__DOCUMENT_PENDING,
+            },
+          });
+        default:
+          return state;
+      }
+
+    case SET_STAGE_I__DOCUMENT_STATUS:
+      return (state = {
+        ...state,
+        ...{
+          app_status: STAGE_I__DOCUMENT_UPLOADED,
+          app_status_awaiting: STAGE_I__ASSESSMENT_PENDING,
+          stage_I_completion_status: STAGE_I__SUBMITED,
+        },
+      });
+
     case UPDATE_STAGE_II_FEE_PAID:
       state = { ...state, ...{ stage_II_fees: "Paid" } };
       return state;
