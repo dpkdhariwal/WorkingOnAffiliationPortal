@@ -1,7 +1,9 @@
-import React, { Children } from "react";
+import React, { Children, useState, useEffect } from "react";
 import "./CustomeTimeLine.scss";
 import WorkIcon from "@mui/icons-material/Work";
 import HourglassBottomIcon from "@mui/icons-material/HourglassBottom";
+import TaskAltIcon from '@mui/icons-material/TaskAlt';
+import { Switch } from "@mui/material";
 // export const AffliationTimeLine = ({ children }) => {
 //   return (
 //     <div className="timeline-container">
@@ -84,7 +86,25 @@ export const AffTimeLine = ({ children }) => {
 };
 export default AffTimeLine;
 
-export const AffTimeLineItem = ({ children }) => {
+export const AffTimeLineItem = ({ children, info, variant }) => {
+  console.log(variant); //completed || pending 
+  const [stepLine, setStepLine] = useState('bg-warning');
+  const [stepIconBg, setStepIconBg] = useState('bg-warning');
+  const [stepIcon, setStepIcon] = useState(<HourglassBottomIcon fontSize="xsmall" />);
+  
+
+  useEffect(() => {
+     if (variant === "completed") {
+       setStepLine("bg-success");
+       setStepIconBg("bg-success");
+       setStepIcon(<TaskAltIcon fontSize="xsmall" />);
+     } else {
+       setStepLine("bg-warning");
+       setStepIconBg("bg-warning");
+       setStepIcon(<HourglassBottomIcon fontSize="xsmall" />);
+     }
+   }, [variant]);
+
   return (
     <>
       {Children.map(children, (child) => (
@@ -99,7 +119,7 @@ export const AffTimeLineItem = ({ children }) => {
             }}
           >
             <div
-              className="bg-success timeline-progress"
+              className={stepLine}
               style={{
                 width: 8,
                 height: "120%",
@@ -109,7 +129,7 @@ export const AffTimeLineItem = ({ children }) => {
               }}
             />
             <div
-              className="bg-success border border-1 border-dashed timeline-icon-container"
+              className={`${stepIconBg} border border-1 border-dashed timeline-icon-container`}
               style={{
                 position: "absolute",
                 top: 5,
@@ -123,35 +143,10 @@ export const AffTimeLineItem = ({ children }) => {
                 alignItems: "center",
               }}
             >
-              <HourglassBottomIcon fontSize="xsmall" />
+              {stepIcon}
             </div>
           </div>
-          {/* <div
-            style={{
-              position: "relative",
-              top: 8,
-              right: "-7px",
-              height: 0,
-              width: 0,
-              borderWidth: 7,
-              borderStyle: "solid",
-              borderColor: "transparent rgb(177 36 36) transparent transparent",
-              borderImage: "initial",
-            }}
-          /> */}
-
           <div style={{ marginLeft: "32px", width: "100%" }}>{child}</div>
-          {/* <div className="border border-primary card"
-            style={{
-              // backgroundColor: "grey",
-              marginLeft: 7,
-              marginTop: '0px',
-              padding: 4,
-              borderRadius: '0.688rem',
-            }}
-          >
-           
-          </div> */}
         </>
       ))}
     </>

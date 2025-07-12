@@ -15,6 +15,7 @@ import AssessmentII from "../components/Assessment/AssessmentII";
 import AssessmentI from "../components/Assessment/AssessmentI";
 
 import { TimeLine } from "../components/TimeLine/TimeLine";
+import {TimeLineFinalTest} from "../screens/TimeLine"
 import RdDashboard from "../../../ui_layouts_collaborate/src/components/Assessment/RdDashboard";
 import Compliance from "../../../ui_layouts_collaborate/src/components/Assessment/Compliance";
 import StateDashboard from "../../../ui_layouts_collaborate/src/components/Assessment/StateDashboard";
@@ -74,6 +75,11 @@ export const Routedata = [
         id: 1,
         path: `TimeLine`,
         elementName: <TimeLine />,
+      },
+      {
+        id: 1,
+        path: `TestTime`,
+        elementName: <TimeLineFinalTest />,
       },
       {
         id: 1,

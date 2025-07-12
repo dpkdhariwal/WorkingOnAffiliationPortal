@@ -19,7 +19,6 @@ const DetailsOfDocumentsToBeUploaded = ({setActive}) => {
   const reg = useSelector((state) => state.reg);
 
 
-
   const submit = (values) => {
     Swal.fire({
       title: "Are you sure?",

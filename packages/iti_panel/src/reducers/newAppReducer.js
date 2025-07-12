@@ -21,6 +21,11 @@ import {
   STAGE_I__ASSESSMENT_PENDING,
   STAGE_I__SUBMIT_PENDING,
   STAGE_I__SUBMITED,
+  AppFlow,
+  STAGE_I_FORM_FILLING,
+  STAGE_I_DOCUMENT_UPLAOD,
+  STAGE_I_SUBMIT,
+  STAGE_I_FEE,
 } from "../constants";
 import * as yup from "yup";
 
@@ -31,6 +36,7 @@ export const AppliInfoInitialValues = {
   stage_I_completion_status: STAGE_I__SUBMIT_PENDING,
   app_status: STAGE_I__NOT_FILLED,
   app_status_awaiting: STAGE_I__FILLED,
+  app_flow_status: AppFlow,
 };
 export const AppliInfo = (state = AppliInfoInitialValues, action) => {
   let { type, payload } = action;
@@ -44,6 +50,13 @@ export const AppliInfo = (state = AppliInfoInitialValues, action) => {
               app_status: STAGE_I__FEE_EXEMPTED,
               stage_I_fee_status: STAGE_I__FEE_EXEMPTED,
               app_status_awaiting: STAGE_I__DOCUMENT_PENDING,
+              app_flow_status: state.app_flow_status.map((item) =>
+                item.step === STAGE_I_FEE
+                  ? { ...item, status: STAGE_I__FEE_EXEMPTED }
+                  : item.step === STAGE_I_FORM_FILLING
+                  ? { ...item, status: STAGE_I__FILLED }
+                  : item
+              ),
             },
           });
         case "Private":
@@ -51,8 +64,15 @@ export const AppliInfo = (state = AppliInfoInitialValues, action) => {
             ...state,
             ...{
               app_status: STAGE_I__FEE_PAID,
-              stage_I_fee_status: STAGE_I__FEE_EXEMPTED,
+              stage_I_fee_status: STAGE_I__FEE_PAID,
               app_status_awaiting: STAGE_I__DOCUMENT_PENDING,
+              app_flow_status: state.app_flow_status.map((item) =>
+                item.step === STAGE_I_FEE
+                  ? { ...item, status: STAGE_I__FEE_PAID }
+                  : item.step === STAGE_I_FORM_FILLING
+                  ? { ...item, status: STAGE_I__FILLED }
+                  : item
+              ),
             },
           });
         default:
@@ -66,6 +86,13 @@ export const AppliInfo = (state = AppliInfoInitialValues, action) => {
           app_status: STAGE_I__DOCUMENT_UPLOADED,
           app_status_awaiting: STAGE_I__ASSESSMENT_PENDING,
           stage_I_completion_status: STAGE_I__SUBMITED,
+          app_flow_status: state.app_flow_status.map((item) =>
+            item.step === STAGE_I_DOCUMENT_UPLAOD
+              ? { ...item, status: STAGE_I__DOCUMENT_UPLOADED }
+              : item.step === STAGE_I_SUBMIT
+              ? { ...item, status: STAGE_I__SUBMITED }
+              : item
+          ),
         },
       });
 

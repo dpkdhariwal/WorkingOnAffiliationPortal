@@ -95,7 +95,7 @@
 //   border-right: 30px solid transparent;
 // }
 
-.f-timeline-container::before {
+.f-timeline-container-success::before {
       content: "";
     width: 0;
     height: 0;
@@ -103,6 +103,19 @@
     border-top: 10px solid transparent;
     border-bottom: 10px solid transparent;
     border-right: 15px solid #1AAF4B;
+    border-left: 0;
+    position: absolute;
+    left: -15px;
+    top: 7px;
+}
+.f-timeline-container-warning::before {
+      content: "";
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+    border-right: 15px solid #ff9b21;
     border-left: 0;
     position: absolute;
     left: -15px;
