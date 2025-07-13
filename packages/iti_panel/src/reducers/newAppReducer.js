@@ -26,6 +26,7 @@ import {
   STAGE_I_DOCUMENT_UPLAOD,
   STAGE_I_SUBMIT,
   STAGE_I_FEE,
+  UPDATE_BUILDING_DETAILS
 } from "../constants";
 import * as yup from "yup";
 
@@ -699,4 +700,102 @@ export const land_info_yupObject = {
     then: () => yup.string().required("Date of expiry is required"),
     otherwise: () => yup.string().notRequired(),
   }),
+};
+
+
+
+// Stage II Form 
+
+export const Building_Detail_initialValues = {
+  language_for_building_plan: "",
+  document_of_building_plan: "",
+  notarised_document_of_building_plan: "",
+  language_for_building_completion_certificate: "",
+  building_completion_certificate: "",
+  notarised_document_of_bcc: "",
+  name_of_bcc_issued_authority: "",
+  date_of_bcc_issued: "",
+  front_view_photo_of_building: "",
+  side_view_photo_of_building: "",
+  entrance_gate_photo_of_plot_with_signage_board: "",
+};
+
+
+export const building_detail_yup_object = {
+  language_for_building_plan: yup
+    .string()
+    .required("Please select the language of the building plan."),
+
+  // document_of_building_plan: yup
+  //   .mixed()
+  //   .required("Please upload the building plan document (PDF).")
+  //   .test("fileType", "Only PDF files are allowed.", (file) => {
+  //     return file && file.type === "application/pdf";
+  //   }),
+
+  // notarised_document_of_building_plan: yup
+  //   .mixed()
+  //   .required("Please upload the notarised building plan (PDF).")
+  //   .test("fileType", "Only PDF files are allowed.", (file) => {
+  //     return file && file.type === "application/pdf";
+  //   }),
+
+  // language_for_building_completion_certificate: yup
+  //   .string()
+  //   .required("Please select the language of the completion certificate."),
+
+  // building_completion_certificate: yup
+  //   .mixed()
+  //   .required("Please upload the building completion certificate (PDF).")
+  //   .test("fileType", "Only PDF files are allowed.", (file) => {
+  //     return file && file.type === "application/pdf";
+  //   }),
+
+  // notarised_document_of_bcc: yup
+  //   .mixed()
+  //   .required("Please upload the notarised BCC (PDF).")
+  //   .test("fileType", "Only PDF files are allowed.", (file) => {
+  //     return file && file.type === "application/pdf";
+  //   }),
+
+  // name_of_bcc_issued_authority: yup
+  //   .string()
+  //   .required("Please enter the name of the authority issuing the BCC."),
+
+  // date_of_bcc_issued: yup
+  //   .string()
+  //   .required("Please enter the date the BCC was issued."),
+
+  // front_view_photo_of_building: yup
+  //   .mixed()
+  //   .required("Please upload the front view photo of the building (PDF).")
+  //   .test("fileType", "Only PDF files are allowed.", (file) => {
+  //     return file && file.type === "application/pdf";
+  //   }),
+
+  // side_view_photo_of_building: yup
+  //   .mixed()
+  //   .required("Please upload the side view photo of the building (PDF).")
+  //   .test("fileType", "Only PDF files are allowed.", (file) => {
+  //     return file && file.type === "application/pdf";
+  //   }),
+
+  // entrance_gate_photo_of_plot_with_signage_board: yup
+  //   .mixed()
+  //   .required("Please upload the entrance gate photo with signage board (PDF).")
+  //   .test("fileType", "Only PDF files are allowed.", (file) => {
+  //     return file && file.type === "application/pdf";
+  //   }),
+};
+
+export const building_detail_reducer = (state = Building_Detail_initialValues, action) => {
+  let { type, payload } = action;
+  console.log("building_detail_reducer", action);
+  switch (type) {
+    case UPDATE_BUILDING_DETAILS:
+      state = { ...state, ...payload };
+      return state;
+    default:
+      return state;
+  }
 };

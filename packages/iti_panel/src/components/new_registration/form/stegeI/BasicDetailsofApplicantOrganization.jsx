@@ -83,7 +83,9 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
   }
   return (
     <Fragment>
-      {AppliInfo.stage_I_fee_status === STAGE_I__FEE_PAID || AppliInfo.stage_I_fee_status === STAGE_I__FEE_EXEMPTED ? (<ABD />) : <Formik
+      {AppliInfo.stage_I_fee_status === STAGE_I__FEE_PAID || AppliInfo.stage_I_fee_status === STAGE_I__FEE_EXEMPTED ? (<ABD />) : 
+      
+      <Formik
         innerRef={formikRef}
         validationSchema={yup.object().shape(yupObject)}
         onSubmit={(values) => {

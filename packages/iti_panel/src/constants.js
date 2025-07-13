@@ -563,6 +563,12 @@ export const getDistrictsByState = (state) => {
   return stateObj ? stateObj.districts : [];
 };
 
+// Stage II Start
+export const UPDATE_BUILDING_DETAILS = "UPDATE_BUILDING_DETAILS";
+
+// Stage II End
+
+
 // Form Applicant Entity Details
 export const UPDATE_ENTITY_DETAILS = "UPDATE_ENTITY_DETAILS";
 export const UPDATE_PURPOSED_INSTI_INFO = "UPDATE_PURPOSED_INSTI_INFO";

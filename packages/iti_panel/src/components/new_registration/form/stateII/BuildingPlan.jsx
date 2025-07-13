@@ -12,27 +12,17 @@ import { ChatMessage } from "../../../Assessment/ReviewTrail";
 import Geotagged from "../../../geotagged";
 import ReactDOM from "react-dom/client";
 
-const schema = yup.object().shape({
-  land_documents: yup.array().of(
-    yup.object().shape({
-      title: yup.string().required("Title is required"),
-      language: yup.string().required("Language is required"),
-      file: yup.mixed().required("File is required"),
-    })
-  ),
-  lease_deed_document: yup.array().of(
-    yup.object().shape({
-      title: yup.string().required("Title is required"),
-      language: yup.string().required("Language is required"),
-      file: yup.mixed().required("File is required"),
-    })
-  ),
-});
+import { Building_Detail_initialValues, building_detail_yup_object } from "../../../../reducers/newAppReducer";
 
-const DetailsOfDocumentsToBeUploaded = () => {
+
+
+const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
   const stage = useSelector((state) => state.reg.stepsII);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const formikRef = useRef();
+  const reg = useSelector((state) => state.reg);
+  const stepInfo = reg.stepsII[0];
 
   useEffect(() => {
     console.log(stage);
@@ -70,19 +60,15 @@ const DetailsOfDocumentsToBeUploaded = () => {
   return (
     <Fragment>
       <Formik
-        initialValues={
-          {
-            // land_documents: initialLandDocs,
-            // lease_deed_document: lease_deed_document,
-          }
-        }
-        validationSchema={schema}
+        innerRef={formikRef}
+        initialValues={Building_Detail_initialValues}
+        validationSchema={yup.object().shape(building_detail_yup_object)}
         onSubmit={(values) => {
           console.log("Form Values", values);
         }}
       >
-        {({ handleSubmit, setFieldValue, values, errors, touched }) => (
-          <Form noValidate onSubmit={handleSubmit}>
+        {({ handleSubmit, handleChange, setFieldValue, values, errors, touched }) => (
+          <Form onSubmit={handleSubmit}>
             <Card className="custom-card border border-primary">
               <Card.Header>
                 <div className="card-title" style={{ textTransform: "none" }}>
@@ -91,7 +77,7 @@ const DetailsOfDocumentsToBeUploaded = () => {
               </Card.Header>
               <Card.Body>
                 <h6>Building Plan</h6>
-                <BuildingPlan languages={languages} />
+                <BuildingPlan languages={languages} handleChange={handleChange} touched={touched} errors={errors} />
                 <br />
                 <hr />
                 <h6>Building Completion Certificate (BCC)</h6>
@@ -105,13 +91,14 @@ const DetailsOfDocumentsToBeUploaded = () => {
                       </Form.Label>
                       <Field
                         required
-                        name={`land_documents_language`}
+                        name="language_for_building_plan"
                         as="select"
                         className="form-control"
-                        // isInvalid={
-                        //   touched.land_documents?.[index]?.language &&
-                        //   !!errors.land_documents?.[index]?.language
-                        // }
+                        onChange={handleChange}
+                        isInvalid={
+                          touched.language_for_building_plan &&
+                          !!errors.language_for_building_plan
+                        }
                       >
                         {languages.map((lang, i) => (
                           <option key={i} value={lang}>
@@ -119,9 +106,14 @@ const DetailsOfDocumentsToBeUploaded = () => {
                           </option>
                         ))}
                       </Field>
-                      <Form.Control.Feedback type="invalid">
-                        Select Document
-                      </Form.Control.Feedback>
+                      {touched.language_for_building_plan && errors.language_for_building_plan && (
+                        <Form.Control.Feedback
+                          type="invalid"
+                          className="d-block"
+                        >
+                          {errors.language_for_building_plan}
+                        </Form.Control.Feedback>
+                      )}
                     </Form.Group>
                   </Col>
                   <Col md={4}>
@@ -268,6 +260,29 @@ const DetailsOfDocumentsToBeUploaded = () => {
                   </Card.Body>
                 </Card>
               </Card.Body>
+              <Card.Footer>
+                <div className="d-flex justify-content-between mb-3">
+                  <Button
+                    className="p-2"
+                    variant="success"
+                    onClick={() => formikRef.current?.submitForm()}
+                  >
+                    Save & Continue
+                  </Button>
+
+                  {/* {stepInfo.filled === true && (
+                    <Button
+                      className="p-2"
+                      variant="warning"
+                      onClick={() => {
+                        setActive(reg.steps[1]);
+                      }}
+                    >
+                      Next
+                    </Button>
+                  )} */}
+                </div>
+              </Card.Footer>
             </Card>
           </Form>
         )}
@@ -277,7 +292,7 @@ const DetailsOfDocumentsToBeUploaded = () => {
 };
 
 // Form to upload Building Plan
-export const BuildingPlan = () => {
+export const BuildingPlan = ({ handleChange, touched, errors }) => {
   const languages = [
     "",
     "Hindi",
@@ -304,9 +319,11 @@ export const BuildingPlan = () => {
           </Form.Label>
           <Field
             required
-            name={`land_documents_language`}
+            name="language_for_building_plan"
             as="select"
             className="form-control"
+            onChange={handleChange}
+            isInvalid={touched.language_for_building_plan && !!errors.language_for_building_plan}
           >
             {languages.map((lang, i) => (
               <option key={i} value={lang}>
@@ -314,9 +331,14 @@ export const BuildingPlan = () => {
               </option>
             ))}
           </Field>
-          <Form.Control.Feedback type="invalid">
-            Select Document
-          </Form.Control.Feedback>
+          {touched.language_for_building_plan && errors.language_for_building_plan && (
+            <Form.Control.Feedback
+              type="invalid"
+              className="d-block"
+            >
+              {errors.language_for_building_plan}
+            </Form.Control.Feedback>
+          )}
         </Form.Group>
       </Col>
       <Col md={4}>
@@ -795,12 +817,11 @@ export const BuildingPlanAction = () => {
                                   required
                                   as="textarea"
                                   rows={3}
-                                  className={`form-control ${
-                                    touched.assessor_comments &&
+                                  className={`form-control ${touched.assessor_comments &&
                                     errors.assessor_comments
-                                      ? "is-invalid"
-                                      : ""
-                                  }`}
+                                    ? "is-invalid"
+                                    : ""
+                                    }`}
                                   value={values.assessor_comments}
                                   onChange={handleChange}
                                   isInvalid={
@@ -865,10 +886,10 @@ export const BuildingPlanAction = () => {
 
                       {formData.category ==
                         "Any other reason, please specify" && (
-                        <Col md={12}>
-                          <b>Reason:</b> <p>{formData.assessor_comments}</p>
-                        </Col>
-                      )}
+                          <Col md={12}>
+                            <b>Reason:</b> <p>{formData.assessor_comments}</p>
+                          </Col>
+                        )}
                     </Row>
                   </Card.Body>
                   <Card.Footer className="d-flex justify-content-between">
@@ -1275,12 +1296,11 @@ export const BccViewAction = () => {
                                   required
                                   as="textarea"
                                   rows={3}
-                                  className={`form-control ${
-                                    touched.assessor_comments &&
+                                  className={`form-control ${touched.assessor_comments &&
                                     errors.assessor_comments
-                                      ? "is-invalid"
-                                      : ""
-                                  }`}
+                                    ? "is-invalid"
+                                    : ""
+                                    }`}
                                   value={values.assessor_comments}
                                   onChange={handleChange}
                                   isInvalid={
@@ -1348,10 +1368,10 @@ export const BccViewAction = () => {
 
                       {formData.category ==
                         "Any other reason, please specify" && (
-                        <Col md={12}>
-                          <b>Reason:</b> <p>{formData.assessor_comments}</p>
-                        </Col>
-                      )}
+                          <Col md={12}>
+                            <b>Reason:</b> <p>{formData.assessor_comments}</p>
+                          </Col>
+                        )}
                     </Row>
                   </Card.Body>
                   <Card.Footer className="d-flex justify-content-between">
@@ -1594,12 +1614,11 @@ export const BccViewAction = () => {
                                     required
                                     as="textarea"
                                     rows={3}
-                                    className={`form-control ${
-                                      touched.assessor_comments &&
+                                    className={`form-control ${touched.assessor_comments &&
                                       errors.assessor_comments
-                                        ? "is-invalid"
-                                        : ""
-                                    }`}
+                                      ? "is-invalid"
+                                      : ""
+                                      }`}
                                     value={values.assessor_comments}
                                     onChange={handleChange}
                                     isInvalid={
