@@ -16,11 +16,14 @@ npm install redux-persist --workspace=packages/iti_panel
 
 npm install @mui/icons-material @mui/material @emotion/styled @emotion/react --workspace=packages/iti_panel
 
+
+npm install @mui/joy @emotion/react @emotion/styled --workspace=packages/iti_panel
+
 npm i --workspace=packages/ui_layouts_collaborate
 
 npm i react-bootstrap-icons --workspace=packages/ui_layouts_collaborate
 
-
+npm install react-form-wizard-component --workspace=packages/iti_panel
 
 npm i redux-devtools-extension
 

@@ -26,8 +26,22 @@ import {
   STAGE_I_DOCUMENT_UPLAOD,
   STAGE_I_SUBMIT,
   STAGE_I_FEE,
-  UPDATE_BUILDING_DETAILS
+  UPDATE_BUILDING_DETAILS,
+  UPDATE_ELECTRICTY_CONNECTION_DETAILS,
+  STAGE_II__FEE_PENDING,
+  STAGE_II__SUBMIT_PENDING,
 } from "../constants";
+
+import {
+  STAGE_II__FEE_EXEMPTED,
+  STAGE_II__DOCUMENT_PENDING,
+  STAGE_II_FEE,
+  STAGE_II_FORM_FILLING,
+  STAGE_II__FILLED,
+  STAGE_II__FEE_PAID,
+  UPDATE_STAGE_II_SET_FEE_STATUS
+} from "../constants";
+
 import * as yup from "yup";
 
 // Application Info
@@ -35,6 +49,9 @@ export const AppliInfoInitialValues = {
   applicantId: "XYZ001234567890",
   stage_I_fee_status: STAGE_I__FEE_PENDING,
   stage_I_completion_status: STAGE_I__SUBMIT_PENDING,
+  stage_II_fee_status: STAGE_II__FEE_PENDING,
+  stage_II_completion_status: STAGE_II__SUBMIT_PENDING,
+
   app_status: STAGE_I__NOT_FILLED,
   app_status_awaiting: STAGE_I__FILLED,
   app_flow_status: AppFlow,
@@ -97,9 +114,43 @@ export const AppliInfo = (state = AppliInfoInitialValues, action) => {
         },
       });
 
-    case UPDATE_STAGE_II_FEE_PAID:
-      state = { ...state, ...{ stage_II_fees: "Paid" } };
-      return state;
+    case UPDATE_STAGE_II_SET_FEE_STATUS:
+      switch (payload.type_of_institute) {
+        case "Government":
+          return (state = {
+            ...state,
+            ...{
+              app_status: STAGE_II__FEE_EXEMPTED,
+              stage_I_fee_status: STAGE_II__FEE_EXEMPTED,
+              app_status_awaiting: STAGE_II__DOCUMENT_PENDING,
+              app_flow_status: state.app_flow_status.map((item) =>
+                item.step === STAGE_II_FEE
+                  ? { ...item, status: STAGE_II__FEE_EXEMPTED }
+                  : item.step === STAGE_II_FORM_FILLING
+                  ? { ...item, status: STAGE_II__FILLED }
+                  : item
+              ),
+            },
+          });
+        case "Private":
+          return (state = {
+            ...state,
+            ...{
+              app_status: STAGE_II__FEE_PAID,
+              stage_I_fee_status: STAGE_II__FEE_PAID,
+              app_status_awaiting: STAGE_II__DOCUMENT_PENDING,
+              app_flow_status: state.app_flow_status.map((item) =>
+                item.step === STAGE_II_FEE
+                  ? { ...item, status: STAGE_II__FEE_PAID }
+                  : item.step === STAGE_II_FORM_FILLING
+                  ? { ...item, status: STAGE_II__FILLED }
+                  : item
+              ),
+            },
+          });
+        default:
+          return state;
+      }
     default:
       return state;
   }
@@ -465,8 +516,32 @@ export const reg = (state = initialState, action) => {
       state = {
         ...state,
         steps: state.steps.map((step, index) => {
-          if (index === payload.step) {
+          if (step.step == payload.step) {
             return { ...step, filled: true };
+          }
+          return step;
+        }),
+      };
+      return state;
+    case "set_filled_step_II":
+      console.log(payload.step, state);
+      state = {
+        ...state,
+        stepsII: state.stepsII.map((step, index) => {
+          if (step.step === payload.step) {
+            return { ...step, filled: true };
+          }
+          return step;
+        }),
+      };
+      return state;
+    case "reg_set_active_stepII":
+      console.log(payload.step, state);
+      state = {
+        ...state,
+        stepsII: state.stepsII.map((step, index) => {
+          if (step.step === payload.step) {
+            return { ...step, active: true };
           }
           return step;
         }),
@@ -702,10 +777,7 @@ export const land_info_yupObject = {
   }),
 };
 
-
-
-// Stage II Form 
-
+// Stage II Form -- Building Info
 export const Building_Detail_initialValues = {
   language_for_building_plan: "",
   document_of_building_plan: "",
@@ -719,80 +791,140 @@ export const Building_Detail_initialValues = {
   side_view_photo_of_building: "",
   entrance_gate_photo_of_plot_with_signage_board: "",
 };
-
-
 export const building_detail_yup_object = {
   language_for_building_plan: yup
     .string()
     .required("Please select the language of the building plan."),
-
-  // document_of_building_plan: yup
-  //   .mixed()
-  //   .required("Please upload the building plan document (PDF).")
-  //   .test("fileType", "Only PDF files are allowed.", (file) => {
-  //     return file && file.type === "application/pdf";
-  //   }),
-
-  // notarised_document_of_building_plan: yup
-  //   .mixed()
-  //   .required("Please upload the notarised building plan (PDF).")
-  //   .test("fileType", "Only PDF files are allowed.", (file) => {
-  //     return file && file.type === "application/pdf";
-  //   }),
-
-  // language_for_building_completion_certificate: yup
-  //   .string()
-  //   .required("Please select the language of the completion certificate."),
-
-  // building_completion_certificate: yup
-  //   .mixed()
-  //   .required("Please upload the building completion certificate (PDF).")
-  //   .test("fileType", "Only PDF files are allowed.", (file) => {
-  //     return file && file.type === "application/pdf";
-  //   }),
-
-  // notarised_document_of_bcc: yup
-  //   .mixed()
-  //   .required("Please upload the notarised BCC (PDF).")
-  //   .test("fileType", "Only PDF files are allowed.", (file) => {
-  //     return file && file.type === "application/pdf";
-  //   }),
-
-  // name_of_bcc_issued_authority: yup
-  //   .string()
-  //   .required("Please enter the name of the authority issuing the BCC."),
-
-  // date_of_bcc_issued: yup
-  //   .string()
-  //   .required("Please enter the date the BCC was issued."),
-
-  // front_view_photo_of_building: yup
-  //   .mixed()
-  //   .required("Please upload the front view photo of the building (PDF).")
-  //   .test("fileType", "Only PDF files are allowed.", (file) => {
-  //     return file && file.type === "application/pdf";
-  //   }),
-
-  // side_view_photo_of_building: yup
-  //   .mixed()
-  //   .required("Please upload the side view photo of the building (PDF).")
-  //   .test("fileType", "Only PDF files are allowed.", (file) => {
-  //     return file && file.type === "application/pdf";
-  //   }),
-
-  // entrance_gate_photo_of_plot_with_signage_board: yup
-  //   .mixed()
-  //   .required("Please upload the entrance gate photo with signage board (PDF).")
-  //   .test("fileType", "Only PDF files are allowed.", (file) => {
-  //     return file && file.type === "application/pdf";
-  //   }),
+  document_of_building_plan: yup
+    .mixed()
+    .required("Please upload the building plan document (PDF)."),
+  // .test("fileType", "Only PDF files are allowed.", (file, e) => {
+  //   console.log(file, e);
+  //   return file && file.type === "application/pdf";
+  // }),
+  notarised_document_of_building_plan: yup
+    .mixed()
+    .required("Please upload the notarised building plan (PDF)."),
+  // .test("fileType", "Only PDF files are allowed.", (file) => {
+  //   return file && file.type === "application/pdf";
+  // }),
+  language_for_building_completion_certificate: yup
+    .string()
+    .required("Please select the language of the completion certificate."),
+  building_completion_certificate: yup
+    .mixed()
+    .required("Please upload the building completion certificate (PDF)."),
+  // .test("fileType", "Only PDF files are allowed.", (file) => {
+  //   return file && file.type === "application/pdf";
+  // }),
+  notarised_document_of_bcc: yup
+    .mixed()
+    .required("Please upload the notarised BCC (PDF)."),
+  // .test("fileType", "Only PDF files are allowed.", (file) => {
+  //   return file && file.type === "application/pdf";
+  // }),
+  name_of_bcc_issued_authority: yup
+    .string()
+    .required("Please enter the name of the authority issuing the BCC."),
+  date_of_bcc_issued: yup
+    .string()
+    .required("Please enter the date the BCC was issued."),
+  front_view_photo_of_building: yup
+    .mixed()
+    .required("Please upload the front view photo of the building (PDF)."),
+  // .test("fileType", "Only PDF files are allowed.", (file) => {
+  //   return file && file.type === "application/pdf";
+  // }),
+  side_view_photo_of_building: yup
+    .mixed()
+    .required("Please upload the side view photo of the building (PDF)."),
+  // .test("fileType", "Only PDF files are allowed.", (file) => {
+  //   return file && file.type === "application/pdf";
+  // }),
+  entrance_gate_photo_of_plot_with_signage_board: yup
+    .mixed()
+    .required(
+      "Please upload the entrance gate photo with signage board (PDF)."
+    ),
+  // .test("fileType", "Only PDF files are allowed.", (file) => {
+  //   return file && file.type === "application/pdf";
+  // }),
 };
-
-export const building_detail_reducer = (state = Building_Detail_initialValues, action) => {
+export const building_detail_reducer = (
+  state = Building_Detail_initialValues,
+  action
+) => {
   let { type, payload } = action;
   console.log("building_detail_reducer", action);
   switch (type) {
     case UPDATE_BUILDING_DETAILS:
+      state = { ...state, ...payload };
+      return state;
+    default:
+      return state;
+  }
+};
+
+// Stage II Form -- Electricity Connection Detail
+export const Electricity_Connection_Detail_initialValues = {
+  consumer_name: "",
+  consumer_number: "",
+  electricity_authority_name: "",
+  electricity_authority_website: "",
+  total_sanction_load_in_kw: "",
+  latest_electricity_bill_sealing_report: "",
+  photo_of_backup_power: "",
+  purchase_related_documents: "",
+  fire_and_safety_certificate: "",
+};
+export const Electricity_Connection_yup_object = {
+  consumer_name: yup.string().required("Enter Electricity Consumer Name"),
+  consumer_number: yup.string().required("Enter Electricity Consumer Number"),
+  electricity_authority_name: yup
+    .string()
+    .required("Enter Electricity Authority Name"),
+  electricity_authority_website: yup
+    .string()
+    .required("Enter Electricity Authority Websiste"),
+  total_sanction_load_in_kw: yup
+    .string()
+    .required("Enter Total Sanctioned Load in Kw"),
+
+  latest_electricity_bill_sealing_report: yup
+    .mixed()
+    .required("Select Latest Electricity Bill Sealing Report"),
+  // .test("fileType", "Only PDF files are allowed.", (file, e) => {
+  //   console.log(file, e);
+  //   return file && file.type === "application/pdf";
+  // }),
+
+  photo_of_backup_power: yup.mixed().required("Select Photo of Backup Power"),
+  // .test("fileType", "Only PDF files are allowed.", (file, e) => {
+  //   console.log(file, e);
+  //   return file && file.type === "application/pdf";
+  // }),
+  purchase_related_documents: yup
+    .mixed()
+    .required("Select Purchase Releted Documents"),
+  // .test("fileType", "Only PDF files are allowed.", (file, e) => {
+  //   console.log(file, e);
+  //   return file && file.type === "application/pdf";
+  // }),
+  fire_and_safety_certificate: yup
+    .mixed()
+    .required("Select Fire and Safety Certificate"),
+  // .test("fileType", "Only PDF files are allowed.", (file, e) => {
+  //   console.log(file, e);
+  //   return file && file.type === "application/pdf";
+  // }),
+};
+export const Electricity_Connection_Detail_reducer = (
+  state = Electricity_Connection_Detail_initialValues,
+  action
+) => {
+  let { type, payload } = action;
+  switch (type) {
+    case UPDATE_ELECTRICTY_CONNECTION_DETAILS:
       state = { ...state, ...payload };
       return state;
     default:

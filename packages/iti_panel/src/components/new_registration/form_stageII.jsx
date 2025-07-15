@@ -33,7 +33,7 @@ const New_registration = () => {
       />
       <Stepper>
         {reg.stepsII.map((item, index) => {
-          // console.log(item); // Valid logging outside JSX
+          console.log(item); // Valid logging outside JSX
           return (
             <div
               key={index}
@@ -43,11 +43,9 @@ const New_registration = () => {
               <Step
                 label={item.label || "Step " + (index + 1)}
                 active={item.active === true || index < activeStep.step}
-                completed={false} // You might want to base this on actual state
+                completed={item.filled}
+                className={item.filled === true ? "stepper_completed" : ''}
                 index={index}
-                onClick={() => {
-                  console.log("dsdfsf");
-                }}
               />
             </div>
           );
@@ -56,21 +54,21 @@ const New_registration = () => {
       <Card className="custom-card">
         <Card.Body>
           {activeStep.label === "Building Detail" ? (
-            <BuildingPlan />
+            <BuildingPlan setActive={goToSection} />
           ) : activeStep.label === "Civil Infrastructure Detail" ? (
-            <CivilInfrastructureDetails stepInfo={activeStep} />
-          ): activeStep.label === "Electricity Connection Details" ? (
-            <ElectricityConnectionDetails stepInfo={activeStep} />
+            <CivilInfrastructureDetails setActive={goToSection} stepInfo={activeStep} />
+          ) : activeStep.label === "Electricity Connection Details" ? (
+            <ElectricityConnectionDetails stepInfo={activeStep} setActive={goToSection} />
           )
-          : activeStep.label === "Tradewise Machinery/Tools/Equipment Details" ? (
-            <TradewiseMachineryToolsEquipmentDetails stepInfo={activeStep} />
-          ) : activeStep.label === "Document Uploads" ? (
-            <DocumentUploads stepInfo={activeStep} />
-          ): activeStep.label === "Fee Payment For StageII" ? (
-            <FeePayment stepInfo={activeStep} />
-          ) : (
-            <p>Something Went Wrong</p>
-          )}
+            : activeStep.label === "Tradewise Machinery/Tools/Equipment Details" ? (
+              <TradewiseMachineryToolsEquipmentDetails stepInfo={activeStep} />
+            ) : activeStep.label === "Document Uploads" ? (
+              <DocumentUploads stepInfo={activeStep} />
+            ) : activeStep.label === "Fee Payment For StageII" ? (
+              <FeePayment stepInfo={activeStep} />
+            ) : (
+              <p>Something Went Wrong</p>
+            )}
         </Card.Body>
       </Card>
     </Fragment>

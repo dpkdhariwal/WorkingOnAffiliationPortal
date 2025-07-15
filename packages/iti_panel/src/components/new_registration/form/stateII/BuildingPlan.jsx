@@ -12,9 +12,10 @@ import { ChatMessage } from "../../../Assessment/ReviewTrail";
 import Geotagged from "../../../geotagged";
 import ReactDOM from "react-dom/client";
 
-import { Building_Detail_initialValues, building_detail_yup_object } from "../../../../reducers/newAppReducer";
+import { building_detail_yup_object } from "../../../../reducers/newAppReducer";
+import { UPDATE_BUILDING_DETAILS } from "../../../../constants";
 
-
+import { Form as BootstrapForm } from "react-bootstrap";
 
 const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
   const stage = useSelector((state) => state.reg.stepsII);
@@ -57,6 +58,39 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
 
   const designation = ["Secretary", "Chairperson", "President"];
 
+
+  const submit = (values) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to save the form data?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes, save it!",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // User confirmed – now show loading or save directly
+        Swal.fire({
+          title: "Saving...",
+          didOpen: () => {
+            Swal.showLoading();
+            dispatch({ type: UPDATE_BUILDING_DETAILS, payload: values });
+            dispatch({ type: "set_filled_step_II", payload: { step: 1 }, });
+            dispatch({ type: "reg_set_active_stepII", payload: { step: 2 } });
+            setActive(reg.stepsII[1]);
+            Swal.close();
+          },
+        });
+      } else {
+        console.log("User cancelled save");
+      }
+    });
+  };
+
+  const Building_Detail_initialValues = useSelector((state) => state.building_detail_reducer);
+
+  console.log(Building_Detail_initialValues);
+
   return (
     <Fragment>
       <Formik
@@ -64,6 +98,7 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
         initialValues={Building_Detail_initialValues}
         validationSchema={yup.object().shape(building_detail_yup_object)}
         onSubmit={(values) => {
+          submit(values);
           console.log("Form Values", values);
         }}
       >
@@ -77,7 +112,7 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
               </Card.Header>
               <Card.Body>
                 <h6>Building Plan</h6>
-                <BuildingPlan languages={languages} handleChange={handleChange} touched={touched} errors={errors} />
+                <BuildingPlan languages={languages} handleChange={handleChange} touched={touched} errors={errors} values={values} />
                 <br />
                 <hr />
                 <h6>Building Completion Certificate (BCC)</h6>
@@ -91,13 +126,13 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
                       </Form.Label>
                       <Field
                         required
-                        name="language_for_building_plan"
+                        name="language_for_building_completion_certificate"
                         as="select"
                         className="form-control"
                         onChange={handleChange}
                         isInvalid={
-                          touched.language_for_building_plan &&
-                          !!errors.language_for_building_plan
+                          touched.language_for_building_completion_certificate &&
+                          !!errors.language_for_building_completion_certificate
                         }
                       >
                         {languages.map((lang, i) => (
@@ -106,12 +141,12 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
                           </option>
                         ))}
                       </Field>
-                      {touched.language_for_building_plan && errors.language_for_building_plan && (
+                      {touched.language_for_building_completion_certificate && errors.language_for_building_completion_certificate && (
                         <Form.Control.Feedback
                           type="invalid"
                           className="d-block"
                         >
-                          {errors.language_for_building_plan}
+                          {errors.language_for_building_completion_certificate}
                         </Form.Control.Feedback>
                       )}
                     </Form.Group>
@@ -130,13 +165,23 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
                           Download Format
                         </Button>
                       </Form.Label>
-                      <div className="d-flex align-items-center gap-2">
-                        <Form.Control type="file" />
-                        <Button variant="primary">Upload</Button>
-                      </div>
-                      <Form.Control.Feedback type="invalid">
-                        Select Document
-                      </Form.Control.Feedback>
+                      {/* <div className="d-flex align-items-center gap-2"> */}
+                      <Form.Control required type="file" 
+                      name="building_completion_certificate"
+                        // value={values.building_completion_certificate}
+                        onChange={handleChange}
+                        isInvalid={
+                          touched.building_completion_certificate &&
+                          !!errors.building_completion_certificate
+                        } />
+                      {/* <Button variant="primary">Upload</Button> */}
+                      {/* </div> */}
+                      {touched.notarised_document_of_building_plan &&
+                        errors.building_completion_certificate && (
+                          <BootstrapForm.Control.Feedback type="invalid">
+                            {errors.building_completion_certificate}
+                          </BootstrapForm.Control.Feedback>
+                        )}
                     </Form.Group>
                   </Col>
                   <Col md={4}>
@@ -145,13 +190,22 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
                         Upload Hindi/English Notarised Copy of document
                         <ReqSign />
                       </Form.Label>
-                      <div className="d-flex align-items-center gap-2">
-                        <Form.Control type="file" />
-                        <Button variant="primary">Upload</Button>
-                      </div>
-                      <Form.Control.Feedback type="invalid">
-                        Select Document
-                      </Form.Control.Feedback>
+                      {/* <div className="d-flex align-items-center gap-2"> */}
+                      <Form.Control type="file" name="notarised_document_of_bcc"
+                        // value={values.notarised_document_of_bcc}
+                        onChange={handleChange}
+                        isInvalid={
+                          touched.notarised_document_of_bcc &&
+                          !!errors.notarised_document_of_bcc
+                        } />
+                      {/* <Button variant="primary">Upload</Button> */}
+                      {/* </div> */}
+                      {touched.notarised_document_of_bcc &&
+                        errors.notarised_document_of_bcc && (
+                          <BootstrapForm.Control.Feedback type="invalid">
+                            {errors.notarised_document_of_bcc}
+                          </BootstrapForm.Control.Feedback>
+                        )}
                     </Form.Group>
                   </Col>
                 </Row>
@@ -165,10 +219,17 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
                         Name of issued Authority
                         <ReqSign />
                       </Form.Label>
-                      <Field name="dddd" as={Form.Control} />
-                      <Form.Control.Feedback type="invalid">
-                        dfdsf{" "}
-                      </Form.Control.Feedback>
+                      <Field placeholder="Enter BCC Issued Authority Name" required name="name_of_bcc_issued_authority" as={Form.Control} value={values.name_of_bcc_issued_authority} onChange={handleChange}
+                        isInvalid={
+                          touched.name_of_bcc_issued_authority &&
+                          !!errors.name_of_bcc_issued_authority
+                        } />
+                      {touched.name_of_bcc_issued_authority &&
+                        errors.name_of_bcc_issued_authority && (
+                          <BootstrapForm.Control.Feedback type="invalid">
+                            {errors.name_of_bcc_issued_authority}
+                          </BootstrapForm.Control.Feedback>
+                        )}
                     </Form.Group>
                   </Col>
                   <Col md={6}>
@@ -177,10 +238,17 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
                         Date of Issued
                         <ReqSign />
                       </Form.Label>
-                      <Form.Control type="date" id="input-date" />
-                      <Form.Control.Feedback type="invalid">
-                        Select Document
-                      </Form.Control.Feedback>
+                      <Form.Control required type="date" name="date_of_bcc_issued" as={Form.Control} value={values.date_of_bcc_issued} onChange={handleChange}
+                        isInvalid={
+                          touched.date_of_bcc_issued &&
+                          !!errors.date_of_bcc_issued
+                        } />
+                      {touched.date_of_bcc_issued &&
+                        errors.date_of_bcc_issued && (
+                          <BootstrapForm.Control.Feedback type="invalid">
+                            {errors.date_of_bcc_issued}
+                          </BootstrapForm.Control.Feedback>
+                        )}
                     </Form.Group>
                   </Col>
                 </Row>
@@ -202,10 +270,21 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
                             Upload Front View Photo of Building
                             <ReqSign />
                           </Form.Label>
-                          <div className="d-flex align-items-center gap-2">
-                            <Form.Control type="file" />
-                            <Button variant="primary">Upload</Button>
-                          </div>
+                          {/* <div className="d-flex align-items-center gap-2"> */}
+                          <Form.Control type="file" name="front_view_photo_of_building"
+                            //  value={values.front_view_photo_of_building}
+                            onChange={handleChange}
+                            isInvalid={
+                              touched.front_view_photo_of_building &&
+                              !!errors.front_view_photo_of_building
+                            } /> {touched.front_view_photo_of_building &&
+                              errors.front_view_photo_of_building && (
+                                <BootstrapForm.Control.Feedback type="invalid">
+                                  {errors.front_view_photo_of_building}
+                                </BootstrapForm.Control.Feedback>
+                              )}
+                          {/* <Button variant="primary">Upload</Button> */}
+                          {/* </div> */}
                           <Form.Control.Feedback type="invalid">
                             Select Document
                           </Form.Control.Feedback>
@@ -217,10 +296,21 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
                             Upload Side View Photo of Building
                             <ReqSign />
                           </Form.Label>
-                          <div className="d-flex align-items-center gap-2">
-                            <Form.Control type="file" />
-                            <Button variant="primary">Upload</Button>
-                          </div>
+                          {/* <div className="d-flex align-items-center gap-2"> */}
+                          <Form.Control type="file" name="side_view_photo_of_building"
+                            // value={values.side_view_photo_of_building}
+                            onChange={handleChange}
+                            isInvalid={
+                              touched.side_view_photo_of_building &&
+                              !!errors.side_view_photo_of_building
+                            } /> {touched.side_view_photo_of_building &&
+                              errors.side_view_photo_of_building && (
+                                <BootstrapForm.Control.Feedback type="invalid">
+                                  {errors.side_view_photo_of_building}
+                                </BootstrapForm.Control.Feedback>
+                              )}
+                          {/* <Button variant="primary">Upload</Button>
+                          </div> */}
                           <Form.Control.Feedback type="invalid">
                             Select Document
                           </Form.Control.Feedback>
@@ -233,10 +323,21 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
                             Board)
                             <ReqSign />
                           </Form.Label>
-                          <div className="d-flex align-items-center gap-2">
-                            <Form.Control type="file" />
-                            <Button variant="primary">Upload</Button>
-                          </div>
+                          {/* <div className="d-flex align-items-center gap-2"> */}
+                          <Form.Control type="file" name="entrance_gate_photo_of_plot_with_signage_board"
+                            // value={values.entrance_gate_photo_of_plot_with_signage_board}
+                            onChange={handleChange}
+                            isInvalid={
+                              touched.entrance_gate_photo_of_plot_with_signage_board &&
+                              !!errors.entrance_gate_photo_of_plot_with_signage_board
+                            } /> {touched.entrance_gate_photo_of_plot_with_signage_board &&
+                              errors.entrance_gate_photo_of_plot_with_signage_board && (
+                                <BootstrapForm.Control.Feedback type="invalid">
+                                  {errors.entrance_gate_photo_of_plot_with_signage_board}
+                                </BootstrapForm.Control.Feedback>
+                              )}
+                          {/* <Button variant="primary">Upload</Button>
+                          </div> */}
                           <Form.Control.Feedback type="invalid">
                             Select Document
                           </Form.Control.Feedback>
@@ -270,17 +371,17 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
                     Save & Continue
                   </Button>
 
-                  {/* {stepInfo.filled === true && (
+                  {stepInfo.filled === true && (
                     <Button
                       className="p-2"
                       variant="warning"
                       onClick={() => {
-                        setActive(reg.steps[1]);
+                        setActive(reg.stepsII[1]);
                       }}
                     >
                       Next
                     </Button>
-                  )} */}
+                  )}
                 </div>
               </Card.Footer>
             </Card>
@@ -292,7 +393,7 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
 };
 
 // Form to upload Building Plan
-export const BuildingPlan = ({ handleChange, touched, errors }) => {
+export const BuildingPlan = ({ handleChange, touched, errors, values }) => {
   const languages = [
     "",
     "Hindi",
@@ -312,34 +413,36 @@ export const BuildingPlan = ({ handleChange, touched, errors }) => {
   return (
     <Row style={{ marginTop: "1rem" }}>
       <Col md={4}>
-        <Form.Group>
-          <Form.Label>
-            Document Language for Building Plan
-            <ReqSign />
-          </Form.Label>
-          <Field
-            required
+        <BootstrapForm.Group
+        >
+          <BootstrapForm.Label>
+            Document Language for Building Plan <ReqSign />
+          </BootstrapForm.Label>
+          <BootstrapForm.Select
+            size="lg"
             name="language_for_building_plan"
-            as="select"
-            className="form-control"
+            value={values.language_for_building_plan}
             onChange={handleChange}
-            isInvalid={touched.language_for_building_plan && !!errors.language_for_building_plan}
+            isInvalid={
+              touched.language_for_building_plan &&
+              !!errors.language_for_building_plan
+            }
           >
             {languages.map((lang, i) => (
-              <option key={i} value={lang}>
+              <option key={i} value={lang} selected={i == 0}>
                 {lang}
               </option>
             ))}
-          </Field>
-          {touched.language_for_building_plan && errors.language_for_building_plan && (
-            <Form.Control.Feedback
-              type="invalid"
-              className="d-block"
-            >
-              {errors.language_for_building_plan}
-            </Form.Control.Feedback>
-          )}
-        </Form.Group>
+          </BootstrapForm.Select>
+
+          {touched.language_for_building_plan &&
+            errors.language_for_building_plan && (
+              <BootstrapForm.Control.Feedback type="invalid">
+                {errors.language_for_building_plan}
+              </BootstrapForm.Control.Feedback>
+            )}
+        </BootstrapForm.Group>
+
       </Col>
       <Col md={4}>
         <Form.Group>
@@ -352,14 +455,20 @@ export const BuildingPlan = ({ handleChange, touched, errors }) => {
               Download Format
             </Button>
           </Form.Label>
-          <div className="d-flex align-items-center gap-2">
-            {/* <Geotagged label="Original Document of Building Plan"/> */}
-            <Form.Control type="file" />
-            <Button variant="primary">Upload</Button>
-          </div>
-          <Form.Control.Feedback type="invalid">
-            Select Document
-          </Form.Control.Feedback>
+          <Form.Control required type="file" name="document_of_building_plan"
+            // value={values.document_of_building_plan}
+            onChange={handleChange}
+            isInvalid={
+              touched.document_of_building_plan &&
+              !!errors.document_of_building_plan
+            } />
+          {/* <Button variant="primary">Upload</Button> */}
+          {touched.document_of_building_plan &&
+            errors.document_of_building_plan && (
+              <BootstrapForm.Control.Feedback type="invalid">
+                {errors.document_of_building_plan}
+              </BootstrapForm.Control.Feedback>
+            )}
         </Form.Group>
       </Col>
 
@@ -369,14 +478,20 @@ export const BuildingPlan = ({ handleChange, touched, errors }) => {
             Upload Hindi/English Notarised Copy of document
             <ReqSign />
           </Form.Label>
-          <div className="d-flex align-items-center gap-2">
-            {/* <Geotagged label="Hindi/English Notarised Copy of document"/> */}
-            <Form.Control type="file" />
-            <Button variant="primary">Upload</Button>
-          </div>
-          <Form.Control.Feedback type="invalid">
-            Select Document
-          </Form.Control.Feedback>
+          <Form.Control required type="file" name="notarised_document_of_building_plan"
+            // value={values.notarised_document_of_building_plan}
+            onChange={handleChange}
+            isInvalid={
+              touched.notarised_document_of_building_plan &&
+              !!errors.notarised_document_of_building_plan
+            } />
+          {/* <Button variant="primary">Upload</Button> */}
+          {touched.notarised_document_of_building_plan &&
+            errors.notarised_document_of_building_plan && (
+              <BootstrapForm.Control.Feedback type="invalid">
+                {errors.notarised_document_of_building_plan}
+              </BootstrapForm.Control.Feedback>
+            )}
         </Form.Group>
       </Col>
     </Row>

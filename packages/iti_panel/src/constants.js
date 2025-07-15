@@ -565,9 +565,10 @@ export const getDistrictsByState = (state) => {
 
 // Stage II Start
 export const UPDATE_BUILDING_DETAILS = "UPDATE_BUILDING_DETAILS";
+export const UPDATE_ELECTRICTY_CONNECTION_DETAILS =
+  "UPDATE_ELECTRICTY_CONNECTION_DETAILS";
 
 // Stage II End
-
 
 // Form Applicant Entity Details
 export const UPDATE_ENTITY_DETAILS = "UPDATE_ENTITY_DETAILS";
@@ -682,6 +683,9 @@ export const AffiliationCategory = [
 ];
 
 export const UPDATE_SET_FEE_STATUS = "UPDATE_SET_FEE_STATUS";
+export const UPDATE_STAGE_II_SET_FEE_STATUS = "UPDATE_STAGE_II_SET_FEE_STATUS";
+
+
 
 export const UPDATE_STAGE_I_FEE_PAID = "UPDATE_STAGE_I_FEE_PAID";
 export const UPDATE_STAGE_II_FEE_PAID = "UPDATE_STAGE_II_FEE_PAID";
@@ -690,16 +694,27 @@ export const SET_STAGE_I__DOCUMENT_STATUS = "SET_STAGE_I__DOCUMENT_STATUS";
 // App Flow
 export const STAGE_I__NOT_FILLED = "STAGE_I__NOT_FILLED";
 export const STAGE_I__FILLED = "STAGE_I__FILLED";
+export const STAGE_II__FILLED = "STAGE_II__FILLED";
+
 
 export const STAGE_I__FEE_PENDING = "STAGE_I__FEE_PENDING";
+export const STAGE_II__FEE_PENDING = "STAGE_II__FEE_PENDING";
+
 export const STAGE_I__FEE_PAID = "STAGE_I__FEE_PAID";
+export const STAGE_II__FEE_PAID = "STAGE_II__FEE_PAID";
 
 export const STAGE_I__FEE_EXEMPTED = "STAGE_I__FEE_EXEMPTED";
+export const STAGE_II__FEE_EXEMPTED = "STAGE_II__FEE_EXEMPTED";
+
 
 export const STAGE_I__DOCUMENT_PENDING = "STAGE_I__DOCUMENT_PENDING";
+export const STAGE_II__DOCUMENT_PENDING = "STAGE_I__DOCUMENT_PENDING";
+
 export const STAGE_I__DOCUMENT_UPLOADED = "STAGE_I__DOCUMENT_UPLOADED";
 
 export const STAGE_I__SUBMIT_PENDING = "STAGE_I__SUBMIT_PENDING";
+export const STAGE_II__SUBMIT_PENDING = "STAGE_II__SUBMIT_PENDING";
+
 export const STAGE_I__SUBMITED = "STAGE_I__SUBMITED";
 
 // export const STAGE_I__APP_SUBMIT_PENDING = "STAGE_I__APP_SUBMIT_PENDING";
@@ -716,7 +731,11 @@ export const STAGE_I__ASSESSMENT_COMPLETED = "STAGE_I__ASSESSMENT_COMPLETED";
 // };
 
 export const STAGE_I_FORM_FILLING = "STAGE_I_FORM_FILLING";
+export const STAGE_II_FORM_FILLING = "STAGE_II_FORM_FILLING";
+
 export const STAGE_I_FEE = "STAGE_I_FEE";
+export const STAGE_II_FEE = "STAGE_I_FEE";
+
 export const STAGE_I_DOCUMENT_UPLAOD = "STAGE_I_DOCUMENT_UPLAOD";
 export const STAGE_I_SUBMIT = "STAGE_I_SUBMIT";
 export const STAGE_I__ASSESSMENT = "STAGE_I__ASSESSMENT";
@@ -743,3 +762,86 @@ export const AppFlow = [
     status: STAGE_I__ASSESSMENT_PENDING, // STAGE_I__ASSESSMENT_PENDING || STAGE_I__ASSESSMENT_ON_PROGRESS || STAGE_I__ASSESSMENT_COMPLETED
   },
 ];
+
+
+// Workshop Information to be filled Start
+export const work_shop_info_to_be_filled = [
+  {
+    tradeId: "tradeId01",
+    tradeName: "Fitter",
+    Particulars: "Workshop 1",
+    Required_Area_As_per_norms: "100sqm",
+  },
+  {
+    tradeId: "tradeId02",
+    tradeName: "Fitter",
+    Particulars: "Workshop 2",
+    Required_Area_As_per_norms: "200sqm",
+  },
+];
+export const UPDATE_TRADEWISE_WORKSHOP_DETAILS = "UPDATE_TRADEWISE_WORKSHOP_DETAILS";
+// Workshop Information to be filled End
+
+// Classroom Information to be filled Start
+export const classrooms_info_to_be_filled = [
+  {
+    tradeId: "tradeId01",
+    tradeName: "Fitter",
+    Particulars: "Classroom 1",
+    Required_Area_As_per_norms: "200sqm",
+  },
+  {
+    tradeId: "tradeId02",
+    tradeName: "Fitter",
+    Particulars: "Classroom 2",
+    Required_Area_As_per_norms: "400sqm",
+  },
+];
+export const UPDATE_TRADEWISE_CLASSROOMS_DETAILS = "UPDATE_TRADEWISE_CLASSROOMS_DETAILS";
+// Classroom Information to be filled End
+
+
+
+// Stage II Document Upload Start
+export const UPDATE_STAGE_II_DOCUMENT_UPLOAD = "UPDATE_STAGE_II_DOCUMENT_UPLOAD";
+
+export const geo_tagged_photo_of_machinery_tools_equipments =  [
+  {
+    tradeId: "tradeId01",
+    tradeName: "Fitter",
+    unit:1,
+    Particulars: "Machinery/Tools/Equipments",
+  },
+  {
+    tradeId: "tradeId02",
+    tradeName: "Fitter",
+    unit:1,
+    Particulars: "Machinery/Tools/Equipments",
+  },
+  {
+    tradeId: "tradeId01",
+    tradeName: "Electrician",
+    unit:1,
+    Particulars: "Machinery/Tools/Equipments",
+  },
+  {
+    tradeId: "tradeId02",
+    tradeName: "Electrician",
+    unit:1,
+    Particulars: "Machinery/Tools/Equipments",
+  },
+];
+
+export const gst_invoices_for_major_machinery_purchase_and_payment_proof =  [
+  {
+    tradeId: "tradeId01",
+    tradeName: "Fitter",
+    Particulars: "MTE Purchase Bills",
+  },
+  {
+    tradeId: "tradeId02",
+    tradeName: "Electrician",
+    Particulars: "MTE Purchase Bills",
+  },
+];
+// Stage II Document Upload End

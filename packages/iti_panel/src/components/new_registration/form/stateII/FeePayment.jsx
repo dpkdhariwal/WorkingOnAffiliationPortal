@@ -7,8 +7,13 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
 import { ViewApplication } from "./Modal/view_application";
+import { Form as BootstrapForm } from 'react-bootstrap';
 
-const FeePayment = () => {
+import { UPDATE_STAGE_II_SET_FEE_STATUS } from "../../../../constants";
+
+const FeePayment = ({ setActive }) => {
+  const PropInstiInfo = useSelector((state) => state.ProposedInstituteInfo);
+
   const [isHidden, setisHidden] = useState([true]);
 
   const { Formik } = formik;
@@ -34,59 +39,72 @@ const FeePayment = () => {
     navigate("?stage=1&form_id=Details of the Proposed Institute");
   };
 
+  const formikRef = useRef();
+  const reg = useSelector((state) => state.reg);
+
+  const submit = (values) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to save the form data?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes, save it!",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // User confirmed – now show loading or save directly
+        Swal.fire({
+          title: "Saving...",
+          didOpen: () => {
+            Swal.showLoading();
+            dispatch({ type: UPDATE_STAGE_II_SET_FEE_STATUS, payload: PropInstiInfo });
+            Swal.close();
+
+            Swal.showLoading();
+            Swal.fire({
+              title: "Fee Payment",
+              text: "You Have Paid Stage-I Fee",
+              icon: "success",
+              confirmButtonText: "Ok, Go Next",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                // User confirmed – now show loading or save directly
+                Swal.fire({
+                  title: "Saving...",
+                  didOpen: () => {
+                    dispatch({ type: "set_filled_stepII", payload: { step: 3 }, });
+                    dispatch({ type: "reg_set_active_stepII", payload: { step: 4 } });
+                    setActive(reg.stepsII[4]);
+                    Swal.close();
+                  },
+                });
+              } else {
+                console.log("User cancelled save");
+              }
+            });
+          },
+        });
+      } else {
+        console.log("User cancelled save");
+      }
+    });
+  };
+
   return (
     <Fragment>
       <Formik
+        innerRef={formikRef}
+
         validationSchema={yup.object().shape({
-          category: yup.string().required("Please select a category"),
-          Is_the_applicant_running_any_other_iti: yup
-            .string()
-            .required("Please select if applicant is running any other ITI"),
+          iaccept: yup.string().required("Mark on I accept check box"),
         })}
-        validateOnChange={() => console.log("validateOnChange")}
+        validateOnChange={true}
         onSubmit={(values) => {
-          console.log("Form submitted with values:", values);
-          setisHidden(false); // Show "Next" button after submission
-          let timerInterval;
-          Swal.fire({
-            title: "Saving on Local Storage",
-            html: "Please wait...",
-            timer: 2000,
-            timerProgressBar: true,
-            didOpen: () => {
-              Swal.showLoading();
-              const b = Swal.getHtmlContainer()?.querySelector("b");
-              if (b) {
-                timerInterval = setInterval(() => {
-                  const remainingTime = Swal.getTimerLeft();
-                  if (remainingTime) {
-                    b.textContent = remainingTime.toString();
-                  }
-                }, 100);
-              }
-              dispatch({ type: "set_comp_stateI_III", payload: values });
-            },
-            willClose: () => {
-              clearInterval(timerInterval);
-            },
-          })
-            .then((result) => {
-              // throw new Error("Error saving to local storage");
-              /* Read more about handling dismissals below */
-              if (result.dismiss === Swal.DismissReason.timer) {
-                // Do something when the timer expires
-              }
-              navigate(
-                "?stage=1&form_id=Basic Details of Applicant  Organization"
-              );
-            })
-            .catch((error) => {
-              console.error("Error saving to local storage:", error);
-            });
+          console.log(values);
+          submit(values);
         }}
         initialValues={{
-          category: "",
-          Is_the_applicant_running_any_other_iti: "yes",
+          iaccept: "",
         }}
       >
         {({ handleSubmit, handleChange, values, errors, touched }) => (
@@ -99,32 +117,33 @@ const FeePayment = () => {
             <Card.Body>
               <p><ul>
                 <li>Please preview the application before fee payment. No editing in
-                application would be allowed after fee payment.</li></ul></p>
+                  application would be allowed after fee payment.</li></ul></p>
               <div className="d-grid gap-2 mb-4">
                 <ViewApplication />
               </div>
-                
 
               <div className="form-check">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  value=""
-                  id="flexCheckDefault"
-                />
+                <BootstrapForm noValidate onSubmit={handleSubmit}>
+                  <BootstrapForm.Check
+                    type="checkbox"
+                    id="flexCheckDefault"
+                    name="iaccept"
+                    label="I Accept"
+                    value={values.iaccept}
+                    onChange={handleChange}
+                    isInvalid={touched.iaccept && !!errors.iaccept}
+                    feedback={errors.iaccept}
+                  // feedbackType="invalid"
+                  />
+                </BootstrapForm>
                 <label className="form-check-label" htmlFor="flexCheckDefault">
                   I have previewed the application and I am sure that all the
                   details are correct. <span style={{ color: "red" }}>*</span>{" "}
-                  {/* <span>
-                    (As per Annexure-3):{" "}
-                    <Button variant="link" className="rounded-pill btn-wave">
-                      Download Format
-                    </Button>
-                  </span> */}
                 </label>
               </div>
 
-              <Card
+
+              {PropInstiInfo.type_of_institute === "Government" ? (<Card
                 className="custom-card border border-primary"
                 style={{ marginTop: "1rem" }}
               >
@@ -173,8 +192,7 @@ const FeePayment = () => {
                     </ol>
                   </p>
                 </Card.Body>
-              </Card>
-              <Card
+              </Card>) : PropInstiInfo.type_of_institute === "Private" ? (<Card
                 className="custom-card border border-primary"
                 style={{ marginTop: "1rem" }}
               >
@@ -230,11 +248,25 @@ const FeePayment = () => {
                     </p>
                   </p>
                 </Card.Body>
-                <Card.Footer  className="d-flex justify-content-end">
-                              <Button size="lg" variant="instagram">Pay</Button>
-                </Card.Footer>
-              </Card>
+
+              </Card>) : ''}
+
+
+
+
             </Card.Body>
+            <Card.Footer className="d-flex justify-content-end">
+              {PropInstiInfo.type_of_institute === "Government" ? (
+                <Button size="lg" variant="facebook" onClick={() => formikRef.current?.submitForm()}
+                >
+                  Save & Next
+                </Button>
+              ) : PropInstiInfo.type_of_institute === "Private" ? (
+                <Button size="lg" variant="instagram" onClick={() => formikRef.current?.submitForm()} >
+                  Pay
+                </Button>
+              ) : ''}
+            </Card.Footer>
           </Card>
         )}
       </Formik>

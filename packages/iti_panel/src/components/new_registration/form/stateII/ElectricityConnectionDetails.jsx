@@ -18,25 +18,11 @@ import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
 import ReqSign from "../comp/requiredSign";
 
+import { Electricity_Connection_yup_object as elec_conn_yup } from "../../../../reducers/newAppReducer";
+import {UPDATE_ELECTRICTY_CONNECTION_DETAILS} from "../../../../constants";
 
-const schema = yup.object().shape({
-  land_documents: yup.array().of(
-    yup.object().shape({
-      title: yup.string().required("Title is required"),
-      language: yup.string().required("Language is required"),
-      file: yup.mixed().required("File is required"),
-    })
-  ),
-  lease_deed_document: yup.array().of(
-    yup.object().shape({
-      title: yup.string().required("Title is required"),
-      language: yup.string().required("Language is required"),
-      file: yup.mixed().required("File is required"),
-    })
-  ),
-});
 
-const ElectricityConnectionDetails = () => {
+const ElectricityConnectionDetails = ({ setActive }) => {
   const stage = useSelector((state) => state.reg.stepsII);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -44,10 +30,8 @@ const ElectricityConnectionDetails = () => {
   useEffect(() => {
     console.log(stage);
   }, []);
-
-  // const initialLandDocs = stage.stage_I.land_documents || [];
-  // const lease_deed_document = stage.stage_I.lease_docs || [];
-
+  const reg = useSelector((state) => state.reg);
+  const stepInfo = reg.stepsII[0];
   const languages = [
     "",
     "Hindi",
@@ -74,35 +58,50 @@ const ElectricityConnectionDetails = () => {
 
   const designation = ["Secretary", "Chairperson", "President"];
 
+  const electricity_conn_reducer = useSelector((state) => state.Electricity_Connection_Detail_reducer);
+  const formikRef = useRef();
+
+   const submit = (values) => {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "Do you want to save the form data?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Yes, save it!",
+        cancelButtonText: "Cancel",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // User confirmed – now show loading or save directly
+          Swal.fire({
+            title: "Saving...",
+            didOpen: () => {
+              Swal.showLoading();
+              dispatch({ type: UPDATE_ELECTRICTY_CONNECTION_DETAILS, payload: values });
+              dispatch({ type: "set_filled_step_II", payload: { step: 3 }, });
+              dispatch({ type: "reg_set_active_stepII", payload: { step: 4 } });
+              setActive(reg.stepsII[3]);
+              Swal.close();
+            },
+          });
+        } else {
+          console.log("User cancelled save");
+        }
+      });
+    };
+
   return (
     <Fragment>
       <Formik
-        initialValues={
-          {
-            // land_documents: initialLandDocs,
-            // lease_deed_document: lease_deed_document,
-          }
-        }
-        validationSchema={schema}
+        innerRef={formikRef}
+
+        initialValues={electricity_conn_reducer}
+        validationSchema={yup.object().shape(elec_conn_yup)}
         onSubmit={(values) => {
           console.log("Form Values", values);
-          // Swal.fire({
-          //   title: "Saving on Local Storage",
-          //   html: "Please wait...",
-          //   timer: 2000,
-          //   timerProgressBar: true,
-          //   didOpen: () => {
-          //     Swal.showLoading();
-          //     dispatch({ type: "set_comp_stateI_III", payload: values });
-          //   },
-          // }).then(() => {
-          //   navigate(
-          //     "?stage=1&form_id=Basic Details of Applicant  Organization"
-          //   );
-          // });
+          submit(values);
         }}
       >
-        {({ handleSubmit, setFieldValue, values, errors, touched }) => (
+        {({ handleSubmit, handleChange, values, errors, touched }) => (
           <Form noValidate onSubmit={handleSubmit}>
             <Card className="custom-card border border-primary">
               <Card.Header>
@@ -119,13 +118,24 @@ const ElectricityConnectionDetails = () => {
                         <ReqSign />
                       </Form.Label>
                       <Field
-                        name="land_use_documents"
+                        name="consumer_name"
                         as={Form.Control}
                         placeholder="Electricity Consumer Name"
+                        value={values.consumer_name}
+                        onChange={handleChange}
+                        isInvalid={
+                          touched.consumer_name &&
+                          !!errors.consumer_name
+                        }
                       />
-                      <Form.Control.Feedback type="invalid">
-                        Error
-                      </Form.Control.Feedback>
+                      {touched.consumer_name && errors.consumer_name && (
+                        <Form.Control.Feedback
+                          type="invalid"
+                          className="d-block"
+                        >
+                          {errors.consumer_name}
+                        </Form.Control.Feedback>
+                      )}
                     </Form.Group>
                   </Col>
                   <Col md={4}>
@@ -135,13 +145,24 @@ const ElectricityConnectionDetails = () => {
                         <ReqSign />
                       </Form.Label>
                       <Field
-                        name="land_use_documents"
+                        name="consumer_number"
                         as={Form.Control}
                         placeholder="Electricity Consumer Number"
+                        value={values.consumer_number}
+                        onChange={handleChange}
+                        isInvalid={
+                          touched.consumer_number &&
+                          !!errors.consumer_number
+                        }
                       />
-                      <Form.Control.Feedback type="invalid">
-                        Error
-                      </Form.Control.Feedback>
+                      {touched.consumer_number && errors.consumer_number && (
+                        <Form.Control.Feedback
+                          type="invalid"
+                          className="d-block"
+                        >
+                          {errors.consumer_number}
+                        </Form.Control.Feedback>
+                      )}
                     </Form.Group>
                   </Col>
 
@@ -152,13 +173,24 @@ const ElectricityConnectionDetails = () => {
                         <ReqSign />
                       </Form.Label>
                       <Field
-                        name="land_use_documents"
+                        name="electricity_authority_name"
                         as={Form.Control}
                         placeholder="Ex. Jaipur Vidyut Vitran Nigam Limited"
+                        value={values.electricity_authority_name}
+                        onChange={handleChange}
+                        isInvalid={
+                          touched.electricity_authority_name &&
+                          !!errors.electricity_authority_name
+                        }
                       />
-                      <Form.Control.Feedback type="invalid">
-                        Error
-                      </Form.Control.Feedback>
+                      {touched.electricity_authority_name && errors.electricity_authority_name && (
+                        <Form.Control.Feedback
+                          type="invalid"
+                          className="d-block"
+                        >
+                          {errors.electricity_authority_name}
+                        </Form.Control.Feedback>
+                      )}
                     </Form.Group>
                   </Col>
                   <Col md={4}>
@@ -168,13 +200,24 @@ const ElectricityConnectionDetails = () => {
                         <ReqSign />
                       </Form.Label>
                       <Field
-                        name="land_use_documents"
+                        name="electricity_authority_website"
                         as={Form.Control}
                         placeholder="Ex. https://www.bijlimitra.com/"
+                        value={values.electricity_authority_website}
+                        onChange={handleChange}
+                        isInvalid={
+                          touched.electricity_authority_website &&
+                          !!errors.electricity_authority_website
+                        }
                       />
-                      <Form.Control.Feedback type="invalid">
-                        Error
-                      </Form.Control.Feedback>
+                      {touched.electricity_authority_website && errors.electricity_authority_website && (
+                        <Form.Control.Feedback
+                          type="invalid"
+                          className="d-block"
+                        >
+                          {errors.electricity_authority_website}
+                        </Form.Control.Feedback>
+                      )}
                     </Form.Group>
                   </Col>
                   <Col md={4}>
@@ -188,11 +231,24 @@ const ElectricityConnectionDetails = () => {
                           required
                           type="number"
                           placeholder="Total Available/Sanction load (in KW)"
-                          name="land_area_in_square_metres"
+                          name="total_sanction_load_in_kw"
+                          value={values.total_sanction_load_in_kw}
+                          onChange={handleChange}
+                          isInvalid={
+                            touched.total_sanction_load_in_kw &&
+                            !!errors.total_sanction_load_in_kw
+                          }
                         />
                         <Button variant="outline-secondary">In KW</Button>
                       </InputGroup>
-                      <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                      {touched.total_sanction_load_in_kw && errors.total_sanction_load_in_kw && (
+                        <Form.Control.Feedback
+                          type="invalid"
+                          className="d-block"
+                        >
+                          {errors.total_sanction_load_in_kw}
+                        </Form.Control.Feedback>
+                      )}
                     </Form.Group>
                   </Col>
                   <Col md={6}>
@@ -201,13 +257,22 @@ const ElectricityConnectionDetails = () => {
                         Latest Electricity Bill / Meter Sealing Report (for new
                         institute if bill is not available )<ReqSign />
                       </Form.Label>
-                      <div className="d-flex align-items-center gap-2">
-                        <Form.Control type="file" />
-                        <Button variant="primary">Upload</Button>
-                      </div>
-                      <Form.Control.Feedback type="invalid">
-                        Select Document
-                      </Form.Control.Feedback>
+                      {/* <div className="d-flex align-items-center gap-2"> */}
+                      <Form.Control type="file" name="latest_electricity_bill_sealing_report"
+                        onChange={handleChange}
+                        isInvalid={
+                          touched.latest_electricity_bill_sealing_report &&
+                          !!errors.latest_electricity_bill_sealing_report
+                        }
+                      />
+                      {/* <Button variant="primary">Upload</Button>
+                      </div> */}
+                      {touched.latest_electricity_bill_sealing_report &&
+                        errors.latest_electricity_bill_sealing_report && (
+                          <Form.Control.Feedback type="invalid">
+                            {errors.latest_electricity_bill_sealing_report}
+                          </Form.Control.Feedback>
+                        )}
                     </Form.Group>
                     <div className="invoice-notes text-danger">
                       <p>
@@ -235,13 +300,21 @@ const ElectricityConnectionDetails = () => {
                             Photo of Backup Power
                             <ReqSign />
                           </Form.Label>
-                          <div className="d-flex align-items-center gap-2">
-                            <Form.Control type="file" />
-                            <Button variant="primary">Upload</Button>
-                          </div>
-                          <Form.Control.Feedback type="invalid">
-                            Select Document
-                          </Form.Control.Feedback>
+                          {/* <div className="d-flex align-items-center gap-2"> */}
+                          <Form.Control type="file" name="photo_of_backup_power"
+                            onChange={handleChange}
+                            isInvalid={
+                              touched.photo_of_backup_power &&
+                              !!errors.photo_of_backup_power
+                            } />
+                          {/* <Button variant="primary">Upload</Button>
+                          </div> */}
+                          {touched.photo_of_backup_power &&
+                            errors.photo_of_backup_power && (
+                              <Form.Control.Feedback type="invalid">
+                                {errors.photo_of_backup_power}
+                              </Form.Control.Feedback>
+                            )}
                         </Form.Group>
                         <div className="invoice-notes text-danger">
                           <p>
@@ -257,13 +330,21 @@ const ElectricityConnectionDetails = () => {
                             Purchase Related Documents
                             <ReqSign />
                           </Form.Label>
-                          <div className="d-flex align-items-center gap-2">
-                            <Form.Control type="file" />
-                            <Button variant="primary">Upload</Button>
-                          </div>
-                          <Form.Control.Feedback type="invalid">
-                            Select Document
-                          </Form.Control.Feedback>
+                          {/* <div className="d-flex align-items-center gap-2"> */}
+                          <Form.Control type="file" name="purchase_related_documents"
+                            onChange={handleChange}
+                            isInvalid={
+                              touched.purchase_related_documents &&
+                              !!errors.purchase_related_documents
+                            } />
+                          {/* <Button variant="primary">Upload</Button>
+                          </div> */}
+                          {touched.purchase_related_documents &&
+                            errors.purchase_related_documents && (
+                              <Form.Control.Feedback type="invalid">
+                                {errors.purchase_related_documents}
+                              </Form.Control.Feedback>
+                            )}
                         </Form.Group>
                       </Col>
                     </Row>
@@ -276,17 +357,48 @@ const ElectricityConnectionDetails = () => {
                         Fire and Safety Certificate
                         <ReqSign />
                       </Form.Label>
-                      <div className="d-flex align-items-center gap-2">
-                        <Form.Control type="file" />
-                        <Button variant="primary">Upload</Button>
-                      </div>
-                      <Form.Control.Feedback type="invalid">
-                        Select Document
-                      </Form.Control.Feedback>
+                      {/* <div className="d-flex align-items-center gap-2"> */}
+                      <Form.Control type="file" name="fire_and_safety_certificate"
+                        onChange={handleChange}
+                        isInvalid={
+                          touched.fire_and_safety_certificate &&
+                          !!errors.fire_and_safety_certificate
+                        } />
+                      {/* <Button variant="primary">Upload</Button>
+                      </div> */}
+                      {touched.fire_and_safety_certificate &&
+                        errors.fire_and_safety_certificate && (
+                          <Form.Control.Feedback type="invalid">
+                            {errors.fire_and_safety_certificate}
+                          </Form.Control.Feedback>
+                        )}
                     </Form.Group>
                   </Col>
                 </Row>
               </Card.Body>
+              <Card.Footer>
+                <div className="d-flex justify-content-between mb-3">
+                  <Button
+                    className="p-2"
+                    variant="success"
+                    onClick={() => formikRef.current?.submitForm()}
+                  >
+                    Save & Continue
+                  </Button>
+
+                  {stepInfo.filled === true && (
+                    <Button
+                      className="p-2"
+                      variant="warning"
+                      onClick={() => {
+                        setActive(reg.steps[1]);
+                      }}
+                    >
+                      Next
+                    </Button>
+                  )}
+                </div>
+              </Card.Footer>
             </Card>
           </Form>
         )}
@@ -310,51 +422,51 @@ export const ElectricityConnectionDetailsView = (props) => {
       </Card.Header>
       <Card.Body>
         <Table className="table-striped table-hover" style={{ textAlign: "start" }}>
-      <thead>
-        <tr>
-          <th scope="col">Particular</th>
-          <th>:</th>
-          <th scope="col">Filled By Applicant</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th scope="row">Consumer Name</th>
-          <th>:</th>
-          <td>XYZ</td>
-        </tr>
-        <tr>
-          <th scope="row">Consumer Number</th>
-          <th>:</th>
-          <td>12VSADDDAA01</td>
-        </tr>
+          <thead>
+            <tr>
+              <th scope="col">Particular</th>
+              <th>:</th>
+              <th scope="col">Filled By Applicant</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Consumer Name</th>
+              <th>:</th>
+              <td>XYZ</td>
+            </tr>
+            <tr>
+              <th scope="row">Consumer Number</th>
+              <th>:</th>
+              <td>12VSADDDAA01</td>
+            </tr>
 
-        <tr>
-          <th scope="row">Electricity Authority Name</th>
-          <th>:</th>
-          <td>XYZ</td>
-        </tr>
+            <tr>
+              <th scope="row">Electricity Authority Name</th>
+              <th>:</th>
+              <td>XYZ</td>
+            </tr>
 
-        <tr>
-          <th scope="row">Total Available/Sanction Load (in KW)</th>
-          <th>:</th>
-          <td>XYZ</td>
-        </tr>
-        <tr>
-          <th scope="row">Latest Electricity Bill / Meter Sealing Report</th>
-          <th>:</th>
-          <td>
-            <Button variant="primary">View Document</Button>
-          </td>
-        </tr>
-      </tbody>
-    </Table>
- </Card.Body>
+            <tr>
+              <th scope="row">Total Available/Sanction Load (in KW)</th>
+              <th>:</th>
+              <td>XYZ</td>
+            </tr>
+            <tr>
+              <th scope="row">Latest Electricity Bill / Meter Sealing Report</th>
+              <th>:</th>
+              <td>
+                <Button variant="primary">View Document</Button>
+              </td>
+            </tr>
+          </tbody>
+        </Table>
+      </Card.Body>
       {/* <Card.Footer>
                       <Button>dsfdf</Button>
                     </Card.Footer> */}
     </Card>
-    
+
   );
 };
 export const ElectricityConnectionDetailsAction = () => {
@@ -408,31 +520,31 @@ export const ElectricityConnectionDetailsAction = () => {
     navigate("?stage=1&form_id=Details of the Proposed Institute");
   };
 
-  
-  
-    const [showXlModal, setShowXlModal] = useState(false);
-    const [selectedSize, setSelectedSize] = useState("");
-  
-    const handleShowModal = (size) => {
-      switch (size) {
-        case "xl":
-          setShowXlModal(true);
-          break;
-        default:
-          break;
-      }
-      setSelectedSize(size);
-    };
-  
-    const handleCloseModal = () => {
-      setShowXlModal(false);
-      setSelectedSize("");
-    };
-  
-    const [formData, setFormData] = useState({});
-    const [formSubmited, setFormSubmited] = useState(false);
-  
-   
+
+
+  const [showXlModal, setShowXlModal] = useState(false);
+  const [selectedSize, setSelectedSize] = useState("");
+
+  const handleShowModal = (size) => {
+    switch (size) {
+      case "xl":
+        setShowXlModal(true);
+        break;
+      default:
+        break;
+    }
+    setSelectedSize(size);
+  };
+
+  const handleCloseModal = () => {
+    setShowXlModal(false);
+    setSelectedSize("");
+  };
+
+  const [formData, setFormData] = useState({});
+  const [formSubmited, setFormSubmited] = useState(false);
+
+
 
   return (
 
@@ -664,12 +776,11 @@ export const ElectricityConnectionDetailsAction = () => {
                                 required
                                 as="textarea"
                                 rows={3}
-                                className={`form-control ${
-                                  touched.assessor_comments &&
+                                className={`form-control ${touched.assessor_comments &&
                                   errors.assessor_comments
-                                    ? "is-invalid"
-                                    : ""
-                                }`}
+                                  ? "is-invalid"
+                                  : ""
+                                  }`}
                                 value={values.assessor_comments}
                                 onChange={handleChange}
                                 isInvalid={
@@ -897,36 +1008,36 @@ export const BackupPowerSupplyView = (props) => {
       </Card.Header>
       <Card.Body>
         <Table className="table-striped table-hover" style={{ textAlign: "start" }}>
-      <thead>
-        <tr>
-          <th scope="col">Particular</th>
-          <th>:</th>
-          <th scope="col">Filled By Applicant</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th scope="row">Photo of Backup Power</th>
-          <th>:</th>
-          <td>
-            <Button variant="primary">View Document</Button>
-          </td>
-        </tr>
-        <tr>
-          <th scope="row">Purchase Related Documents</th>
-          <th>:</th>
-          <td>
-            <Button variant="primary">View Document</Button>
-          </td>
-        </tr>
-      </tbody>
-    </Table>
- </Card.Body>
+          <thead>
+            <tr>
+              <th scope="col">Particular</th>
+              <th>:</th>
+              <th scope="col">Filled By Applicant</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Photo of Backup Power</th>
+              <th>:</th>
+              <td>
+                <Button variant="primary">View Document</Button>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row">Purchase Related Documents</th>
+              <th>:</th>
+              <td>
+                <Button variant="primary">View Document</Button>
+              </td>
+            </tr>
+          </tbody>
+        </Table>
+      </Card.Body>
       {/* <Card.Footer>
                       <Button>dsfdf</Button>
                     </Card.Footer> */}
     </Card>
-    
+
   );
 };
 export const BackupPowerSupplyAction = () => {
@@ -978,36 +1089,36 @@ export const BackupPowerSupplyAction = () => {
   const [lable, setLabel] = useState("Backup Power Supply");
 
 
-    const [showXlModal, setShowXlModal] = useState(false);
-    const [selectedSize, setSelectedSize] = useState("");
-  
-    const handleShowModal = (size) => {
-      switch (size) {
-        case "xl":
-          setShowXlModal(true);
-          break;
-        default:
-          break;
-      }
-      setSelectedSize(size);
-    };
-  
-    const handleCloseModal = () => {
-      setShowXlModal(false);
-      setSelectedSize("");
-    };
-  
-    const [formData, setFormData] = useState({});
-    const [formSubmited, setFormSubmited] = useState(false);
-  
-   
+  const [showXlModal, setShowXlModal] = useState(false);
+  const [selectedSize, setSelectedSize] = useState("");
+
+  const handleShowModal = (size) => {
+    switch (size) {
+      case "xl":
+        setShowXlModal(true);
+        break;
+      default:
+        break;
+    }
+    setSelectedSize(size);
+  };
+
+  const handleCloseModal = () => {
+    setShowXlModal(false);
+    setSelectedSize("");
+  };
+
+  const [formData, setFormData] = useState({});
+  const [formSubmited, setFormSubmited] = useState(false);
+
+
 
 
   return (
 
 
 
-      <>
+    <>
       <Row
         style={{
           backgroundColor: "rgb(245, 245, 245)",
@@ -1234,12 +1345,11 @@ export const BackupPowerSupplyAction = () => {
                                 required
                                 as="textarea"
                                 rows={3}
-                                className={`form-control ${
-                                  touched.assessor_comments &&
+                                className={`form-control ${touched.assessor_comments &&
                                   errors.assessor_comments
-                                    ? "is-invalid"
-                                    : ""
-                                }`}
+                                  ? "is-invalid"
+                                  : ""
+                                  }`}
                                 value={values.assessor_comments}
                                 onChange={handleChange}
                                 isInvalid={
@@ -1458,7 +1568,7 @@ export const BackupPowerSupplyAction = () => {
 export const FireAndSafetyCertificateView = (props) => {
   return (
 
-     <Card className="custom-card shadow border-info">
+    <Card className="custom-card shadow border-info">
       <Card.Header>
         <div className="card-title" style={{ textTransform: "none" }}>
           <h5> {props.label}</h5>
@@ -1466,32 +1576,32 @@ export const FireAndSafetyCertificateView = (props) => {
       </Card.Header>
       <Card.Body>
         <Table className="table-striped table-hover" style={{ textAlign: "start" }}>
-      <thead>
-        <tr>
-          <th scope="col">Particular</th>
-          <th>:</th>
-          <th scope="col">Filled By Applicant</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th scope="row">Fire and Safety Certificate</th>
-          <th>:</th>
-          <td>
-            <Button variant="primary">View Document</Button>
-          </td>
-        </tr>
-      </tbody>
-    </Table>
-</Card.Body>
+          <thead>
+            <tr>
+              <th scope="col">Particular</th>
+              <th>:</th>
+              <th scope="col">Filled By Applicant</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Fire and Safety Certificate</th>
+              <th>:</th>
+              <td>
+                <Button variant="primary">View Document</Button>
+              </td>
+            </tr>
+          </tbody>
+        </Table>
+      </Card.Body>
       {/* <Card.Footer>
                       <Button>dsfdf</Button>
                     </Card.Footer> */}
     </Card>
-    
+
   );
 };
-export const FireAndSafetyCertificateAction  = () => {
+export const FireAndSafetyCertificateAction = () => {
   const [reviewState, setReviewState] = useState("Reviewed"); // Given || Awaiting for Review || Reviewed
   const MaxData = [
     { value: "1", label: "Document is not legible" },
@@ -1518,7 +1628,7 @@ export const FireAndSafetyCertificateAction  = () => {
 
 
 
- 
+
 
 
   const [isHidden, setisHidden] = useState([true]);
@@ -1550,34 +1660,34 @@ export const FireAndSafetyCertificateAction  = () => {
   const [lable, setLabel] = useState("Fire and Safety Certificate");
 
 
-    const [showXlModal, setShowXlModal] = useState(false);
-    const [selectedSize, setSelectedSize] = useState("");
-  
-    const handleShowModal = (size) => {
-      switch (size) {
-        case "xl":
-          setShowXlModal(true);
-          break;
-        default:
-          break;
-      }
-      setSelectedSize(size);
-    };
-  
-    const handleCloseModal = () => {
-      setShowXlModal(false);
-      setSelectedSize("");
-    };
-  
-    const [formData, setFormData] = useState({});
-    const [formSubmited, setFormSubmited] = useState(false);
-  
-   
+  const [showXlModal, setShowXlModal] = useState(false);
+  const [selectedSize, setSelectedSize] = useState("");
+
+  const handleShowModal = (size) => {
+    switch (size) {
+      case "xl":
+        setShowXlModal(true);
+        break;
+      default:
+        break;
+    }
+    setSelectedSize(size);
+  };
+
+  const handleCloseModal = () => {
+    setShowXlModal(false);
+    setSelectedSize("");
+  };
+
+  const [formData, setFormData] = useState({});
+  const [formSubmited, setFormSubmited] = useState(false);
+
+
 
 
   return (
 
- <>
+    <>
       <Row
         style={{
           backgroundColor: "rgb(245, 245, 245)",
@@ -1804,12 +1914,11 @@ export const FireAndSafetyCertificateAction  = () => {
                                 required
                                 as="textarea"
                                 rows={3}
-                                className={`form-control ${
-                                  touched.assessor_comments &&
+                                className={`form-control ${touched.assessor_comments &&
                                   errors.assessor_comments
-                                    ? "is-invalid"
-                                    : ""
-                                }`}
+                                  ? "is-invalid"
+                                  : ""
+                                  }`}
                                 value={values.assessor_comments}
                                 onChange={handleChange}
                                 isInvalid={

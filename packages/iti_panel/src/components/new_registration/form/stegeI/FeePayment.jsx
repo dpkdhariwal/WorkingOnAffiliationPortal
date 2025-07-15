@@ -96,9 +96,9 @@ const FeePayment = ({ setActive }) => {
         innerRef={formikRef}
 
         validationSchema={yup.object().shape({
-          iaccept: yup.string().required("Please select a category"),
+          iaccept: yup.string().required("Mark on I accept check box"),
         })}
-        validateOnChange={() => console.log("validateOnChange")}
+        validateOnChange={true}
         onSubmit={(values) => {
           console.log(values);
           submit(values);

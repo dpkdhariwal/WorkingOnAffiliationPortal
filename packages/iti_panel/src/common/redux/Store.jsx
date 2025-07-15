@@ -20,10 +20,17 @@ import {
   loginUserReducer,
   getAllUsersReducer,
 } from "../../reducers/userReducer";
-import { reg, appCat, EntityDetails, ProposedInstituteInfo, trade_unit_reducer, land_info_reducer, AppliInfo, building_detail_reducer } from "../../reducers/newAppReducer";
+import { reg, appCat, EntityDetails, ProposedInstituteInfo, trade_unit_reducer, land_info_reducer, AppliInfo, building_detail_reducer, Electricity_Connection_Detail_reducer } from "../../reducers/newAppReducer";
 
 
-import {land_documents_reducer, lease_deed_document_reducer} from "../../reducers/document_upload";
+import { land_documents_reducer, lease_deed_document_reducer } from "../../reducers/document_upload";
+
+import { TradeWiseWorkshopReducer } from "../../reducers/tradeWiseWorkshopReducer";
+import { TradeWiseClassroomReducer } from "../../reducers/tradeWiseClassroomsReducer";
+
+import { stageII_document_Uploads_Reducer } from "../../reducers/stageII_document_upload";
+
+
 
 // 👇 Combine all reducers
 const rootReducer = combineReducers({
@@ -41,7 +48,11 @@ const rootReducer = combineReducers({
   land_documents_reducer,
   lease_deed_document_reducer,
   AppliInfo,
-  building_detail_reducer
+  building_detail_reducer,
+  Electricity_Connection_Detail_reducer,
+  TradeWiseWorkshopReducer,
+  TradeWiseClassroomReducer,
+  stageII_document_Uploads_Reducer
 });
 
 // 👇 Redux persist configuration

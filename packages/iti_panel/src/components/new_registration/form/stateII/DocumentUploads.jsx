@@ -1,5 +1,5 @@
 import { Fragment, useEffect } from "react";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 
 import List from "./component/list";
 
@@ -15,6 +15,8 @@ import {
 import Select from "react-select";
 
 import { Formik, Field, FieldArray } from "formik";
+import { Form as FormikForm, ErrorMessage } from "formik";
+
 import * as yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -46,93 +48,67 @@ export const Preference = [
   { value: "No", label: "no" },
 ];
 
+import { validationSchema } from "../../../../reducers/stageII_document_upload";
+
+import {
+  geo_tagged_photo_of_machinery_tools_equipments as docs1,
+  gst_invoices_for_major_machinery_purchase_and_payment_proof as docs2,
+  UPDATE_STAGE_II_DOCUMENT_UPLOAD,
+} from "../../../../constants";
+
 const DocumentUploads = () => {
-  const stage = useSelector((state) => state.reg.stepsII);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [currentStep, setCurrentStep] = useState(0);
 
-  const handleStepClick = (step, index) => setCurrentStep(index);
+  const formikRef = useRef();
 
-  const initialStepsArr = [
-    {
-      stepLabel: "Fitter",
-      stepDescription: "Fill Machinery/Tools/Equipment Details",
-      completed: false,
-    },
-    {
-      stepLabel: "Electrician",
-      stepDescription: "Fill Machinery/Tools/Equipment Details",
-      completed: false,
-    },
-  ];
+  const submit = (values) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to save the form data?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes, save it!",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // User confirmed – now show loading or save directly
+        Swal.fire({
+          title: "Saving...",
+          didOpen: () => {
+            Swal.showLoading();
+            dispatch({
+              type: UPDATE_STAGE_II_DOCUMENT_UPLOAD,
+              payload: values,
+            });
+            dispatch({ type: "set_filled_stepII", payload: { step: 5 } });
+            dispatch({ type: "reg_set_active_stepII", payload: { step: 5 } });
+            setActive(reg.steps[5]);
+          },
+        });
+      } else {
+        console.log("User cancelled save");
+      }
+    });
+  };
 
-  useEffect(() => {
-    console.log(stage);
-  }, []);
+  const initial_values = useSelector(
+    (state) => state.stageII_document_Uploads_Reducer
+  );
 
-  // const initialLandDocs = stage.stage_I.land_documents || [];
-  // const lease_deed_document = stage.stage_I.lease_docs || [];
-
-  const languages = [
-    "",
-    "Hindi",
-    "English",
-    "Bengali",
-    "Telugu",
-    "Marathi",
-    "Tamil",
-    "Urdu",
-    "Gujarati",
-    "Kannada",
-    "Odia",
-    "Malayalam",
-    "Punjabi",
-  ];
-
-  const ID_Proof_Doc_list = [
-    "Aadhaar Card",
-    "PAN Card",
-    "Passport",
-    "Voter ID Card",
-    "Driving License",
-  ];
-
-  const designation = ["Secretary", "Chairperson", "President"];
 
   return (
     <Fragment>
-      {true && (
-        <Formik
-          initialValues={
-            {
-              // land_documents: initialLandDocs,
-              // lease_deed_document: lease_deed_document,
-            }
-          }
-          validationSchema={schema}
+       <Formik
+          innerRef={formikRef}
+          initialValues={initial_values}
+          validationSchema={validationSchema}
           onSubmit={(values) => {
             console.log("Form Values", values);
-            // Swal.fire({
-            //   title: "Saving on Local Storage",
-            //   html: "Please wait...",
-            //   timer: 2000,
-            //   timerProgressBar: true,
-            //   didOpen: () => {
-            //     Swal.showLoading();
-            //     dispatch({ type: "set_comp_stateI_III", payload: values });
-            //   },
-            // }).then(() => {
-            //   navigate(
-            //     "?stage=1&form_id=Basic Details of Applicant  Organization"
-            //   );
-            // });
+            submit(values);
           }}
         >
           {({ handleSubmit, setFieldValue, values, errors, touched }) => (
             <Form noValidate onSubmit={handleSubmit}>
-             
-
               <Card
                 className="custom-card border border-primary"
                 style={{ marginTop: "10px" }}
@@ -155,28 +131,42 @@ const DocumentUploads = () => {
                             Unit
                           </th>
                           <th scope="col" style={{ textTransform: "none" }}>
-                            Geo tagged photo <ReqSign/>
+                            Geo tagged photo <ReqSign />
                           </th>
                         </tr>
                       </thead>
                       <tbody>
-                        {[1, 2, 3].map((item, index) => (
-                          <tr key={index}>
-                            <th scope="row">Fitter</th>
-                            <td>1</td>
-                            <td>
-                              <Form.Group>
-                                <div className="d-flex align-items-center gap-2">
-                                  <Form.Control type="file" />
-                                  <Button variant="primary">Upload</Button>
+                        {docs1.map((item, index) => {
+                          const fileField = `${item.tradeId}_mte_geo_tagged_photo_${index}`;
+                          return (
+                            <tr key={index}>
+                              <th scope="row">{item.tradeName}</th>
+                              <td>1</td>
+                              <td>
+                                {/* {fileField} */}
+
+                                <input
+                                  type="file"
+                                  name={fileField}
+                                  className="form-control"
+                                  onChange={(event) => {
+                                    setFieldValue(
+                                      fileField,
+                                      event.currentTarget.files[0]
+                                    );
+                                  }}
+                                />
+                                <div className="text-danger">
+                                  <ErrorMessage
+                                    name={fileField}
+                                    component="div"
+                                    className="text-danger"
+                                  />
                                 </div>
-                                <Form.Control.Feedback type="invalid">
-                                  Select Document
-                                </Form.Control.Feedback>
-                              </Form.Group>
-                            </td>
-                          </tr>
-                        ))}
+                              </td>
+                            </tr>
+                          );
+                        })}
                       </tbody>
                     </Table>
                   </div>
@@ -203,40 +193,84 @@ const DocumentUploads = () => {
                           <th scope="col" style={{ textTransform: "none" }}>
                             Select GST Invoices for Major Machinery Purchase and
                             Payment proof (Bill amount > Rs. 10,000)(single PDF
-                            for each Trade) <ReqSign/>
+                            for each Trade) <ReqSign />
                           </th>
                         </tr>
                       </thead>
                       <tbody>
-                        {["Electrician", "Fitter"].map((item, index) => (
-                          <tr key={index}>
-                            <th scope="row">{item}</th>
-                            <td>
-                              <Form.Group>
-                                <div className="d-flex align-items-center gap-2">
-                                  <Form.Control type="file" />
-                                  <Button variant="primary">Upload</Button>
+                        {docs2.map((item, index) => {
+                          const fileField = `${item.tradeId}_mte_gst_invoices_${index}`;
+
+                          return (
+                            <tr key={index}>
+                              <th scope="row">{item.tradeName}</th>
+                              <td>
+                                <input
+                                  type="file"
+                                  name={fileField}
+                                  className="form-control"
+                                  onChange={(event) => {
+                                    setFieldValue(
+                                      fileField,
+                                      event.currentTarget.files[0]
+                                    );
+                                  }}
+                                />
+                                <div className="text-danger">
+                                  <ErrorMessage
+                                    name={fileField}
+                                    component="div"
+                                    className="text-danger"
+                                  />
                                 </div>
-                                <Form.Control.Feedback type="invalid">
-                                  Select Document
-                                </Form.Control.Feedback>
-                              </Form.Group>
-                            </td>
-                          </tr>
-                        ))}
+                              </td>
+                            </tr>
+                          );
+                        })}
                       </tbody>
                     </Table>
                   </div>
                 </Card.Body>
               </Card>
+
+              <Card className="custom-card border border-primary">
+                <Card.Body>
+                  <div className="form-check">
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      value=""
+                      id="flexCheckDefault"
+                    />
+                    <label
+                      className="form-check-label"
+                      htmlFor="flexCheckDefault"
+                    >
+                      Self Declaration<span style={{ color: "red" }}>*</span>
+                    </label>
+                  </div>
+                  <Row style={{ marginTop: "1rem" }}>
+                    <Col md={12}>
+                      <strike>{`Institute's self-declaration of compliance with Affiliation Norms and acknowledgment of responsibilities, as per Annexure-6`}</strike>
+                    </Col>
+                  </Row>
+                </Card.Body>
+                <Card.Footer className="d-flex justify-content-end">
+                  <Button
+                    onClick={() => formikRef.current?.submitForm()}
+                    size="lg"
+                    variant="success"
+                    className="btn-wave"
+                  >
+                    Submit Application
+                  </Button>
+                </Card.Footer>
+              </Card>
             </Form>
           )}
         </Formik>
-      )}
     </Fragment>
   );
 };
 
 export default DocumentUploads;
-
-
