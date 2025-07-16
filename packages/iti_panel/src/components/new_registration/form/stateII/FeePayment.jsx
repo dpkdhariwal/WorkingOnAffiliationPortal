@@ -10,6 +10,7 @@ import { ViewApplication } from "./Modal/view_application";
 import { Form as BootstrapForm } from 'react-bootstrap';
 
 import { UPDATE_STAGE_II_SET_FEE_STATUS } from "../../../../constants";
+import { STAGE_II__FEE_PAID, STAGE_II__FEE_EXEMPTED } from "../../../../constants";
 
 const FeePayment = ({ setActive }) => {
   const PropInstiInfo = useSelector((state) => state.ProposedInstituteInfo);
@@ -43,55 +44,19 @@ const FeePayment = ({ setActive }) => {
   const reg = useSelector((state) => state.reg);
 
   const submit = (values) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to save the form data?",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonText: "Yes, save it!",
-      cancelButtonText: "Cancel",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // User confirmed – now show loading or save directly
-        Swal.fire({
-          title: "Saving...",
-          didOpen: () => {
-            Swal.showLoading();
-            dispatch({ type: UPDATE_STAGE_II_SET_FEE_STATUS, payload: PropInstiInfo });
-            Swal.close();
-
-            Swal.showLoading();
-            Swal.fire({
-              title: "Fee Payment",
-              text: "You Have Paid Stage-I Fee",
-              icon: "success",
-              confirmButtonText: "Ok, Go Next",
-            }).then((result) => {
-              if (result.isConfirmed) {
-                // User confirmed – now show loading or save directly
-                Swal.fire({
-                  title: "Saving...",
-                  didOpen: () => {
-                    dispatch({ type: "set_filled_stepII", payload: { step: 3 }, });
-                    dispatch({ type: "reg_set_active_stepII", payload: { step: 4 } });
-                    setActive(reg.stepsII[4]);
-                    Swal.close();
-                  },
-                });
-              } else {
-                console.log("User cancelled save");
-              }
-            });
-          },
-        });
-      } else {
-        console.log("User cancelled save");
-      }
-    });
+    console.log(PropInstiInfo);
+    dispatch({ type: UPDATE_STAGE_II_SET_FEE_STATUS, payload: PropInstiInfo });
+    dispatch({ type: "set_filled_step_II", payload: { step: 3 }, });
+    dispatch({ type: "reg_set_active_stepII", payload: { step: 4 } });
+    setActive(reg.stepsII[4]);
   };
+
+      const AppliInfo = useSelector((state) => state.AppliInfo);
 
   return (
     <Fragment>
+            {AppliInfo.stage_II_fee_status === STAGE_II__FEE_PAID || AppliInfo.stage_II_fee_status === STAGE_II__FEE_EXEMPTED ? (<h4>{AppliInfo.stage_II_fee_status}</h4>) :
+      
       <Formik
         innerRef={formikRef}
 
@@ -270,6 +235,7 @@ const FeePayment = ({ setActive }) => {
           </Card>
         )}
       </Formik>
+}
     </Fragment>
   );
 };

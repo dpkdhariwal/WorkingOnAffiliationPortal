@@ -25,8 +25,8 @@ export const masterConfig = {
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'nimitask',
-    port: 4206
+    database: 'affiliation',
+    port: 3306
 };
 
 

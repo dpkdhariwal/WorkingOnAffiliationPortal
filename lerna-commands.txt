@@ -47,9 +47,14 @@ npx lerna run build --scope=affiliation_portal
 
 
 npx lerna run dev --scope=layout
+npx lerna run server --scope=server
 
 
+# SERVER DEPENDENCIES
+npm install knex -g --workspace=packages/server
+npm install mysql2 --workspace=packages/server
 
+npm install knex -g
 
 
 

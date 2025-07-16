@@ -52,6 +52,7 @@ app.use("/task", task);
 app.use((req, res) => {
   res.status(404).send("Route Not Found");
 });
+
 app.use((req, res) => {
   res.status(505).send("Server Error");
 });

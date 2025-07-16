@@ -1,0 +1,12 @@
+# Run migrations
+npx knex --knexfile ./knex/knexfile.js migrate:latest
+
+# Create new migration
+npx knex --knexfile ./knex/knexfile.js migrate:make create_users_table
+
+@dpkdhariwal
+npx knex --knexfile ./knex/knexfile.js migrate:make create_users_modifying_cols
+
+
+# Run seeds
+npx knex --knexfile ./knex/knexfile.js seed:run

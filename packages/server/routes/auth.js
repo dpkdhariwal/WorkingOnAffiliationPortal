@@ -7,11 +7,16 @@ import jwt from "jsonwebtoken";
 const privateKey = fs.readFileSync(pKeyPath, "utf8");
 router.use(express.json());
 
-import { checkUser } from "../database/models/auth.js";
+import { checkUser, checkUser2 } from "../database/models/auth.js";
 import { authenticateToken } from "../database/models/token.js";
 
 router.post("/login", async (req, res) => {
+  // let result = checkUser(req);
   let result = checkUser(req);
+  // console.log("result", result);
+  // res.status(200);
+  // res.json("data");
+
   result
     .then((data) => {
       res.status(200);

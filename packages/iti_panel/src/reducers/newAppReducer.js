@@ -121,7 +121,7 @@ export const AppliInfo = (state = AppliInfoInitialValues, action) => {
             ...state,
             ...{
               app_status: STAGE_II__FEE_EXEMPTED,
-              stage_I_fee_status: STAGE_II__FEE_EXEMPTED,
+              stage_II_fee_status: STAGE_II__FEE_EXEMPTED,
               app_status_awaiting: STAGE_II__DOCUMENT_PENDING,
               app_flow_status: state.app_flow_status.map((item) =>
                 item.step === STAGE_II_FEE

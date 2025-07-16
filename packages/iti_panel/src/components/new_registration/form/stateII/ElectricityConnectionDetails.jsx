@@ -19,7 +19,8 @@ import Swal from "sweetalert2";
 import ReqSign from "../comp/requiredSign";
 
 import { Electricity_Connection_yup_object as elec_conn_yup } from "../../../../reducers/newAppReducer";
-import {UPDATE_ELECTRICTY_CONNECTION_DETAILS} from "../../../../constants";
+import { UPDATE_ELECTRICTY_CONNECTION_DETAILS } from "../../../../constants";
+import { STAGE_II__FEE_PAID, STAGE_II__FEE_EXEMPTED } from "../../../../constants";
 
 
 const ElectricityConnectionDetails = ({ setActive }) => {
@@ -61,36 +62,45 @@ const ElectricityConnectionDetails = ({ setActive }) => {
   const electricity_conn_reducer = useSelector((state) => state.Electricity_Connection_Detail_reducer);
   const formikRef = useRef();
 
-   const submit = (values) => {
-      Swal.fire({
-        title: "Are you sure?",
-        text: "Do you want to save the form data?",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonText: "Yes, save it!",
-        cancelButtonText: "Cancel",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // User confirmed – now show loading or save directly
-          Swal.fire({
-            title: "Saving...",
-            didOpen: () => {
-              Swal.showLoading();
-              dispatch({ type: UPDATE_ELECTRICTY_CONNECTION_DETAILS, payload: values });
-              dispatch({ type: "set_filled_step_II", payload: { step: 3 }, });
-              dispatch({ type: "reg_set_active_stepII", payload: { step: 4 } });
-              setActive(reg.stepsII[3]);
-              Swal.close();
-            },
-          });
-        } else {
-          console.log("User cancelled save");
-        }
-      });
-    };
+  const submit = (values) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to save the form data?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes, save it!",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // User confirmed – now show loading or save directly
+        Swal.fire({
+          title: "Saving...",
+          didOpen: () => {
+            Swal.showLoading();
+            dispatch({ type: UPDATE_ELECTRICTY_CONNECTION_DETAILS, payload: values });
+            dispatch({ type: "set_filled_step_II", payload: { step: 3 }, });
+            dispatch({ type: "reg_set_active_stepII", payload: { step: 4 } });
+            setActive(reg.stepsII[3]);
+            Swal.close();
+          },
+        });
+      } else {
+        console.log("User cancelled save");
+      }
+    });
+  };
 
+    const AppliInfo = useSelector((state) => state.AppliInfo);
+  
   return (
     <Fragment>
+      {AppliInfo.stage_II_fee_status === STAGE_II__FEE_PAID || AppliInfo.stage_II_fee_status === STAGE_II__FEE_EXEMPTED ? (<ElectricityConnectionDetailsView />) :
+
+        <>
+        
+
+
+
       <Formik
         innerRef={formikRef}
 
@@ -402,7 +412,9 @@ const ElectricityConnectionDetails = ({ setActive }) => {
             </Card>
           </Form>
         )}
-      </Formik>
+      </Formik></>
+      }
+      
     </Fragment>
   );
 };
@@ -414,58 +426,82 @@ export default ElectricityConnectionDetails;
 export const ElectricityConnectionDetailsView = (props) => {
   return (
 
-    <Card className="custom-card shadow border-info">
-      <Card.Header>
-        <div className="card-title" style={{ textTransform: "none" }}>
-          <h5> {props.label}</h5>
-        </div>
-      </Card.Header>
-      <Card.Body>
-        <Table className="table-striped table-hover" style={{ textAlign: "start" }}>
-          <thead>
-            <tr>
-              <th scope="col">Particular</th>
-              <th>:</th>
-              <th scope="col">Filled By Applicant</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th scope="row">Consumer Name</th>
-              <th>:</th>
-              <td>XYZ</td>
-            </tr>
-            <tr>
-              <th scope="row">Consumer Number</th>
-              <th>:</th>
-              <td>12VSADDDAA01</td>
-            </tr>
+    <> 
+    <table
+      width="98%"
+      border={1}
+      style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
+      align="center"
+      cellPadding="5px"
+    >
+      <tbody>
+        <tr>
+          <th colSpan={7} style={{ border: "1px solid black" }}>Electricity Connection Details</th>
+        </tr>
+        <tr>
+          <th style={{ border: "1px solid black" }}>Consumer Name</th>
+          <th style={{ border: "1px solid black" }}>Consumer Number</th>
+          <th style={{ border: "1px solid black" }}>Electricity Authority Name</th>
+        </tr>
 
-            <tr>
-              <th scope="row">Electricity Authority Name</th>
-              <th>:</th>
-              <td>XYZ</td>
-            </tr>
+        <tr>
+          <td style={{ border: "1px solid black" }}>ABCD</td>
+          <td style={{ border: "1px solid black" }}>XYZ01</td>
+          <td style={{ border: "1px solid black" }}>XYZ</td>
+        </tr>
 
-            <tr>
-              <th scope="row">Total Available/Sanction Load (in KW)</th>
-              <th>:</th>
-              <td>XYZ</td>
-            </tr>
-            <tr>
-              <th scope="row">Latest Electricity Bill / Meter Sealing Report</th>
-              <th>:</th>
-              <td>
-                <Button variant="primary">View Document</Button>
-              </td>
-            </tr>
-          </tbody>
-        </Table>
-      </Card.Body>
-      {/* <Card.Footer>
-                      <Button>dsfdf</Button>
-                    </Card.Footer> */}
-    </Card>
+        <tr>
+          <th style={{ border: "1px solid black" }}>Total Available/Sanction Load (in KW)*</th>
+          <th style={{ border: "1px solid black" }}>Latest Electricity Bill/Meter Sealing Report</th>
+          <th style={{ border: "1px solid black" }}>Electricity Authority Website</th>
+        </tr>
+        <tr>
+          <td style={{ border: "1px solid black" }}>ABCD</td>
+          <td style={{ border: "1px solid black" }}><Button size="sm" variant="primary">View Document</Button></td>
+          <td style={{ border: "1px solid black" }}>XYZ</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table
+      width="98%"
+      border={1}
+      style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
+      align="center"
+      cellPadding="5px"
+    >
+      <tbody>
+        <tr>
+          <th colSpan={7} style={{ border: "1px solid black" }}>Backup Power Supply</th>
+        </tr>
+        <tr>
+          <th style={{ border: "1px solid black" }}>Photo of Backup Power</th>
+          <th style={{ border: "1px solid black" }}>Purchase Related Documents</th>
+        </tr>
+        <tr>
+          <td style={{ border: "1px solid black" }}><Button size="sm" variant="primary">View Document</Button></td>
+          <td style={{ border: "1px solid black" }}><Button size="sm" variant="primary">View Document</Button></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <table
+      width="98%"
+      border={1}
+      style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
+      align="center"
+      cellPadding="5px"
+    >
+      <tbody>
+        <tr>
+          <th colSpan={7} style={{ border: "1px solid black" }}>Fire and Safety Certificate Document</th>
+        </tr>
+        <tr>
+          <td style={{ border: "1px solid black" }}><Button size="sm" variant="primary">View Document</Button></td>
+        </tr>
+      </tbody>
+    </table>
+    </>
 
   );
 };

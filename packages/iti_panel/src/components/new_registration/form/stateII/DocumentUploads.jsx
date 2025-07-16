@@ -26,6 +26,8 @@ import Stepper from "@keyvaluesystems/react-stepper";
 import MTE from "./component/machinery_form";
 import ReqSign from "../comp/requiredSign";
 
+import { STAGE_II__FEE_PAID, STAGE_II__FEE_EXEMPTED } from "../../../../constants";
+
 const schema = yup.object().shape({
   land_documents: yup.array().of(
     yup.object().shape({
@@ -95,182 +97,280 @@ const DocumentUploads = () => {
     (state) => state.stageII_document_Uploads_Reducer
   );
 
+  const AppliInfo = useSelector((state) => state.AppliInfo);
 
   return (
     <Fragment>
-       <Formik
-          innerRef={formikRef}
-          initialValues={initial_values}
-          validationSchema={validationSchema}
-          onSubmit={(values) => {
-            console.log("Form Values", values);
-            submit(values);
-          }}
-        >
-          {({ handleSubmit, setFieldValue, values, errors, touched }) => (
-            <Form noValidate onSubmit={handleSubmit}>
-              <Card
-                className="custom-card border border-primary"
-                style={{ marginTop: "10px" }}
-              >
-                <Card.Header>
-                  <div className="card-title" style={{ textTransform: "none" }}>
-                    Geo tagged photo of Machinery/Tools/Equipments (Single PDF
-                    for each Unit)
-                  </div>
-                </Card.Header>
-                <Card.Body>
-                  <div className="table-responsive">
-                    <Table className="text-nowrap ">
-                      <thead>
-                        <tr>
-                          <th scope="col" style={{ textTransform: "none" }}>
-                            Trade Name
-                          </th>
-                          <th scope="col" style={{ textTransform: "none" }}>
-                            Unit
-                          </th>
-                          <th scope="col" style={{ textTransform: "none" }}>
-                            Geo tagged photo <ReqSign />
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {docs1.map((item, index) => {
-                          const fileField = `${item.tradeId}_mte_geo_tagged_photo_${index}`;
-                          return (
-                            <tr key={index}>
-                              <th scope="row">{item.tradeName}</th>
-                              <td>1</td>
-                              <td>
-                                {/* {fileField} */}
+      {AppliInfo.stage_II_fee_status === STAGE_II__FEE_PAID || AppliInfo.stage_II_fee_status === STAGE_II__FEE_EXEMPTED ? (<DocumentUploadsView />) :
 
-                                <input
-                                  type="file"
-                                  name={fileField}
-                                  className="form-control"
-                                  onChange={(event) => {
-                                    setFieldValue(
-                                      fileField,
-                                      event.currentTarget.files[0]
-                                    );
-                                  }}
-                                />
-                                <div className="text-danger">
-                                  <ErrorMessage
+        <>
+          <DocumentUploadsView />
+          <Formik
+            innerRef={formikRef}
+            initialValues={initial_values}
+            validationSchema={validationSchema}
+            onSubmit={(values) => {
+              console.log("Form Values", values);
+              submit(values);
+            }}
+          >
+            {({ handleSubmit, setFieldValue, values, errors, touched }) => (
+              <Form noValidate onSubmit={handleSubmit}>
+                <Card
+                  className="custom-card border border-primary"
+                  style={{ marginTop: "10px" }}
+                >
+                  <Card.Header>
+                    <div className="card-title" style={{ textTransform: "none" }}>
+                      Geo tagged photo of Machinery/Tools/Equipments (Single PDF
+                      for each Unit)
+                    </div>
+                  </Card.Header>
+                  <Card.Body>
+                    <div className="table-responsive">
+                      <Table className="text-nowrap ">
+                        <thead>
+                          <tr>
+                            <th scope="col" style={{ textTransform: "none" }}>
+                              Trade Name
+                            </th>
+                            <th scope="col" style={{ textTransform: "none" }}>
+                              Unit
+                            </th>
+                            <th scope="col" style={{ textTransform: "none" }}>
+                              Geo tagged photo <ReqSign />
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {docs1.map((item, index) => {
+                            const fileField = `${item.tradeId}_mte_geo_tagged_photo_${index}`;
+                            return (
+                              <tr key={index}>
+                                <th scope="row">{item.tradeName}</th>
+                                <td>1</td>
+                                <td>
+                                  {/* {fileField} */}
+
+                                  <input
+                                    type="file"
                                     name={fileField}
-                                    component="div"
-                                    className="text-danger"
+                                    className="form-control"
+                                    onChange={(event) => {
+                                      setFieldValue(
+                                        fileField,
+                                        event.currentTarget.files[0]
+                                      );
+                                    }}
                                   />
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </Table>
-                  </div>
-                </Card.Body>
-              </Card>
-              <Card
-                className="custom-card border border-primary"
-                style={{ marginTop: "10px" }}
-              >
-                <Card.Header>
-                  <div className="card-title" style={{ textTransform: "none" }}>
-                    GST Invoices for Major Machinery Purchase and Payment proof
+                                  <div className="text-danger">
+                                    <ErrorMessage
+                                      name={fileField}
+                                      component="div"
+                                      className="text-danger"
+                                    />
+                                  </div>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </Table>
+                    </div>
+                  </Card.Body>
+                </Card>
+                <Card
+                  className="custom-card border border-primary"
+                  style={{ marginTop: "10px" }}
+                >
+                  <Card.Header>
+                    <div className="card-title" style={{ textTransform: "none" }}>
+                      GST Invoices for Major Machinery Purchase and Payment proof
                     (Bill amount > Rs. 10,000)(single PDF for each Trade)
-                  </div>
-                </Card.Header>
-                <Card.Body>
-                  <div className="table-responsive">
-                    <Table className="text-nowrap ">
-                      <thead>
-                        <tr>
-                          <th scope="col" style={{ textTransform: "none" }}>
-                            Trade Name
-                          </th>
-                          <th scope="col" style={{ textTransform: "none" }}>
-                            Select GST Invoices for Major Machinery Purchase and
+                    </div>
+                  </Card.Header>
+                  <Card.Body>
+                    <div className="table-responsive">
+                      <Table className="text-nowrap ">
+                        <thead>
+                          <tr>
+                            <th scope="col" style={{ textTransform: "none" }}>
+                              Trade Name
+                            </th>
+                            <th scope="col" style={{ textTransform: "none" }}>
+                              Select GST Invoices for Major Machinery Purchase and
                             Payment proof (Bill amount > Rs. 10,000)(single PDF
-                            for each Trade) <ReqSign />
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {docs2.map((item, index) => {
-                          const fileField = `${item.tradeId}_mte_gst_invoices_${index}`;
+                              for each Trade) <ReqSign />
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {docs2.map((item, index) => {
+                            const fileField = `${item.tradeId}_mte_gst_invoices_${index}`;
 
-                          return (
-                            <tr key={index}>
-                              <th scope="row">{item.tradeName}</th>
-                              <td>
-                                <input
-                                  type="file"
-                                  name={fileField}
-                                  className="form-control"
-                                  onChange={(event) => {
-                                    setFieldValue(
-                                      fileField,
-                                      event.currentTarget.files[0]
-                                    );
-                                  }}
-                                />
-                                <div className="text-danger">
-                                  <ErrorMessage
+                            return (
+                              <tr key={index}>
+                                <th scope="row">{item.tradeName}</th>
+                                <td>
+                                  <input
+                                    type="file"
                                     name={fileField}
-                                    component="div"
-                                    className="text-danger"
+                                    className="form-control"
+                                    onChange={(event) => {
+                                      setFieldValue(
+                                        fileField,
+                                        event.currentTarget.files[0]
+                                      );
+                                    }}
                                   />
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </Table>
-                  </div>
-                </Card.Body>
-              </Card>
+                                  <div className="text-danger">
+                                    <ErrorMessage
+                                      name={fileField}
+                                      component="div"
+                                      className="text-danger"
+                                    />
+                                  </div>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </Table>
+                    </div>
+                  </Card.Body>
+                </Card>
 
-              <Card className="custom-card border border-primary">
-                <Card.Body>
-                  <div className="form-check">
-                    <input
-                      className="form-check-input"
-                      type="checkbox"
-                      value=""
-                      id="flexCheckDefault"
-                    />
-                    <label
-                      className="form-check-label"
-                      htmlFor="flexCheckDefault"
+                <Card className="custom-card border border-primary">
+                  <Card.Body>
+                    <div className="form-check">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        value=""
+                        id="flexCheckDefault"
+                      />
+                      <label
+                        className="form-check-label"
+                        htmlFor="flexCheckDefault"
+                      >
+                        Self Declaration<span style={{ color: "red" }}>*</span>
+                      </label>
+                    </div>
+                    <Row style={{ marginTop: "1rem" }}>
+                      <Col md={12}>
+                        <strike>{`Institute's self-declaration of compliance with Affiliation Norms and acknowledgment of responsibilities, as per Annexure-6`}</strike>
+                      </Col>
+                    </Row>
+                  </Card.Body>
+                  <Card.Footer className="d-flex justify-content-end">
+                    <Button
+                      onClick={() => formikRef.current?.submitForm()}
+                      size="lg"
+                      variant="success"
+                      className="btn-wave"
                     >
-                      Self Declaration<span style={{ color: "red" }}>*</span>
-                    </label>
-                  </div>
-                  <Row style={{ marginTop: "1rem" }}>
-                    <Col md={12}>
-                      <strike>{`Institute's self-declaration of compliance with Affiliation Norms and acknowledgment of responsibilities, as per Annexure-6`}</strike>
-                    </Col>
-                  </Row>
-                </Card.Body>
-                <Card.Footer className="d-flex justify-content-end">
-                  <Button
-                    onClick={() => formikRef.current?.submitForm()}
-                    size="lg"
-                    variant="success"
-                    className="btn-wave"
-                  >
-                    Submit Application
-                  </Button>
-                </Card.Footer>
-              </Card>
-            </Form>
-          )}
-        </Formik>
+                      Submit Application
+                    </Button>
+                  </Card.Footer>
+                </Card>
+              </Form>
+            )}
+          </Formik>
+        </>
+      }
+
+
     </Fragment>
   );
 };
 
+
+export const DocumentUploadsView = (props) => {
+  return (
+
+    <>
+      <table
+        width="98%"
+        border={1}
+        style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
+        align="center"
+        cellPadding="5px"
+      >
+        <tbody>
+          <tr>
+            <th colSpan={7} style={{ border: "1px solid black" }}>Geo tagged photo of Machinery/Tools/Equipments (Single PDF for each Unit)</th>
+          </tr>
+          <tr>
+            <th>#</th>
+            <th style={{ border: "1px solid black" }}>Trade Name</th>
+            <th style={{ border: "1px solid black" }}>Unit</th>
+            <th style={{ border: "1px solid black" }}>Geo tagged photo</th>
+          </tr>
+
+          <tr>
+            <td style={{ border: "1px solid black" }}>1</td>
+            <td style={{ border: "1px solid black" }}>Electrician</td>
+            <td style={{ border: "1px solid black" }}>1</td>
+            <td style={{ border: "1px solid black" }}><Button size="sm" variant="primary">View Document</Button></td>
+          </tr>
+          <tr>
+            <td style={{ border: "1px solid black" }}>2</td>
+            <td style={{ border: "1px solid black" }}>Electrician</td>
+            <td style={{ border: "1px solid black" }}>1</td>
+            <td style={{ border: "1px solid black" }}><Button size="sm" variant="primary">View Document</Button></td>
+          </tr>
+          <tr>
+            <td style={{ border: "1px solid black" }}>3</td>
+            <td style={{ border: "1px solid black" }}>Fitter</td>
+            <td style={{ border: "1px solid black" }}>1</td>
+            <td style={{ border: "1px solid black" }}><Button size="sm" variant="primary">View Document</Button></td>
+          </tr>
+          <tr>
+            <td style={{ border: "1px solid black" }}>4</td>
+            <td style={{ border: "1px solid black" }}>Fitter</td>
+            <td style={{ border: "1px solid black" }}>1</td>
+            <td style={{ border: "1px solid black" }}><Button size="sm" variant="primary">View Document</Button></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <table
+        width="98%"
+        border={1}
+        style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
+        align="center"
+        cellPadding="5px"
+      >
+        <tbody>
+          <tr>
+            <th colSpan={7} style={{ border: "1px solid black" }}>{`GST Invoices for Major Machinery Purchase and Payment proof (Bill amount > Rs. 10,000)(single PDF for each Trade)`}</th>
+          </tr>
+          <tr>
+            <th>#</th>
+            <th style={{ border: "1px solid black" }}>Trade Name</th>
+            <th style={{ border: "1px solid black" }}>Document</th>
+          </tr>
+
+          <tr>
+            <td style={{ border: "1px solid black" }}>1</td>
+            <td style={{ border: "1px solid black" }}>Electrician</td>
+            <td style={{ border: "1px solid black" }}><Button size="sm" variant="primary">View Document</Button></td>
+          </tr>
+          <tr>
+            <td style={{ border: "1px solid black" }}>2</td>
+            <td style={{ border: "1px solid black" }}>Fitter</td>
+            <td style={{ border: "1px solid black" }}><Button size="sm" variant="primary">View Document</Button></td>
+          </tr>
+
+        </tbody>
+      </table>
+
+    </>
+
+  );
+};
+
+
 export default DocumentUploads;
+
+
