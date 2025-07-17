@@ -802,6 +802,78 @@ export const UPDATE_TRADEWISE_CLASSROOMS_DETAILS = "UPDATE_TRADEWISE_CLASSROOMS_
 
 
 
+// Multipurpose Hall Information to be filled Start
+export const multipurposehall_info_to_be_filled = [
+  {
+    Particulars: "Multipurpose Hall",
+    Required_Area_As_per_norms: "200sqm",
+  },
+];
+export const UPDATE_MULTIPURPOSEHALL_DETAILS = "UPDATE_TRADEWISE_MULTIPURPOSEHALL_DETAILS";
+// Multipurpose Hall Information to be filled End
+
+
+// IT Lab Information to be filled Start
+export const it_lab_info_to_be_filled = [
+  {
+    Particulars: "IT Lab",
+    Required_Area_As_per_norms: "200sqm",
+  },
+];
+export const UPDATE_IT_LAB_DETAILS = "UPDATE_IT_LAB_DETAILS";
+// IT Lab Information to be filled End
+
+
+// Library Information to be filled Start
+export const it_library_to_be_filled = [
+  {
+    Particulars: "Library",
+    Required_Area_As_per_norms: "200sqm",
+  },
+];
+export const UPDATE_LIBRARY_DETAILS = "UPDATE_LIBRARY_DETAILS";
+// Library Information to be filled End
+
+
+// Placement and Counselling room Information to be filled Start
+export const placement_n_counselling_room_to_be_filled = [
+  {
+    Particulars: "Placement and Counselling Room",
+    Required_Area_As_per_norms: "200sqm",
+  },
+];
+export const UPDATE_PLACEMENT_N_COUNSELLING_ROOM_DETAILS = "UPDATE_LIBRARY_DETAILS";
+// Placement and Counselling room Information to be filled End
+
+
+// Placement and Counselling room Information to be filled Start
+export const administrativeArea = [
+  {
+    Particulars: "Principal Room",
+    Required_Area_As_per_norms: "20 sq. m",
+  },
+  {
+    Particulars: "Reception cum waiting lobby",
+    Required_Area_As_per_norms: "40 sq. m",
+  },
+  {
+    Particulars: "Staff Room",
+    Required_Area_As_per_norms: "20 sq. m",
+  },
+  {
+    Particulars: "Administrative Hall/Section",
+    Required_Area_As_per_norms: "50 sq. m",
+  },
+];
+export const UPDATE_ADMINISTRATIVE_AREA_DETAILS = "UPDATE_LIBRARY_DETAILS";
+// Placement and Counselling room Information to be filled End
+
+
+
+
+
+
+
 // Stage II Document Upload Start
 export const UPDATE_STAGE_II_DOCUMENT_UPLOAD = "UPDATE_STAGE_II_DOCUMENT_UPLOAD";
 

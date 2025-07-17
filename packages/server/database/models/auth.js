@@ -17,9 +17,7 @@ export const checkUser = async (req) => {
     await connection.beginTransaction();
 
     // Prepare the SQL statement
-    const stmt = await connection.prepare(
-      "SELECT * FROM `users` WHERE `email` = ? AND `password` = ?"
-    );
+    const stmt = await connection.prepare("SELECT * FROM `users` WHERE `email` = ? AND `password` = ?");
 
     // Execute the prepared statement
     const results = await stmt.execute([email, password]);
@@ -43,6 +41,7 @@ export const checkUser = async (req) => {
       msg: "User Successfully Logged In",
       token,
     };
+
   } catch (err) {
     console.error("Error in checkUser:", err);
     if (connection) {

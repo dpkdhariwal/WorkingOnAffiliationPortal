@@ -20,7 +20,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { validationSchema } from "../../../../../reducers/tradeWiseClassroomsReducer";
 
 
-export const TradeWiseClassrooms = ({ goPrevious, finish }) => {
+export const TradeWiseClassrooms = ({ goPrevious, goNext }) => {
 
     const initialValues = useSelector((state) => state.TradeWiseClassroomReducer);
     const dispatch = useDispatch();
@@ -110,7 +110,7 @@ export const TradeWiseClassrooms = ({ goPrevious, finish }) => {
                             <Button variant="secondary" onClick={goPrevious}>
                                 Previous
                             </Button>
-                            <Button onClick={finish} type="submit">Finish</Button>
+                            <Button onClick={goNext} type="submit">Save & Next</Button>
                         </Card.Footer>
                     </Card>
                 </FormikForm>

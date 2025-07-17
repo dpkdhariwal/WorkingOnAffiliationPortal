@@ -17,6 +17,16 @@ import ReqSign from "../comp/requiredSign"; // Make sure this component exists a
 
 import { TradeWiseWorkshops } from "../stateII/Civil Infrastructure Details Forms/tradeWiseWorkShops";
 import { TradeWiseClassrooms } from "../stateII/Civil Infrastructure Details Forms/tradeWiseClassrooms";
+import { MultipurposeHall } from "../stateII/Civil Infrastructure Details Forms/multipurposeHalls";
+import { ITLab } from "../stateII/Civil Infrastructure Details Forms/itLab";
+import { Library } from "../stateII/Civil Infrastructure Details Forms/library";
+
+import { PlacementNCounsellingRoom } from "../stateII/Civil Infrastructure Details Forms/PlacementNCounsellingRoom";
+import { AdministrativeArea } from "../stateII/Civil Infrastructure Details Forms/AdministrativeArea";
+
+
+
+
 
 import { STAGE_II__FEE_PAID, STAGE_II__FEE_EXEMPTED } from "../../../../constants";
 
@@ -24,8 +34,14 @@ import { useSelector, useDispatch } from "react-redux";
 
 
 const steps = [
-  { key: "first", label: "TradeWise Workshops", filled: false },
-  { key: "second", label: "TradeWise Classrooms", filled: true },
+  { key: 1, label: "TradeWise Workshops", filled: false },
+  { key: 2, label: "TradeWise Classrooms", filled: false },
+  { key: 3, label: "Multipurpose hall", filled: false },
+  { key: 4, label: "IT Lab", filled: false },
+  { key: 5, label: "Library", filled: false },
+  { key: 6, label: "Placement and counselling room", filled: false },
+  { key: 7, label: "Administrative Area", filled: false },
+  
 ];
 
 export default function MultiStepWithIndividualForms({ setActive }) {
@@ -88,13 +104,38 @@ export default function MultiStepWithIndividualForms({ setActive }) {
               <Col xl={9}>
                 <Tab.Content>
                   {/* === Step 1 === */}
-                  <Tab.Pane eventKey="first">
+                  <Tab.Pane eventKey={1}>
                     <TradeWiseWorkshops goNext={goNext} />
                   </Tab.Pane>
 
                   {/* === Step 2 === */}
-                  <Tab.Pane eventKey="second">
-                    <TradeWiseClassrooms finish={finish} goPrevious={goPrevious} />
+                  <Tab.Pane eventKey={2}>
+                    <TradeWiseClassrooms  goPrevious={goPrevious} goNext={goNext} />
+                  </Tab.Pane>
+
+                  {/* === Step 3 === */}
+                  <Tab.Pane eventKey={3}>
+                    <MultipurposeHall  goPrevious={goPrevious} goNext={goNext} />
+                  </Tab.Pane>
+
+                  {/* === Step 4 === */}
+                  <Tab.Pane eventKey={4}>
+                    <ITLab finish={finish}  goPrevious={goPrevious} goNext={goNext} />
+                  </Tab.Pane>
+
+                  {/* === Step 5 === */}
+                  <Tab.Pane eventKey={5}>
+                    <Library finish={finish}  goPrevious={goPrevious} goNext={goNext} />
+                  </Tab.Pane>
+
+                  {/* === Step 6 === */}
+                  <Tab.Pane eventKey={6}>
+                    <PlacementNCounsellingRoom  goPrevious={goPrevious} goNext={goNext} />
+                  </Tab.Pane>
+
+                  {/* === Step 7 === */}
+                  <Tab.Pane eventKey={7}>
+                    <AdministrativeArea finish={finish} goPrevious={goPrevious} />
                   </Tab.Pane>
                 </Tab.Content>
               </Col>

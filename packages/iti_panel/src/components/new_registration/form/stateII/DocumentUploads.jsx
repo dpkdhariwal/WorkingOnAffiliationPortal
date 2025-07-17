@@ -104,7 +104,6 @@ const DocumentUploads = () => {
       {AppliInfo.stage_II_fee_status === STAGE_II__FEE_PAID || AppliInfo.stage_II_fee_status === STAGE_II__FEE_EXEMPTED ? (<DocumentUploadsView />) :
 
         <>
-          <DocumentUploadsView />
           <Formik
             innerRef={formikRef}
             initialValues={initial_values}

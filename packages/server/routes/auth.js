@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken";
 const privateKey = fs.readFileSync(pKeyPath, "utf8");
 router.use(express.json());
 
-import { checkUser, checkUser2 } from "../database/models/auth.js";
+import { checkUser } from "../database/models/auth.js";
 import { authenticateToken } from "../database/models/token.js";
 
 router.post("/login", async (req, res) => {
