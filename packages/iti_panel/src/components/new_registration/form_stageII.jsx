@@ -16,6 +16,8 @@ import ElectricityConnectionDetails from "./form/stateII/ElectricityConnectionDe
 import TradewiseMachineryToolsEquipmentDetails from "./form/stateII/TradewiseMachineryToolsEquipmentDetails";
 import DocumentUploads from "./form/stateII/DocumentUploads";
 import FeePayment from "./form/stateII/FeePayment";
+import {Amenities} from "./form/stateII/Amenities";
+import {SignageBoards} from "./form/stateII/SignageBoards";
 const New_registration = () => {
   const reg = useSelector((state) => state.reg);
   const [activeStep, setActiveStep] = useState(reg.stepsII[0]);
@@ -57,6 +59,10 @@ const New_registration = () => {
             <BuildingPlan setActive={goToSection} />
           ) : activeStep.label === "Civil Infrastructure Detail" ? (
             <CivilInfrastructureDetails setActive={goToSection} stepInfo={activeStep} />
+          ) : activeStep.label === "Amenities Area" ? (
+            <Amenities setActive={goToSection} stepInfo={activeStep} />
+          ): activeStep.label === "Signage Boards" ? (
+            <SignageBoards setActive={goToSection} stepInfo={activeStep} />
           ) : activeStep.label === "Electricity Connection Details" ? (
             <ElectricityConnectionDetails stepInfo={activeStep} setActive={goToSection} />
           )

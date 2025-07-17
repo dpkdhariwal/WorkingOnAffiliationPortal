@@ -917,3 +917,17 @@ export const gst_invoices_for_major_machinery_purchase_and_payment_proof =  [
   },
 ];
 // Stage II Document Upload End
+
+
+
+export const STEPPER_STYLE = {
+    LineSeparator: () => ({
+      backgroundColor: "#8a3b02ff",
+    }),
+    ActiveNode: () => ({
+      backgroundColor: "#020b8aff",
+    }),
+    CompletedNode: () => ({
+      backgroundColor: "#028A0F",
+    })
+  };

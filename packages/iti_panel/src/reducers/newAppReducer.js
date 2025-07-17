@@ -452,6 +452,22 @@ let initialState = {
     },
     {
       step: 3,
+      label: "Amenities Area",
+      active: false,
+      filled: false,
+      inputs: {},
+      fields: [],
+    },
+    {
+      step: 4,
+      label: "Signage Boards",
+      active: false,
+      filled: false,
+      inputs: {},
+      fields: [],
+    },
+    {
+      step: 5,
       label: "Electricity Connection Details",
       active: false,
       filled: false,
@@ -471,14 +487,14 @@ let initialState = {
       ],
     },
     {
-      step: 4,
+      step: 6,
       label: "Fee Payment For StageII",
       active: false,
       filled: false,
       inputs: {},
     },
     {
-      step: 5,
+      step: 7,
       label: "Tradewise Machinery/Tools/Equipment Details",
       active: false,
       filled: false,
@@ -486,7 +502,7 @@ let initialState = {
     },
 
     {
-      step: 6,
+      step: 8,
       label: "Document Uploads",
       active: false,
       filled: false,
