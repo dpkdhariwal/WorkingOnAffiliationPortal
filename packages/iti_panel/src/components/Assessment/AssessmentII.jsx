@@ -26,6 +26,9 @@ import {
 import AssessmentMte from "./stage-II/AssessmentMte";
 
 import AssessmentCivilInfraStruction from "./stage-II/AssessmentCivilInfraStruction";
+import {Assessment_Amenities} from "../new_registration/form/stateII/Amenities";
+import {Assessment_SignageBoards} from "../new_registration/form/stateII/SignageBoards";
+
 
 const LINE_HEIGHT = 400;
 
@@ -216,7 +219,7 @@ const Assessment = () => {
         parentfolder="Dashboard"
         activepage="Assessment"
       /> */}
-
+      
       <Card className="custom-card" style={{ marginTop: "10px" }}>
         <Card.Header>
           <div className="card-title">Assessment-II</div>
@@ -249,6 +252,25 @@ const Assessment = () => {
                 >
                   <i className="ri-file-line me-1 align-middle"></i>Civil
                   Infrastructure Details
+                </Nav.Link>{" "}
+              </Nav.Item>
+
+              <Nav.Item>
+                <Nav.Link
+                  eventKey="Amenities"
+                  id="Amenities-tab"
+                  type="button"
+                >
+                  <i className="ri-file-line me-1 align-middle"></i>Amenities Details
+                </Nav.Link>{" "}
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link
+                  eventKey="SignageBoards"
+                  id="SignageBoards-tab"
+                  type="button"
+                >
+                  <i className="ri-file-line me-1 align-middle"></i>Signage Boards Details
                 </Nav.Link>{" "}
               </Nav.Item>
 
@@ -317,6 +339,34 @@ const Assessment = () => {
               >
                 <AssessmentCivilInfraStruction />
               </Tab.Pane>
+
+
+              <Tab.Pane
+                className="fade text-muted p-0"
+                id="Amenities-pane"
+                eventKey="Amenities"
+                role="tabpanel"
+                aria-labelledby="profile-tab"
+                tabIndex={1}
+              >
+                <Assessment_Amenities />
+              </Tab.Pane>
+
+              <Tab.Pane
+                className="fade text-muted p-0"
+                id="SignageBoards-pane"
+                eventKey="SignageBoards"
+                role="tabpanel"
+                aria-labelledby="profile-tab"
+                tabIndex={1}
+              >
+                <Assessment_SignageBoards />
+              </Tab.Pane>
+
+
+
+
+
               <Tab.Pane
                 className="fade text-muted p-0"
                 id="ElectricityConnectionDetails-pane"
@@ -336,7 +386,7 @@ const Assessment = () => {
                 tabIndex={3}
                 eventKey="MteDetail"
               >
-                <AssessmentMte/>
+                <AssessmentMte />
               </Tab.Pane>
 
               <Tab.Pane

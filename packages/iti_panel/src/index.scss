@@ -123,3 +123,21 @@ input[type="checkbox"].form-check-input:checked {
   border-color: #a9a9a9;
   border-radius: 5px;
 }
+
+
+
+// View Tables
+.custom-table {
+  border: 1px solid black;
+  border-collapse: collapse;
+  margin-top: 15px;
+  color: black;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.custom-table td,
+.custom-table th {
+  padding: 5px;
+  border: 1px solid black;
+}

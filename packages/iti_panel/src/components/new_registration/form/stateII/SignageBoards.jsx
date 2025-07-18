@@ -119,8 +119,8 @@ export const SignageBoards = ({ setActive }) => {
                     {/*  className="text-nowrap" */}
                     <Table width={100} cellPadding="5px"
                       border={1}
-                      style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }} 
-                      >
+                      style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
+                    >
                       <thead>
                         <tr>
                           <th style={{ width: '20%' }}>Particulars</th>
@@ -133,15 +133,15 @@ export const SignageBoards = ({ setActive }) => {
 
                         {[
 
-                          {key:"Signage Board on plot entrance", note:"The institute must display a signage board at the plot entrance as well as on the institute building, in accordance with the specifications provided in the guidelines below: \n Signage board to be made in English/Hindi/Regional language. The signage should be bilingual. The size of the font should be minimum 75 mm. The size of the board may vary from 2m x 1.5 m or 3m x 1.5 m or 4m x 2.0 m. \n Details needed: ITI's name, MIS code and full address and ITI logo, Skill India Logo & DGT logo."},
-                          {key:"Signage Board on Institute building", note:"Details needed: ITI's name, MIS code*, ITI logo, Skill India Logo & DGT logo."},
-                          {key:"Signage Boards", note:"i.	Directional boards must be displayed to indicate different sections of the building, such as the workshop, administrative building, hostel, scrap yard, etc. \n ii.	Signage boards for important safety information, including three-phase power supply, danger zones, and prohibited areas, must also be prominently displayed."},
-                          {key:"Trade details board", note:"Trade details board shall display the list of DGT affiliated trades, seating capacity and number of trainees enrolled"},
-                          {key:"Staff details board", note:"Staff details board shall display name, qualification/ designation and contact numbers of Principal and Group Instructor/Trade Instructor"},
-                          {key:"Exit Board", note:"Emergency exit routes must be clearly marked with visible signage."},
-                          {key:"Board indicating Danger Signs", note:"Boards indicating Danger Signs must be prominently displayed near: Transformer, Generator Set, heavy Electrical Installation/ Panels"},
-                          {key:"Prohibited Area Indicators", note:"Near running machinery etc."},
-                          {key:"Sexual Harassment Redressal Committee Notice", note:"Each ITI must prominently display information about the Sexual Harassment Redressal Committee on notice boards, ensuring awareness and fostering a safe, respectful environment for all students and staff."},
+                          { key: "Signage Board on plot entrance", note: "The institute must display a signage board at the plot entrance as well as on the institute building, in accordance with the specifications provided in the guidelines below: \n Signage board to be made in English/Hindi/Regional language. The signage should be bilingual. The size of the font should be minimum 75 mm. The size of the board may vary from 2m x 1.5 m or 3m x 1.5 m or 4m x 2.0 m. \n Details needed: ITI's name, MIS code and full address and ITI logo, Skill India Logo & DGT logo." },
+                          { key: "Signage Board on Institute building", note: "Details needed: ITI's name, MIS code*, ITI logo, Skill India Logo & DGT logo." },
+                          { key: "Signage Boards", note: "i.	Directional boards must be displayed to indicate different sections of the building, such as the workshop, administrative building, hostel, scrap yard, etc. \n ii.	Signage boards for important safety information, including three-phase power supply, danger zones, and prohibited areas, must also be prominently displayed." },
+                          { key: "Trade details board", note: "Trade details board shall display the list of DGT affiliated trades, seating capacity and number of trainees enrolled" },
+                          { key: "Staff details board", note: "Staff details board shall display name, qualification/ designation and contact numbers of Principal and Group Instructor/Trade Instructor" },
+                          { key: "Exit Board", note: "Emergency exit routes must be clearly marked with visible signage." },
+                          { key: "Board indicating Danger Signs", note: "Boards indicating Danger Signs must be prominently displayed near: Transformer, Generator Set, heavy Electrical Installation/ Panels" },
+                          { key: "Prohibited Area Indicators", note: "Near running machinery etc." },
+                          { key: "Sexual Harassment Redressal Committee Notice", note: "Each ITI must prominently display information about the Sexual Harassment Redressal Committee on notice boards, ensuring awareness and fostering a safe, respectful environment for all students and staff." },
                         ].map((item, index) => {
                           return (<tr key={index}>
                             <td>{item.key}</td>
@@ -210,6 +210,62 @@ export const SignageBoards = ({ setActive }) => {
 };
 
 
+
+export const Assessment_SignageBoards = () => {
+
+  return (
+    <>
+      <Row
+        style={{
+          backgroundColor: "rgb(245, 245, 245)",
+          margin: "10px 0px 0px",
+          borderRadius: 6,
+          borderStyle: "dashed",
+          borderWidth: "thin",
+          padding: "2px",
+        }}
+      >
+        <Col xl={12} lg={12} md={12} sm={12}>
+          <table className="custom-table">
+            <thead>
+              <tr>
+                <th style={{ width: '20%' }}>Particulars</th>
+                <th style={{ width: '60%' }}>Required</th>
+                <th style={{ width: '20%' }}>Upload Geo Tagged Photo <ReqSign /></th>
+              </tr>
+            </thead>
+            <tbody>
+
+
+              {[
+
+                { key: "Signage Board on plot entrance", note: "The institute must display a signage board at the plot entrance as well as on the institute building, in accordance with the specifications provided in the guidelines below: \n Signage board to be made in English/Hindi/Regional language. The signage should be bilingual. The size of the font should be minimum 75 mm. The size of the board may vary from 2m x 1.5 m or 3m x 1.5 m or 4m x 2.0 m. \n Details needed: ITI's name, MIS code and full address and ITI logo, Skill India Logo & DGT logo." },
+                { key: "Signage Board on Institute building", note: "Details needed: ITI's name, MIS code*, ITI logo, Skill India Logo & DGT logo." },
+                { key: "Signage Boards", note: "i.	Directional boards must be displayed to indicate different sections of the building, such as the workshop, administrative building, hostel, scrap yard, etc. \n ii.	Signage boards for important safety information, including three-phase power supply, danger zones, and prohibited areas, must also be prominently displayed." },
+                { key: "Trade details board", note: "Trade details board shall display the list of DGT affiliated trades, seating capacity and number of trainees enrolled" },
+                { key: "Staff details board", note: "Staff details board shall display name, qualification/ designation and contact numbers of Principal and Group Instructor/Trade Instructor" },
+                { key: "Exit Board", note: "Emergency exit routes must be clearly marked with visible signage." },
+                { key: "Board indicating Danger Signs", note: "Boards indicating Danger Signs must be prominently displayed near: Transformer, Generator Set, heavy Electrical Installation/ Panels" },
+                { key: "Prohibited Area Indicators", note: "Near running machinery etc." },
+                { key: "Sexual Harassment Redressal Committee Notice", note: "Each ITI must prominently display information about the Sexual Harassment Redressal Committee on notice boards, ensuring awareness and fostering a safe, respectful environment for all students and staff." },
+              ].map((item, index) => {
+                return (<tr key={index}>
+                  <td>{item.key}</td>
+                  <td>{item.note}</td>
+                  <td><Button size="sm">View Document</Button></td>
+                </tr>);
+              })}
+
+            </tbody>
+          </table>
+        </Col>
+
+      </Row>
+
+
+    </>
+  );
+};
 
 // // Form to upload Building Plan
 // export const BuildingPlan = ({ handleChange, touched, errors, values }) => {

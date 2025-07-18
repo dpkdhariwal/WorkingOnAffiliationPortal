@@ -18,12 +18,14 @@ import {
 } from "react-bootstrap";
 
 import { useState, useRef } from "react";
-import {} from "react-bootstrap";
+import { } from "react-bootstrap";
 import * as yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import * as formik from "formik";
 import ReqSign from "../../new_registration/form/comp/requiredSign";
+
+import {Assessment_ItLabMte} from "../../new_registration/form/stateII/ItLabMte"
 
 const AssessmentMte = () => {
   const tradeList = [
@@ -1088,6 +1090,20 @@ const AssessmentMte = () => {
         className="accordion-customicon1 accordions-items-seperate"
         defaultActiveKey="0"
       >
+        <Accordion.Item eventKey="ITLab">
+          <Accordion.Header>IT Lab</Accordion.Header>
+          <Accordion.Body>
+            <Assessment_ItLabMte/>
+          </Accordion.Body>
+        </Accordion.Item>
+      </Accordion>
+
+
+
+      <Accordion
+        className="accordion-customicon1 accordions-items-seperate"
+        defaultActiveKey="0"
+      >
         {tradeList.map((trade, index) => {
           return (
             <Accordion.Item key={index} eventKey={index}>
@@ -1102,6 +1118,7 @@ const AssessmentMte = () => {
                     role="tablist"
                     defaultActiveKey="index_0"
                   >
+
                     {trade.categories.map((item, index) => {
                       return (
                         <Nav.Item key={index} as="li">

@@ -54,6 +54,9 @@ npx lerna run server --scope=server
 npm install knex -g --workspace=packages/server
 npm install mysql2 --workspace=packages/server
 
+npm install date-fns --workspace=packages/ui_layouts_collaborate
+
+
 npm install knex -g
 
 

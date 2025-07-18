@@ -115,55 +115,53 @@ export const Amenities = ({ setActive }) => {
                     </div>
                   </Card.Header>
                   <Card.Body>
-{/* className="text-nowrap"  */}
-                    <div className="table-responsive">
-                      <Table cellPadding="5px"
-                        border={1}
-                        style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
-                      >
-                        <thead>
-                          <tr>
-                            <th>Particulars</th>
-                            <th>Required</th>
-                            <th>Required Area</th>
-                            <th>Available Area</th>
-                            <th>Upload Geo Tagged Photo <ReqSign /></th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {[
-                            {key:"Library & reading room", required_value:"40 sq. m ", note:"The area mentioned above is for upto 160 trainees per shift and thereafter additional proportionate area will be required for each additional trainee."},
-                            {key:"First-Aid Room", required_value:"15 sq. m ", note:"15 sq. m "},
-                            ].map((item, index) => {
-                              return (
-                                <tr key={index}>
-                                  <td>{item.key}</td>
-                                  <td>{item.note}</td>
-                                  <td>{item.required_value}</td>
-                                  <td>
-                                    <Field
-                                      type="number"
-                                      name="name"
-                                      as={BForm.Control}
+                    <Table cellPadding="5px"
+                      border={1}
+                      style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
+                    >
+                      <thead>
+                        <tr>
+                          <th>Particulars</th>
+                          <th>Required</th>
+                          <th>Required Area</th>
+                          <th>Available Area</th>
+                          <th>Upload Geo Tagged Photo <ReqSign /></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[
+                          { key: "Library & reading room", required_value: "40 sq. m ", note: "The area mentioned above is for upto 160 trainees per shift and thereafter additional proportionate area will be required for each additional trainee." },
+                          { key: "First-Aid Room", required_value: "15 sq. m ", note: "15 sq. m " },
+                        ].map((item, index) => {
+                          return (
+                            <tr key={index}>
+                              <td>{item.key}</td>
+                              <td>{item.note}</td>
+                              <td>{item.required_value}</td>
+                              <td>
+                                <Field
+                                  type="number"
+                                  name="name"
+                                  as={BForm.Control}
 
-                                    />
-                                    {/* <div className="text-danger">
+                                />
+                                {/* <div className="text-danger">
                                                             <ErrorMessage name={workshopAreaField} />
                                                         </div> */}
-                                  </td>
-                                  <td>
-                                    <input
-                                      type="file"
-                                      name="file"
-                                      className="form-control"
-                                    // onChange={(event) => {
-                                    //     setFieldValue(
-                                    //         fileField,
-                                    //         event.currentTarget.files[0]
-                                    //     );
-                                    // }}
-                                    />
-                                    {/* <div className="text-danger">
+                              </td>
+                              <td>
+                                <input
+                                  type="file"
+                                  name="file"
+                                  className="form-control"
+                                // onChange={(event) => {
+                                //     setFieldValue(
+                                //         fileField,
+                                //         event.currentTarget.files[0]
+                                //     );
+                                // }}
+                                />
+                                {/* <div className="text-danger">
                                                             <ErrorMessage
                                                                 name={fileField}
                                                                 component="div"
@@ -171,22 +169,14 @@ export const Amenities = ({ setActive }) => {
                                                             />
 
                                                         </div> */}
-
-
-                                  </td>
-                                </tr>
-                              )
-                            })}
-
-
-
-                        </tbody>
-                      </Table>
-                    </div>
+                              </td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </Table>
                     <hr />
 
-
-                    {/*  className="text-nowrap" */}
                     <Table width={100} cellPadding="5px"
                       border={1}
                       style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
@@ -273,6 +263,87 @@ export const Amenities = ({ setActive }) => {
     </Fragment>
   );
 };
+
+
+
+export const Assessment_Amenities = () => {
+
+  return (
+    <>
+      <Row
+        style={{
+          backgroundColor: "rgb(245, 245, 245)",
+          margin: "10px 0px 0px",
+          borderRadius: 6,
+          borderStyle: "dashed",
+          borderWidth: "thin",
+          padding: "2px",
+        }}
+      >
+        <Col xl={12} lg={12} md={12} sm={12}>
+          <table
+            className="custom-table">
+            <thead>
+              <tr>
+                <th style={{ border: "1px solid black" }}>Particulars</th>
+                <th>Required</th>
+                <th>Required Area</th>
+                <th>Available Area</th>
+                <th>Geo Tagged Photo</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { key: "Library & reading room", required_value: "40 sq. m ", note: "The area mentioned above is for upto 160 trainees per shift and thereafter additional proportionate area will be required for each additional trainee." },
+                { key: "First-Aid Room", required_value: "15 sq. m ", note: "15 sq. m " },
+              ].map((item, index) => {
+                return (
+                  <tr key={index}>
+                    <td style={{ border: "1px solid black" }}>{item.key}</td>
+                    <td>{item.note}</td>
+                    <td>{item.required_value}</td>
+                    <td>100 sq. m</td>
+                    <td><Button size="sm">View Document</Button></td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+          <hr />
+
+          <table className="custom-table">
+            <thead>
+              <tr>
+                <th style={{ width: '20%' }}>Particulars</th>
+                <th style={{ width: '60%' }}>Required</th>
+                <th style={{ width: '20%' }}>Geo Tagged Photo</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { key: "Playground", note: "Dedicated playground, as per Local Building Bye- Laws/NBC of India" },
+                { key: "Drinking water facility", note: "Institute shall provide treated drinking water facility at all floors and workshops as per the local building bye-laws/ Latest NBC of India " },
+                { key: "Availability of staircases", note: "As per local building bye-laws/As per latest National Building Code of India  " },
+                { key: "Toilets/Water Closets ", note: "Institutes must provide separate toilets for staff, boys, girls and differently abled individuals as per local building bye-laws/NBC of India " },
+                { key: "General Parking Details  ", note: "The parking area should be provided as per local building bye-laws or as per the National Building Code for two-wheelers, bicycles etc. \n The parking area specified for different trades, such as Mechanic Diesel, in the workshop norms is separate from this general parking area." },
+              ].map((item, index) => {
+                return (<tr key={index}>
+                  <td>{item.key}</td>
+                  <td>{item.note}</td>
+                  <td><Button size="sm">View Document</Button></td>
+                </tr>);
+              })}
+            </tbody>
+          </table>
+        </Col>
+
+      </Row>
+
+
+    </>
+  );
+};
+
 
 
 

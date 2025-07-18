@@ -23,6 +23,7 @@ import AddIcMember from "../../../ui_layouts_collaborate/src/components/Assessme
 
 import RdUser from "../../../ui_layouts_collaborate/src/components/Assessment/RdUser";
 import ViewApplicationStageOne from "../components/new_registration/application_view_stage_1";
+import {NocGenerateForm} from "../components/new_registration/NocGenerateForm";
 export const Routedata = [
   {
     id: 1,
@@ -39,6 +40,11 @@ export const Routedata = [
         id: 1,
         path: `new_registration`,
         elementName: <New_registration />,
+      },
+      {
+        id: 1,
+        path: `generateNoc`,
+        elementName: <NocGenerateForm />,
       },
       {
         id: 1,
@@ -113,6 +119,7 @@ export const Routedata = [
         path: `state_admin/AddStateMembers`,
         elementName: <AddIcMember />,
       },
+      
     ],
   },
 ];

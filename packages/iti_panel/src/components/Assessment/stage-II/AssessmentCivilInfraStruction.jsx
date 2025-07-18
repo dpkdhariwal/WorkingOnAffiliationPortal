@@ -22,6 +22,11 @@ import { useSelector, useDispatch } from "react-redux";
 import * as formik from "formik";
 import ReqSign from "../../new_registration/form/comp/requiredSign";
 
+import {Assessment_MultipurposeHall} from "../../new_registration/form/stateII/Civil Infrastructure Details Forms/multipurposeHalls";
+import {Assessment_ITLab} from "../../new_registration/form/stateII/Civil Infrastructure Details Forms/itLab";
+import {Assessment_Library} from "../../new_registration/form/stateII/Civil Infrastructure Details Forms/library";
+import {Assessment_PlacementNCounsellingRoom} from "../../new_registration/form/stateII/Civil Infrastructure Details Forms/PlacementNCounsellingRoom";
+import {Assessment_AdministrativeArea} from "../../new_registration/form/stateII/Civil Infrastructure Details Forms/AdministrativeArea";
 const AssessmentCivilInfraStruction = () => {
   const CivilInfraList = [
     {
@@ -67,13 +72,18 @@ const AssessmentCivilInfraStruction = () => {
   ];
   return (
     <Fragment>
+
+      <Assessment_MultipurposeHall/>
+      <Assessment_ITLab/>
+      <Assessment_Library/>
+      <Assessment_PlacementNCounsellingRoom/>
+      <Assessment_AdministrativeArea/>
+
       <Accordion
         className="accordion-customicon1 accordions-items-seperate"
         defaultActiveKey="0"
       >
         {CivilInfraList.map((trade, index) => {
-          
-
           return (
             <Accordion.Item key={index} eventKey={index}>
               <Accordion.Header>{trade.tradeName}</Accordion.Header>
