@@ -84,7 +84,7 @@ const New_registration = () => {
             <PreviewOfApplication setActive={goToSection} />
           ) : // To be Work
             activeStep.label === "Fee Payment" ? (
-              AppliInfo.stage_I_fee_status === STAGE_I__FEE_PAID || AppliInfo.stage_I_fee_status === STAGE_I__FEE_EXEMPTED ? (<h6>Fee has {STAGE_I__FEE_EXEMPTED}</h6>) : <FeePayment setActive={goToSection} />
+              AppliInfo.stage_I_fee_status === STAGE_I__FEE_PAID ? (<StageIPaidInfo/>) : AppliInfo.stage_I_fee_status === STAGE_I__FEE_EXEMPTED ? (<StageIExemtedInfo />) : <FeePayment setActive={goToSection} />
             ) : // To be Work
               activeStep.label === "Documents Upload" ? (
                 (AppliInfo.stage_I_fee_status === STAGE_I__FEE_PENDING) ? (<h5>First Complete the Stage-I and Pay the Fee</h5>) :
@@ -103,3 +103,173 @@ const New_registration = () => {
 };
 
 export default New_registration;
+
+export const StageIExemtedInfo = () => {
+
+  return (
+    <>
+
+      <div>
+        <Card className="custom-card border border-primary">
+          {/* <Card.Header>
+            <div className="card-title" style={{ textTransform: "none" }}>
+              <h5> Stage-I Fee Exempted</h5>
+            </div>
+          </Card.Header> */}
+          <Card.Body>
+            <Row style={{ marginTop: "1rem" }}>
+              <Col md={12}>
+                <div className="jumbotron">
+                  <h1 className="display-4"> ✅ Successfully stage-I complited.</h1>
+                  <p className="lead">
+                    Thank you for submitting your application, your Registration for Stage I has been Completed. <br /> You can now upload relavent documents of stage I
+                  </p>
+                </div>
+              </Col>
+            </Row>
+          </Card.Body>
+          {/* <Card.Footer>
+          
+        </Card.Footer> */}
+        </Card>
+
+        <Card className="custom-card border border-primary">
+          {/* <Card.Header>
+            <div className="card-title" style={{ textTransform: "none" }}>
+              <h5> Stage I Fee Exempted</h5>
+            </div>
+          </Card.Header> */}
+          <Card.Body>
+            <Row style={{ marginTop: "1rem" }}>
+              <Col md={12}>
+                <table style={{ width: "98%" }} className="custom-table"
+                >
+                  <tbody>
+                    <tr>
+                      <th>Allication Id:</th>
+                      <td>ABC123</td>
+                    </tr>
+                    <tr>
+                      <th>Payment Status:</th>
+                      <td>Exempted</td>
+                    </tr>
+                    <tr>
+                      <th>Status:</th>
+                      <td>Successfull</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </Col>
+            </Row>
+          </Card.Body>
+          <Card.Footer>
+            <div className="d-flex justify-content-between mb-3">
+              <Button 
+                className="p-2" variant="warning">
+                Previous
+              </Button>
+              <Button className="p-2"
+                variant="success"
+              >
+                Upload Document
+              </Button>
+            </div>
+          </Card.Footer>
+        </Card>
+      </div>
+
+    </>
+  )
+
+}
+
+export const StageIPaidInfo = () => {
+
+  return (
+    <>
+
+      <div>
+        <Card className="custom-card border border-primary">
+          {/* <Card.Header>
+            <div className="card-title" style={{ textTransform: "none" }}>
+              <h5> Stage-I Fee Exempted</h5>
+            </div>
+          </Card.Header> */}
+          <Card.Body>
+            <Row style={{ marginTop: "1rem" }}>
+              <Col md={12}>
+                <div className="jumbotron">
+                  <h1 className="display-4"> ✅ Payment Successfully Stage-I Completed</h1>
+                  <p className="lead">
+                    Thank you, for submitting your Application. <br/> 
+                    Your Registration for Stage-I has been completed. You can now upload relavent document
+                  </p>
+                  <p className="lead">
+                    Your Payment has been received and recorded successfully. Please keep the Transation Id for your reference.
+                  </p>
+                </div>
+              </Col>
+            </Row>
+          </Card.Body>
+          {/* <Card.Footer>
+          
+        </Card.Footer> */}
+        </Card>
+
+        <Card className="custom-card border border-primary">
+          {/* <Card.Header>
+            <div className="card-title" style={{ textTransform: "none" }}>
+              <h5> Stage I Fee Exempted</h5>
+            </div>
+          </Card.Header> */}
+          <Card.Body>
+            <Row style={{ marginTop: "1rem" }}>
+              <Col md={12}>
+                <table style={{ width: "98%" }} className="custom-table"
+                >
+                  <tbody>
+                    <tr>
+                      <th>Allication Id:</th>
+                      <td>ABC123</td>
+                    </tr>
+                    <tr>
+                      <th>Transaction ID:</th>
+                      <td>ABC123</td>
+                    </tr>
+                    <tr>
+                      <th>Payment Date:</th>
+                      <td>Paid</td>
+                    </tr>
+                    <tr>
+                      <th>Amount Paid:</th>
+                      <td>Rs. 10,000</td>
+                    </tr>
+                    <tr>
+                      <th>Status:</th>
+                      <td>Successfull</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </Col>
+            </Row>
+          </Card.Body>
+          <Card.Footer>
+            <div className="d-flex justify-content-between mb-3">
+              <Button 
+                className="p-2" variant="warning">
+                Previous
+              </Button>
+              <Button className="p-2"
+                variant="success"
+              >
+                Upload Document
+              </Button>
+            </div>
+          </Card.Footer>
+        </Card>
+      </div>
+
+    </>
+  )
+
+}

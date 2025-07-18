@@ -1,17 +1,16 @@
-import { Fragment, useEffect, useRef } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { Row, Col, Card, Form, Button, InputGroup } from "react-bootstrap";
 import { Formik, Field, FieldArray } from "formik";
 import * as yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
-import { Form as BootstrapForm } from "react-bootstrap";
+import { Form as BootstrapForm, Modal } from "react-bootstrap";
 
 import { languages, ADD_MORE_LAND_DOCUMENT, SET_STAGE_I__DOCUMENT_STATUS } from "../../../../constants";
 import { land_documents_yupObject } from "../../../../reducers/document_upload";
 
-
-const DetailsOfDocumentsToBeUploaded = ({setActive}) => {
+const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
   const dispatch = useDispatch();
   const formikRef = useRef();
   const land_info = useSelector((state) => state.land_info_reducer);
@@ -46,6 +45,10 @@ const DetailsOfDocumentsToBeUploaded = ({setActive}) => {
       }
     });
   };
+
+  const submitNow = () => {
+    formikRef.current?.submitForm()
+  }
 
   return (
     <Fragment>
@@ -848,14 +851,15 @@ const DetailsOfDocumentsToBeUploaded = ({setActive}) => {
                   </Row>
                 </Card.Body>
                 <Card.Footer className="d-flex justify-content-end">
-                  <Button
+                  {/* <Button
                     onClick={() => formikRef.current?.submitForm()}
                     size="lg"
                     variant="success"
                     className="btn-wave"
                   >
                     Submit Application
-                  </Button>
+                  </Button> */}
+                  <ConfirmBox submitNow={submitNow} />
                 </Card.Footer>
               </Card>
             </Form>
@@ -867,3 +871,132 @@ const DetailsOfDocumentsToBeUploaded = ({setActive}) => {
 };
 
 export default DetailsOfDocumentsToBeUploaded;
+
+
+const renderOtpInputs = (otpArray, setOtpArray, refs, onComplete) => (
+  <div className="d-flex justify-content-start flex-wrap gap-1 mt-2">
+    {otpArray.map((val, idx) => (
+      <Form.Control
+        key={idx}
+        type="text"
+        maxLength="1"
+        value={val}
+        className="text-center p-0"
+        style={{
+          width: "2rem",
+          height: "2rem",
+          fontSize: "1rem",
+          border: "1px solid #ccc",
+        }}
+        ref={(el) => (refs.current[idx] = el)}
+        onChange={(e) => {
+          if (!isNaN(e.target.value)) {
+            const updatedOtp = [...otpArray];
+            updatedOtp[idx] = e.target.value;
+            setOtpArray(updatedOtp);
+            if (e.target.value && idx < 5) refs.current[idx + 1].focus();
+            if (updatedOtp.every((digit) => digit !== "")) onComplete(true);
+          }
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Backspace" && otpArray[idx] === "") {
+            if (idx > 0) refs.current[idx - 1].focus();
+          }
+        }}
+      />
+    ))}
+    {otpArray.every((v) => v !== "") && (
+      <span style={{ fontSize: "1.25rem", color: "green", marginLeft: "10px" }}>&#10004;</span>
+    )}
+  </div>
+);
+const MyVerticallyCenteredModal = (props) => {
+
+
+  const [emailTimer, setEmailTimer] = useState(0);
+  const [mobileTimer, setMobileTimer] = useState(0);
+
+  const [signupEmailTimer, setSignupEmailTimer] = useState(0);
+  const [signupMobileTimer, setSignupMobileTimer] = useState(0);
+
+  const [email, setEmail] = useState("");
+  const [mobile, setMobile] = useState("");
+
+  const [emailOtpVisible, setEmailOtpVisible] = useState(false);
+  const [emailOtp, setEmailOtp] = useState(new Array(6).fill(""));
+  const [emailOtpComplete, setEmailOtpComplete] = useState(false);
+  const emailOtpRefs = useRef([]);
+
+  const [mobileOtpVisible, setMobileOtpVisible] = useState(false);
+  const [mobileOtp, setMobileOtp] = useState(new Array(6).fill(""));
+  const [mobileOtpComplete, setMobileOtpComplete] = useState(false);
+  const mobileOtpRefs = useRef([]);
+
+  const [signupEmail, setSignupEmail] = useState("");
+  const [signupMobile, setSignupMobile] = useState("");
+  const [signupPassword, setSignupPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [captchaInput, setCaptchaInput] = useState("");
+  const [captcha, setCaptcha] = useState("");
+
+  const [signupEmailOtpVisible, setSignupEmailOtpVisible] = useState(false);
+  const [signupEmailOtp, setSignupEmailOtp] = useState(new Array(6).fill(""));
+  const [signupEmailOtpComplete, setSignupEmailOtpComplete] = useState(false);
+  const signupEmailOtpRefs = useRef([]);
+
+  const [signupMobileOtpVisible, setSignupMobileOtpVisible] = useState(false);
+  const [signupMobileOtp, setSignupMobileOtp] = useState(new Array(6).fill(""));
+  const [signupMobileOtpComplete, setSignupMobileOtpComplete] = useState(false);
+  const signupMobileOtpRefs = useRef([]);
+
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [loginSuccess, setLoginSuccess] = useState(false);
+  const [view, setView] = useState("signin");
+
+  return (
+    <Modal
+      {...props}
+      size="lg"
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+    >
+      <Modal.Header closeButton>
+        <Modal.Title id="contained-modal-title-vcenter" as="h6">
+          Submit Stage-I Docuemnts
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        {/* className="mt-5" */}
+        <div >
+          <h3 className="mb-3">
+            Dear, <span className="text-primary">Applicant</span>
+          </h3>
+          <p>
+            Your stage I application has been successfully completed. The Application will now be forwarded to the Concerned State Directorage for Assessment. One's submitted, You can not modify your application. You will be notified onces the evaluation is completed.
+          </p>
+
+        </div>
+      </Modal.Body>
+      <Modal.Footer>
+        {/* <Button onClick={props.onHide}>Close</Button> */}
+        <Button onClick={props.submitNow}>Submit Now</Button>
+      </Modal.Footer>
+    </Modal>
+  );
+}
+
+export const ConfirmBox = ({ submitNow }) => {
+  const [modalShow, setModalShow] = useState(false);
+  return (
+    <div>
+      <Button variant="success" onClick={() => setModalShow(true)}>
+        Save & Next
+      </Button>
+      <MyVerticallyCenteredModal
+        show={modalShow}
+        onHide={() => setModalShow(false)}
+        submitNow={submitNow}
+      />
+    </div>
+  )
+}

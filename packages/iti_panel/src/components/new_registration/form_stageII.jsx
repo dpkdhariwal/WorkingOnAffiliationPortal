@@ -71,7 +71,7 @@ const New_registration = () => {
             ) : activeStep.label === "Document Uploads" ? (
               <DocumentUploads stepInfo={activeStep} />
             ) : activeStep.label === "Fee Payment For StageII" ? (
-              <FeePayment stepInfo={activeStep} />
+              <FeePayment stepInfo={activeStep} setActive={goToSection}  />
             ) : (
               <p>Something Went Wrong</p>
             )}

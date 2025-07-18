@@ -46,104 +46,105 @@ const FeePayment = ({ setActive }) => {
   const submit = (values) => {
     console.log(PropInstiInfo);
     dispatch({ type: UPDATE_STAGE_II_SET_FEE_STATUS, payload: PropInstiInfo });
-    dispatch({ type: "set_filled_step_II", payload: { step: 3 }, });
-    dispatch({ type: "reg_set_active_stepII", payload: { step: 4 } });
-    setActive(reg.stepsII[4]);
+    dispatch({ type: "set_filled_step_II", payload: { step: 5 }, });
+    dispatch({ type: "reg_set_active_stepII", payload: { step: 6 } });
+    setActive(reg.stepsII[6]);
   };
 
-      const AppliInfo = useSelector((state) => state.AppliInfo);
+  const AppliInfo = useSelector((state) => state.AppliInfo);
 
   return (
     <Fragment>
-            {AppliInfo.stage_II_fee_status === STAGE_II__FEE_PAID || AppliInfo.stage_II_fee_status === STAGE_II__FEE_EXEMPTED ? (<h4>{AppliInfo.stage_II_fee_status}</h4>) :
-      
-      <Formik
-        innerRef={formikRef}
+      {AppliInfo.stage_II_fee_status === STAGE_II__FEE_PAID ? (<StageIIPaidInfo/>) : AppliInfo.stage_II_fee_status === STAGE_II__FEE_EXEMPTED ? (<StageIIExemtedInfo/>) :
 
-        validationSchema={yup.object().shape({
-          iaccept: yup.string().required("Mark on I accept check box"),
-        })}
-        validateOnChange={true}
-        onSubmit={(values) => {
-          console.log(values);
-          submit(values);
-        }}
-        initialValues={{
-          iaccept: "",
-        }}
-      >
-        {({ handleSubmit, handleChange, values, errors, touched }) => (
-          <Card className="custom-card border border-primary">
-            {/* <Card.Header>
+
+        <Formik
+          innerRef={formikRef}
+
+          validationSchema={yup.object().shape({
+            iaccept: yup.string().required("Mark on I accept check box"),
+          })}
+          validateOnChange={true}
+          onSubmit={(values) => {
+            console.log(values);
+            submit(values);
+          }}
+          initialValues={{
+            iaccept: "",
+          }}
+        >
+          {({ handleSubmit, handleChange, values, errors, touched }) => (
+            <Card className="custom-card border border-primary">
+              {/* <Card.Header>
             <div className="card-title" style={{ textTransform: "none" }}>
               Self Declaration
             </div>
           </Card.Header> */}
-            <Card.Body>
-              <p><ul>
-                <li>Please preview the application before fee payment. No editing in
-                  application would be allowed after fee payment.</li></ul></p>
-              <div className="d-grid gap-2 mb-4">
-                <ViewApplication />
-              </div>
+              <Card.Body>
+                <p><ul>
+                  <li>Please preview the application before fee payment. No editing in
+                    application would be allowed after fee payment.</li></ul></p>
+                <div className="d-grid gap-2 mb-4">
+                  <ViewApplication />
+                </div>
 
-              <div className="form-check">
-                <BootstrapForm noValidate onSubmit={handleSubmit}>
-                  <BootstrapForm.Check
-                    type="checkbox"
-                    id="flexCheckDefault"
-                    name="iaccept"
-                    label="I Accept"
-                    value={values.iaccept}
-                    onChange={handleChange}
-                    isInvalid={touched.iaccept && !!errors.iaccept}
-                    feedback={errors.iaccept}
-                  // feedbackType="invalid"
-                  />
-                </BootstrapForm>
-                <label className="form-check-label" htmlFor="flexCheckDefault">
-                  I have previewed the application and I am sure that all the
-                  details are correct. <span style={{ color: "red" }}>*</span>{" "}
-                </label>
-              </div>
+                <div className="form-check">
+                  <BootstrapForm noValidate onSubmit={handleSubmit}>
+                    <BootstrapForm.Check
+                      type="checkbox"
+                      id="flexCheckDefault"
+                      name="iaccept"
+                      label="I Accept"
+                      value={values.iaccept}
+                      onChange={handleChange}
+                      isInvalid={touched.iaccept && !!errors.iaccept}
+                      feedback={errors.iaccept}
+                    // feedbackType="invalid"
+                    />
+                  </BootstrapForm>
+                  <label className="form-check-label" htmlFor="flexCheckDefault">
+                    I have previewed the application and I am sure that all the
+                    details are correct. <span style={{ color: "red" }}>*</span>{" "}
+                  </label>
+                </div>
 
 
-              {PropInstiInfo.type_of_institute === "Government" ? (<Card
-                className="custom-card border border-primary"
-                style={{ marginTop: "1rem" }}
-              >
-                <Card.Header>
-                  <div className="card-title" style={{ textTransform: "none" }}>
-                    Fee Pay Exempted
-                  </div>
-                </Card.Header>
-                <Card.Body>
-                  <p>
-                    Note:
-                    <ol>
-                      <li>
-                        Government ITIs are exempted from all registration fee
-                        for affiliation and accreditation, including conversions
-                        from SCVT to NCVET.
-                      </li>
-                      {/* <li>
+                {PropInstiInfo.type_of_institute === "Government" ? (<Card
+                  className="custom-card border border-primary"
+                  style={{ marginTop: "1rem" }}
+                >
+                  <Card.Header>
+                    <div className="card-title" style={{ textTransform: "none" }}>
+                      Fee Pay Exempted
+                    </div>
+                  </Card.Header>
+                  <Card.Body>
+                    <p>
+                      Note:
+                      <ol>
+                        <li>
+                          Government ITIs are exempted from all registration fee
+                          for affiliation and accreditation, including conversions
+                          from SCVT to NCVET.
+                        </li>
+                        {/* <li>
                                      The above rates may be revised by the DGT at any time,
                                      subject to approval from the competent authority.
                                    </li> */}
-                      <li>
-                        No fee shall be charged for applications submitted under
-                        the Renewal of Affiliation of ITI and Affiliation for
-                        DST application.
-                      </li>
-                      {/* <li>
+                        <li>
+                          No fee shall be charged for applications submitted under
+                          the Renewal of Affiliation of ITI and Affiliation for
+                          DST application.
+                        </li>
+                        {/* <li>
                                      All payments must be made exclusively through the online
                                      payment gateway system provided on portal.
                                    </li> */}
-                      {/* <li>
+                        {/* <li>
                                      The above-mentioned registration fee is non-refundable,
                                      even if the application is rejected at any stage.
                                    </li> */}
-                      {/* <li>
+                        {/* <li>
                                      State/UT Directorates may levy additional fee in
                                      accordance with their respective norms and guidelines,
                                      including for issuing the NOC. These State-specific fee
@@ -154,90 +155,263 @@ const FeePayment = ({ setActive }) => {
                                      if any rests solely with the State, with no intervention
                                      from the Directorate General of Training (DGT).
                                    </li> */}
-                    </ol>
-                  </p>
-                </Card.Body>
-              </Card>) : PropInstiInfo.type_of_institute === "Private" ? (<Card
-                className="custom-card border border-primary"
-                style={{ marginTop: "1rem" }}
-              >
-                <Card.Header>
-                  <div className="card-title" style={{ textTransform: "none" }}>
-                    Terms and Conditions
-                  </div>
-                </Card.Header>
-                <Card.Body>
-                  <p>
-                    Note:
-                    <ol>
-                      {/* <li>
+                      </ol>
+                    </p>
+                  </Card.Body>
+                </Card>) : PropInstiInfo.type_of_institute === "Private" ? (<Card
+                  className="custom-card border border-primary"
+                  style={{ marginTop: "1rem" }}
+                >
+                  <Card.Header>
+                    <div className="card-title" style={{ textTransform: "none" }}>
+                      Terms and Conditions
+                    </div>
+                  </Card.Header>
+                  <Card.Body>
+                    <p>
+                      Note:
+                      <ol>
+                        {/* <li>
                                      Government ITIs are exempted from all registration fee
                                      for affiliation and accreditation, including conversions
                                      from SCVT to NCVET.
                                    </li> */}
-                      <li>
-                        The above rates may be revised by the DGT at any time,
-                        subject to approval from the competent authority.
-                      </li>
-                      <li>
-                        No fee shall be charged for applications submitted under
-                        the Renewal of Affiliation of ITI and Affiliation for
-                        DST application.
-                      </li>
-                      <li>
-                        All payments must be made exclusively through the online
-                        payment gateway system provided on portal.
-                      </li>
-                      <li>
-                        The above-mentioned registration fee is non-refundable,
-                        even if the application is rejected at any stage.
-                      </li>
-                      <li>
-                        State/UT Directorates may levy additional fee in
-                        accordance with their respective norms and guidelines,
-                        including for issuing the NOC. These State-specific fee
-                        will be collected by the respective State/UT
-                        directorates through their designated platforms or
-                        payment modes before the issuance of the NOC. The
-                        responsibility for determining and collecting this fee,
-                        if any rests solely with the State, with no intervention
-                        from the Directorate General of Training (DGT).
-                      </li>
-                    </ol>
-                    <p>
-                      {" "}
-                      The payment of fee merely does not guarantee the granting
-                      of affiliation. The institute must strictly adhere to the
-                      prescribed procedures, norms, and guidelines for
-                      affiliation and accreditation.
+                        <li>
+                          The above rates may be revised by the DGT at any time,
+                          subject to approval from the competent authority.
+                        </li>
+                        <li>
+                          No fee shall be charged for applications submitted under
+                          the Renewal of Affiliation of ITI and Affiliation for
+                          DST application.
+                        </li>
+                        <li>
+                          All payments must be made exclusively through the online
+                          payment gateway system provided on portal.
+                        </li>
+                        <li>
+                          The above-mentioned registration fee is non-refundable,
+                          even if the application is rejected at any stage.
+                        </li>
+                        <li>
+                          State/UT Directorates may levy additional fee in
+                          accordance with their respective norms and guidelines,
+                          including for issuing the NOC. These State-specific fee
+                          will be collected by the respective State/UT
+                          directorates through their designated platforms or
+                          payment modes before the issuance of the NOC. The
+                          responsibility for determining and collecting this fee,
+                          if any rests solely with the State, with no intervention
+                          from the Directorate General of Training (DGT).
+                        </li>
+                      </ol>
+                      <p>
+                        {" "}
+                        The payment of fee merely does not guarantee the granting
+                        of affiliation. The institute must strictly adhere to the
+                        prescribed procedures, norms, and guidelines for
+                        affiliation and accreditation.
+                      </p>
                     </p>
-                  </p>
-                </Card.Body>
+                  </Card.Body>
 
-              </Card>) : ''}
-
+                </Card>) : ''}
 
 
 
-            </Card.Body>
-            <Card.Footer className="d-flex justify-content-end">
-              {PropInstiInfo.type_of_institute === "Government" ? (
-                <Button size="lg" variant="facebook" onClick={() => formikRef.current?.submitForm()}
-                >
-                  Save & Next
-                </Button>
-              ) : PropInstiInfo.type_of_institute === "Private" ? (
-                <Button size="lg" variant="instagram" onClick={() => formikRef.current?.submitForm()} >
-                  Pay
-                </Button>
-              ) : ''}
-            </Card.Footer>
-          </Card>
-        )}
-      </Formik>
-}
+
+              </Card.Body>
+              <Card.Footer className="d-flex justify-content-end">
+                {PropInstiInfo.type_of_institute === "Government" ? (
+                  <Button size="lg" variant="facebook" onClick={() => formikRef.current?.submitForm()}
+                  >
+                    Save & Next
+                  </Button>
+                ) : PropInstiInfo.type_of_institute === "Private" ? (
+                  <Button size="lg" variant="instagram" onClick={() => formikRef.current?.submitForm()} >
+                    Pay
+                  </Button>
+                ) : ''}
+              </Card.Footer>
+            </Card>
+          )}
+        </Formik>
+      }
     </Fragment>
   );
 };
 
 export default FeePayment;
+
+
+
+export const StageIIExemtedInfo = () => {
+
+  return (
+    <>
+
+      <div>
+        <Card className="custom-card border border-primary">
+          {/* <Card.Header>
+            <div className="card-title" style={{ textTransform: "none" }}>
+              <h5> Stage-I Fee Exempted</h5>
+            </div>
+          </Card.Header> */}
+          <Card.Body>
+            <Row style={{ marginTop: "1rem" }}>
+              <Col md={12}>
+                <div className="jumbotron">
+                  <h1 className="display-4"> ✅ Successfully stage-II complited.</h1>
+                  <p className="lead">
+                    Thank you for submitting your application, your Registration for Stage II has been Completed. <br /> You can now Submit Machinery/Tools/Equipment Details
+                  </p>
+                </div>
+              </Col>
+            </Row>
+          </Card.Body>
+          {/* <Card.Footer>
+          
+        </Card.Footer> */}
+        </Card>
+
+        <Card className="custom-card border border-primary">
+          {/* <Card.Header>
+            <div className="card-title" style={{ textTransform: "none" }}>
+              <h5> Stage I Fee Exempted</h5>
+            </div>
+          </Card.Header> */}
+          <Card.Body>
+            <Row style={{ marginTop: "1rem" }}>
+              <Col md={12}>
+                <table style={{ width: "98%" }} className="custom-table"
+                >
+                  <tbody>
+                    <tr>
+                      <th>Allication Id:</th>
+                      <td>ABC123</td>
+                    </tr>
+                    <tr>
+                      <th>Payment Status:</th>
+                      <td>Exempted</td>
+                    </tr>
+                    <tr>
+                      <th>Status:</th>
+                      <td>Successfull</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </Col>
+            </Row>
+          </Card.Body>
+          <Card.Footer>
+            <div className="d-flex justify-content-between mb-3">
+              <Button 
+                className="p-2" variant="warning">
+                Previous
+              </Button>
+              <Button className="p-2"
+                variant="success"
+              >
+                Save & Next
+              </Button>
+            </div>
+          </Card.Footer>
+        </Card>
+      </div>
+
+    </>
+  )
+
+}
+
+export const StageIIPaidInfo = () => {
+
+  return (
+    <>
+
+      <div>
+        <Card className="custom-card border border-primary">
+          {/* <Card.Header>
+            <div className="card-title" style={{ textTransform: "none" }}>
+              <h5> Stage-I Fee Exempted</h5>
+            </div>
+          </Card.Header> */}
+          <Card.Body>
+            <Row style={{ marginTop: "1rem" }}>
+              <Col md={12}>
+                <div className="jumbotron">
+                  <h1 className="display-4"> ✅ Payment Successfully Stage-II Completed</h1>
+                  <p className="lead">
+                    Thank you, for submitting your Application. <br/> 
+                    Your Registration for Stage-II has been completed. You can now Sumibt Machinery, Tools, Equipment Details
+
+                  </p>
+                  <p className="lead">
+                    Your Payment has been received and recorded successfully. Please keep the Transation Id for your reference.
+                  </p>
+                </div>
+              </Col>
+            </Row>
+          </Card.Body>
+          {/* <Card.Footer>
+          
+        </Card.Footer> */}
+        </Card>
+
+        <Card className="custom-card border border-primary">
+          {/* <Card.Header>
+            <div className="card-title" style={{ textTransform: "none" }}>
+              <h5> Stage I Fee Exempted</h5>
+            </div>
+          </Card.Header> */}
+          <Card.Body>
+            <Row style={{ marginTop: "1rem" }}>
+              <Col md={12}>
+                <table style={{ width: "98%" }} className="custom-table"
+                >
+                  <tbody>
+                    <tr>
+                      <th>Allication Id:</th>
+                      <td>ABC123</td>
+                    </tr>
+                    <tr>
+                      <th>Transaction ID:</th>
+                      <td>ABC123</td>
+                    </tr>
+                    <tr>
+                      <th>Payment Date:</th>
+                      <td>Paid</td>
+                    </tr>
+                    <tr>
+                      <th>Amount Paid:</th>
+                      <td>Rs. 10,000</td>
+                    </tr>
+                    <tr>
+                      <th>Status:</th>
+                      <td>Successfull</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </Col>
+            </Row>
+          </Card.Body>
+          <Card.Footer>
+            <div className="d-flex justify-content-between mb-3">
+              <Button 
+                className="p-2" variant="warning">
+                Previous
+              </Button>
+              <Button className="p-2"
+                variant="success"
+              >
+                Save & Next
+              </Button>
+            </div>
+          </Card.Footer>
+        </Card>
+      </div>
+
+    </>
+  )
+
+}

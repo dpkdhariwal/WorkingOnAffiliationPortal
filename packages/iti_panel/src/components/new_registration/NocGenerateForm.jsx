@@ -75,7 +75,7 @@ export const NocGenerateForm = () => {
             >
               Generate NOC Now
             </Button> */}
-            <VerticallyCentered
+            <ConfirmBox
               show={modalShow}
               onHide={() => setModalShow(false)}
             />
@@ -90,7 +90,8 @@ export const NocGenerateForm = () => {
 export const NocForm = () => {
 
   return (
-    <><table
+    <>
+    <table
       width="98%"
       border={1}
       style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
@@ -418,7 +419,7 @@ const MyVerticallyCenteredModal = (props) => {
   );
 }
 
-const VerticallyCentered = () => {
+export const ConfirmBox = () => {
   const [modalShow, setModalShow] = useState(false);
   return (
     <div>
