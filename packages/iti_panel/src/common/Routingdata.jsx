@@ -24,6 +24,9 @@ import AddIcMember from "../../../ui_layouts_collaborate/src/components/Assessme
 import RdUser from "../../../ui_layouts_collaborate/src/components/Assessment/RdUser";
 import ViewApplicationStageOne from "../components/new_registration/application_view_stage_1";
 import {NocGenerateForm} from "../components/new_registration/NocGenerateForm";
+import {AddStaffDetail} from "../components/new_registration/AddStaffDetail";
+import {InspectionSlotSelection} from "../components/new_registration/InspectionSlotSelection";
+import {AppList} from "../screens/Applicant/AppList";
 export const Routedata = [
   {
     id: 1,
@@ -43,9 +46,26 @@ export const Routedata = [
       },
       {
         id: 1,
+        path: `AppList`,
+        elementName: <AppList />,
+      },
+      {
+        id: 1,
         path: `generateNoc`,
         elementName: <NocGenerateForm />,
       },
+      {
+        id: 1,
+        path: `AddStaffDetail`,
+        elementName: <AddStaffDetail />,
+      },
+
+      {
+        id: 1,
+        path: `InspectionSlotSelection`,
+        elementName: <InspectionSlotSelection />,
+      },
+      
       {
         id: 1,
         path: `application_stage_1_form`,

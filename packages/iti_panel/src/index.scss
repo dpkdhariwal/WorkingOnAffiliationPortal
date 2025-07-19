@@ -12,6 +12,31 @@
 
 @import "./assets/css/styles.css";
 
+
+// @import 'datatables.net-dt';
+// // @import 'datatables.net-responsive-dt';
+// // @import 'datatables.net-select-dt'
+
+// table.dataTable tbody td.select-checkbox::before,
+// table.dataTable thead th.select-checkbox::before {
+//   content: ' ';
+//   margin-top: -9px;
+//   margin-left: -4px;
+//   border: 1px solid black;
+//   border-radius: 3px;
+//   display: inline-block;
+//   width: 16px;
+//   height: 16px;
+// }
+@import url('datatables.net-bs4');
+@import url('datatables.net-buttons-bs4');
+@import url('datatables.net-select-bs4');
+
+
+
+
+
+
 .app-sidebar {
   *::-webkit-scrollbar {
     width: 0rem !important;

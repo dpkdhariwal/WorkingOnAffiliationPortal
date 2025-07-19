@@ -19,6 +19,18 @@ npm install @mui/icons-material @mui/material @emotion/styled @emotion/react --w
 
 npm install @mui/joy @emotion/react @emotion/styled --workspace=packages/iti_panel
 
+ 
+npm install --save datatables.net-react datatables.net-dt datatables.net-bs5 --workspace=packages/iti_panel
+
+npm install datatables.net datatables.net-dt datatables.net-select --workspace=packages/iti_panel
+
+npm install datatables.net datatables.net-dt datatables.net-select --workspace=packages/iti_panel
+npm install datatables.net-select-dt datatables.nt-responsive-dt --workspace=packages/iti_panel
+
+
+npm install datatables.net-react install datatables.net-bs4 install datatables.net-buttons-bs4 install datatables.net-select-bs4 --workspace=packages/iti_panel
+
+
 npm i --workspace=packages/ui_layouts_collaborate
 
 npm i react-bootstrap-icons --workspace=packages/ui_layouts_collaborate
@@ -55,6 +67,7 @@ npm install knex -g --workspace=packages/server
 npm install mysql2 --workspace=packages/server
 
 npm install date-fns --workspace=packages/ui_layouts_collaborate
+
 
 
 npm install knex -g
