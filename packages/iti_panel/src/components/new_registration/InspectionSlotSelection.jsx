@@ -20,10 +20,10 @@ export const InspectionSlotSelection = () => {
 
   // Slot labels for display
   const slotLabels = {
-    "slot-1": "Slot-1 (1st to 15th)",
-    "slot-2": "Slot-2 (1st to 30/31st)",
-    "slot-3": "Slot-3 (1st to 15th)",
-    "slot-4": "Slot-4 (16th to 30/31st)",
+    "slot-1": "1st to 15th day of the first month",
+    "slot-2": "16th to 30th/31th day of the first month",
+    "slot-3": "1st to 15th day of the second month",
+    "slot-4": "16th to 30th/31th day of the second month",
   };
 
   // Generate all dates for a slot within the correct month
