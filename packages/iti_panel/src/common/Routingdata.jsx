@@ -27,6 +27,8 @@ import {NocGenerateForm} from "../components/new_registration/NocGenerateForm";
 import {AddStaffDetail} from "../components/new_registration/AddStaffDetail";
 import {InspectionSlotSelection} from "../components/new_registration/InspectionSlotSelection";
 import {AppList} from "../screens/Applicant/AppList";
+// import {GridExample} from "../screens/Applicant/AppList_ag-grid";
+
 export const Routedata = [
   {
     id: 1,
@@ -49,6 +51,12 @@ export const Routedata = [
         path: `AppList`,
         elementName: <AppList />,
       },
+      // {
+      //   id: 1, 
+      //   path: `AppListGrid`,
+      //   elementName: <GridExample />,
+      // },
+
       {
         id: 1,
         path: `generateNoc`,

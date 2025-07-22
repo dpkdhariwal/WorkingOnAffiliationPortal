@@ -51,9 +51,11 @@ export const AppliInfoInitialValues = {
   stage_I_completion_status: STAGE_I__SUBMIT_PENDING,
   stage_II_fee_status: STAGE_II__FEE_PENDING,
   stage_II_completion_status: STAGE_II__SUBMIT_PENDING,
-
+  
+  
   app_status: STAGE_I__NOT_FILLED,
   app_status_awaiting: STAGE_I__FILLED,
+  
   app_flow_status: AppFlow,
 };
 export const AppliInfo = (state = AppliInfoInitialValues, action) => {

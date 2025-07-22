@@ -31,6 +31,8 @@ npm install datatables.net-select-dt datatables.nt-responsive-dt --workspace=pac
 npm install datatables.net-react install datatables.net-bs4 install datatables.net-buttons-bs4 install datatables.net-select-bs4 --workspace=packages/iti_panel
 
 
+npm install ag-grid-react --workspace=packages/iti_panel
+
 npm i --workspace=packages/ui_layouts_collaborate
 
 npm i react-bootstrap-icons --workspace=packages/ui_layouts_collaborate

@@ -7,6 +7,10 @@ import { useSelector, useDispatch } from "react-redux";
 // import { AppFlow } from "../constants";
 import { Card, } from "react-bootstrap";
 import { InactiveStep } from "./Timeline/inactive_step";
+import { CompletedStep } from "./Timeline/completed_step";
+import { PendingStep } from "./Timeline/pending_step";
+
+
 
 import {
   STAGE_I_FORM_FILLING,
@@ -30,64 +34,21 @@ import {
   STAGE_I__ASSESSMENT_COMPLETED
 } from "../constants";
 
-import {ActionONStateOneAssessmentPending} from "../screens/Timeline/actions/assessor/actions_stage_i_assessment";
+import { ActionONStateOneAssessmentPending } from "../screens/Timeline/actions/assessor/actions_stage_i_assessment";
 
 const getSetStep = (info, i) => {
-  switch (info.step) {
-    case STAGE_I_FORM_FILLING:
-      switch (info.status) {
-        case STAGE_I__FILLED:
-          return <AffTimeLineItem variant="completed" key={i}><InactiveStep variant="completed" info={info} /></AffTimeLineItem>
-        case STAGE_I__NOT_FILLED:
-          return <AffTimeLineItem variant="pending" key={i}><InactiveStep  info={info} /></AffTimeLineItem>
-        default:
-          return <AffTimeLineItem variant="pending" key={i}><InactiveStep info={info} /></AffTimeLineItem>
-      }
-    case STAGE_I_FEE:
-      switch (info.status) {
-        case STAGE_I__FEE_PENDING:
-          return <AffTimeLineItem key={i}><InactiveStep info={info} /></AffTimeLineItem>
-        case STAGE_I__FEE_PAID:
-          return <AffTimeLineItem variant="completed"  key={i}><InactiveStep variant="completed" info={info} /></AffTimeLineItem>
-        case STAGE_I__FEE_EXEMPTED:
-          return <AffTimeLineItem variant="completed" key={i}><InactiveStep variant="completed" info={info} /></AffTimeLineItem>
-        default:
-          return <AffTimeLineItem key={i}><InactiveStep info={info} /></AffTimeLineItem>
-      }
-    case STAGE_I_DOCUMENT_UPLAOD:
-      switch (info.status) {
-        case STAGE_I__DOCUMENT_PENDING:
-          return <AffTimeLineItem key={i}><InactiveStep info={info} /></AffTimeLineItem>
-        case STAGE_I__DOCUMENT_UPLOADED:
-          return <AffTimeLineItem variant="completed" key={i}><InactiveStep variant="completed" info={info} /></AffTimeLineItem>
-        default:
-          return <AffTimeLineItem key={i}><InactiveStep info={info} /></AffTimeLineItem>
-      }
-    case STAGE_I_SUBMIT:
-      switch (info.status) {
-        case STAGE_I__SUBMIT_PENDING:
-          return <AffTimeLineItem key={i}><InactiveStep info={info} /></AffTimeLineItem>
-        case STAGE_I__SUBMITED:
-          return <AffTimeLineItem variant="completed" key={i}><InactiveStep variant="completed" info={info} /></AffTimeLineItem>
-        default:
-          return <AffTimeLineItem key={i}><InactiveStep info={info} /></AffTimeLineItem>
-      }
-    case STAGE_I__ASSESSMENT:
-      switch (info.status) {
-        case STAGE_I__ASSESSMENT_PENDING:
-          return <AffTimeLineItem key={i}><ActionONStateOneAssessmentPending info={info} /></AffTimeLineItem>
-        case STAGE_I__ASSESSMENT_ON_PROGRESS:
-          return <AffTimeLineItem key={i}><InactiveStep info={info} /></AffTimeLineItem>
-        case STAGE_I__ASSESSMENT_COMPLETED:
-          return <AffTimeLineItem variant="completed" key={i}><InactiveStep variant="completed" info={info} /></AffTimeLineItem>
-        default:
-          return <AffTimeLineItem key={i}><InactiveStep info={info} /></AffTimeLineItem>
-      }
+  switch (info.stepStatus) {
+    case 'inactive':
+      return <AffTimeLineItem variant="inative" key={i}><InactiveStep info={info} /></AffTimeLineItem>
+    case 'pending':
+      return <AffTimeLineItem variant="pending" key={i}><PendingStep info={info} /></AffTimeLineItem>
+    case 'on-progress':
+      return <AffTimeLineItem variant="inProgress" key={i}><PendingStep variant="inProgress" info={info} /></AffTimeLineItem>
+    case 'completed':
+      return <AffTimeLineItem variant="completed" key={i}><CompletedStep variant="completed" info={info} /></AffTimeLineItem>
     default:
-      break;
+      return <h5>Something Went Wrong</h5>;
   }
-
-
 }
 
 export const TimeLineFinalTest = () => {
@@ -121,6 +82,27 @@ export const TimeLineFinalTest = () => {
           </AffTimeLine>
         </Card.Body>
       </Card>
+    </Fragment>
+  );
+};
+
+
+export const TimeLine = () => {
+
+  const AppFlow = useSelector((state) => state.AppliInfo);
+
+  return (
+    <Fragment>
+      <AffTimeLine>
+        {AppFlow.app_flow_status.map((info, i) => {
+          return (getSetStep(info, i));
+        })}
+      </AffTimeLine>
+      {/* <Card className="border border-primary card custom-card">
+        <Card.Body style={{ padding: "0.563rem" }}>
+          
+        </Card.Body>
+      </Card> */}
     </Fragment>
   );
 };

@@ -685,8 +685,6 @@ export const AffiliationCategory = [
 export const UPDATE_SET_FEE_STATUS = "UPDATE_SET_FEE_STATUS";
 export const UPDATE_STAGE_II_SET_FEE_STATUS = "UPDATE_STAGE_II_SET_FEE_STATUS";
 
-
-
 export const UPDATE_STAGE_I_FEE_PAID = "UPDATE_STAGE_I_FEE_PAID";
 export const UPDATE_STAGE_II_FEE_PAID = "UPDATE_STAGE_II_FEE_PAID";
 export const SET_STAGE_I__DOCUMENT_STATUS = "SET_STAGE_I__DOCUMENT_STATUS";
@@ -696,7 +694,6 @@ export const STAGE_I__NOT_FILLED = "STAGE_I__NOT_FILLED";
 export const STAGE_I__FILLED = "STAGE_I__FILLED";
 export const STAGE_II__FILLED = "STAGE_II__FILLED";
 
-
 export const STAGE_I__FEE_PENDING = "STAGE_I__FEE_PENDING";
 export const STAGE_II__FEE_PENDING = "STAGE_II__FEE_PENDING";
 
@@ -705,7 +702,6 @@ export const STAGE_II__FEE_PAID = "STAGE_II__FEE_PAID";
 
 export const STAGE_I__FEE_EXEMPTED = "STAGE_I__FEE_EXEMPTED";
 export const STAGE_II__FEE_EXEMPTED = "STAGE_II__FEE_EXEMPTED";
-
 
 export const STAGE_I__DOCUMENT_PENDING = "STAGE_I__DOCUMENT_PENDING";
 export const STAGE_II__DOCUMENT_PENDING = "STAGE_I__DOCUMENT_PENDING";
@@ -731,6 +727,7 @@ export const STAGE_I__ASSESSMENT_COMPLETED = "STAGE_I__ASSESSMENT_COMPLETED";
 // };
 
 export const STAGE_I_FORM_FILLING = "STAGE_I_FORM_FILLING";
+
 export const STAGE_II_FORM_FILLING = "STAGE_II_FORM_FILLING";
 
 export const STAGE_I_FEE = "STAGE_I_FEE";
@@ -740,29 +737,189 @@ export const STAGE_I_DOCUMENT_UPLAOD = "STAGE_I_DOCUMENT_UPLAOD";
 export const STAGE_I_SUBMIT = "STAGE_I_SUBMIT";
 export const STAGE_I__ASSESSMENT = "STAGE_I__ASSESSMENT";
 
+// @dpkdhariwal old
+// export const AppFlow = [
+//   {
+//     step: STAGE_I_FORM_FILLING,
+//     status: STAGE_I__NOT_FILLED, // STAGE_I__FILLED || STAGE_I__NOT_FILLED
+//   },
+//   {
+//     step: STAGE_I_FEE,
+//     status: STAGE_I__FEE_PENDING, //  STAGE_I__FEE_PENDING || STAGE_I__FEE_PAID || STAGE_I__FEE_EXEMPTED
+//   },
+//   {
+//     step: STAGE_I_DOCUMENT_UPLAOD,
+//     status: STAGE_I__DOCUMENT_PENDING, // STAGE_I__DOCUMENT_PENDING|| STAGE_I__DOCUMENT_UPLOADED
+//   },
+//   {
+//     step: STAGE_I_SUBMIT,
+//     status: STAGE_I__SUBMIT_PENDING, // STAGE_I__SUBMIT_PENDING || STAGE_I__SUBMITED
+//   },
+//   {
+//     step: STAGE_I__ASSESSMENT,
+//     status: STAGE_I__ASSESSMENT_PENDING, // STAGE_I__ASSESSMENT_PENDING || STAGE_I__ASSESSMENT_ON_PROGRESS || STAGE_I__ASSESSMENT_COMPLETED
+//   },
+// ];
+
+export const NOC_ISSUANCE = "NOC_ISSUANCE";
+export const NOC_ISSUANCE_PENDING = "NOC_ISSUANCE_PENDING";
+export const STAGE_II__NOT_FILLED = "STAGE_II__NOT_FILLED";
+export const STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS =
+  "STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS";
+export const STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_PENDING =
+  "STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_PENDING";
+export const STAGE_II_DOCUMENT_UPLAOD = "STAGE_II_DOCUMENT_UPLAOD";
+export const STAGE_II_SUBMIT = "STAGE_II_SUBMIT";
+export const STAGE_II__ASSESSMENT = "STAGE_II__ASSESSMENT";
+export const STAGE_II__ASSESSMENT_PENDING = "STAGE_II__ASSESSMENT_PENDING";
+export const STAFF_DETAILS = "STAFF_DETAILS";
+export const STAFF_DETAILS_PENDING = "STAFF_DETAILS_PENDING";
+export const INSP_SLOT_SELECTION = "INSP_SLOT_SELECTION";
+export const INSP_SHEDULED = "INSP_SHEDULED";
+
 export const AppFlow = [
   {
+    stepNo: 1,
     step: STAGE_I_FORM_FILLING,
-    status: STAGE_I__NOT_FILLED, // STAGE_I__FILLED || STAGE_I__NOT_FILLED
+    status: STAGE_I__NOT_FILLED, // STAGE_I__FILLED || STAGE_I__PENDING || ON_PROGRESS
+    stepStatus: "completed", // inactive || pending || completed || on-progress
+    stepTitle: "Stage I Form Filling",
+    
+    stepMsg: "Applicant Has to fill stage I Form",
+    
+    // stepMsgCompleted: "Stage I Form Completed",
+    // stepMsgOnProgress: "stage I Form Filling On Progress",
+    
+    
+    assignedTo: ["applicant"],
   },
   {
+    stepNo: 2,
     step: STAGE_I_FEE,
     status: STAGE_I__FEE_PENDING, //  STAGE_I__FEE_PENDING || STAGE_I__FEE_PAID || STAGE_I__FEE_EXEMPTED
+    stepStatus: "completed", // inactive || pending || completed || on-progress
+    stepTitle: "Stage I Fee",
+    stepMsg: "Applicant Has to Pay Stage I Fee",
+    assignedTo: ["applicant"],
   },
   {
+    stepNo: 3,
     step: STAGE_I_DOCUMENT_UPLAOD,
-    status: STAGE_I__DOCUMENT_PENDING, // STAGE_I__DOCUMENT_PENDING|| STAGE_I__DOCUMENT_UPLOADED
+    status: STAGE_I__DOCUMENT_PENDING, // STAGE_I__DOCUMENT_PENDING || STAGE_I__DOCUMENT_UPLOADED
+    stepStatus: "completed", // inactive || pending || completed || on-progress
+    stepTitle: "Stage I Document Upload",
+    stepMsg: "Applicant Has to Upload Stage I Documents",
+    assignedTo: ["applicant"],
   },
   {
+    stepNo: 4,
     step: STAGE_I_SUBMIT,
     status: STAGE_I__SUBMIT_PENDING, // STAGE_I__SUBMIT_PENDING || STAGE_I__SUBMITED
+    stepStatus: "completed", // inactive || pending || completed || on-progress
+    stepTitle: "Stage I Submit",
+    stepMsg: "Applicant Has to Submit Stage I Application",
+    assignedTo: ["applicant"],
   },
   {
+    stepNo: 5,
     step: STAGE_I__ASSESSMENT,
     status: STAGE_I__ASSESSMENT_PENDING, // STAGE_I__ASSESSMENT_PENDING || STAGE_I__ASSESSMENT_ON_PROGRESS || STAGE_I__ASSESSMENT_COMPLETED
+    stepStatus: "completed", // inactive || pending || completed || on-progress
+    stepTitle: "Stage I Assessment",
+    stepMsg: "State Has to Assess Stage I Application",
+    assignedTo: ["applicant"],
+  },
+  {
+    stepNo: 6,
+    step: NOC_ISSUANCE,
+    status: NOC_ISSUANCE_PENDING, // NOC_ISSUANCE_ISSUED || NOC_ISSUANCE_PENDING || NOC_ISSUANCE_REJECTED
+    stepStatus: "completed", // inactive || pending || completed || on-progress
+    stepTitle: "NOC Issuance",
+    stepMsg: "State Has to Issue NOC (No Objection Certificate)",
+    assignedTo: ["state"],
+  },
+  {
+    stepNo: 7,
+    step: STAGE_II_FORM_FILLING,
+    status: STAGE_II__NOT_FILLED, // STAGE_II__FILLED || STAGE_II__PENDING || ON_PROGRESS
+    stepStatus: "completed", // inactive || pending || completed || on-progress
+    stepTitle: "Stage II Form Filling",
+    stepMsg: "Applicant Has to fill stage II Form",
+    assignedTo: ["applicant"],
+  },
+  {
+    stepNo: 8,
+    step: STAGE_II_FEE,
+    status: STAGE_II__FEE_PENDING, //  STAGE_II__FEE_PENDING || STAGE_II__FEE_PAID || STAGE_II__FEE_EXEMPTED
+    stepStatus: "completed", // inactive || pending || completed || on-progress
+    stepTitle: "Stage II Fee",
+    stepMsg: "Applicant Has to Pay Stage II Fee",
+    assignedTo: ["applicant"],
+  },
+  {
+    stepNo: 9,
+    step: STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS,
+    status: STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_PENDING, // STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_PENDING || STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_COMPLETED || STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_ON_PROGRESS
+    stepStatus: "completed", // inactive || pending || completed || on-progress
+    stepTitle: "Stage II Machine Equipment Tool Details",
+    stepMsg: "Applicant Has to fill Stage II Machine Equipment Tool Details",
+    assignedTo: ["applicant"],
+  },
+  {
+    stepNo: 3,
+    step: STAGE_II_DOCUMENT_UPLAOD,
+    status: STAGE_II__DOCUMENT_PENDING, // STAGE_II__DOCUMENT_PENDING || STAGE_II__DOCUMENT_UPLOADED
+    stepStatus: "completed", // inactive || pending || completed || on-progress
+    stepTitle: "Stage II Document Upload",
+    stepMsg: "Applicant Has to Upload Stage II Documents",
+    assignedTo: ["applicant"],
+  },
+  {
+    stepNo: 10,
+    step: STAGE_II_SUBMIT,
+    status: STAGE_II__SUBMIT_PENDING, // STAGE_II__SUBMIT_PENDING || STAGE_II__SUBMITED
+    stepStatus: "completed", // inactive || pending || completed || on-progress
+    stepTitle: "Stage II Application Submit",
+    stepMsg: "Applicant Has to Submit Stage II Application",
+    assignedTo: ["applicant"],
+  },
+  {
+    stepNo: 11,
+    step: STAGE_II__ASSESSMENT,
+    status: STAGE_II__ASSESSMENT_PENDING, // STAGE_II__ASSESSMENT_PENDING || STAGE_II__ASSESSMENT_ON_PROGRESS || STAGE_II__ASSESSMENT_COMPLETED
+    stepStatus: "completed", // inactive || pending || completed || on-progress
+    stepTitle: "Stage II Assessment",
+    stepMsg: "State has to Assess Stage II Application",
+    assignedTo: ["state"],
+  },
+  {
+    stepNo: 11,
+    step: STAFF_DETAILS,
+    status: STAFF_DETAILS_PENDING, // STAFF_DETAILS_PENDING || STAFF_DETAILS_COMPLETED
+    stepStatus: "completed", // inactive || pending || completed || on-progress
+    stepTitle: "Stage II Staff Detail",
+    stepMsg: "Applicant Has to fill Staff Details",
+    assignedTo: ["applicant"],
+  },
+  {
+    stepNo: 11,
+    step: INSP_SLOT_SELECTION,
+    status: STAFF_DETAILS_PENDING, // INSP_SLOT_SELECTION_PENDING || INSP_SLOT_SELECTION_COMPLETED
+    stepStatus: "completed", // inactive || pending || completed || on-progress
+    stepTitle: "Inspection Slot Selection",
+    stepMsg: "Applicant Has to Select Inspection Slot",
+    assignedTo: ["applicant"],
+  },
+  {
+    stepNo: 11,
+    step: INSP_SHEDULED,
+    status: STAFF_DETAILS_PENDING, // INSP_SHEDULED || INSP_PENDING
+    stepStatus: "completed", // inactive || pending || completed || on-progress
+    stepTitle: "Inspection Scheduled",
+    stepMsg: "Inspection Scheduled",
+    assignedTo: ["RDSDE"],
   },
 ];
-
 
 // Workshop Information to be filled Start
 export const work_shop_info_to_be_filled = [
@@ -779,7 +936,8 @@ export const work_shop_info_to_be_filled = [
     Required_Area_As_per_norms: "200sqm",
   },
 ];
-export const UPDATE_TRADEWISE_WORKSHOP_DETAILS = "UPDATE_TRADEWISE_WORKSHOP_DETAILS";
+export const UPDATE_TRADEWISE_WORKSHOP_DETAILS =
+  "UPDATE_TRADEWISE_WORKSHOP_DETAILS";
 // Workshop Information to be filled End
 
 // Classroom Information to be filled Start
@@ -797,10 +955,9 @@ export const classrooms_info_to_be_filled = [
     Required_Area_As_per_norms: "400sqm",
   },
 ];
-export const UPDATE_TRADEWISE_CLASSROOMS_DETAILS = "UPDATE_TRADEWISE_CLASSROOMS_DETAILS";
+export const UPDATE_TRADEWISE_CLASSROOMS_DETAILS =
+  "UPDATE_TRADEWISE_CLASSROOMS_DETAILS";
 // Classroom Information to be filled End
-
-
 
 // Multipurpose Hall Information to be filled Start
 export const multipurposehall_info_to_be_filled = [
@@ -809,9 +966,9 @@ export const multipurposehall_info_to_be_filled = [
     Required_Area_As_per_norms: "200sqm",
   },
 ];
-export const UPDATE_MULTIPURPOSEHALL_DETAILS = "UPDATE_TRADEWISE_MULTIPURPOSEHALL_DETAILS";
+export const UPDATE_MULTIPURPOSEHALL_DETAILS =
+  "UPDATE_TRADEWISE_MULTIPURPOSEHALL_DETAILS";
 // Multipurpose Hall Information to be filled End
-
 
 // IT Lab Information to be filled Start
 export const it_lab_info_to_be_filled = [
@@ -823,7 +980,6 @@ export const it_lab_info_to_be_filled = [
 export const UPDATE_IT_LAB_DETAILS = "UPDATE_IT_LAB_DETAILS";
 // IT Lab Information to be filled End
 
-
 // Library Information to be filled Start
 export const it_library_to_be_filled = [
   {
@@ -834,7 +990,6 @@ export const it_library_to_be_filled = [
 export const UPDATE_LIBRARY_DETAILS = "UPDATE_LIBRARY_DETAILS";
 // Library Information to be filled End
 
-
 // Placement and Counselling room Information to be filled Start
 export const placement_n_counselling_room_to_be_filled = [
   {
@@ -842,9 +997,9 @@ export const placement_n_counselling_room_to_be_filled = [
     Required_Area_As_per_norms: "200sqm",
   },
 ];
-export const UPDATE_PLACEMENT_N_COUNSELLING_ROOM_DETAILS = "UPDATE_LIBRARY_DETAILS";
+export const UPDATE_PLACEMENT_N_COUNSELLING_ROOM_DETAILS =
+  "UPDATE_LIBRARY_DETAILS";
 // Placement and Counselling room Information to be filled End
-
 
 // Placement and Counselling room Information to be filled Start
 export const administrativeArea = [
@@ -868,43 +1023,38 @@ export const administrativeArea = [
 export const UPDATE_ADMINISTRATIVE_AREA_DETAILS = "UPDATE_LIBRARY_DETAILS";
 // Placement and Counselling room Information to be filled End
 
-
-
-
-
-
-
 // Stage II Document Upload Start
-export const UPDATE_STAGE_II_DOCUMENT_UPLOAD = "UPDATE_STAGE_II_DOCUMENT_UPLOAD";
+export const UPDATE_STAGE_II_DOCUMENT_UPLOAD =
+  "UPDATE_STAGE_II_DOCUMENT_UPLOAD";
 
-export const geo_tagged_photo_of_machinery_tools_equipments =  [
+export const geo_tagged_photo_of_machinery_tools_equipments = [
   {
     tradeId: "tradeId01",
     tradeName: "Fitter",
-    unit:1,
+    unit: 1,
     Particulars: "Machinery/Tools/Equipments",
   },
   {
     tradeId: "tradeId02",
     tradeName: "Fitter",
-    unit:1,
+    unit: 1,
     Particulars: "Machinery/Tools/Equipments",
   },
   {
     tradeId: "tradeId01",
     tradeName: "Electrician",
-    unit:1,
+    unit: 1,
     Particulars: "Machinery/Tools/Equipments",
   },
   {
     tradeId: "tradeId02",
     tradeName: "Electrician",
-    unit:1,
+    unit: 1,
     Particulars: "Machinery/Tools/Equipments",
   },
 ];
 
-export const gst_invoices_for_major_machinery_purchase_and_payment_proof =  [
+export const gst_invoices_for_major_machinery_purchase_and_payment_proof = [
   {
     tradeId: "tradeId01",
     tradeName: "Fitter",
@@ -918,16 +1068,14 @@ export const gst_invoices_for_major_machinery_purchase_and_payment_proof =  [
 ];
 // Stage II Document Upload End
 
-
-
 export const STEPPER_STYLE = {
-    LineSeparator: () => ({
-      backgroundColor: "#8a3b02ff",
-    }),
-    ActiveNode: () => ({
-      backgroundColor: "#020b8aff",
-    }),
-    CompletedNode: () => ({
-      backgroundColor: "#028A0F",
-    })
-  };
+  LineSeparator: () => ({
+    backgroundColor: "#8a3b02ff",
+  }),
+  ActiveNode: () => ({
+    backgroundColor: "#020b8aff",
+  }),
+  CompletedNode: () => ({
+    backgroundColor: "#028A0F",
+  }),
+};

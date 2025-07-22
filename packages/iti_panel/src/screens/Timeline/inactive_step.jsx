@@ -27,13 +27,10 @@ export const InactiveStep = ({ info, variant }) => {
   return (
     <Card
       className={`${cardArrow} border border-2 ${cardBorder}  card custom-card shadow-size-small ${cardShadow}`}
-      style={{ position: "relative" }}
+      style={{ position: "relative", opacity:"50%" }}
     >
       <Card.Body style={{ padding: "5px" }}>
-        <div className="card-title">{info.step}</div>
-        <h6 className="card-title fw-semibold mb-2">
-          {text}
-        </h6>
+        <div>{info.stepTitle}</div>
       </Card.Body>
     </Card>
   );
