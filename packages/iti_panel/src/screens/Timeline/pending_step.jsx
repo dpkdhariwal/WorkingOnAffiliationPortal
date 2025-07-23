@@ -22,7 +22,51 @@ import {
   STAGE_I__ASSESSMENT,
   STAGE_I__ASSESSMENT_COMPLETED,
   STAGE_I__ASSESSMENT_ON_PROGRESS,
-  STAGE_I__ASSESSMENT_PENDING
+  STAGE_I__ASSESSMENT_PENDING,
+  NOC_ISSUANCE,
+  NOC_ISSUANCE_ISSUED,
+  NOC_ISSUANCE_PENDING,
+  NOC_ISSUANCE_REJECTED,
+  STAGE_II_FORM_FILLING,
+  STAGE_II__FILLED,
+  STAGE_II__PENDING,
+  STAGE_II__ON_PROGRESS,
+
+  STAGE_II_FEE,
+  STAGE_II__FEE_PENDING,
+  STAGE_II__FEE_PAID,
+  STAGE_II__FEE_EXEMPTED,
+
+  STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS,
+  STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_PENDING,
+  STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_COMPLETED,
+  STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_ON_PROGRESS,
+
+
+  STAGE_II_DOCUMENT_UPLAOD,
+  STAGE_II__DOCUMENT_PENDING,
+  STAGE_II__DOCUMENT_UPLOADED,
+
+  STAGE_II_SUBMIT,
+  STAGE_II__SUBMIT_PENDING,
+  STAGE_II__SUBMITED,
+
+  STAGE_II__ASSESSMENT,
+  STAGE_II__ASSESSMENT_PENDING,
+  STAGE_II__ASSESSMENT_ON_PROGRESS,
+  STAGE_II__ASSESSMENT_COMPLETED,
+
+  STAFF_DETAILS,
+  STAFF_DETAILS_PENDING,
+  STAFF_DETAILS_COMPLETED,
+
+  INSP_SLOT_SELECTION,
+  INSP_SLOT_SELECTION_PENDING,
+  INSP_SLOT_SELECTION_COMPLETED,
+
+  INSP_SHEDULE,
+  INSP_SHEDULED,
+  INSP_PENDING
 } from "../../constants";
 
 export const PendingStep = ({ info, variant }) => {
@@ -64,7 +108,7 @@ export const PendingStep = ({ info, variant }) => {
       case STAGE_I_FEE:
         switch (info.status) {
           case STAGE_I__FEE_PENDING:
-            return <h5>DD</h5>
+            return action.GoToStageIForm();
           case STAGE_I__FEE_PAID:
             return <h5>DD</h5>
           case STAGE_I__FEE_EXEMPTED:
@@ -75,7 +119,7 @@ export const PendingStep = ({ info, variant }) => {
       case STAGE_I_DOCUMENT_UPLAOD:
         switch (info.status) {
           case STAGE_I__DOCUMENT_PENDING:
-            return <h5>DD</h5>
+            return action.GoToStageIForm();
           case STAGE_I__DOCUMENT_UPLOADED:
             return <h5>DD</h5>
           default:
@@ -84,7 +128,7 @@ export const PendingStep = ({ info, variant }) => {
       case STAGE_I_SUBMIT:
         switch (info.status) {
           case STAGE_I__SUBMIT_PENDING:
-            return <h5>DD</h5>
+            return action.GoToStageIForm();
           case STAGE_I__SUBMITED:
             return <h5>DD</h5>
           default:
@@ -97,10 +141,138 @@ export const PendingStep = ({ info, variant }) => {
           case STAGE_I__ASSESSMENT_ON_PROGRESS:
             return <h5>DD</h5>
           case STAGE_I__ASSESSMENT_PENDING:
+            return action.GoToStageIAssessment();
+          default:
+            return <h5>DD</h5>
+        }
+      case NOC_ISSUANCE:
+        switch (info.status) {
+          case NOC_ISSUANCE_PENDING:
+            return action.GoToNOCGenerateForm();
+          case NOC_ISSUANCE_ISSUED:
+            return <h5>DD</h5>
+          case NOC_ISSUANCE_REJECTED:
             return <h5>DD</h5>
           default:
             return <h5>DD</h5>
         }
+
+      case STAGE_II_FORM_FILLING:
+        switch (info.status) {
+          case STAGE_II__FILLED:
+            return <h5>DD</h5>
+          case STAGE_II__PENDING:
+            return action.GoToStageIIForm();
+          case STAGE_II__ON_PROGRESS:
+            return <h5>DD</h5>
+          default:
+            return <h5>DD</h5>
+        }
+
+      case STAGE_II_FEE:
+        switch (info.status) {
+          case STAGE_II__FEE_PENDING:
+            return action.GoToStageIIForm();
+          case STAGE_II__FEE_PAID:
+            return <h5>DD</h5>
+          case STAGE_II__FEE_EXEMPTED:
+            return <h5>DD</h5>
+          default:
+            return <h5>DD</h5>
+        }
+
+      case STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS:
+        switch (info.status) {
+          case STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_PENDING:
+            return action.GoToStageIIForm();
+          case STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_COMPLETED:
+            return <h5>DD</h5>
+          case STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_ON_PROGRESS:
+            return <h5>DD</h5>
+          default:
+            return <h5>DD</h5>
+        }
+
+      case STAGE_II_DOCUMENT_UPLAOD:
+        switch (info.status) {
+          case STAGE_II__DOCUMENT_PENDING:
+            return action.GoToStageIIForm();
+          case STAGE_II__DOCUMENT_UPLOADED:
+            return <h5>DD</h5>
+          default:
+            return <h5>DD</h5>
+        }
+
+      case STAGE_II_SUBMIT:
+        switch (info.status) {
+          case STAGE_II__SUBMIT_PENDING:
+            return action.GoToStageIIForm();
+          case STAGE_II__SUBMITED:
+            return <h5>DD</h5>
+          default:
+            return <h5>DD</h5>
+        }
+
+
+      case STAGE_II__ASSESSMENT:
+        switch (info.status) {
+          case STAGE_II__ASSESSMENT_PENDING:
+            return action.GoToStageIIAssessment();
+          case STAGE_II__ASSESSMENT_ON_PROGRESS:
+            return <h5>DD</h5>
+          case STAGE_II__ASSESSMENT_COMPLETED:
+            return <h5>DD</h5>
+          default:
+            return <h5>DD</h5>
+        }
+
+
+      case STAFF_DETAILS:
+        switch (info.status) {
+          case STAFF_DETAILS_PENDING:
+            return action.GoToStageIIStaffDetailForm();
+          case STAFF_DETAILS_COMPLETED:
+            return <h5>DD</h5>
+          default:
+            return <h5>DD</h5>
+        }
+
+      case INSP_SLOT_SELECTION:
+        switch (info.status) {
+          case INSP_SLOT_SELECTION_PENDING:
+            return action.GoToInspectionSlotSelection();
+          case INSP_SLOT_SELECTION_COMPLETED:
+            return <h5>DD</h5>
+          default:
+            return <h5>DD</h5>
+        }
+
+
+
+      case INSP_SHEDULE:
+        switch (info.status) {
+          case INSP_SHEDULED:
+            return <h5>DD</h5>
+          case INSP_PENDING:
+            return <h5>to be continue...</h5>
+          default:
+            return <h5>DD</h5>
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       default:
         return <h5>DD</h5>
     }

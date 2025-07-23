@@ -39,7 +39,7 @@ import {
   STAGE_II_FORM_FILLING,
   STAGE_II__FILLED,
   STAGE_II__FEE_PAID,
-  UPDATE_STAGE_II_SET_FEE_STATUS
+  UPDATE_STAGE_II_SET_FEE_STATUS,
 } from "../constants";
 
 import * as yup from "yup";
@@ -51,11 +51,10 @@ export const AppliInfoInitialValues = {
   stage_I_completion_status: STAGE_I__SUBMIT_PENDING,
   stage_II_fee_status: STAGE_II__FEE_PENDING,
   stage_II_completion_status: STAGE_II__SUBMIT_PENDING,
-  
-  
+
   app_status: STAGE_I__NOT_FILLED,
   app_status_awaiting: STAGE_I__FILLED,
-  
+
   app_flow_status: AppFlow,
 };
 export const AppliInfo = (state = AppliInfoInitialValues, action) => {
@@ -187,6 +186,8 @@ let ApplicantEntityDetails = {
   ApplicantEntityPlotNumber_KhasaraNumber_GataNumber: null,
   ApplicantEntityLandmark: null,
   ApplicantEntityEmailId: null,
+  isApplicantEntityEmailIdVerified: false,
+
   ApplicantContactNumber: null,
 
   // Conditional Fields
@@ -220,6 +221,7 @@ export const initialValues = {
   ApplicantEntityPlotNumber_KhasaraNumber_GataNumber: "",
   ApplicantEntityLandmark: "",
   ApplicantEntityEmailId: "",
+  isApplicantEntityEmailIdVerified: false,
   ApplicantContactNumber: "",
 
   Is_the_applicant_running_any_other_iti: "",
@@ -273,10 +275,21 @@ export const yupObject = {
     .string()
     .required("Please enter Plot Number/Khasara Number/Gata Number"),
   ApplicantEntityLandmark: yup.string().required("Please enter Landmark"),
+
   ApplicantEntityEmailId: yup
     .string()
     .required("Please enter email")
-    .email("Please enter a valid email"),
+    .email("Please enter a valid email")
+    .test(
+      "is-otp-verified",
+      "Please verify your email with OTP",
+      function (value) {
+        const { isApplicantEntityEmailIdVerified } = this.parent; // ✅ Access from Formik values
+        console.log("isApplicantEntityEmailIdVerified =", isApplicantEntityEmailIdVerified, value);
+        return isApplicantEntityEmailIdVerified === true;
+      }
+    ),
+
   ApplicantContactNumber: yup.string().required("Please enter contact number"),
 
   // Is_the_applicant_running_any_other_iti: yup

@@ -693,6 +693,8 @@ export const SET_STAGE_I__DOCUMENT_STATUS = "SET_STAGE_I__DOCUMENT_STATUS";
 export const STAGE_I__NOT_FILLED = "STAGE_I__NOT_FILLED";
 export const STAGE_I__FILLED = "STAGE_I__FILLED";
 export const STAGE_II__FILLED = "STAGE_II__FILLED";
+export const STAGE_II__ON_PROGRESS = "STAGE_II__ON_PROGRESS";
+export const STAGE_II__PENDING = "STAGE_II__PENDING";
 
 export const STAGE_I__FEE_PENDING = "STAGE_I__FEE_PENDING";
 export const STAGE_II__FEE_PENDING = "STAGE_II__FEE_PENDING";
@@ -705,11 +707,13 @@ export const STAGE_II__FEE_EXEMPTED = "STAGE_II__FEE_EXEMPTED";
 
 export const STAGE_I__DOCUMENT_PENDING = "STAGE_I__DOCUMENT_PENDING";
 export const STAGE_II__DOCUMENT_PENDING = "STAGE_I__DOCUMENT_PENDING";
+export const STAGE_II__DOCUMENT_UPLOADED = "STAGE_II__DOCUMENT_UPLOADED";
 
 export const STAGE_I__DOCUMENT_UPLOADED = "STAGE_I__DOCUMENT_UPLOADED";
 
 export const STAGE_I__SUBMIT_PENDING = "STAGE_I__SUBMIT_PENDING";
 export const STAGE_II__SUBMIT_PENDING = "STAGE_II__SUBMIT_PENDING";
+export const STAGE_II__SUBMITED = "STAGE_II__SUBMITED";
 
 export const STAGE_I__SUBMITED = "STAGE_I__SUBMITED";
 
@@ -731,7 +735,7 @@ export const STAGE_I_FORM_FILLING = "STAGE_I_FORM_FILLING";
 export const STAGE_II_FORM_FILLING = "STAGE_II_FORM_FILLING";
 
 export const STAGE_I_FEE = "STAGE_I_FEE";
-export const STAGE_II_FEE = "STAGE_I_FEE";
+export const STAGE_II_FEE = "STAGE_II_FEE";
 
 export const STAGE_I_DOCUMENT_UPLAOD = "STAGE_I_DOCUMENT_UPLAOD";
 export const STAGE_I_SUBMIT = "STAGE_I_SUBMIT";
@@ -762,27 +766,39 @@ export const STAGE_I__ASSESSMENT = "STAGE_I__ASSESSMENT";
 // ];
 
 export const NOC_ISSUANCE = "NOC_ISSUANCE";
+export const NOC_ISSUANCE_ISSUED = "NOC_ISSUANCE_ISSUED";
 export const NOC_ISSUANCE_PENDING = "NOC_ISSUANCE_PENDING";
+export const NOC_ISSUANCE_REJECTED = "NOC_ISSUANCE_REJECTED";
+
 export const STAGE_II__NOT_FILLED = "STAGE_II__NOT_FILLED";
 export const STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS =
   "STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS";
 export const STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_PENDING =
   "STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_PENDING";
+export const STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_COMPLETED = "STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_COMPLETED";
+export const STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_ON_PROGRESS = "STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_ON_PROGRESS";
 export const STAGE_II_DOCUMENT_UPLAOD = "STAGE_II_DOCUMENT_UPLAOD";
 export const STAGE_II_SUBMIT = "STAGE_II_SUBMIT";
 export const STAGE_II__ASSESSMENT = "STAGE_II__ASSESSMENT";
 export const STAGE_II__ASSESSMENT_PENDING = "STAGE_II__ASSESSMENT_PENDING";
+export const STAGE_II__ASSESSMENT_ON_PROGRESS = "STAGE_II__ASSESSMENT_ON_PROGRESS";
+export const STAGE_II__ASSESSMENT_COMPLETED = "STAGE_II__ASSESSMENT_COMPLETED";
 export const STAFF_DETAILS = "STAFF_DETAILS";
 export const STAFF_DETAILS_PENDING = "STAFF_DETAILS_PENDING";
+export const STAFF_DETAILS_COMPLETED = "STAFF_DETAILS_COMPLETED";
 export const INSP_SLOT_SELECTION = "INSP_SLOT_SELECTION";
+export const INSP_SLOT_SELECTION_PENDING = "INSP_SLOT_SELECTION_PENDING";
+export const INSP_SLOT_SELECTION_COMPLETED = "INSP_SLOT_SELECTION_COMPLETED";
+export const INSP_SHEDULE = "INSP_SHEDULE";
 export const INSP_SHEDULED = "INSP_SHEDULED";
+export const INSP_PENDING = "INSP_PENDING";
 
 export const AppFlow = [
   {
     stepNo: 1,
     step: STAGE_I_FORM_FILLING,
     status: STAGE_I__NOT_FILLED, // STAGE_I__FILLED || STAGE_I__PENDING || ON_PROGRESS
-    stepStatus: "completed", // inactive || pending || completed || on-progress
+    stepStatus: "pending", // inactive || pending || completed || on-progress
     stepTitle: "Stage I Form Filling",
     
     stepMsg: "Applicant Has to fill stage I Form",
@@ -797,7 +813,7 @@ export const AppFlow = [
     stepNo: 2,
     step: STAGE_I_FEE,
     status: STAGE_I__FEE_PENDING, //  STAGE_I__FEE_PENDING || STAGE_I__FEE_PAID || STAGE_I__FEE_EXEMPTED
-    stepStatus: "completed", // inactive || pending || completed || on-progress
+    stepStatus: "inactive", // inactive || pending || completed || on-progress
     stepTitle: "Stage I Fee",
     stepMsg: "Applicant Has to Pay Stage I Fee",
     assignedTo: ["applicant"],
@@ -806,7 +822,7 @@ export const AppFlow = [
     stepNo: 3,
     step: STAGE_I_DOCUMENT_UPLAOD,
     status: STAGE_I__DOCUMENT_PENDING, // STAGE_I__DOCUMENT_PENDING || STAGE_I__DOCUMENT_UPLOADED
-    stepStatus: "completed", // inactive || pending || completed || on-progress
+    stepStatus: "inactive", // inactive || pending || completed || on-progress
     stepTitle: "Stage I Document Upload",
     stepMsg: "Applicant Has to Upload Stage I Documents",
     assignedTo: ["applicant"],
@@ -815,7 +831,7 @@ export const AppFlow = [
     stepNo: 4,
     step: STAGE_I_SUBMIT,
     status: STAGE_I__SUBMIT_PENDING, // STAGE_I__SUBMIT_PENDING || STAGE_I__SUBMITED
-    stepStatus: "completed", // inactive || pending || completed || on-progress
+    stepStatus: "inactive", // inactive || pending || completed || on-progress
     stepTitle: "Stage I Submit",
     stepMsg: "Applicant Has to Submit Stage I Application",
     assignedTo: ["applicant"],
@@ -824,25 +840,25 @@ export const AppFlow = [
     stepNo: 5,
     step: STAGE_I__ASSESSMENT,
     status: STAGE_I__ASSESSMENT_PENDING, // STAGE_I__ASSESSMENT_PENDING || STAGE_I__ASSESSMENT_ON_PROGRESS || STAGE_I__ASSESSMENT_COMPLETED
-    stepStatus: "completed", // inactive || pending || completed || on-progress
+    stepStatus: "inactive", // inactive || pending || completed || on-progress
     stepTitle: "Stage I Assessment",
     stepMsg: "State Has to Assess Stage I Application",
-    assignedTo: ["applicant"],
+    assignedTo: ["state"],
   },
   {
     stepNo: 6,
     step: NOC_ISSUANCE,
     status: NOC_ISSUANCE_PENDING, // NOC_ISSUANCE_ISSUED || NOC_ISSUANCE_PENDING || NOC_ISSUANCE_REJECTED
-    stepStatus: "completed", // inactive || pending || completed || on-progress
+    stepStatus: "inactive", // inactive || pending || completed || on-progress
     stepTitle: "NOC Issuance",
-    stepMsg: "State Has to Issue NOC (No Objection Certificate)",
+    stepMsg: "State Has to Issue No Objection Certificate (NOC)",
     assignedTo: ["state"],
   },
   {
     stepNo: 7,
     step: STAGE_II_FORM_FILLING,
-    status: STAGE_II__NOT_FILLED, // STAGE_II__FILLED || STAGE_II__PENDING || ON_PROGRESS
-    stepStatus: "completed", // inactive || pending || completed || on-progress
+    status: STAGE_II__PENDING, // STAGE_II__FILLED || STAGE_II__PENDING || STAGE_II__ON_PROGRESS
+    stepStatus: "inactive", // inactive || pending || completed || on-progress
     stepTitle: "Stage II Form Filling",
     stepMsg: "Applicant Has to fill stage II Form",
     assignedTo: ["applicant"],
@@ -851,7 +867,7 @@ export const AppFlow = [
     stepNo: 8,
     step: STAGE_II_FEE,
     status: STAGE_II__FEE_PENDING, //  STAGE_II__FEE_PENDING || STAGE_II__FEE_PAID || STAGE_II__FEE_EXEMPTED
-    stepStatus: "completed", // inactive || pending || completed || on-progress
+    stepStatus: "inactive", // inactive || pending || completed || on-progress
     stepTitle: "Stage II Fee",
     stepMsg: "Applicant Has to Pay Stage II Fee",
     assignedTo: ["applicant"],
@@ -860,7 +876,7 @@ export const AppFlow = [
     stepNo: 9,
     step: STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS,
     status: STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_PENDING, // STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_PENDING || STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_COMPLETED || STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_ON_PROGRESS
-    stepStatus: "completed", // inactive || pending || completed || on-progress
+    stepStatus: "inactive", // inactive || pending || completed || on-progress
     stepTitle: "Stage II Machine Equipment Tool Details",
     stepMsg: "Applicant Has to fill Stage II Machine Equipment Tool Details",
     assignedTo: ["applicant"],
@@ -869,7 +885,7 @@ export const AppFlow = [
     stepNo: 3,
     step: STAGE_II_DOCUMENT_UPLAOD,
     status: STAGE_II__DOCUMENT_PENDING, // STAGE_II__DOCUMENT_PENDING || STAGE_II__DOCUMENT_UPLOADED
-    stepStatus: "completed", // inactive || pending || completed || on-progress
+    stepStatus: "inactive", // inactive || pending || completed || on-progress
     stepTitle: "Stage II Document Upload",
     stepMsg: "Applicant Has to Upload Stage II Documents",
     assignedTo: ["applicant"],
@@ -878,7 +894,7 @@ export const AppFlow = [
     stepNo: 10,
     step: STAGE_II_SUBMIT,
     status: STAGE_II__SUBMIT_PENDING, // STAGE_II__SUBMIT_PENDING || STAGE_II__SUBMITED
-    stepStatus: "completed", // inactive || pending || completed || on-progress
+    stepStatus: "inactive", // inactive || pending || completed || on-progress
     stepTitle: "Stage II Application Submit",
     stepMsg: "Applicant Has to Submit Stage II Application",
     assignedTo: ["applicant"],
@@ -887,7 +903,7 @@ export const AppFlow = [
     stepNo: 11,
     step: STAGE_II__ASSESSMENT,
     status: STAGE_II__ASSESSMENT_PENDING, // STAGE_II__ASSESSMENT_PENDING || STAGE_II__ASSESSMENT_ON_PROGRESS || STAGE_II__ASSESSMENT_COMPLETED
-    stepStatus: "completed", // inactive || pending || completed || on-progress
+    stepStatus: "inactive", // inactive || pending || completed || on-progress
     stepTitle: "Stage II Assessment",
     stepMsg: "State has to Assess Stage II Application",
     assignedTo: ["state"],
@@ -896,7 +912,7 @@ export const AppFlow = [
     stepNo: 11,
     step: STAFF_DETAILS,
     status: STAFF_DETAILS_PENDING, // STAFF_DETAILS_PENDING || STAFF_DETAILS_COMPLETED
-    stepStatus: "completed", // inactive || pending || completed || on-progress
+    stepStatus: "inactive", // inactive || pending || completed || on-progress
     stepTitle: "Stage II Staff Detail",
     stepMsg: "Applicant Has to fill Staff Details",
     assignedTo: ["applicant"],
@@ -904,17 +920,17 @@ export const AppFlow = [
   {
     stepNo: 11,
     step: INSP_SLOT_SELECTION,
-    status: STAFF_DETAILS_PENDING, // INSP_SLOT_SELECTION_PENDING || INSP_SLOT_SELECTION_COMPLETED
-    stepStatus: "completed", // inactive || pending || completed || on-progress
+    status: INSP_SLOT_SELECTION_PENDING, // INSP_SLOT_SELECTION_PENDING || INSP_SLOT_SELECTION_COMPLETED
+    stepStatus: "inactive", // inactive || pending || completed || on-progress
     stepTitle: "Inspection Slot Selection",
     stepMsg: "Applicant Has to Select Inspection Slot",
     assignedTo: ["applicant"],
   },
   {
     stepNo: 11,
-    step: INSP_SHEDULED,
+    step: INSP_SHEDULE,
     status: STAFF_DETAILS_PENDING, // INSP_SHEDULED || INSP_PENDING
-    stepStatus: "completed", // inactive || pending || completed || on-progress
+    stepStatus: "inactive", // inactive || pending || completed || on-progress
     stepTitle: "Inspection Scheduled",
     stepMsg: "Inspection Scheduled",
     assignedTo: ["RDSDE"],

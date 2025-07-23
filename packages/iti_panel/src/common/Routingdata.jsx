@@ -15,7 +15,7 @@ import AssessmentII from "../components/Assessment/AssessmentII";
 import AssessmentI from "../components/Assessment/AssessmentI";
 
 import { TimeLine } from "../components/TimeLine/TimeLine";
-import {TimeLineFinalTest} from "../screens/TimeLine"
+import { TimeLineFinalTest } from "../screens/TimeLine"
 import RdDashboard from "../../../ui_layouts_collaborate/src/components/Assessment/RdDashboard";
 import Compliance from "../../../ui_layouts_collaborate/src/components/Assessment/Compliance";
 import StateDashboard from "../../../ui_layouts_collaborate/src/components/Assessment/StateDashboard";
@@ -23,12 +23,12 @@ import AddIcMember from "../../../ui_layouts_collaborate/src/components/Assessme
 
 import RdUser from "../../../ui_layouts_collaborate/src/components/Assessment/RdUser";
 import ViewApplicationStageOne from "../components/new_registration/application_view_stage_1";
-import {NocGenerateForm} from "../components/new_registration/NocGenerateForm";
-import {AddStaffDetail} from "../components/new_registration/AddStaffDetail";
-import {InspectionSlotSelection} from "../components/new_registration/InspectionSlotSelection";
-import {AppList} from "../screens/Applicant/AppList";
+import { NocGenerateForm } from "../components/new_registration/NocGenerateForm";
+import { AddStaffDetail } from "../components/new_registration/AddStaffDetail";
+import { InspectionSlotSelection } from "../components/new_registration/InspectionSlotSelection";
+import { AppList } from "../screens/Applicant/AppList";
 // import {GridExample} from "../screens/Applicant/AppList_ag-grid";
-
+import Test from "../components/test";
 export const Routedata = [
   {
     id: 1,
@@ -73,7 +73,7 @@ export const Routedata = [
         path: `InspectionSlotSelection`,
         elementName: <InspectionSlotSelection />,
       },
-      
+
       {
         id: 1,
         path: `application_stage_1_form`,
@@ -147,7 +147,12 @@ export const Routedata = [
         path: `state_admin/AddStateMembers`,
         elementName: <AddIcMember />,
       },
-      
+
     ],
   },
+  // {
+  //   id: 1,
+  //   path: `${import.meta.env.BASE_URL}test/`,
+  //   elementName: <Test />,
+  // },
 ];

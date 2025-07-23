@@ -84,7 +84,7 @@ const New_registration = () => {
             <PreviewOfApplication setActive={goToSection} />
           ) : // To be Work
             activeStep.label === "Fee Payment" ? (
-              AppliInfo.stage_I_fee_status === STAGE_I__FEE_PAID ? (<StageIPaidInfo/>) : AppliInfo.stage_I_fee_status === STAGE_I__FEE_EXEMPTED ? (<StageIExemtedInfo />) : <FeePayment setActive={goToSection} />
+              AppliInfo.stage_I_fee_status === STAGE_I__FEE_PAID ? (<StageIPaidInfo />) : AppliInfo.stage_I_fee_status === STAGE_I__FEE_EXEMPTED ? (<StageIExemtedInfo />) : <FeePayment setActive={goToSection} />
             ) : // To be Work
               activeStep.label === "Documents Upload" ? (
                 (AppliInfo.stage_I_fee_status === STAGE_I__FEE_PENDING) ? (<h5>First Complete the Stage-I and Pay the Fee</h5>) :
@@ -164,7 +164,7 @@ export const StageIExemtedInfo = () => {
           </Card.Body>
           <Card.Footer>
             <div className="d-flex justify-content-between mb-3">
-              <Button 
+              <Button
                 className="p-2" variant="warning">
                 Previous
               </Button>
@@ -201,7 +201,7 @@ export const StageIPaidInfo = () => {
                 <div className="jumbotron">
                   <h1 className="display-4"> ✅ Payment Successfully Stage-I Completed</h1>
                   <p className="lead">
-                    Thank you, for submitting your Application. <br/> 
+                    Thank you, for submitting your Application. <br />
                     Your Registration for Stage-I has been completed. You can now upload relavent document
                   </p>
                   <p className="lead">
@@ -255,7 +255,7 @@ export const StageIPaidInfo = () => {
           </Card.Body>
           <Card.Footer>
             <div className="d-flex justify-content-between mb-3">
-              <Button 
+              <Button
                 className="p-2" variant="warning">
                 Previous
               </Button>

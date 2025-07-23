@@ -60,13 +60,13 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
           didOpen: () => {
 
 
-             Swal.showLoading();
-                        dispatch({ type: UPDATE_PURPOSED_INSTI_INFO, payload: values });
-                        dispatch({type: "set_filled_step", payload: { step: 1 },});
-                        dispatch({type: "reg_set_active_step", payload: { step: 2 }});
-                        setActive(reg.steps[2]);
-                        Swal.close(); 
-                        
+            Swal.showLoading();
+            dispatch({ type: UPDATE_PURPOSED_INSTI_INFO, payload: values });
+            dispatch({ type: "set_filled_step", payload: { step: 1 }, });
+            dispatch({ type: "reg_set_active_step", payload: { step: 2 } });
+            setActive(reg.steps[2]);
+            Swal.close();
+
 
 
             // Swal.showLoading();
@@ -111,7 +111,7 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
         }}
         initialValues={PropInstiInfo}
       >
-        {({ handleSubmit, handleChange, values, errors, touched }) => (
+        {({ handleSubmit, handleChange, values, errors, touched, setFieldValue }) => (
           <Card className="custom-card shadow">
             <Card.Header>
               <div className="card-title" style={{ textTransform: "none" }}>
@@ -613,33 +613,51 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
                               <div className="p-2 flex-fill">
                                 {values.is_falls_under_hill_area_hill ===
                                   "yes" && (
-                                    <div className="p-2 flex-fill">
-                                      <Form.Group controlId="validationCustom02">
-                                        <Form.Label>
-                                          If Yes, Upload Supporting Government
-                                          Notification/Order/Circular
-                                          <span style={{ color: "red" }}>*</span>
-                                        </Form.Label>
-                                        <Form.Control
-                                          required
-                                          type="file"
-                                          name="Falls_Under_Hill_Area_Hill__Supporting_Doc"
-                                          onChange={handleChange} // if using Formik or handling file upload
-                                          isInvalid={
-                                            touched.Falls_Under_Hill_Area_Hill__Supporting_Doc &&
-                                            !!errors.Falls_Under_Hill_Area_Hill__Supporting_Doc
-                                          }
-                                        />
-                                        {touched.Falls_Under_Hill_Area_Hill__Supporting_Doc && errors.Falls_Under_Hill_Area_Hill__Supporting_Doc && (
-                                          <Form.Control.Feedback
-                                            type="invalid"
-                                            className="d-block"
-                                          >
-                                            {errors.Falls_Under_Hill_Area_Hill__Supporting_Doc}
-                                          </Form.Control.Feedback>
-                                        )}
-                                      </Form.Group>
-                                    </div>
+                                    <>
+                                      <div className="p-2 flex-fill">
+                                        <Form.Group controlId="validationCustom02">
+                                          <Form.Label>
+                                            If Yes, Upload Supporting Government
+                                            Notification/Order/Circular
+                                            <span style={{ color: "red" }}>*</span>
+                                          </Form.Label>
+                                          {values.Falls_Under_Hill_Area_Hill__Supporting_Doc ? (
+                                            <div className="btn-list">
+                                              <Button variant="primary"
+                                                href={values.Falls_Under_Hill_Area_Hill__Supporting_Doc}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="btn-w-xs btn-wave">View</Button>
+                                              <Button variant='secondary' onClick={()=>{setFieldValue("Falls_Under_Hill_Area_Hill__Supporting_Doc", null);}} className="btn-w-sm btn-wave">Remove</Button></div>
+                                          ) : (<Form.Control
+                                            required
+                                            type="file"
+                                            name="Falls_Under_Hill_Area_Hill__Supporting_Doc"
+                                            onChange={(event) => {
+                                              const file = event.currentTarget.files[0];
+                                              if (file) {
+                                                const url = URL.createObjectURL(file);
+                                                setFieldValue("Falls_Under_Hill_Area_Hill__Supporting_Doc", url);
+                                              }
+                                            }}
+                                            isInvalid={
+                                              touched.Falls_Under_Hill_Area_Hill__Supporting_Doc &&
+                                              !!errors.Falls_Under_Hill_Area_Hill__Supporting_Doc
+                                            }
+                                          />)}
+
+                                          {touched.Falls_Under_Hill_Area_Hill__Supporting_Doc && errors.Falls_Under_Hill_Area_Hill__Supporting_Doc && (
+                                            <Form.Control.Feedback
+                                              type="invalid"
+                                              className="d-block"
+                                            >
+                                              {errors.Falls_Under_Hill_Area_Hill__Supporting_Doc}
+                                            </Form.Control.Feedback>
+                                          )}
+                                        </Form.Group>
+                                      </div>
+
+                                    </>
                                   )}
                               </div>
                             </div>
