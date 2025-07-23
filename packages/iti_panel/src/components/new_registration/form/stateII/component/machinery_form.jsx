@@ -793,8 +793,6 @@ const mteInfo = () => {
                         default:
                           return (<h5>Sowething Went Wrong</h5>)
                       }
-
-
                     }}
                   />
                 </Card.Body>

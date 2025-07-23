@@ -628,7 +628,7 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 className="btn-w-xs btn-wave">View</Button>
-                                              <Button variant='secondary' onClick={()=>{setFieldValue("Falls_Under_Hill_Area_Hill__Supporting_Doc", null);}} className="btn-w-sm btn-wave">Remove</Button></div>
+                                              <Button variant='secondary' onClick={() => { setFieldValue("Falls_Under_Hill_Area_Hill__Supporting_Doc", null); }} className="btn-w-sm btn-wave">Remove</Button></div>
                                           ) : (<Form.Control
                                             required
                                             type="file"
