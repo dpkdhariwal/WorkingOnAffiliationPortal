@@ -39,6 +39,9 @@ npm i react-bootstrap-icons --workspace=packages/ui_layouts_collaborate
 
 npm install react-form-wizard-component --workspace=packages/iti_panel
 
+npm install idb --workspace=packages/iti_panel
+
+
 npm i redux-devtools-extension
 
 #instal package for specific workspace/project

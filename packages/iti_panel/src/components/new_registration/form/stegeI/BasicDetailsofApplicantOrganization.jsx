@@ -131,8 +131,8 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
                                   }
                                 />
                               </Form.Group>
-                              {category.master === "04" &&
-                                values.aff_category === "04" &&
+                              {category.master === "06" &&
+                                values.aff_category === "06" &&
                                 category.subCate && (
                                   <ListGroup
                                     as="ul"

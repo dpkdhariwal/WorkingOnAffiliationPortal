@@ -13,6 +13,7 @@ import * as yup from "yup";
 import { tryLogin } from "../../services/index";
 import { loginUser } from "../../actions/userAuth";
 import toast, { Toaster } from "react-hot-toast";
+import { setSampleUser, getSetUserRoles, getUserByCredentials } from "../../db/users";
 
 const Signin = () => {
   const navigate = useNavigate(); // initialize navigation
@@ -63,19 +64,16 @@ const Signin = () => {
       email: "vivek@gmail.com",
       password: "123",
     },
-
-
-
   ];
 
   const LoginNow = async (values) => {
     const { userid, password } = values;
-    const user = sampleUserList.find(
-      (u) => u.email === userid && u.password === password
-    );
+    // setSampleUser();
+    // getSetUserRoles();
+    const user = await getUserByCredentials(userid, password);
     if (user) {
       dispatch({ type: "USER_SIGNED_IN_SUCCESS", payload: user });
-
+      
       toast.success("Logged in successfully", {
         position: "top-right",
       });
@@ -93,37 +91,51 @@ const Signin = () => {
           break;
         case 'state_admin':
           navigate("/dashboard/state_admin");
-        break;  
+          break;
         default:
           navigate("/dashboard/");
           break;
       }
-    } else {
-      toast.error("User Not Found", {
-        position: "top-right",
-      });
+    }
+    else {
+      alert("Invalid User:");
     }
 
-    // tryLogin(userid, password)
-    //   .then((userInfo) => {
-    //     dispatch({ type: "USER_SIGNED_IN_SUCCESS", payload: userInfo.user });
-    //     toast.success(userInfo.message, {
-    //       position: "top-right",
-    //     });
-    //     navigate("/dashboard/");
-    //   })
-    //   .catch((e) => {
-    //     console.log(e.message);
-    //     toast.error(e.message, {
-    //       position: "top-right",
-    //     });
-    //   });
-    // dispatch(
-    //   loginUser({
-    //     userid,
-    //     password,
-    //   })
+
+    // const user = sampleUserList.find(
+    //   (u) => u.email === userid && u.password === password
     // );
+
+    // if (user) {
+    //   dispatch({ type: "USER_SIGNED_IN_SUCCESS", payload: user });
+
+    //   toast.success("Logged in successfully", {
+    //     position: "top-right",
+    //   });
+
+    //   switch (user.userType) {
+    //     case "applicant":
+    //       if (user.total_applications == 0) {
+    //         navigate("/dashboard/Application/");
+    //       } else {
+    //         navigate("/dashboard/");
+    //       }
+    //       break;
+    //     case "rdsde":
+    //       navigate("/dashboard/rdsde");
+    //       break;
+    //     case 'state_admin':
+    //       navigate("/dashboard/state_admin");
+    //       break;
+    //     default:
+    //       navigate("/dashboard/");
+    //       break;
+    //   }
+    // } else {
+    //   toast.error("User Not Found", {
+    //     position: "top-right",
+    //   });
+    // }
   };
 
   useEffect(() => {

@@ -21,18 +21,20 @@ import * as yup from "yup";
 import { Formik, Field, FieldArray } from "formik";
 
 import { SAVE_APP_CATEGORY } from "../../constants";
+import { addNewApp } from "../../db/appList";
+import {AffiliationCategory} from "../../constants";
 const Start = () => {
   const regCategory = useSelector((state) => state.reg.regCategory);
   const appCat = useSelector((state) => state.appCat);
   const navigate = useNavigate();
   console.log(appCat.selected);
 
-  useEffect(() => {
-    if (appCat.selected === true) {
-      navigate("/dashboard/new_registration");
-    }
-    console.log(regCategory, appCat.selected);
-  }, [regCategory]);
+  // useEffect(() => {
+  //   if (appCat.selected === true) {
+  //     navigate("/dashboard/new_registration");
+  //   }
+  //   console.log(regCategory, appCat.selected);
+  // }, [regCategory]);
 
   return (
     <Fragment>
@@ -68,63 +70,63 @@ const Start = () => {
   );
 };
 
-// import { useRef, useState } from "react";
-// import { Modal, Button, Form, Row, Col } from "react-bootstrap";
-// import { Formik } from "formik";
-// import * as yup from "yup";
-// import { useSelector, useDispatch } from "react-redux";
-
 const SelectCategoryModal = (props) => {
-  const AffiliationCategory = [
-    { name: "Application for Establishment of New ITIs", master: "01" },
-    {
-      name: "Application for opening Mini Skill Training Institute",
-      master: "02",
-    },
-    {
-      name: "Establishment of New Age ITIs or Adoption of existing ITIs by industry entities",
-      master: "03",
-    },
-    {
-      name: "Application for Existing ITIs",
-      master: "04",
-      subCate: [
-        { name: "Addition of New Trades/Units", master: "01" },
-        { name: "Name Change of the ITI", master: "02" },
-        { name: "Shifting/Relocation or Merger of ITIs", master: "03" },
-        {
-          name: "SCVT to NCVET conversion of Trades (for existing Government ITIs)",
-          master: "04",
-        },
-        { name: "Renewal of Affiliation", master: "05" },
-        {
-          name: "Affiliation under the Dual System of Training (DST)",
-          master: "06",
-        },
-        { name: "Surrender of Trade/Units", master: "07" },
-      ],
-    },
-  ];
+  // const AffiliationCategory = [
+  //   { name: "Application for Establishment of New ITIs", master: "01" },
+  //   {
+  //     name: "Application for opening Mini Skill Training Institute",
+  //     master: "02",
+  //   },
+  //   {
+  //     name: "Establishment of New Age ITIs or Adoption of existing ITIs by industry entities",
+  //     master: "03",
+  //   },
+  //   {
+  //     name: "Affiliation under the Dual System of Training (DST)",
+  //     master: "04",
+  //   },
+  //   { name: "Surrender of Trade/Units", 
+  //     master: "05" },
+  //   {
+  //     name: "Application for Existing ITIs",
+  //     master: "06",
+  //     subCate: [
+  //       { name: "Addition of New Trades/Units", master: "01" },
+  //       { name: "Name Change of the ITI", master: "02" },
+  //       { name: "Shifting/Relocation", master: "03" },
+  //       { name: "Merger of ITIs", master: "04" },
+  //       {
+  //         name: "SCVT to NCVET conversion of Trades (for existing Government ITIs)",
+  //         master: "05",
+  //       },
+  //       { name: "Renewal of Affiliation", master: "06" },
+  //     ],
+  //   },
+  // ];
   const navigate = useNavigate();
   const [selectedIndex, setSelectedIndex] = useState(2);
   const regCategory = useSelector((state) => state.reg.regCategory);
   const appCat = useSelector((state) => state.appCat);
+  const authUser = useSelector((state) => state.loginUserReducer);
+
   // if (appCat.selected === true) {
   //   navigate("/dashboard/new_registration");
   // }
-
   console.log(Object.keys(appCat.cat).length);
   const dispatch = useDispatch();
 
   const formikRef = useRef();
 
-  const saveRegCat = (values) => {
+  const saveRegCat = async (values) => {
     const { aff_category, aff_sub_category } = values;
-    dispatch({
-      type: "SAVE_APP_CATEGORY",
-      payload: { cat: aff_category, sub_cat: aff_sub_category },
-    });
+    const obj = { cat: aff_category, sub_cat: aff_sub_category };
+    
+    const result = await addNewApp({ id: Date.now(), cat: aff_category, sub_cat: aff_sub_category, userId:authUser.id});
+    console.log(result);
+    
+    dispatch({ type: "SAVE_APP_CATEGORY", payload: obj, });
     navigate("/dashboard/new_registration");
+
   };
 
   return (
@@ -141,7 +143,7 @@ const SelectCategoryModal = (props) => {
           validationSchema={yup.object().shape({
             aff_category: yup.string().required("Select Affiliation Category"),
             aff_sub_category: yup.string().when("aff_category", {
-              is: "04", // 🔄 change to "no" since category and comments are required when it's "no"
+              is: "06", // 🔄 change to "no" since category and comments are required when it's "no"
               then: () => yup.string().required("Please select a Sub category"),
               otherwise: () => yup.string().notRequired(),
             }),
@@ -189,8 +191,8 @@ const SelectCategoryModal = (props) => {
                               }
                             />
                           </Form.Group>
-                          {category.master === "04" &&
-                            values.aff_category === "04" &&
+                          {category.master === "06" &&
+                            values.aff_category === "06" &&
                             category.subCate && (
                               <ListGroup
                                 as="ul"

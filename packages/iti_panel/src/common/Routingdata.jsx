@@ -29,6 +29,12 @@ import { InspectionSlotSelection } from "../components/new_registration/Inspecti
 import { AppList } from "../screens/Applicant/AppList";
 // import {GridExample} from "../screens/Applicant/AppList_ag-grid";
 import Test from "../components/test";
+import { lazy } from "react";
+
+
+import {NewAppRegistration} from "../screens/RegNewApplication/NewAppRegistration";
+
+
 export const Routedata = [
   {
     id: 1,
@@ -148,11 +154,13 @@ export const Routedata = [
         elementName: <AddIcMember />,
       },
 
+
+      {
+        id: 1,
+        path: "new-app-registration",
+        elementName: <NewAppRegistration/>,
+      },
+
     ],
   },
-  // {
-  //   id: 1,
-  //   path: `${import.meta.env.BASE_URL}test/`,
-  //   elementName: <Test />,
-  // },
 ];

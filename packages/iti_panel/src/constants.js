@@ -651,6 +651,36 @@ export const ctsTrades = [
   "Sewing Technology",
 ];
 
+// export const AffiliationCategory = [
+//   { name: "Application for Establishment of New ITIs", master: "01" },
+//   {
+//     name: "Application for opening Mini Skill Training Institute",
+//     master: "02",
+//   },
+//   {
+//     name: "Establishment of New Age ITIs or Adoption of existing ITIs by industry entities",
+//     master: "03",
+//   },
+//   {
+//     name: "Application for Existing ITIs",
+//     master: "04",
+//     subCate: [
+//       { name: "Addition of New Trades/Units", master: "01" },
+//       { name: "Name Change of the ITI", master: "02" },
+//       { name: "Shifting/Relocation or Merger of ITIs", master: "03" },
+//       {
+//         name: "SCVT to NCVET conversion of Trades (for existing Government ITIs)",
+//         master: "04",
+//       },
+//       { name: "Renewal of Affiliation", master: "05" },
+//       {
+//         name: "Affiliation under the Dual System of Training (DST)",
+//         master: "06",
+//       },
+//       { name: "Surrender of Trade/Units", master: "07" },
+//     ],
+//   },
+// ];
 export const AffiliationCategory = [
   { name: "Application for Establishment of New ITIs", master: "01" },
   {
@@ -662,22 +692,23 @@ export const AffiliationCategory = [
     master: "03",
   },
   {
-    name: "Application for Existing ITIs",
+    name: "Affiliation under the Dual System of Training (DST)",
     master: "04",
+  },
+  { name: "Surrender of Trade/Units", master: "05" },
+  {
+    name: "Application for Existing ITIs",
+    master: "06",
     subCate: [
       { name: "Addition of New Trades/Units", master: "01" },
       { name: "Name Change of the ITI", master: "02" },
-      { name: "Shifting/Relocation or Merger of ITIs", master: "03" },
+      { name: "Shifting/Relocation", master: "03" },
+      { name: "Merger of ITIs", master: "04" },
       {
         name: "SCVT to NCVET conversion of Trades (for existing Government ITIs)",
-        master: "04",
+        master: "05",
       },
-      { name: "Renewal of Affiliation", master: "05" },
-      {
-        name: "Affiliation under the Dual System of Training (DST)",
-        master: "06",
-      },
-      { name: "Surrender of Trade/Units", master: "07" },
+      { name: "Renewal of Affiliation", master: "06" },
     ],
   },
 ];
@@ -775,13 +806,16 @@ export const STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS =
   "STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS";
 export const STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_PENDING =
   "STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_PENDING";
-export const STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_COMPLETED = "STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_COMPLETED";
-export const STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_ON_PROGRESS = "STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_ON_PROGRESS";
+export const STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_COMPLETED =
+  "STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_COMPLETED";
+export const STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_ON_PROGRESS =
+  "STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_ON_PROGRESS";
 export const STAGE_II_DOCUMENT_UPLAOD = "STAGE_II_DOCUMENT_UPLAOD";
 export const STAGE_II_SUBMIT = "STAGE_II_SUBMIT";
 export const STAGE_II__ASSESSMENT = "STAGE_II__ASSESSMENT";
 export const STAGE_II__ASSESSMENT_PENDING = "STAGE_II__ASSESSMENT_PENDING";
-export const STAGE_II__ASSESSMENT_ON_PROGRESS = "STAGE_II__ASSESSMENT_ON_PROGRESS";
+export const STAGE_II__ASSESSMENT_ON_PROGRESS =
+  "STAGE_II__ASSESSMENT_ON_PROGRESS";
 export const STAGE_II__ASSESSMENT_COMPLETED = "STAGE_II__ASSESSMENT_COMPLETED";
 export const STAFF_DETAILS = "STAFF_DETAILS";
 export const STAFF_DETAILS_PENDING = "STAFF_DETAILS_PENDING";
@@ -800,13 +834,12 @@ export const AppFlow = [
     status: STAGE_I__NOT_FILLED, // STAGE_I__FILLED || STAGE_I__PENDING || ON_PROGRESS
     stepStatus: "pending", // inactive || pending || completed || on-progress
     stepTitle: "Stage I Form Filling",
-    
+
     stepMsg: "Applicant Has to fill stage I Form",
-    
+
     // stepMsgCompleted: "Stage I Form Completed",
     // stepMsgOnProgress: "stage I Form Filling On Progress",
-    
-    
+
     assignedTo: ["applicant"],
   },
   {
@@ -1095,3 +1128,54 @@ export const STEPPER_STYLE = {
     backgroundColor: "#028A0F",
   }),
 };
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+// Database Constants
+export const DB_NAME = "AffliationDB";
+export const USERS = "users";
+export const USER_ROLES = "userRoles";
+
+export const APPLIST = "apps";
+
+// Sample Users
+export const SAMPLE_USERS = [
+  {
+    userType: "applicant",
+    role: ["applicant"],
+    email: "applicant@gmail.com",
+    password: "123",
+    total_applications: 0,
+  },
+  {
+    userType: "rdsde",
+    role: ["rdsde"],
+    email: "rdsde@gmail.com",
+    password: "123",
+  },
+  {
+    userType: "dgt",
+    role: ["dgt"],
+    email: "dgt@gmail.com",
+    password: "123",
+  },
+  {
+    userType: "state_admin",
+    role: ["state_admin"],
+    email: "state_admin@gmail.com",
+    password: "123",
+  },
+  {
+    userType: "state_assessor",
+    role: ["state_assessor"],
+    email: "state_assessor@gmail.com",
+    password: "123",
+  },
+  {
+    userType: "state_assessor",
+    role: ["test"],
+    email: "vivek@gmail.com",
+    password: "123",
+  },
+];
+
+//------------------------------------------//
