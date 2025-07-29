@@ -46,15 +46,13 @@ import * as yup from "yup";
 
 // Application Info
 export const AppliInfoInitialValues = {
-  applicantId: "XYZ001234567890",
+  appId: null,
   stage_I_fee_status: STAGE_I__FEE_PENDING,
   stage_I_completion_status: STAGE_I__SUBMIT_PENDING,
   stage_II_fee_status: STAGE_II__FEE_PENDING,
   stage_II_completion_status: STAGE_II__SUBMIT_PENDING,
-
   app_status: STAGE_I__NOT_FILLED,
   app_status_awaiting: STAGE_I__FILLED,
-
   app_flow_status: AppFlow,
 };
 export const AppliInfo = (state = AppliInfoInitialValues, action) => {
@@ -285,7 +283,11 @@ export const yupObject = {
       "Please verify your email with OTP",
       function (value) {
         const { isApplicantEntityEmailIdVerified } = this.parent; // ✅ Access from Formik values
-        console.log("isApplicantEntityEmailIdVerified =", isApplicantEntityEmailIdVerified, value);
+        console.log(
+          "isApplicantEntityEmailIdVerified =",
+          isApplicantEntityEmailIdVerified,
+          value
+        );
         return isApplicantEntityEmailIdVerified === true;
       }
     ),
@@ -587,6 +589,8 @@ export const reg = (state = initialState, action) => {
 export const dpi_initialValues = {
   name_of_applicant_institute: "",
   type_of_institute: "",
+
+  cmp_post_state: "",
   cmp_post_address: "",
   cmp_post_district: "",
   cmp_post_city: "",
@@ -750,6 +754,13 @@ export const trade_unit_reducer_yupObject = yup.object().shape({
 export const land_info_initialValues = {
   possession_of_land: "",
   land_area_in_square_metres: "",
+  land_owner_name: "",
+  land_registration_number: "",
+  name_of_lessor: "",
+  name_of_lessee: "",
+  lease_deed_number: "",
+  date_of_commencement: "",
+  date_of_expiry: "",
 };
 export const land_info_reducer = (state = land_info_initialValues, action) => {
   let { type, payload } = action;

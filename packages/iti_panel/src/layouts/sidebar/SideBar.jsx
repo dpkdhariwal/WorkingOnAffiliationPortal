@@ -17,17 +17,20 @@ const SideBar = ({ local_varaiable, ThemeChanger }) => {
     let result = MENUITEMS.filter((menu) => {
       const userRoles = userInfo.role;
       const allowedRoles = menu.allowTo;
+      // console.log(menu);
       const hasMatch = userRoles.some((role) => {
         switch (userInfo.userType) {
           case "applicant":
-            if (userInfo.total_applications > 0) {
-              return (
-                allowedRoles.includes(role) || allowedRoles.includes("all")
-              );
-            } else {
-              menu.active = true;
-              return menu.menuGroup === "new_registration";
-            }
+            return allowedRoles.includes(role) || allowedRoles.includes("all")
+            // if (userInfo.total_applications > 0) {
+            //   return (
+            //     allowedRoles.includes(role) || allowedRoles.includes("all")
+            //   );
+            // } else {
+            //   menu.active = true;
+            //   return menu.menuGroup === "new_registration";
+              
+            // }
           case "dgt":
           case "state_admin":
           case "state_assessor":

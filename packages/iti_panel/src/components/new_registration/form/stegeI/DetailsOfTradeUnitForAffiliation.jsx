@@ -18,8 +18,17 @@ import { ADD_MORE_TRADE } from "../../../../constants";
 import { trade_unit_reducer_yupObject } from "../../../../reducers/newAppReducer";
 import { ctsTrades, UPDATE_TRADE_UNIT } from "../../../../constants";
 
+import { setInstTradeDetails } from "../../../../db/appList";
+import { useLocation } from "react-router-dom";
+
+
 const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
-    const reg = useSelector((state) => state.reg);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const appId = queryParams.get("appId");
+
+
+  const reg = useSelector((state) => state.reg);
 
   const dispatch = useDispatch();
   const submit = (values) => {
@@ -43,7 +52,13 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
             dispatch({ type: "set_filled_step", payload: { step: 2 }, });
             dispatch({ type: "reg_set_active_step", payload: { step: 3 } });
             setActive(reg.steps[3]);
+
+
+            let result = setInstTradeDetails(values, appId);
+            console.log(result);
             Swal.close();
+
+
 
             // Swal.showLoading();
             // // simulate async save (remove setTimeout if dispatch is sync)

@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import React, { Children, useState, useEffect } from "react";
 
 import * as action from "../action/allActions";
-
+import { GoToStageIForm, GoToStageIAssessment } from "../action/allActions";
 
 import {
   STAGE_I_FORM_FILLING,
@@ -68,6 +68,7 @@ import {
   INSP_SHEDULED,
   INSP_PENDING
 } from "../../constants";
+import { useSelector, useDispatch } from "react-redux";
 
 export const PendingStep = ({ info, variant }) => {
 
@@ -76,6 +77,12 @@ export const PendingStep = ({ info, variant }) => {
   const [cardArrow, setCardArrow] = useState('f-timeline-container-warning');
   const [text, setText] = useState('Not Completed Yet');
 
+  const authUser = useSelector((state) => state.loginUserReducer);
+
+
+  useEffect(() => {
+    console.log(authUser);
+  });
 
   useEffect(() => {
     if (variant === "completed") {
@@ -95,20 +102,20 @@ export const PendingStep = ({ info, variant }) => {
 
   // GET SET ACTIONS 
   const getSetActions = (info) => {
+    console.log(info);
     switch (info.step) {
       case STAGE_I_FORM_FILLING:
         switch (info.status) {
           case STAGE_I__FILLED:
-            return action.GoToStageIForm();
           case STAGE_I__NOT_FILLED:
-            return action.GoToStageIForm();
+            return authUser.userType === 'applicant' ? <GoToStageIForm info={info} /> : ''
           default:
-            return action.GoToStageIForm();
+            return ''
         }
       case STAGE_I_FEE:
         switch (info.status) {
           case STAGE_I__FEE_PENDING:
-            return action.GoToStageIForm();
+            return authUser.userType === 'applicant' ? <GoToStageIForm info={info} /> : ''
           case STAGE_I__FEE_PAID:
             return <h5>DD</h5>
           case STAGE_I__FEE_EXEMPTED:
@@ -119,7 +126,7 @@ export const PendingStep = ({ info, variant }) => {
       case STAGE_I_DOCUMENT_UPLAOD:
         switch (info.status) {
           case STAGE_I__DOCUMENT_PENDING:
-            return action.GoToStageIForm();
+            return authUser.userType === 'applicant' ? <GoToStageIForm info={info} /> : ''
           case STAGE_I__DOCUMENT_UPLOADED:
             return <h5>DD</h5>
           default:
@@ -128,7 +135,7 @@ export const PendingStep = ({ info, variant }) => {
       case STAGE_I_SUBMIT:
         switch (info.status) {
           case STAGE_I__SUBMIT_PENDING:
-            return action.GoToStageIForm();
+            return authUser.userType === 'applicant' ? <GoToStageIForm info={info} /> : ''
           case STAGE_I__SUBMITED:
             return <h5>DD</h5>
           default:
@@ -141,7 +148,8 @@ export const PendingStep = ({ info, variant }) => {
           case STAGE_I__ASSESSMENT_ON_PROGRESS:
             return <h5>DD</h5>
           case STAGE_I__ASSESSMENT_PENDING:
-            return action.GoToStageIAssessment();
+            return authUser.userType === 'state_assessor' ? <GoToStageIAssessment info={info} /> : ''
+          // return action.GoToStageIAssessment();
           default:
             return <h5>DD</h5>
         }
@@ -246,9 +254,6 @@ export const PendingStep = ({ info, variant }) => {
           default:
             return <h5>DD</h5>
         }
-
-
-
       case INSP_SHEDULE:
         switch (info.status) {
           case INSP_SHEDULED:
@@ -258,21 +263,6 @@ export const PendingStep = ({ info, variant }) => {
           default:
             return <h5>DD</h5>
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       default:
         return <h5>DD</h5>
     }

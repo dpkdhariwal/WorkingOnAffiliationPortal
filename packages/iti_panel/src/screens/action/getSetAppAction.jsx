@@ -9,48 +9,43 @@ import { Formik, Form as FormikForm, Field, ErrorMessage } from "formik";
 
 import { TimeLine } from "../../screens/TimeLine";
 
-export const GetSetAppAction = () => {
+import { createContext } from "react";
+import { TimeLineContext } from "../../services/context";
+
+export const GetSetAppAction = ({ row }) => {
 
   const [modalShow, setModalShow] = useState(false);
 
-  const [emailTimer, setEmailTimer] = useState(0);
-
-  const [emailOtpVisible, setEmailOtpVisible] = useState(false);
-  const [emailOtp, setEmailOtp] = useState(new Array(6).fill(""));
-  const [emailOtpComplete, setEmailOtpComplete] = useState(false);
-  const emailOtpRefs = useRef([]);
-
-
-  // console.log(row.app_status_awaiting);
-
-  //  const AppliInfo = useSelector((state) => state.AppliInfo);
-  //   console.log(AppliInfo);
+  console.log(row);
 
   return (
     <>
-      <Button variant="success" onClick={() => setModalShow(true)}>
-        status
-      </Button>
-      <Modal
-        show={modalShow}
-        onHide={() => setModalShow(false)}
-        size="md"
-        aria-labelledby="contained-modal-title-vcenter"
-        centered
-      >
+      <TimeLineContext.Provider value={{ row }} >
+        <Button variant="success" onClick={() => setModalShow(true)}>
+          Enter
+        </Button>
+        <Modal
+          show={modalShow}
+          onHide={() => setModalShow(false)}
+          size="md"
+          aria-labelledby="contained-modal-title-vcenter"
+          centered
+        >
 
-        <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-vcenter" as="h6">
-            XYZ : RANI KAMLAWATI PVT ITI Delhi
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <TimeLine />
-        </Modal.Body>
-        {/* <Modal.Footer>
+          <Modal.Header closeButton>
+            <Modal.Title id="contained-modal-title-vcenter" as="h6">
+              {row?.appId ?? "No App ID"} : {row?.proposedInstDetails?.pro_insti_details?.name_of_applicant_institute || "Not Filled"}
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <TimeLine rowData={row} />
+          </Modal.Body>
+          {/* <Modal.Footer>
           <Button>Action</Button>
         </Modal.Footer> */}
-      </Modal>
+        </Modal>
+      </TimeLineContext.Provider>
+
     </>
   );
 }

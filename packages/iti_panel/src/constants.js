@@ -834,13 +834,11 @@ export const AppFlow = [
     status: STAGE_I__NOT_FILLED, // STAGE_I__FILLED || STAGE_I__PENDING || ON_PROGRESS
     stepStatus: "pending", // inactive || pending || completed || on-progress
     stepTitle: "Stage I Form Filling",
-
     stepMsg: "Applicant Has to fill stage I Form",
-
     // stepMsgCompleted: "Stage I Form Completed",
     // stepMsgOnProgress: "stage I Form Filling On Progress",
-
     assignedTo: ["applicant"],
+    nextStep: STAGE_I_FEE,
   },
   {
     stepNo: 2,
@@ -850,6 +848,7 @@ export const AppFlow = [
     stepTitle: "Stage I Fee",
     stepMsg: "Applicant Has to Pay Stage I Fee",
     assignedTo: ["applicant"],
+    nextStep: STAGE_I_DOCUMENT_UPLAOD,
   },
   {
     stepNo: 3,
@@ -859,6 +858,7 @@ export const AppFlow = [
     stepTitle: "Stage I Document Upload",
     stepMsg: "Applicant Has to Upload Stage I Documents",
     assignedTo: ["applicant"],
+    nextStep: STAGE_I_SUBMIT,
   },
   {
     stepNo: 4,
@@ -868,6 +868,7 @@ export const AppFlow = [
     stepTitle: "Stage I Submit",
     stepMsg: "Applicant Has to Submit Stage I Application",
     assignedTo: ["applicant"],
+    nextStep: STAGE_I__ASSESSMENT,
   },
   {
     stepNo: 5,
@@ -877,6 +878,7 @@ export const AppFlow = [
     stepTitle: "Stage I Assessment",
     stepMsg: "State Has to Assess Stage I Application",
     assignedTo: ["state"],
+    nextStep: NOC_ISSUANCE,
   },
   {
     stepNo: 6,
@@ -886,6 +888,7 @@ export const AppFlow = [
     stepTitle: "NOC Issuance",
     stepMsg: "State Has to Issue No Objection Certificate (NOC)",
     assignedTo: ["state"],
+    nextStep: STAGE_II_FORM_FILLING,
   },
   {
     stepNo: 7,
@@ -895,6 +898,7 @@ export const AppFlow = [
     stepTitle: "Stage II Form Filling",
     stepMsg: "Applicant Has to fill stage II Form",
     assignedTo: ["applicant"],
+    nextStep: STAGE_II_FEE,
   },
   {
     stepNo: 8,
@@ -904,6 +908,7 @@ export const AppFlow = [
     stepTitle: "Stage II Fee",
     stepMsg: "Applicant Has to Pay Stage II Fee",
     assignedTo: ["applicant"],
+    nextStep: STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS,
   },
   {
     stepNo: 9,
@@ -913,54 +918,60 @@ export const AppFlow = [
     stepTitle: "Stage II Machine Equipment Tool Details",
     stepMsg: "Applicant Has to fill Stage II Machine Equipment Tool Details",
     assignedTo: ["applicant"],
+    nextStep: STAGE_II_DOCUMENT_UPLAOD,
   },
   {
-    stepNo: 3,
+    stepNo: 10,
     step: STAGE_II_DOCUMENT_UPLAOD,
     status: STAGE_II__DOCUMENT_PENDING, // STAGE_II__DOCUMENT_PENDING || STAGE_II__DOCUMENT_UPLOADED
     stepStatus: "inactive", // inactive || pending || completed || on-progress
     stepTitle: "Stage II Document Upload",
     stepMsg: "Applicant Has to Upload Stage II Documents",
     assignedTo: ["applicant"],
+    nextStep: STAGE_II_SUBMIT,
   },
   {
-    stepNo: 10,
+    stepNo: 11,
     step: STAGE_II_SUBMIT,
     status: STAGE_II__SUBMIT_PENDING, // STAGE_II__SUBMIT_PENDING || STAGE_II__SUBMITED
     stepStatus: "inactive", // inactive || pending || completed || on-progress
     stepTitle: "Stage II Application Submit",
     stepMsg: "Applicant Has to Submit Stage II Application",
     assignedTo: ["applicant"],
+    nextStep: STAGE_II__ASSESSMENT,
   },
   {
-    stepNo: 11,
+    stepNo: 12,
     step: STAGE_II__ASSESSMENT,
     status: STAGE_II__ASSESSMENT_PENDING, // STAGE_II__ASSESSMENT_PENDING || STAGE_II__ASSESSMENT_ON_PROGRESS || STAGE_II__ASSESSMENT_COMPLETED
     stepStatus: "inactive", // inactive || pending || completed || on-progress
     stepTitle: "Stage II Assessment",
     stepMsg: "State has to Assess Stage II Application",
     assignedTo: ["state"],
+    nextStep: STAFF_DETAILS,
   },
   {
-    stepNo: 11,
+    stepNo: 13,
     step: STAFF_DETAILS,
     status: STAFF_DETAILS_PENDING, // STAFF_DETAILS_PENDING || STAFF_DETAILS_COMPLETED
     stepStatus: "inactive", // inactive || pending || completed || on-progress
     stepTitle: "Stage II Staff Detail",
     stepMsg: "Applicant Has to fill Staff Details",
     assignedTo: ["applicant"],
+    nextStep: INSP_SLOT_SELECTION,
   },
   {
-    stepNo: 11,
+    stepNo: 14,
     step: INSP_SLOT_SELECTION,
     status: INSP_SLOT_SELECTION_PENDING, // INSP_SLOT_SELECTION_PENDING || INSP_SLOT_SELECTION_COMPLETED
     stepStatus: "inactive", // inactive || pending || completed || on-progress
     stepTitle: "Inspection Slot Selection",
     stepMsg: "Applicant Has to Select Inspection Slot",
     assignedTo: ["applicant"],
+    nextStep: INSP_SHEDULE,
   },
   {
-    stepNo: 11,
+    stepNo: 15,
     step: INSP_SHEDULE,
     status: STAFF_DETAILS_PENDING, // INSP_SHEDULED || INSP_PENDING
     stepStatus: "inactive", // inactive || pending || completed || on-progress
@@ -1131,11 +1142,27 @@ export const STEPPER_STYLE = {
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 // Database Constants
+export const DB_VERSION = 1;
 export const DB_NAME = "AffliationDB";
 export const USERS = "users";
 export const USER_ROLES = "userRoles";
-
 export const APPLIST = "apps";
+
+export const ENTITY_DETAILS = "ent_entityDetails";
+export const ENTITY_ADDRESS = "ent_EntityAddress";
+export const OTHER_ITI = "ent_otherIti";
+
+export const PROPOSED_INSTI_DETAILS = "proposed_proposedInstituteDetails";
+export const PROPOSED_INSTI_ADDRESSES =
+  "proposed_proposedInstituteAddressesDetails";
+
+export const NEW_INSTI_TRADE_LIST = "trades_newInstTrades";
+
+export const LAND_INST_DETAILS = "land_landInstDetail";
+export const LAND_OWNED_LANDS_DETAILS = "land_owned_lands";
+export const LAND_LEASED_LANDS_DETAILS = "land_leased_lands";
+
+export const APP_FLOW = "app_flow";
 
 // Sample Users
 export const SAMPLE_USERS = [

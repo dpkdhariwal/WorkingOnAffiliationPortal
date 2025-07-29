@@ -2,11 +2,12 @@ import { Modal, Row, Col, Card, Form, InputGroup, Button, Table, Form as BForm }
 import { useState } from "react";
 import { useNavigate } from "react-router-dom"; // <-- Import this
 
-export const GoToStageIForm = () => {
+export const GoToStageIForm = ({info}) => {
   const navigate = useNavigate(); // <-- Hook for navigation
-
+  
   const goNow = () => {
-    navigate("/dashboard/new_registration"); // <-- Your route here
+    console.log(info);
+    navigate(`/dashboard/new_registration?appId=${info.appId}`); // <-- Your route here
   };
 
   return (
@@ -16,11 +17,11 @@ export const GoToStageIForm = () => {
   );
 };
 
-export const GoToStageIAssessment = () => {
+export const GoToStageIAssessment = ({info}) => {
   const navigate = useNavigate(); // <-- Hook for navigation
 
   const goNow = () => {
-    navigate("/dashboard/AssessmentI"); // <-- Your route here
+    navigate(`/dashboard/AssessmentI?appId=${info.appId}`); // <-- Your route here
   };
 
   return (

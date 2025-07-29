@@ -7,8 +7,13 @@ import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
 import { Form as BootstrapForm, Modal } from "react-bootstrap";
 
-import { languages, ADD_MORE_LAND_DOCUMENT, SET_STAGE_I__DOCUMENT_STATUS } from "../../../../constants";
+import { languages, ADD_MORE_LAND_DOCUMENT, SET_STAGE_I__DOCUMENT_STATUS, STAGE_I_DOCUMENT_UPLAOD } from "../../../../constants";
 import { land_documents_yupObject } from "../../../../reducers/document_upload";
+import { useContext } from "react";
+import { AppStatusContext } from "../../../../services/context";
+import {setAppFlow} from "../../../../db/users";
+import { useLocation } from "react-router-dom";
+
 
 const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
   const dispatch = useDispatch();
@@ -16,7 +21,10 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
   const land_info = useSelector((state) => state.land_info_reducer);
   const land_documents_initial_values = useSelector((state) => state.land_documents_reducer);
   const reg = useSelector((state) => state.reg);
-
+  const { appStatus } = useContext(AppStatusContext);
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const appId = queryParams.get("appId");
 
   const submit = (values) => {
     Swal.fire({
@@ -33,7 +41,10 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
           title: "Saving...",
           didOpen: () => {
             Swal.showLoading();
-            dispatch({ type: SET_STAGE_I__DOCUMENT_STATUS, payload: values });
+
+            setAppFlow(appId, STAGE_I_DOCUMENT_UPLAOD);
+
+            // dispatch({ type: SET_STAGE_I__DOCUMENT_STATUS, payload: values });
             dispatch({ type: "set_filled_step", payload: { step: 5 }, });
             dispatch({ type: "reg_set_active_step", payload: { step: 5 } });
             setActive(reg.steps[5]);

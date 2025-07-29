@@ -33,6 +33,22 @@ export const MENUITEMS = [
     menuGroup: "new_registration",
   },
   {
+    allowTo: ["applicant", "test","state_assessor"],
+    menutitle: "Applications",
+    menuGroup: "app_list",
+  },
+  {
+    allowTo: ["applicant", "test", "state_assessor"],
+    path: `${import.meta.env.BASE_URL}dashboard/AppList`,
+    title: "All Applications",
+    icon: "ti-file",
+    type: "link",
+    active: false,
+    selected: false,
+    dirchange: false,
+    menuGroup: "app_list",
+  },
+  {
     allowTo: ["test"],
     path: `${import.meta.env.BASE_URL}dashboard/new_registration`,
     title: "New Application",
@@ -101,7 +117,7 @@ export const MENUITEMS = [
     selected: false,
     dirchange: false,
   },
-   {
+  {
     allowTo: ["state_assessor", "test"],
     path: `${import.meta.env.BASE_URL}dashboard/TestTime`,
     title: "TimeLine",
@@ -111,7 +127,7 @@ export const MENUITEMS = [
     selected: false,
     dirchange: false,
   },
-    
+
   {
     allowTo: ["test"],
     path: `${import.meta.env.BASE_URL}dashboard/TimeLine`,
@@ -165,19 +181,19 @@ export const MENUITEMS = [
 
   {
     allowTo: ["rdsde"],
-		title: "Members", 
-    icon: 'ti-wallet', 
-    type: "sub", 
-    active: false, 
-    selected: false, 
+    title: "Members",
+    icon: 'ti-wallet',
+    type: "sub",
+    active: false,
+    selected: false,
     dirchange: false,
-		
+
     children: [
-			{ path: `${import.meta.env.BASE_URL}dashboard/rdsde/AddIcvcMember`, type: "link", active: false, selected: false, dirchange: false, title: "Add ICVC Member" },
+      { path: `${import.meta.env.BASE_URL}dashboard/rdsde/AddIcvcMember`, type: "link", active: false, selected: false, dirchange: false, title: "Add ICVC Member" },
       { path: `${import.meta.env.BASE_URL}dashboard/rdsde/MemberList`, type: "link", active: false, selected: false, dirchange: false, title: "Member List" },
-      
-		],
-	},
+
+    ],
+  },
 
 
   //STATE ADMIN
@@ -200,14 +216,14 @@ export const MENUITEMS = [
 
   {
     allowTo: ["state_admin"],
-		title: "Members", 
-    icon: 'ti-wallet', 
-    type: "sub", 
-    active: false, 
-    selected: false, 
+    title: "Members",
+    icon: 'ti-wallet',
+    type: "sub",
+    active: false,
+    selected: false,
     dirchange: false,
     children: [
-			{ path: `${import.meta.env.BASE_URL}dashboard/state_admin/AddStateMembers`, type: "link", active: false, selected: false, dirchange: false, title: "Add State Members" },
-		],
-	},
+      { path: `${import.meta.env.BASE_URL}dashboard/state_admin/AddStateMembers`, type: "link", active: false, selected: false, dirchange: false, title: "Add State Members" },
+    ],
+  },
 ];

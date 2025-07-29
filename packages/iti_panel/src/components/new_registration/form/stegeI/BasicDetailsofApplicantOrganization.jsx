@@ -21,8 +21,24 @@ import { Assessment_Basic_Detail as ABD } from "../../../../components/new_regis
 
 import { ApplicantEntityEmailId } from "./formComponent/ApplicantEntityEmailId";
 import { FormikHelpersContext } from "./FormikContext";
+import { setEntityDetails } from "../../../../db/appList";
+import { getDbEntityDetails } from "../../../../db/users";
+import { useLocation } from "react-router-dom";
+import { useContext } from "react";
+import { AppStatusContext } from "../../../../services/context";
+
 
 const BasicDetailsofApplicantOrganization = ({ setActive }) => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const appId = queryParams.get("appId");
+  const { appStatus } = useContext(AppStatusContext);
+
+  useEffect(() => {
+    console.log(appStatus);
+  }, [])
+
+
   const dispatch = useDispatch();
   const reg = useSelector((state) => state.reg);
   const stepInfo = reg.steps[0];
@@ -30,12 +46,27 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
 
   const EntityDetails = useSelector((state) => state.EntityDetails);
 
+
+
   const AppliInfo = useSelector((state) => state.AppliInfo);
 
+  const authUser = useSelector((state) => state.loginUserReducer);
 
-  // useEffect(() => {
-  //   console.log(stepInfo.filled);
-  // }, []);
+  const [basicDetail, setBasicDetail] = useState([]);
+
+  const loadData = async () => {
+    const data = await getDbEntityDetails(appId);
+    const combinedData = { ...data.entityAddress[0], ...data.entityDetail[0], ...data.otherIti[0] };
+    console.log(combinedData);
+    let newData = { ...initialValues, ...combinedData };
+    formikRef.current.setValues(newData); // update entire form
+  };
+
+  useEffect(() => {
+    //Get Set Entity Info From database
+    // dispatch({ type: UPDATE_ENTITY_DETAILS, payload: values });
+    loadData();
+  }, []);
 
   const { Formik } = formik;
   const formRef2 = useRef();
@@ -63,6 +94,10 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
             dispatch({ type: "set_filled_step", payload: { step: 0 }, });
             dispatch({ type: "reg_set_active_step", payload: { step: 1 } });
             setActive(reg.steps[1]);
+
+
+            console.log(authUser);
+            setEntityDetails(values, authUser, appId);
             Swal.close();
           },
         });
@@ -75,7 +110,6 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
   const formikRef = useRef();
 
   const onStateSelected = (e) => {
-    // console.log("Changed:", e.target.name, e.target.value, getDistrictsByState(e.target.value));
     let List = getDistrictsByState(e.target.value);
     setDistrict(List);
   }
@@ -84,7 +118,7 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
 
   return (
     <Fragment>
-      {AppliInfo.stage_I_fee_status === STAGE_I__FEE_PAID || AppliInfo.stage_I_fee_status === STAGE_I__FEE_EXEMPTED ? (<ABD />) :
+      {appStatus?.stage_I_fee_status === STAGE_I__FEE_PAID || appStatus?.stage_I_fee_status === STAGE_I__FEE_EXEMPTED ? (<ABD />) :
 
         <Formik
           innerRef={formikRef}
@@ -93,7 +127,7 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
             console.log("Form submitted with values:", values);
             submit(values);
           }}
-          initialValues={EntityDetails}
+          initialValues={basicDetail}
           validateOnBlur={true}
           validateOnChange={true} // Enable validation on every field change
 

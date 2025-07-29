@@ -68,12 +68,12 @@ const Signin = () => {
 
   const LoginNow = async (values) => {
     const { userid, password } = values;
-    // setSampleUser();
-    // getSetUserRoles();
+    setSampleUser();
+    getSetUserRoles();
     const user = await getUserByCredentials(userid, password);
     if (user) {
       dispatch({ type: "USER_SIGNED_IN_SUCCESS", payload: user });
-      
+
       toast.success("Logged in successfully", {
         position: "top-right",
       });

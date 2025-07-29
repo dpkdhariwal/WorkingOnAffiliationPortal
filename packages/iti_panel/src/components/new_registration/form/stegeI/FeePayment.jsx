@@ -10,36 +10,26 @@ import { ViewApplication } from "./Modal/view_application";
 import { Form as BootstrapForm } from 'react-bootstrap';
 
 import { UPDATE_SET_FEE_STATUS } from "../../../../constants"
+import { useContext } from "react";
+import { AppStatusContext } from "../../../../services/context";
+import { useLocation } from "react-router-dom";
+import {setAppCurrentStatus} from "../../../../db/users";
 
 const FeePayment = ({ setActive }) => {
-  const [isHidden, setisHidden] = useState([true]);
 
   const { Formik } = formik;
-  const formRef2 = useRef();
   const dispatch = useDispatch();
+  const { appStatus } = useContext(AppStatusContext);
 
-  //Custom Validation
-  const stageI1_info = useSelector((state) => state.new_registration);
-  // useEffect(() => { console.log("stageI1_info", stageI1_info); }, []);
-
-  const handleExternalSubmit = () => {
-    if (formRef2.current) {
-      console.log(formRef2.current);
-      formRef2.current.requestSubmit(); // Better than .submit() — triggers onSubmit properly
-    }
-  };
 
   const navigate = useNavigate();
-  // const updateQuery = () => { navigate("?stage=1&form_id=Basic Details of Applicant  Organization"); };
-
-  const gotoNext = () => {
-    console.log("gotoNext called");
-    navigate("?stage=1&form_id=Details of the Proposed Institute");
-  };
 
   const PropInstiInfo = useSelector((state) => state.ProposedInstituteInfo);
-
   const reg = useSelector((state) => state.reg);
+
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const appId = queryParams.get("appId");
 
   const submit = (values) => {
     Swal.fire({
@@ -56,31 +46,37 @@ const FeePayment = ({ setActive }) => {
           title: "Saving...",
           didOpen: () => {
             Swal.showLoading();
-            dispatch({ type: UPDATE_SET_FEE_STATUS, payload: PropInstiInfo });
+
+            setAppCurrentStatus(appId, PropInstiInfo.type_of_institute).then((data)=>{
+              console.log(data);
+            })
+
+            // let newState = dispatch({ type: UPDATE_SET_FEE_STATUS, payload: PropInstiInfo });
+            // console.log(newState);
             Swal.close();
 
             Swal.showLoading();
-            Swal.fire({
-              title: "Fee Payment",
-              text: "You Have Paid Stage-I Fee",
-              icon: "success",
-              confirmButtonText: "Ok, Go Next",
-            }).then((result) => {
-              if (result.isConfirmed) {
-                // User confirmed – now show loading or save directly
-                Swal.fire({
-                  title: "Saving...",
-                  didOpen: () => {
-                    dispatch({ type: "set_filled_step", payload: { step: 4 }, });
-                    dispatch({ type: "reg_set_active_step", payload: { step: 5 } });
-                    setActive(reg.steps[5]);
-                    Swal.close();
-                  },
-                });
-              } else {
-                console.log("User cancelled save");
-              }
-            });
+            // Swal.fire({
+            //   title: "Fee Payment",
+            //   text: "You Have Paid Stage-I Fee",
+            //   icon: "success",
+            //   confirmButtonText: "Ok, Go Next",
+            // }).then((result) => {
+            //   if (result.isConfirmed) {
+            //     // User confirmed – now show loading or save directly
+            //     Swal.fire({
+            //       title: "Saving...",
+            //       didOpen: () => {
+            //         dispatch({ type: "set_filled_step", payload: { step: 4 }, });
+            //         dispatch({ type: "reg_set_active_step", payload: { step: 5 } });
+            //         setActive(reg.steps[5]);
+            //         Swal.close();
+            //       },
+            //     });
+            //   } else {
+            //     console.log("User cancelled save");
+            //   }
+            // });
           },
         });
       } else {

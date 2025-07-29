@@ -10,7 +10,15 @@ import { UPDATE_LAND_INFO } from "../../../../constants";
 
 import { land_info_yupObject } from "../../../../reducers/newAppReducer";
 
+
+import { setInstLandDetails } from "../../../../db/appList";
+import { useLocation } from "react-router-dom";
+
 const DetailsOfTheLandToBeUsedForTheITI = ({ setActive }) => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const appId = queryParams.get("appId");
+  
   const { Formik } = formik;
   const formRef2 = useRef();
   const dispatch = useDispatch();
@@ -39,6 +47,8 @@ const DetailsOfTheLandToBeUsedForTheITI = ({ setActive }) => {
             dispatch({ type: "set_filled_step", payload: { step: 3 }, });
             dispatch({ type: "reg_set_active_step", payload: { step: 4 } });
             setActive(reg.steps[4]);
+            let result = setInstLandDetails(values, appId);
+            console.log(result);
             Swal.close();
           },
         });

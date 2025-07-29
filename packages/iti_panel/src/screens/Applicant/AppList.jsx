@@ -28,13 +28,8 @@ import { useSelector, useDispatch } from "react-redux";
 
 export const AppList = () => {
   const AppliInfo = useSelector((state) => state.AppliInfo);
-  console.log(AppliInfo);
-
-
   const [tableData] = useState([AppliInfo]);
-
   const table = useRef();
-  // console.log(table.current);
 
   return (
     <Fragment>
@@ -133,14 +128,10 @@ export const AppList = () => {
               </tr>
             </thead>
           </DataTable>)}
-
         </Card.Body>
         {/* <Card.Footer>
         </Card.Footer> */}
       </Card>)}
-
-
-
     </Fragment>
   );
 };

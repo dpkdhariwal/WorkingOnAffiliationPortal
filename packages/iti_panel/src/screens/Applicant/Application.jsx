@@ -22,7 +22,7 @@ import { Formik, Field, FieldArray } from "formik";
 
 import { SAVE_APP_CATEGORY } from "../../constants";
 import { addNewApp } from "../../db/appList";
-import {AffiliationCategory} from "../../constants";
+import { AffiliationCategory } from "../../constants";
 const Start = () => {
   const regCategory = useSelector((state) => state.reg.regCategory);
   const appCat = useSelector((state) => state.appCat);
@@ -120,12 +120,10 @@ const SelectCategoryModal = (props) => {
   const saveRegCat = async (values) => {
     const { aff_category, aff_sub_category } = values;
     const obj = { cat: aff_category, sub_cat: aff_sub_category };
-    
-    const result = await addNewApp({ id: Date.now(), cat: aff_category, sub_cat: aff_sub_category, userId:authUser.id});
-    console.log(result);
-    
+    const appId = Date.now() + Math.random();
+
     dispatch({ type: "SAVE_APP_CATEGORY", payload: obj, });
-    navigate("/dashboard/new_registration");
+    navigate(`/dashboard/new_registration?appId=${appId}`);
 
   };
 

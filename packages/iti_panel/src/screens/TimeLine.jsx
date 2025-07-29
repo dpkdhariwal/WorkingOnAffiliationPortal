@@ -11,6 +11,9 @@ import { CompletedStep } from "./Timeline/completed_step";
 import { PendingStep } from "./Timeline/pending_step";
 
 
+import { useContext } from "react";
+import { TimeLineContext } from "../services/context"; // adjust path
+import { getAppFlowByAppId } from "../db/users";
 
 import {
   STAGE_I_FORM_FILLING,
@@ -56,6 +59,7 @@ export const TimeLineFinalTest = () => {
   const AppFlow = useSelector((state) => state.AppliInfo);
 
 
+
   return (
     <Fragment>
       <Card className="border border-primary card custom-card">
@@ -87,20 +91,32 @@ export const TimeLineFinalTest = () => {
 };
 
 
-export const TimeLine = () => {
+export const TimeLine = ({ rowData }) => {
+  // const AppFlow = useSelector((state) => state.AppliInfo);
+  const { row } = useContext(TimeLineContext);
+  const authUser = useSelector((state) => state.loginUserReducer);
+  const [AppFlow, setAppFlow] = useState([]);
 
-  const AppFlow = useSelector((state) => state.AppliInfo);
+  useEffect(() => {
+    let result = getAppFlowByAppId(row.appId);
+    result.then((data) => {
+      setAppFlow(data);
+      console.log(data)
+    })
 
+    console.log(authUser);
+  }, [])
+
+  console.log(AppFlow);
   return (
     <Fragment>
       <AffTimeLine>
-        {AppFlow.app_flow_status.map((info, i) => {
+        {AppFlow.map((info, i) => {
           return (getSetStep(info, i));
         })}
       </AffTimeLine>
       {/* <Card className="border border-primary card custom-card">
         <Card.Body style={{ padding: "0.563rem" }}>
-          
         </Card.Body>
       </Card> */}
     </Fragment>
