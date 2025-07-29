@@ -18,6 +18,13 @@ import * as Yup from "yup";
 import ReqSign from "../new_registration/form/comp/requiredSign"; // Make sure this component exists and is exported correctly
 // import {, OverlayTrigger, Popover, Row, Tooltip } from 'react-bootstrap';
 
+import { useLocation } from "react-router-dom";
+import Swal from "sweetalert2";
+
+import { setAppFlow } from "../../db/users";
+import { NOC_ISSUANCE } from "../../constants";
+
+
 
 export const NocGenerateForm = () => {
   const reg = useSelector((state) => state.reg);
@@ -91,23 +98,23 @@ export const NocForm = () => {
 
   return (
     <>
-    <table
-      width="98%"
-      border={1}
-      style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
-      align="center"
-      cellPadding="5px"
-    >
-      <tbody>
-        <tr>
-          <td colSpan={7} style={{ border: "1px solid black" }}><b>Affiliation Category</b></td>
-        </tr>
-        <tr>
-          <td style={{ colSpan: 2 }}><b>Category:</b> <span>Application from Existing ITIs</span> </td>
-          <td><b>Sub Category:</b> <span>Addition of New Trades/Units</span> </td>
-        </tr>
-      </tbody>
-    </table>
+      <table
+        width="98%"
+        border={1}
+        style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
+        align="center"
+        cellPadding="5px"
+      >
+        <tbody>
+          <tr>
+            <td colSpan={7} style={{ border: "1px solid black" }}><b>Affiliation Category</b></td>
+          </tr>
+          <tr>
+            <td style={{ colSpan: 2 }}><b>Category:</b> <span>Application from Existing ITIs</span> </td>
+            <td><b>Sub Category:</b> <span>Addition of New Trades/Units</span> </td>
+          </tr>
+        </tbody>
+      </table>
       <table
         width="98%"
         border={1}
@@ -363,6 +370,34 @@ const MyVerticallyCenteredModal = (props) => {
   const [loginSuccess, setLoginSuccess] = useState(false);
   const [view, setView] = useState("signin");
 
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const appId = queryParams.get("appId");
+  const generateNocNow = () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to Generate NOC",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes, Generate Now!",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // User confirmed – now show loading or save directly
+        Swal.fire({
+          title: "Saving...",
+          didOpen: () => {
+            Swal.showLoading();
+            setAppFlow(appId, NOC_ISSUANCE);
+            Swal.close();
+          },
+        });
+      } else {
+        console.log("User cancelled save");
+      }
+    });
+  }
+
   return (
     <Modal
       {...props}
@@ -413,7 +448,7 @@ const MyVerticallyCenteredModal = (props) => {
       </Modal.Body>
       <Modal.Footer>
         {/* <Button onClick={props.onHide}>Close</Button> */}
-        <Button onClick={props.onHide}>Generate NOC Now</Button>  
+        <Button onClick={generateNocNow}>Generate NOC Now</Button>
       </Modal.Footer>
     </Modal>
   );

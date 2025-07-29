@@ -3,7 +3,8 @@ import PropTypes from "prop-types";
 import React, { Children, useState, useEffect } from "react";
 
 import * as action from "../action/allActions";
-import { GoToStageIForm, GoToStageIAssessment } from "../action/allActions";
+import { GoToStageIForm, GoToStageIAssessment, GoToNOCGenerateForm, GoToStageIIForm, GoToStageIIAssessment, GoToStageIIStaffDetailForm, GoToInspectionSlotSelection } from "../action/allActions";
+
 
 import {
   STAGE_I_FORM_FILLING,
@@ -156,7 +157,7 @@ export const PendingStep = ({ info, variant }) => {
       case NOC_ISSUANCE:
         switch (info.status) {
           case NOC_ISSUANCE_PENDING:
-            return action.GoToNOCGenerateForm();
+            return authUser.userType === 'state_assessor' ? <GoToNOCGenerateForm info={info} /> : ''
           case NOC_ISSUANCE_ISSUED:
             return <h5>DD</h5>
           case NOC_ISSUANCE_REJECTED:
@@ -170,7 +171,7 @@ export const PendingStep = ({ info, variant }) => {
           case STAGE_II__FILLED:
             return <h5>DD</h5>
           case STAGE_II__PENDING:
-            return action.GoToStageIIForm();
+            return authUser.userType === 'applicant' ? <GoToStageIIForm info={info} /> : ''
           case STAGE_II__ON_PROGRESS:
             return <h5>DD</h5>
           default:
@@ -180,19 +181,20 @@ export const PendingStep = ({ info, variant }) => {
       case STAGE_II_FEE:
         switch (info.status) {
           case STAGE_II__FEE_PENDING:
-            return action.GoToStageIIForm();
-          case STAGE_II__FEE_PAID:
-            return <h5>DD</h5>
-          case STAGE_II__FEE_EXEMPTED:
-            return <h5>DD</h5>
+            return authUser.userType === 'applicant' ? <GoToStageIIForm info={info} /> : ''
+          // // case STAGE_II__FEE_PAID:
+          // //   console.log(info);
+          // //   return <h5>DAD</h5>
+          // case STAGE_II__FEE_EXEMPTED:
+          //   return <h5>DD</h5>
           default:
-            return <h5>DD</h5>
+            return ''
         }
 
       case STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS:
         switch (info.status) {
           case STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_PENDING:
-            return action.GoToStageIIForm();
+            return authUser.userType === 'applicant' ? <GoToStageIIForm info={info} /> : ''
           case STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_COMPLETED:
             return <h5>DD</h5>
           case STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS_ON_PROGRESS:
@@ -204,7 +206,7 @@ export const PendingStep = ({ info, variant }) => {
       case STAGE_II_DOCUMENT_UPLAOD:
         switch (info.status) {
           case STAGE_II__DOCUMENT_PENDING:
-            return action.GoToStageIIForm();
+            return authUser.userType === 'applicant' ? <GoToStageIIForm info={info} /> : ''
           case STAGE_II__DOCUMENT_UPLOADED:
             return <h5>DD</h5>
           default:
@@ -214,7 +216,7 @@ export const PendingStep = ({ info, variant }) => {
       case STAGE_II_SUBMIT:
         switch (info.status) {
           case STAGE_II__SUBMIT_PENDING:
-            return action.GoToStageIIForm();
+            return authUser.userType === 'applicant' ? <GoToStageIIForm info={info} /> : ''
           case STAGE_II__SUBMITED:
             return <h5>DD</h5>
           default:
@@ -225,7 +227,7 @@ export const PendingStep = ({ info, variant }) => {
       case STAGE_II__ASSESSMENT:
         switch (info.status) {
           case STAGE_II__ASSESSMENT_PENDING:
-            return action.GoToStageIIAssessment();
+            return authUser.userType === 'state_assessor' ? <GoToStageIIAssessment info={info} /> : ''
           case STAGE_II__ASSESSMENT_ON_PROGRESS:
             return <h5>DD</h5>
           case STAGE_II__ASSESSMENT_COMPLETED:
@@ -238,7 +240,7 @@ export const PendingStep = ({ info, variant }) => {
       case STAFF_DETAILS:
         switch (info.status) {
           case STAFF_DETAILS_PENDING:
-            return action.GoToStageIIStaffDetailForm();
+            return authUser.userType === 'state_assessor' ? <GoToStageIIStaffDetailForm info={info} /> : ''
           case STAFF_DETAILS_COMPLETED:
             return <h5>DD</h5>
           default:
@@ -248,7 +250,7 @@ export const PendingStep = ({ info, variant }) => {
       case INSP_SLOT_SELECTION:
         switch (info.status) {
           case INSP_SLOT_SELECTION_PENDING:
-            return action.GoToInspectionSlotSelection();
+            return authUser.userType === 'state_assessor' ? <GoToInspectionSlotSelection info={info} /> : ''
           case INSP_SLOT_SELECTION_COMPLETED:
             return <h5>DD</h5>
           default:

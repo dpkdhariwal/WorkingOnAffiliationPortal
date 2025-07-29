@@ -31,11 +31,11 @@ export const GoToStageIAssessment = ({info}) => {
   );
 };
 
-export const GoToNOCGenerateForm = () => {
+export const GoToNOCGenerateForm = ({info}) => {
   const navigate = useNavigate(); // <-- Hook for navigation
 
   const goNow = () => {
-    navigate("/dashboard/generateNOC"); // <-- Your route here
+    navigate(`/dashboard/generateNOC?appId=${info.appId}`); // <-- Your route here
   };
 
   return (
@@ -47,11 +47,13 @@ export const GoToNOCGenerateForm = () => {
 
 
 
-export const GoToStageIIForm = () => {
+export const GoToStageIIForm = ({info}={}) => {
   const navigate = useNavigate(); // <-- Hook for navigation
 
+  console.log(info);
+
   const goNow = () => {
-    navigate("/dashboard/form_stageII"); // <-- Your route here
+    navigate(`/dashboard/form_stageII?appId=${info?.appId}`); // <-- Your route here
   };
 
   return (

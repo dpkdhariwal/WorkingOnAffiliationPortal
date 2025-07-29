@@ -46,9 +46,9 @@ const getSetStep = (info, i) => {
     case 'pending':
       return <AffTimeLineItem variant="pending" key={i}><PendingStep info={info} /></AffTimeLineItem>
     case 'on-progress':
-      return <AffTimeLineItem variant="inProgress" key={i}><PendingStep variant="inProgress" info={info} /></AffTimeLineItem>
+      return <AffTimeLineItem variant="inProgress" key={i}><PendingStep  info={info}variant="inProgress"  /></AffTimeLineItem>
     case 'completed':
-      return <AffTimeLineItem variant="completed" key={i}><CompletedStep variant="completed" info={info} /></AffTimeLineItem>
+      return <AffTimeLineItem variant="completed" key={i}><CompletedStep info={info} variant="completed"  /></AffTimeLineItem>
     default:
       return <h5>Something Went Wrong</h5>;
   }
@@ -81,6 +81,7 @@ export const TimeLineFinalTest = () => {
           </div>
           <AffTimeLine>
             {AppFlow.app_flow_status.map((info, i) => {
+              console.log(info);
               return (getSetStep(info, i));
             })}
           </AffTimeLine>
@@ -112,6 +113,8 @@ export const TimeLine = ({ rowData }) => {
     <Fragment>
       <AffTimeLine>
         {AppFlow.map((info, i) => {
+          
+          console.log(info);
           return (getSetStep(info, i));
         })}
       </AffTimeLine>

@@ -1206,3 +1206,85 @@ export const SAMPLE_USERS = [
 ];
 
 //------------------------------------------//
+
+export const FILLED = "FILLED";
+export const NOT_FILLED = "NOT_FILLED";
+
+export const BUILDING_DETAIL = "Building Detail";
+export const CIVIL_INFRASTRUCTURE_DETAIL = "Civil Infrastructure Detail";
+export const AMENITIES_AREA = "Amenities Area";
+
+export const SIGNAGE_BOARDS = "Signage Boards";
+export const ELECTRICITY_CONNECTION_DETAILS = "Electricity Connection Details";
+export const FEE_PAYMENT_FOR_STAGEII = "Fee Payment For StageII";
+export const TRADEWISE_MACHINERY__TOOLS__EQUIPMENT_DETAILS =
+  "Tradewise Machinery/Tools/Equipment Details";
+export const DOCUMENT_UPLOADS = "Document Uploads";
+
+export const STAGE_II_APP_FORM_FLOW = [
+  {
+    stepNo: 1,
+    step: BUILDING_DETAIL,
+    status: FILLED, // NOT_FILLED
+    stepTitle: "Building Detail",
+    nextStep: CIVIL_INFRASTRUCTURE_DETAIL,
+  },
+  {
+    stepNo: 2,
+    step: CIVIL_INFRASTRUCTURE_DETAIL,
+    status: FILLED, // NOT_FILLED
+    stepTitle: "Civil Infrastructure Detail",
+    nextStep: AMENITIES_AREA,
+    subSteps: [
+      {
+        stepNo: 1,
+        step: "Tradewise Workshop",
+        status: FILLED, // NOT_FILLED
+        stepTitle: "Tradewise Workshop",
+        nextStep: null,
+      },
+    ],
+  },
+  {
+    stepNo: 3,
+    step: AMENITIES_AREA,
+    status: FILLED, // NOT_FILLED
+    stepTitle: "Amenities Area",
+    nextStep: SIGNAGE_BOARDS,
+  },
+  {
+    stepNo: 4,
+    step: SIGNAGE_BOARDS,
+    status: FILLED, // NOT_FILLED
+    stepTitle: "Signage Boards",
+    nextStep: ELECTRICITY_CONNECTION_DETAILS,
+  },
+  {
+    stepNo: 5,
+    step: ELECTRICITY_CONNECTION_DETAILS,
+    status: FILLED, // NOT_FILLED
+    stepTitle: "Electricity Connection Details",
+    nextStep: FEE_PAYMENT_FOR_STAGEII,
+  },
+  {
+    stepNo: 6,
+    step: FEE_PAYMENT_FOR_STAGEII,
+    status: FILLED, // NOT_FILLED
+    stepTitle: "Fee Payment For StageII",
+    nextStep: TRADEWISE_MACHINERY__TOOLS__EQUIPMENT_DETAILS,
+  },
+  {
+    stepNo: 7,
+    step: TRADEWISE_MACHINERY__TOOLS__EQUIPMENT_DETAILS,
+    status: FILLED, // NOT_FILLED
+    stepTitle: "Tradewise Machinery/Tools/Equipment Details",
+    nextStep: null,
+  },
+  {
+    stepNo: 8,
+    step: DOCUMENT_UPLOADS,
+    status: FILLED, // NOT_FILLED
+    stepTitle: "Document Uploads",
+    nextStep: null,
+  },
+];

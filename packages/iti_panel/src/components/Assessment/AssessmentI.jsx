@@ -2,7 +2,7 @@ import React, { Fragment, useRef, useState, useEffect } from "react";
 import Pageheader from "../../layouts/Pageheader";
 import SplitPane, { Pane } from "split-pane-react";
 import "split-pane-react/esm/themes/default.css";
-import { Card, Badge, Row, Col, Form, Tab, Nav } from "react-bootstrap";
+import { Card, Badge, Row, Col, Form, Tab, Nav, Button } from "react-bootstrap";
 import "./Resizer.css"; // Import your CSS file for custom styles
 
 import { Assessment_Basic_Detail } from "../new_registration/form/stegeI/BasicDetailsofApplicantOrganization";
@@ -19,7 +19,15 @@ import { LandDocuments } from "../new_registration/form/stegeI/view/stage_1/deta
 
 
 import { Documents } from "../new_registration/form/stegeI/view/stage_1/detail_of_proposed_institute/assessment_view/documents"
+import { Form as BootstrapForm } from "react-bootstrap";
 
+import { useContext } from "react";
+import * as formik from "formik";
+import * as yup from "yup";
+import { useLocation } from "react-router-dom";
+import Swal from "sweetalert2";
+
+import { useSelector, useDispatch } from "react-redux";
 
 import {
   BuildingPlanView,
@@ -47,6 +55,9 @@ import AssessmentCivilInfraStruction from "./stage-II/AssessmentCivilInfraStruct
 
 const LINE_HEIGHT = 400;
 
+
+import {setAppFlow} from "../../db/users";
+import {STAGE_I__ASSESSMENT} from "../../constants";
 
 const Assessment = () => {
   const BuildingDetail = [
@@ -300,7 +311,7 @@ const Assessment = () => {
                   Assessment
                 </Nav.Link>{" "}
               </Nav.Item>
-              <Nav.Item>
+              {/* <Nav.Item>
                 {" "}
                 <Nav.Link
                   eventKey="SendToApplicant"
@@ -310,7 +321,7 @@ const Assessment = () => {
                   <i className="ri-file-line me-1 align-middle"></i>Send to
                   Applicant
                 </Nav.Link>{" "}
-              </Nav.Item>
+              </Nav.Item> */}
             </Nav>
 
             <Tab.Content id="myTabContent">
@@ -389,6 +400,11 @@ const Assessment = () => {
                 <Assessment_DetailsOfDocumentsToBeUploaded />
                 <LandDocuments />
                 <Documents />
+
+
+                <MarkAsCompleteStageIAssessment />
+
+
               </Tab.Pane>
             </Tab.Content>
           </Tab.Container>
@@ -399,3 +415,65 @@ const Assessment = () => {
 };
 
 export default Assessment;
+
+
+const MarkAsCompleteStageIAssessment = () => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const appId = queryParams.get("appId");
+
+  const dispatch = useDispatch();
+  const reg = useSelector((state) => state.reg);
+  const stepInfo = reg.steps[0];
+  const [district, setDistrict] = useState([]);
+
+  const EntityDetails = useSelector((state) => state.EntityDetails);
+  const AppliInfo = useSelector((state) => state.AppliInfo);
+  const authUser = useSelector((state) => state.loginUserReducer);
+
+
+  const { Formik } = formik;
+  const formRef2 = useRef();
+
+  const submit = () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to Mark Comlete Stage I Document Verification",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes, Mark it!",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // User confirmed – now show loading or save directly
+        Swal.fire({
+          title: "Saving...",
+          didOpen: () => {
+
+              setAppFlow(appId, STAGE_I__ASSESSMENT);
+
+            // Swal.showLoading();
+            // dispatch({ type: UPDATE_ENTITY_DETAILS, payload: values });
+            // dispatch({ type: "set_filled_step", payload: { step: 0 }, });
+            // dispatch({ type: "reg_set_active_step", payload: { step: 1 } });
+            // setActive(reg.steps[1]);
+            // console.log(authUser);
+            // setEntityDetails(values, authUser, appId);
+            // Swal.close();
+          },
+        });
+      } else {
+        console.log("User cancelled save");
+      }
+    });
+  };
+
+  return (
+    <Fragment>
+
+        <div className="d-flex justify-content-end mb-3 " style={{marginTop:'15px'}}>
+                 <Button onClick={submit} className="btn-success" size="lg">Mark as Complete Stage I Document Verfication</Button>
+                </div>
+    </Fragment>
+  );
+};

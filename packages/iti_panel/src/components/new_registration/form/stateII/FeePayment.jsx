@@ -10,9 +10,18 @@ import { ViewApplication } from "./Modal/view_application";
 import { Form as BootstrapForm } from 'react-bootstrap';
 
 import { UPDATE_STAGE_II_SET_FEE_STATUS } from "../../../../constants";
-import { STAGE_II__FEE_PAID, STAGE_II__FEE_EXEMPTED } from "../../../../constants";
+import { STAGE_II__FEE_PAID, STAGE_II__FEE_EXEMPTED, STAGE_II_FEE } from "../../../../constants";
+import { useLocation } from "react-router-dom";
+
+import { getStepStatus, getProposedInstDetailsByUserId, setAppFlow } from "../../../../db/users";
+
 
 const FeePayment = ({ setActive }) => {
+
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const appId = queryParams.get("appId");
+
   const PropInstiInfo = useSelector((state) => state.ProposedInstituteInfo);
 
   const [isHidden, setisHidden] = useState([true]);
@@ -45,7 +54,8 @@ const FeePayment = ({ setActive }) => {
 
   const submit = (values) => {
     console.log(PropInstiInfo);
-    dispatch({ type: UPDATE_STAGE_II_SET_FEE_STATUS, payload: PropInstiInfo });
+      setAppFlow(appId, STAGE_II_FEE);
+    // dispatch({ type: UPDATE_STAGE_II_SET_FEE_STATUS, payload: PropInstiInfo });
     dispatch({ type: "set_filled_step_II", payload: { step: 5 }, });
     dispatch({ type: "reg_set_active_stepII", payload: { step: 6 } });
     setActive(reg.stepsII[6]);
@@ -53,11 +63,25 @@ const FeePayment = ({ setActive }) => {
 
   const AppliInfo = useSelector((state) => state.AppliInfo);
 
+  const [stepInfo, setStepInfo] = useState({});
+  const [proInstiInfo, setProInstiInfo] = useState({});
+
+
+  useEffect(() => {
+    getStepStatus(appId, STAGE_II_FEE).then((data) => {
+      console.log(data[0]);
+      setStepInfo(data[0]);
+    });
+    getProposedInstDetailsByUserId(appId).then((data) => {
+      console.log(data);
+      setProInstiInfo(data);
+    })
+  }, [])
+
+
   return (
     <Fragment>
-      {AppliInfo.stage_II_fee_status === STAGE_II__FEE_PAID ? (<StageIIPaidInfo/>) : AppliInfo.stage_II_fee_status === STAGE_II__FEE_EXEMPTED ? (<StageIIExemtedInfo/>) :
-
-
+      {stepInfo.status === STAGE_II__FEE_PAID ? (<StageIIPaidInfo />) : stepInfo.status === STAGE_II__FEE_EXEMPTED ? (<StageIIExemtedInfo />) :
         <Formik
           innerRef={formikRef}
 
@@ -109,7 +133,7 @@ const FeePayment = ({ setActive }) => {
                 </div>
 
 
-                {PropInstiInfo.type_of_institute === "Government" ? (<Card
+                {proInstiInfo?.pro_insti_details?.type_of_institute === "Government" ? (<Card
                   className="custom-card border border-primary"
                   style={{ marginTop: "1rem" }}
                 >
@@ -158,76 +182,78 @@ const FeePayment = ({ setActive }) => {
                       </ol>
                     </p>
                   </Card.Body>
-                </Card>) : PropInstiInfo.type_of_institute === "Private" ? (<Card
-                  className="custom-card border border-primary"
-                  style={{ marginTop: "1rem" }}
-                >
-                  <Card.Header>
-                    <div className="card-title" style={{ textTransform: "none" }}>
-                      Terms and Conditions
-                    </div>
-                  </Card.Header>
-                  <Card.Body>
-                    <p>
-                      Note:
-                      <ol>
-                        {/* <li>
+                </Card>)
+                  :
+                  proInstiInfo?.pro_insti_details?.type_of_institute === "Private" ? (
+                    <Card
+                      className="custom-card border border-primary"
+                      style={{ marginTop: "1rem" }}
+                    >
+                      <Card.Header>
+                        <div className="card-title" style={{ textTransform: "none" }}>
+                          Terms and Conditions
+                        </div>
+                      </Card.Header>
+                      <Card.Body>
+                        <p>
+                          Note:
+                          <ol>
+                            {/* <li>
                                      Government ITIs are exempted from all registration fee
                                      for affiliation and accreditation, including conversions
                                      from SCVT to NCVET.
                                    </li> */}
-                        <li>
-                          The above rates may be revised by the DGT at any time,
-                          subject to approval from the competent authority.
-                        </li>
-                        <li>
-                          No fee shall be charged for applications submitted under
-                          the Renewal of Affiliation of ITI and Affiliation for
-                          DST application.
-                        </li>
-                        <li>
-                          All payments must be made exclusively through the online
-                          payment gateway system provided on portal.
-                        </li>
-                        <li>
-                          The above-mentioned registration fee is non-refundable,
-                          even if the application is rejected at any stage.
-                        </li>
-                        <li>
-                          State/UT Directorates may levy additional fee in
-                          accordance with their respective norms and guidelines,
-                          including for issuing the NOC. These State-specific fee
-                          will be collected by the respective State/UT
-                          directorates through their designated platforms or
-                          payment modes before the issuance of the NOC. The
-                          responsibility for determining and collecting this fee,
-                          if any rests solely with the State, with no intervention
-                          from the Directorate General of Training (DGT).
-                        </li>
-                      </ol>
-                      <p>
-                        {" "}
-                        The payment of fee merely does not guarantee the granting
-                        of affiliation. The institute must strictly adhere to the
-                        prescribed procedures, norms, and guidelines for
-                        affiliation and accreditation.
-                      </p>
-                    </p>
-                  </Card.Body>
+                            <li>
+                              The above rates may be revised by the DGT at any time,
+                              subject to approval from the competent authority.
+                            </li>
+                            <li>
+                              No fee shall be charged for applications submitted under
+                              the Renewal of Affiliation of ITI and Affiliation for
+                              DST application.
+                            </li>
+                            <li>
+                              All payments must be made exclusively through the online
+                              payment gateway system provided on portal.
+                            </li>
+                            <li>
+                              The above-mentioned registration fee is non-refundable,
+                              even if the application is rejected at any stage.
+                            </li>
+                            <li>
+                              State/UT Directorates may levy additional fee in
+                              accordance with their respective norms and guidelines,
+                              including for issuing the NOC. These State-specific fee
+                              will be collected by the respective State/UT
+                              directorates through their designated platforms or
+                              payment modes before the issuance of the NOC. The
+                              responsibility for determining and collecting this fee,
+                              if any rests solely with the State, with no intervention
+                              from the Directorate General of Training (DGT).
+                            </li>
+                          </ol>
+                          <p>
+                            {" "}
+                            The payment of fee merely does not guarantee the granting
+                            of affiliation. The institute must strictly adhere to the
+                            prescribed procedures, norms, and guidelines for
+                            affiliation and accreditation.
+                          </p>
+                        </p>
+                      </Card.Body>
 
-                </Card>) : ''}
-
-
-
+                    </Card>)
+                    :
+                    ''}
 
               </Card.Body>
               <Card.Footer className="d-flex justify-content-end">
-                {PropInstiInfo.type_of_institute === "Government" ? (
+                {proInstiInfo?.pro_insti_details?.type_of_institute === "Government" ? (
                   <Button size="lg" variant="facebook" onClick={() => formikRef.current?.submitForm()}
                   >
                     Save & Next
                   </Button>
-                ) : PropInstiInfo.type_of_institute === "Private" ? (
+                ) : proInstiInfo?.pro_insti_details?.type_of_institute === "Private" ? (
                   <Button size="lg" variant="instagram" onClick={() => formikRef.current?.submitForm()} >
                     Pay
                   </Button>
@@ -305,7 +331,7 @@ export const StageIIExemtedInfo = () => {
           </Card.Body>
           <Card.Footer>
             <div className="d-flex justify-content-between mb-3">
-              <Button 
+              <Button
                 className="p-2" variant="warning">
                 Previous
               </Button>
@@ -342,7 +368,7 @@ export const StageIIPaidInfo = () => {
                 <div className="jumbotron">
                   <h1 className="display-4"> ✅ Payment Successfully Stage-II Completed</h1>
                   <p className="lead">
-                    Thank you, for submitting your Application. <br/> 
+                    Thank you, for submitting your Application. <br />
                     Your Registration for Stage-II has been completed. You can now Sumibt Machinery, Tools, Equipment Details
 
                   </p>
@@ -397,7 +423,7 @@ export const StageIIPaidInfo = () => {
           </Card.Body>
           <Card.Footer>
             <div className="d-flex justify-content-between mb-3">
-              <Button 
+              <Button
                 className="p-2" variant="warning">
                 Previous
               </Button>

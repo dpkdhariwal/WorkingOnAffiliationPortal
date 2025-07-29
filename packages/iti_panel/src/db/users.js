@@ -32,6 +32,10 @@ import {
   INSP_SLOT_SELECTION,
   INSP_SHEDULE,
   STAGE_I__FILLED,
+  STAGE_I__ASSESSMENT_COMPLETED,
+  NOC_ISSUANCE_ISSUED,
+  STAGE_II__PENDING,
+  STAGE_II__FEE_PAID
 } from "../constants";
 import { initDB } from "./db";
 
@@ -122,7 +126,7 @@ export const getAppListByStateAssessor = async (AuthUser) => {
     })
   );
 
-  
+
   return enrichedApps; // Now includes full entity details, not Promises
 };
 
@@ -285,12 +289,33 @@ export const setAppFlow = async (appId, step, type_of_institute = null) => {
       setActiveAppFlowNextStep(appId, data2.nextStep);
       break;
     case STAGE_I__ASSESSMENT:
+      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [ appId, STAGE_I__ASSESSMENT, ]);
+      data = data[0];
+      data = { ...data, status: STAGE_I__ASSESSMENT_COMPLETED, stepStatus: "completed" };
+      await db.put(APP_FLOW, data);
+      setActiveAppFlowNextStep(appId, data.nextStep);
       break;
     case NOC_ISSUANCE:
+      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [ appId, NOC_ISSUANCE, ]);
+      data = data[0];
+      data = { ...data, status: NOC_ISSUANCE_ISSUED, stepStatus: "completed" };
+      await db.put(APP_FLOW, data);
+      setActiveAppFlowNextStep(appId, data.nextStep);
       break;
     case STAGE_II_FORM_FILLING:
+      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [appId, STAGE_II_FORM_FILLING,]);
+      data = data[0];
+      data = { ...data, status: STAGE_II__PENDING, stepStatus: "completed" };
+      await db.put(APP_FLOW, data);
+      setActiveAppFlowNextStep(appId, data.nextStep);
       break;
     case STAGE_II_FEE:
+      setAppFlow(appId, STAGE_II_FORM_FILLING);
+      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [appId, STAGE_II_FEE,]);
+      data = data[0];
+      data = { ...data, status: STAGE_II__FEE_PAID, stepStatus: "completed" };
+      await db.put(APP_FLOW, data);
+      setActiveAppFlowNextStep(appId, data.nextStep);
       break;
     case STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS:
       break;
@@ -604,4 +629,9 @@ export const setActiveAppFlowNextStep = async (appId, nextStep) => {
     default:
       break;
   }
+};
+
+export const getStepStatus = async (appId, step) => {
+  const db = await initDB();
+  return await db.getAllFromIndex(APP_FLOW, "appId_step", [ appId, step]);
 };
