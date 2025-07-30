@@ -824,11 +824,13 @@ export const Building_Detail_initialValues = {
   language_for_building_plan: "",
   document_of_building_plan: "",
   notarised_document_of_building_plan: "",
+  
   language_for_building_completion_certificate: "",
   building_completion_certificate: "",
   notarised_document_of_bcc: "",
   name_of_bcc_issued_authority: "",
   date_of_bcc_issued: "",
+  
   front_view_photo_of_building: "",
   side_view_photo_of_building: "",
   entrance_gate_photo_of_plot_with_signage_board: "",

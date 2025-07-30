@@ -3,8 +3,17 @@ import { Button, Form, Alert } from "react-bootstrap";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
+import { setAppFlow } from "../../db/users";
+import { INSP_SLOT_SELECTION } from "../../constants";
+import { useLocation } from "react-router-dom";
+
 export const InspectionSlotSelection = () => {
-  
+
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const appId = queryParams.get("appId");
+
+
   const [selectedDates, setSelectedDates] = useState([]);
   const [selectedSlots, setSelectedSlots] = useState([]);
   const [error, setError] = useState("");
@@ -28,6 +37,9 @@ export const InspectionSlotSelection = () => {
 
   // Generate all dates for a slot within the correct month
   const generateSlotDates = (slotKey) => {
+
+
+
     const range = slotDateRanges[slotKey];
     const today = new Date();
 
@@ -123,6 +135,9 @@ export const InspectionSlotSelection = () => {
     }
 
     setError("");
+
+
+    setAppFlow(appId, INSP_SLOT_SELECTION)
     alert(
       `✅ Slots (${selectedSlots
         .map((s) => slotLabels[s])
@@ -197,7 +212,7 @@ export const InspectionSlotSelection = () => {
 
         {/* Confirmation Checkbox */}
         <Form.Group className="mb-3 ms-4">
-          <Form.Check 
+          <Form.Check
             type="checkbox"
             id="confirmCheckbox"
             label="I confirm that I have reviewed my application and I am ready to submit"

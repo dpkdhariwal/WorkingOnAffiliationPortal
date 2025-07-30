@@ -28,6 +28,11 @@ import MTE from "./component/machinery_form";
 import ReqSign from "../comp/requiredSign";
 
 import { STAGE_II__FEE_PAID, STAGE_II__FEE_EXEMPTED } from "../../../../constants";
+import { useLocation } from "react-router-dom";
+
+import { STAGE_II_DOCUMENT_UPLAOD } from "../../../../constants";
+
+import { setAppFlow } from "../../../../db/users";
 
 const schema = yup.object().shape({
   land_documents: yup.array().of(
@@ -462,6 +467,13 @@ const MyVerticallyCenteredModal = (props) => {
   const [loginSuccess, setLoginSuccess] = useState(false);
   const [view, setView] = useState("signin");
 
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const appId = queryParams.get("appId");
+const markascomplete = () => {
+    setAppFlow(appId, STAGE_II_DOCUMENT_UPLAOD);
+
+  }
   return (
     <Modal
       {...props}
@@ -488,7 +500,7 @@ const MyVerticallyCenteredModal = (props) => {
       </Modal.Body>
       <Modal.Footer>
         {/* <Button onClick={props.onHide}>Close</Button> */}
-        <Button onClick={props.submitNow}>Submit Now</Button>
+        <Button onClick={markascomplete}>Submit Now</Button>
       </Modal.Footer>
     </Modal>
   );

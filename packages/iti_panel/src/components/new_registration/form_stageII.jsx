@@ -18,6 +18,7 @@ import DocumentUploads from "./form/stateII/DocumentUploads";
 import FeePayment from "./form/stateII/FeePayment";
 import {Amenities} from "./form/stateII/Amenities";
 import {SignageBoards} from "./form/stateII/SignageBoards";
+import {FormStageII} from "../../screens/application forms/stage_II_with_stepper";
 const New_registration = () => {
   const reg = useSelector((state) => state.reg);
   const [activeStep, setActiveStep] = useState(reg.stepsII[0]);
@@ -33,6 +34,18 @@ const New_registration = () => {
         parentfolder="Dashboard"
         activepage="Stage-II Application Form"
       />
+
+      <FormStageII/>
+
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      <br/>
+      
+
       <Stepper>
         {reg.stepsII.map((item, index) => {
           console.log(item); // Valid logging outside JSX

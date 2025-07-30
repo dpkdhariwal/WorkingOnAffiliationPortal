@@ -19,6 +19,14 @@ import ReqSign from "./form/comp/requiredSign"; // Make sure this component exis
 // import {, OverlayTrigger, Popover, Row, Tooltip } from 'react-bootstrap';
 import { v4 as uuidv4 } from "uuid";
 
+import {STAFF_DETAILS} from "../../constants";
+
+import { useContext } from "react";
+import * as formik from "formik";
+import * as yup from "yup";
+import { useLocation } from "react-router-dom";
+import Swal from "sweetalert2";
+import {setAppFlow} from "../../db/users";
 
 export const AddStaffDetail = () => {
   const reg = useSelector((state) => state.reg);
@@ -652,6 +660,11 @@ const MyVerticallyCenteredModal = (props) => {
   const [loginSuccess, setLoginSuccess] = useState(false);
   const [view, setView] = useState("signin");
 
+
+  const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const appId = queryParams.get("appId");
+
   return (
     <Modal
       {...props}
@@ -661,11 +674,12 @@ const MyVerticallyCenteredModal = (props) => {
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter" as="h6">
-          Generate NOC Now
+          Confirm
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {/* className="mt-5" */}
+        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+        {false && (<>{/* className="mt-5" */}
         <div >
           <h3 className="mb-3">
             Creative <span className="text-primary">Design</span> for a
@@ -698,11 +712,11 @@ const MyVerticallyCenteredModal = (props) => {
         {renderOtpInputs(emailOtp, setEmailOtp, emailOtpRefs, setEmailOtpComplete)}
         <div className="text-muted mt-2" style={{ fontSize: "0.9rem" }}>
           {emailTimer > 0 ? `New OTP will be generated after ${emailTimer}s` : ""}
-        </div>
+        </div></>)}
       </Modal.Body>
       <Modal.Footer>
         {/* <Button onClick={props.onHide}>Close</Button> */}
-        <Button onClick={props.onHide}>Generate NOC Now</Button>
+        <Button onClick={()=>{setAppFlow(appId, STAFF_DETAILS)}}>Save & Next</Button>
       </Modal.Footer>
     </Modal>
   );

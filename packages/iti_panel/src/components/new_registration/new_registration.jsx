@@ -25,6 +25,8 @@ import { STAGE_I__FEE_PAID, STAGE_I__FEE_EXEMPTED, STAGE_I__SUBMIT_PENDING, STAG
 import { AppStatusContext } from "../../services/context";
 import { getAppCurrentStatus } from "../../db/users";
 
+import {StageIForm} from "./stage_I_with_stepper";
+
 const New_registration = () => {
   const reg = useSelector((state) => state.reg);
   const [activeStep, setActiveStep] = useState(reg.steps[0]);
@@ -57,6 +59,20 @@ const New_registration = () => {
           parentfolder="Dashboard"
           activepage="New Registration"
         />
+
+        <StageIForm/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        
+
+
         <Stepper>
           {reg.steps.map((item, index) => {
             return (

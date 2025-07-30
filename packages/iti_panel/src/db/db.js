@@ -17,6 +17,11 @@ import {
   LAND_OWNED_LANDS_DETAILS,
   LAND_LEASED_LANDS_DETAILS,
   APP_FLOW,
+  BLD_BUILDING_PLAN,
+  APP_FORM_FLOW_STAGE_II,
+  APP_FORM_SUB_CIVIL_INFRA,
+  BLD_BCC,
+  BLD_PHOTOS,
 } from "../constants";
 
 export const initDB = async () => {
@@ -101,6 +106,47 @@ export const initDB = async () => {
 
       if (!db.objectStoreNames.contains(APP_FLOW)) {
         const userStore = db.createObjectStore(APP_FLOW, {
+          keyPath: "id",
+        });
+        userStore.createIndex("appId", "appId", { unique: false });
+        userStore.createIndex("userId", "userId", { unique: false });
+        userStore.createIndex("appId_step", ["appId", "step"]); // compound index
+      }
+
+      if (!db.objectStoreNames.contains(APP_FORM_FLOW_STAGE_II)) {
+        const userStore = db.createObjectStore(APP_FORM_FLOW_STAGE_II, {
+          keyPath: "id",
+        });
+        userStore.createIndex("appId", "appId", { unique: false });
+        userStore.createIndex("userId", "userId", { unique: false });
+        userStore.createIndex("appId_step", ["appId", "step"]); // compound index
+      }
+
+      if (!db.objectStoreNames.contains(BLD_BUILDING_PLAN)) {
+        const userStore = db.createObjectStore(BLD_BUILDING_PLAN, {
+          keyPath: "id",
+        });
+        userStore.createIndex("appId", "appId", { unique: false });
+        userStore.createIndex("userId", "userId", { unique: false });
+      }
+
+      if (!db.objectStoreNames.contains(BLD_BCC)) {
+        const userStore = db.createObjectStore(BLD_BCC, {
+          keyPath: "id",
+        });
+        userStore.createIndex("appId", "appId", { unique: false });
+        userStore.createIndex("userId", "userId", { unique: false });
+      }
+      if (!db.objectStoreNames.contains(BLD_PHOTOS)) {
+        const userStore = db.createObjectStore(BLD_PHOTOS, {
+          keyPath: "id",
+        });
+        userStore.createIndex("appId", "appId", { unique: false });
+        userStore.createIndex("userId", "userId", { unique: false });
+      }
+
+      if (!db.objectStoreNames.contains(APP_FORM_SUB_CIVIL_INFRA)) {
+        const userStore = db.createObjectStore(APP_FORM_SUB_CIVIL_INFRA, {
           keyPath: "id",
         });
         userStore.createIndex("appId", "appId", { unique: false });

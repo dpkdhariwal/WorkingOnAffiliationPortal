@@ -14,6 +14,16 @@ import {
   LAND_OWNED_LANDS_DETAILS,
   LAND_LEASED_LANDS_DETAILS,
   APP_FLOW,
+  STAGE_II_APP_FORM_FLOW,
+  APP_FORM_FLOW_STAGE_II,
+  APP_FORM_SUB_CIVIL_INFRA,
+  BUILDING_DETAIL,
+  FRONT_VIEW_PHOTO_OF_BUILDING,
+  SIDE_VIEW_PHOTO_OF_BUILDING,
+  ENTRANCE_GATE_PHOTO_OF_PLOT_WITH_SIGNAGE_BOARD,
+  BLD_BUILDING_PLAN,
+  BLD_BCC,
+  BLD_PHOTOS,
 } from "../constants";
 
 import { initDB } from "./db";
@@ -312,7 +322,6 @@ export const setInstLandDetails = async (data, appId) => {
 
 export const setAppFlow = async (authUser, appId) => {
   const db = await initDB();
-
   AppFlow.forEach(async (flow) => {
     const flowData = {
       ...flow,
@@ -322,4 +331,113 @@ export const setAppFlow = async (authUser, appId) => {
     };
     await db.put(APP_FLOW, flowData);
   });
+
+  set_stage_ii_form_flow(authUser, appId);
+};
+
+// Stage II
+export const set_stage_ii_form_flow = async (authUser, appId) => {
+  const db = await initDB();
+  STAGE_II_APP_FORM_FLOW.forEach(async (flow) => {
+    const flowData = {
+      ...flow,
+      id: Date.now() + Math.random(),
+      appId: appId,
+      userId: authUser.id,
+    };
+    await db.put(APP_FORM_FLOW_STAGE_II, flowData);
+
+    if ("subSteps" in flow) {
+      switch (flow.step) {
+        case BUILDING_DETAIL:
+          flowData.subSteps.forEach(async (flow) => {
+            const flowData = {
+              ...flow,
+              id: Date.now() + Math.random(),
+              appId: appId,
+              userId: authUser.id,
+            };
+            await db.put(APP_FORM_SUB_CIVIL_INFRA, flowData);
+          });
+          break;
+
+        default:
+          break;
+      }
+    }
+  });
+};
+
+export const setBuildingDetail = async (data, authUser, appId) => {
+  const db = await initDB();
+
+  const Building_Detail = (({
+    language_for_building_plan,
+    document_of_building_plan,
+    notarised_document_of_building_plan,
+  }) => ({
+    language_for_building_plan,
+    document_of_building_plan,
+    notarised_document_of_building_plan,
+  }))(data);
+
+  const bld_bcc = (({
+    language_for_building_completion_certificate,
+    building_completion_certificate,
+    notarised_document_of_bcc,
+    name_of_bcc_issued_authority,
+    date_of_bcc_issued,
+  }) => ({
+    language_for_building_completion_certificate,
+    building_completion_certificate,
+    notarised_document_of_bcc,
+    name_of_bcc_issued_authority,
+    date_of_bcc_issued,
+  }))(data);
+
+  const bld_photos = (({
+    front_view_photo_of_building,
+    side_view_photo_of_building,
+    entrance_gate_photo_of_plot_with_signage_board,
+  }) => ({
+    front_view_photo_of_building,
+    side_view_photo_of_building,
+    entrance_gate_photo_of_plot_with_signage_board,
+  }))(data);
+  // Prepare Photo in Row
+  const photo_list = [
+    {
+      photo_view: FRONT_VIEW_PHOTO_OF_BUILDING,
+      photo_pth: bld_photos.front_view_photo_of_building,
+    },
+    {
+      photo_view: SIDE_VIEW_PHOTO_OF_BUILDING,
+      photo_pth: bld_photos.side_view_photo_of_building,
+    },
+    {
+      photo_view: ENTRANCE_GATE_PHOTO_OF_PLOT_WITH_SIGNAGE_BOARD,
+      photo_pth: bld_photos.entrance_gate_photo_of_plot_with_signage_board,
+    },
+  ];
+
+  await db.put(BLD_BUILDING_PLAN, {
+    ...Building_Detail,
+    id: Date.now() + Math.random(),
+    appId: appId,
+  });
+
+  await db.put(BLD_BCC, {
+    ...bld_bcc,
+    id: Date.now() + Math.random(),
+    appId: appId,
+  });
+
+  for (let index = 0; index <= photo_list.length; index++) {
+    const photo = photo_list[index];
+    await db.put(BLD_PHOTOS, {
+      ...photo,
+      id: Date.now() + Math.random(),
+      appId: appId,
+    });
+  }
 };

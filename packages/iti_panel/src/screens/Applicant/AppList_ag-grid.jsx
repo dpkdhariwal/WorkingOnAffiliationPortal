@@ -16,7 +16,7 @@ import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import { GetSetAppAction } from "../../screens/action/getSetAppAction";
 
 // import { getAppsByUserId } from "../../db/appList";
-import { getAppListByUserId, getAppListByStateAssessor } from "../../db/users";
+import { getAppListByUserId, getAppListByStateAssessor, getAppListByRdsde } from "../../db/users";
 
 
 export const PrimeReactDT = () => {
@@ -39,6 +39,13 @@ export const PrimeReactDT = () => {
           data.sort((a, b) => a.stepNo - b.stepNo);
           setProducts(data);
           console.log(data);
+        });
+        break;
+
+      case 'rdsde':
+        getAppListByRdsde(user).then((data) => {
+          data.sort((a, b) => a.stepNo - b.stepNo);
+          setProducts(data);
         });
         break;
 

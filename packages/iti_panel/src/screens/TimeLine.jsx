@@ -113,8 +113,6 @@ export const TimeLine = ({ rowData }) => {
     <Fragment>
       <AffTimeLine>
         {AppFlow.map((info, i) => {
-          
-          console.log(info);
           return (getSetStep(info, i));
         })}
       </AffTimeLine>

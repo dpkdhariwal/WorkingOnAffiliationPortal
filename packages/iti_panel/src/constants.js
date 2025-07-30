@@ -823,7 +823,7 @@ export const STAFF_DETAILS_COMPLETED = "STAFF_DETAILS_COMPLETED";
 export const INSP_SLOT_SELECTION = "INSP_SLOT_SELECTION";
 export const INSP_SLOT_SELECTION_PENDING = "INSP_SLOT_SELECTION_PENDING";
 export const INSP_SLOT_SELECTION_COMPLETED = "INSP_SLOT_SELECTION_COMPLETED";
-export const INSP_SHEDULE = "INSP_SHEDULE";
+export const INSPENCTION = "INSPENCTION";
 export const INSP_SHEDULED = "INSP_SHEDULED";
 export const INSP_PENDING = "INSP_PENDING";
 
@@ -968,15 +968,15 @@ export const AppFlow = [
     stepTitle: "Inspection Slot Selection",
     stepMsg: "Applicant Has to Select Inspection Slot",
     assignedTo: ["applicant"],
-    nextStep: INSP_SHEDULE,
+    nextStep: INSPENCTION,
   },
   {
     stepNo: 15,
-    step: INSP_SHEDULE,
-    status: STAFF_DETAILS_PENDING, // INSP_SHEDULED || INSP_PENDING
+    step: INSPENCTION,
+    status: INSP_PENDING, // INSP_PENDING || INSP_SHEDULED || INSPECTED || INSP_RE_SHEDULED || RE_INSPECTED
     stepStatus: "inactive", // inactive || pending || completed || on-progress
-    stepTitle: "Inspection Scheduled",
-    stepMsg: "Inspection Scheduled",
+    stepTitle: "Inspection",
+    stepMsg: "ITI Institute Inspection",
     assignedTo: ["RDSDE"],
   },
 ];
@@ -1132,17 +1132,42 @@ export const STEPPER_STYLE = {
   LineSeparator: () => ({
     backgroundColor: "#8a3b02ff",
   }),
-  ActiveNode: () => ({
-    backgroundColor: "#020b8aff",
+  InActiveNode: () => ({
+    backgroundColor: "#8a3b02ff",
+    width: "30px",
+    height: "30px",
   }),
+  ActiveNode: () => ({
+    backgroundColor: "#f40000f3",
+    width: "32px",
+    height: "32px",
+    border: "2px solid #470d0df3",
+    fontSize: "large",
+  }),
+
   CompletedNode: () => ({
     backgroundColor: "#028A0F",
+    width: "30px",
+    height: "30px",
+    fontSize: "large",
   }),
+  InactiveLineSeparator: (step, stepIndex) => {
+    console.log(step, stepIndex);
+    return {
+      backgroundColor: "#8a0202ff",
+    };
+  },
+  Node: (step, stepIndex) => {
+    console.log(step, stepIndex);
+    return {
+      backgroundColor: "#8a0202ff",
+    };
+  },
 };
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 // Database Constants
-export const DB_VERSION = 1;
+export const DB_VERSION = 3;
 export const DB_NAME = "AffliationDB";
 export const USERS = "users";
 export const USER_ROLES = "userRoles";
@@ -1163,6 +1188,20 @@ export const LAND_OWNED_LANDS_DETAILS = "land_owned_lands";
 export const LAND_LEASED_LANDS_DETAILS = "land_leased_lands";
 
 export const APP_FLOW = "app_flow";
+export const APP_FORM_FLOW_STAGE_II = "form_flow_stage_ii";
+export const APP_FORM_SUB_CIVIL_INFRA = "app_form_sub_civil_infra";
+
+export const BLD_BUILDING_PLAN = "bld_building_plan";
+export const BLD_BCC = "bld_bcc";
+export const BLD_PHOTOS = "bld_photos";
+// Photo Types
+export const FRONT_VIEW_PHOTO_OF_BUILDING = "front_view_photo_of_building";
+export const SIDE_VIEW_PHOTO_OF_BUILDING = "side_view_photo_of_building";
+export const ENTRANCE_GATE_PHOTO_OF_PLOT_WITH_SIGNAGE_BOARD =
+  "entrance_gate_photo_of_plot_with_signage_board";
+
+// export const Civil_Infrastructure_Detail = "Civil Infrastructure Detail";
+// export const Civil_Infrastructure_Detail = "Civil Infrastructure Detail";
 
 // Sample Users
 export const SAMPLE_USERS = [
@@ -1209,6 +1248,7 @@ export const SAMPLE_USERS = [
 
 export const FILLED = "FILLED";
 export const NOT_FILLED = "NOT_FILLED";
+export const LAST = "LAST";
 
 export const BUILDING_DETAIL = "Building Detail";
 export const CIVIL_INFRASTRUCTURE_DETAIL = "Civil Infrastructure Detail";
@@ -1221,26 +1261,77 @@ export const TRADEWISE_MACHINERY__TOOLS__EQUIPMENT_DETAILS =
   "Tradewise Machinery/Tools/Equipment Details";
 export const DOCUMENT_UPLOADS = "Document Uploads";
 
+export const CIC = {
+  TRADEWISE_WORKSHOP: "Tradewise Workshop",
+  TRADEWISE_CLASSROOMS: "TradeWise Classrooms",
+  MULTIPURPOSE_HALL: "Multipurpose hall",
+  IT_LAB: "IT Lab",
+  LIBRARY: "Library",
+  PLACEMENT_AND_COUNSELLING_ROOM: "Placement and counselling room",
+  ADMINISTRATIVE_AREA: "Administrative Area",
+};
 export const STAGE_II_APP_FORM_FLOW = [
   {
     stepNo: 1,
     step: BUILDING_DETAIL,
-    status: FILLED, // NOT_FILLED
-    stepTitle: "Building Detail",
+    status: NOT_FILLED, // NOT_FILLED
+    stepLabel: "Building Detail",
     nextStep: CIVIL_INFRASTRUCTURE_DETAIL,
   },
   {
     stepNo: 2,
     step: CIVIL_INFRASTRUCTURE_DETAIL,
-    status: FILLED, // NOT_FILLED
-    stepTitle: "Civil Infrastructure Detail",
+    status: NOT_FILLED, // NOT_FILLED
+    stepLabel: "Civil Infrastructure Detail",
     nextStep: AMENITIES_AREA,
     subSteps: [
       {
         stepNo: 1,
-        step: "Tradewise Workshop",
+        step: CIC.TRADEWISE_WORKSHOP,
         status: FILLED, // NOT_FILLED
         stepTitle: "Tradewise Workshop",
+        nextStep: CIC.TRADEWISE_CLASSROOMS,
+      },
+      {
+        stepNo: 2,
+        step: CIC.TRADEWISE_CLASSROOMS,
+        status: FILLED, // NOT_FILLED
+        stepTitle: "TradeWise Classrooms",
+        nextStep: CIC.MULTIPURPOSE_HALL,
+      },
+      {
+        stepNo: 3,
+        step: CIC.MULTIPURPOSE_HALL,
+        status: FILLED, // NOT_FILLED
+        stepTitle: "Multipurpose hall",
+        nextStep: CIC.IT_LAB,
+      },
+      {
+        stepNo: 4,
+        step: CIC.IT_LAB,
+        status: FILLED, // NOT_FILLED
+        stepTitle: "IT Lab",
+        nextStep: CIC.LIBRARY,
+      },
+      {
+        stepNo: 5,
+        step: CIC.LIBRARY,
+        status: FILLED, // NOT_FILLED
+        stepTitle: "Library",
+        nextStep: CIC.PLACEMENT_AND_COUNSELLING_ROOM,
+      },
+      {
+        stepNo: 6,
+        step: CIC.PLACEMENT_AND_COUNSELLING_ROOM,
+        status: FILLED, // NOT_FILLED
+        stepTitle: "Placement and counselling room",
+        nextStep: CIC.ADMINISTRATIVE_AREA,
+      },
+      {
+        stepNo: 8,
+        step: CIC.ADMINISTRATIVE_AREA,
+        status: FILLED, // NOT_FILLED
+        stepTitle: "Administrative Area",
         nextStep: null,
       },
     ],
@@ -1248,43 +1339,121 @@ export const STAGE_II_APP_FORM_FLOW = [
   {
     stepNo: 3,
     step: AMENITIES_AREA,
-    status: FILLED, // NOT_FILLED
-    stepTitle: "Amenities Area",
+    status: NOT_FILLED, // NOT_FILLED
+    stepLabel: "Amenities Area",
     nextStep: SIGNAGE_BOARDS,
   },
   {
     stepNo: 4,
     step: SIGNAGE_BOARDS,
-    status: FILLED, // NOT_FILLED
-    stepTitle: "Signage Boards",
+    status: NOT_FILLED, // NOT_FILLED
+    stepLabel: "Signage Boards",
     nextStep: ELECTRICITY_CONNECTION_DETAILS,
   },
   {
     stepNo: 5,
     step: ELECTRICITY_CONNECTION_DETAILS,
-    status: FILLED, // NOT_FILLED
-    stepTitle: "Electricity Connection Details",
+    status: NOT_FILLED, // NOT_FILLED
+    stepLabel: "Electricity Connection Details",
     nextStep: FEE_PAYMENT_FOR_STAGEII,
   },
   {
     stepNo: 6,
     step: FEE_PAYMENT_FOR_STAGEII,
-    status: FILLED, // NOT_FILLED
-    stepTitle: "Fee Payment For StageII",
+    status: NOT_FILLED, // NOT_FILLED
+    stepLabel: "Fee Payment For StageII",
     nextStep: TRADEWISE_MACHINERY__TOOLS__EQUIPMENT_DETAILS,
   },
   {
     stepNo: 7,
     step: TRADEWISE_MACHINERY__TOOLS__EQUIPMENT_DETAILS,
-    status: FILLED, // NOT_FILLED
-    stepTitle: "Tradewise Machinery/Tools/Equipment Details",
+    status: NOT_FILLED, // NOT_FILLED
+    stepLabel: "Tradewise Machinery/Tools/Equipment Details",
     nextStep: null,
   },
   {
     stepNo: 8,
     step: DOCUMENT_UPLOADS,
-    status: FILLED, // NOT_FILLED
-    stepTitle: "Document Uploads",
+    status: NOT_FILLED, // NOT_FILLED
+    stepLabel: "Document Uploads",
     nextStep: null,
+  },
+];
+
+// Stage 1 Form Constants
+export const ST1FC = {
+  APPLICANT_ENTITY_DETAILS: {
+    label: "Applicant Entity Details",
+    step: "APPLICANT_ENTITY_DETAILS",
+  },
+  DETAILS_OF_THE_PROPOSED_INSTITUTE: {
+    label: "Details of the Proposed Institute",
+    step: "DETAILS_OF_THE_PROPOSED_INSTITUTE",
+  },
+  DETAILS_OF_TRADE_UNIT_FOR_AFFILIATION: {
+    label: "Details of Trade(s)/Unit(s) for Affiliation",
+    step: "DETAILS_OF_TRADE_UNIT_FOR_AFFILIATION",
+  },
+  DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI: {
+    label: "Details of the Land to be used for the ITI",
+    step: "DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI",
+  },
+  FEE_PAYMENT: { label: "Fee Payment", step: "FEE_PAYMENT" },
+  DOCUMENTS_UPLOAD: { label: "Documents Upload", step: "DOCUMENTS_UPLOAD" },
+};
+export const STAGE_I_APP_FORM_FLOW = [
+  {
+    stepNo: 1,
+    step: ST1FC.APPLICANT_ENTITY_DETAILS.step,
+    status: NOT_FILLED, // NOT_FILLED
+    stepLabel: ST1FC.APPLICANT_ENTITY_DETAILS.label,
+    nextStep: ST1FC.DETAILS_OF_THE_PROPOSED_INSTITUTE.step,
+    submitDate: null,
+    updateDate: null,
+  },
+  {
+    stepNo: 2,
+    step: ST1FC.DETAILS_OF_THE_PROPOSED_INSTITUTE.step,
+    status: NOT_FILLED, // NOT_FILLED
+    stepLabel: ST1FC.DETAILS_OF_THE_PROPOSED_INSTITUTE.label,
+    nextStep: ST1FC.DETAILS_OF_TRADE_UNIT_FOR_AFFILIATION,
+    submitDate: null,
+    updateDate: null,
+  },
+  {
+    stepNo: 3,
+    step: ST1FC.DETAILS_OF_TRADE_UNIT_FOR_AFFILIATION.step,
+    status: NOT_FILLED, // NOT_FILLED
+    stepLabel: ST1FC.DETAILS_OF_TRADE_UNIT_FOR_AFFILIATION.label,
+    nextStep: ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step,
+    submitDate: null,
+    updateDate: null,
+  },
+  {
+    stepNo: 4,
+    step: ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step,
+    status: NOT_FILLED, // NOT_FILLED
+    stepLabel: ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.label,
+    nextStep: ST1FC.FEE_PAYMENT.step,
+    submitDate: null,
+    updateDate: null,
+  },
+  {
+    stepNo: 5,
+    step: ST1FC.FEE_PAYMENT.step,
+    status: NOT_FILLED, // NOT_FILLED
+    stepLabel: ST1FC.FEE_PAYMENT.label,
+    nextStep: ST1FC.DOCUMENTS_UPLOAD.step,
+    submitDate: null,
+    updateDate: null,
+  },
+  {
+    stepNo: 6,
+    step: ST1FC.DOCUMENTS_UPLOAD.step,
+    status: NOT_FILLED, // NOT_FILLED
+    stepLabel: ST1FC.DOCUMENTS_UPLOAD.label,
+    nextStep: LAST,
+    submitDate: null,
+    updateDate: null,
   },
 ];

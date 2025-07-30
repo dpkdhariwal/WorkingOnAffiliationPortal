@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import React, { Children, useState, useEffect } from "react";
 
 import * as action from "../action/allActions";
-import { GoToStageIForm, GoToStageIAssessment, GoToNOCGenerateForm, GoToStageIIForm, GoToStageIIAssessment, GoToStageIIStaffDetailForm, GoToInspectionSlotSelection } from "../action/allActions";
+import { GoToStageIForm, GoToStageIAssessment, GoToNOCGenerateForm, GoToStageIIForm, GoToStageIIAssessment, GoToStageIIStaffDetailForm, GoToInspectionSlotSelection, GoToBatchCreattion } from "../action/allActions";
 
 
 import {
@@ -65,7 +65,7 @@ import {
   INSP_SLOT_SELECTION_PENDING,
   INSP_SLOT_SELECTION_COMPLETED,
 
-  INSP_SHEDULE,
+  INSPENCTION,
   INSP_SHEDULED,
   INSP_PENDING
 } from "../../constants";
@@ -240,7 +240,7 @@ export const PendingStep = ({ info, variant }) => {
       case STAFF_DETAILS:
         switch (info.status) {
           case STAFF_DETAILS_PENDING:
-            return authUser.userType === 'state_assessor' ? <GoToStageIIStaffDetailForm info={info} /> : ''
+            return authUser.userType === 'applicant' ? <GoToStageIIStaffDetailForm info={info} /> : ''
           case STAFF_DETAILS_COMPLETED:
             return <h5>DD</h5>
           default:
@@ -250,18 +250,16 @@ export const PendingStep = ({ info, variant }) => {
       case INSP_SLOT_SELECTION:
         switch (info.status) {
           case INSP_SLOT_SELECTION_PENDING:
-            return authUser.userType === 'state_assessor' ? <GoToInspectionSlotSelection info={info} /> : ''
+            return authUser.userType === 'applicant' ? <GoToInspectionSlotSelection info={info} /> : ''
           case INSP_SLOT_SELECTION_COMPLETED:
             return <h5>DD</h5>
           default:
             return <h5>DD</h5>
         }
-      case INSP_SHEDULE:
+      case INSPENCTION:
         switch (info.status) {
-          case INSP_SHEDULED:
-            return <h5>DD</h5>
           case INSP_PENDING:
-            return <h5>to be continue...</h5>
+            return authUser.userType === 'rdsde' ? <GoToBatchCreattion info={info} /> : ''
           default:
             return <h5>DD</h5>
         }

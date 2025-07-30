@@ -2,7 +2,7 @@ import React, { Fragment, useRef, useState, useEffect } from "react";
 import Pageheader from "../../layouts/Pageheader";
 import SplitPane, { Pane } from "split-pane-react";
 import "split-pane-react/esm/themes/default.css";
-import { Card, Badge, Row, Col, Form, Tab, Nav } from "react-bootstrap";
+import { Card, Badge, Row, Col, Form, Tab, Nav, Button } from "react-bootstrap";
 import "./Resizer.css"; // Import your CSS file for custom styles
 import {
   BuildingPlanView,
@@ -29,8 +29,18 @@ import AssessmentCivilInfraStruction from "./stage-II/AssessmentCivilInfraStruct
 import {Assessment_Amenities} from "../new_registration/form/stateII/Amenities";
 import {Assessment_SignageBoards} from "../new_registration/form/stateII/SignageBoards";
 
+import {STAGE_II__ASSESSMENT} from "../../constants";
+import {setAppFlow} from "../../db/users";
+
 
 const LINE_HEIGHT = 400;
+
+
+import { useContext } from "react";
+import * as formik from "formik";
+import * as yup from "yup";
+import { useLocation } from "react-router-dom";
+import Swal from "sweetalert2";
 
 
 const Assessment = () => {
@@ -304,7 +314,7 @@ const Assessment = () => {
                   Assessment
                 </Nav.Link>{" "}
               </Nav.Item>
-              <Nav.Item>
+              {/* <Nav.Item>
                 {" "}
                 <Nav.Link
                   eventKey="SendToApplicant"
@@ -314,7 +324,7 @@ const Assessment = () => {
                   <i className="ri-file-line me-1 align-middle"></i>Send to
                   Applicant
                 </Nav.Link>{" "}
-              </Nav.Item>
+              </Nav.Item> */}
             </Nav>
             <Tab.Content id="myTabContent">
               <Tab.Pane
@@ -398,21 +408,66 @@ const Assessment = () => {
               >
                 ...
               </Tab.Pane>
-              <Tab.Pane
-                className="fade text-muted p-0"
-                id="SendToApplicant-pane"
-                role="tabpanel"
-                tabIndex={5}
-                eventKey="SendToApplicant"
-              >
-                ...
-              </Tab.Pane>
             </Tab.Content>
           </Tab.Container>
         </Card.Body>
+        <Card.Footer>
+          <MarkAsCompleteStageIAssessment/>
+        </Card.Footer>
       </Card>
     </Fragment>
   );
 };
 
 export default Assessment;
+
+const MarkAsCompleteStageIAssessment = () => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const appId = queryParams.get("appId");
+
+  const { Formik } = formik;
+  const formRef2 = useRef();
+
+  const submit = () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to Mark Comlete Stage I Document Verification",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes, Mark it!",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // User confirmed – now show loading or save directly
+        Swal.fire({
+          title: "Saving...",
+          didOpen: () => {
+
+              setAppFlow(appId, STAGE_II__ASSESSMENT);
+
+            // Swal.showLoading();
+            // dispatch({ type: UPDATE_ENTITY_DETAILS, payload: values });
+            // dispatch({ type: "set_filled_step", payload: { step: 0 }, });
+            // dispatch({ type: "reg_set_active_step", payload: { step: 1 } });
+            // setActive(reg.steps[1]);
+            // console.log(authUser);
+            // setEntityDetails(values, authUser, appId);
+            // Swal.close();
+          },
+        });
+      } else {
+        console.log("User cancelled save");
+      }
+    });
+  };
+
+  return (
+    <Fragment>
+
+        <div className="d-flex justify-content-end mb-3 " style={{marginTop:'15px'}}>
+                 <Button onClick={submit} className="btn-success" size="lg">Mark as Complete Stage II Document Verfication</Button>
+                </div>
+    </Fragment>
+  );
+};

@@ -33,12 +33,12 @@ export const MENUITEMS = [
     menuGroup: "new_registration",
   },
   {
-    allowTo: ["applicant", "test","state_assessor"],
+    allowTo: ["applicant", "test", "state_assessor", "rdsde"],
     menutitle: "Applications",
     menuGroup: "app_list",
   },
   {
-    allowTo: ["applicant", "test", "state_assessor"],
+    allowTo: ["applicant", "test", "state_assessor", "rdsde"],
     path: `${import.meta.env.BASE_URL}dashboard/AppList`,
     title: "All Applications",
     icon: "ti-file",
@@ -223,7 +223,10 @@ export const MENUITEMS = [
     selected: false,
     dirchange: false,
     children: [
-      { path: `${import.meta.env.BASE_URL}dashboard/state_admin/AddStateMembers`, type: "link", active: false, selected: false, dirchange: false, title: "Add State Members" },
+      { path: 'member-list', type: "link", active: false, selected: false, dirchange: false, title: "Member List" },
+      { path: 'add-new-member', type: "link", active: false, selected: false, dirchange: false, title: "Add New Member" },
     ],
   },
+
+ 
 ];

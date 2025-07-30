@@ -41,7 +41,6 @@ const steps = [
   { key: 5, label: "Library", filled: false },
   { key: 6, label: "Placement and counselling room", filled: false },
   { key: 7, label: "Administrative Area", filled: false },
-  
 ];
 
 export default function MultiStepWithIndividualForms({ setActive }) {
@@ -74,73 +73,84 @@ export default function MultiStepWithIndividualForms({ setActive }) {
       {AppliInfo.stage_II_fee_status === STAGE_II__FEE_PAID || AppliInfo.stage_II_fee_status === STAGE_II__FEE_EXEMPTED ? (<CivilInfrastructureView />) :
 
         <>
-          <Tab.Container activeKey={activeKey}>
-            <Row>
-              {/* Navigation Tabs */}
-              <Col xl={3}>
-                <Nav className="nav-tabs flex-column nav-style-5">
-                  {steps.map((step) => (
-                    <Nav.Item key={step.key}>
-                      <Nav.Link eventKey={step.key} onClick={() => setActiveKey(step.key)} >
-                        <div className="d-flex justify-content-between align-items-center">
-                          <span>
-                            <i className="ri-tools-line me-2 align-middle d-inline-block"></i>
-                            {step.label}
-                          </span>
-                          <div style={{ width: 30, height: 30 }}>
-                            <CircularProgressbar
-                              value={percentage}
-                              text={`${percentage}%`}
-                            />
-                          </div>
-                        </div>
-                      </Nav.Link>
-                    </Nav.Item>
-                  ))}
-                </Nav>
-              </Col>
+          <Card className="custom-card border border-primary">
+            <Card.Header>
+              <div className="card-title" style={{ textTransform: "none" }}>
+                <h5> Building Details</h5>
+              </div>
+            </Card.Header>
+            <Card.Body>
+              <Tab.Container activeKey={activeKey}
+                onSelect={(key) => { console.log(key) }}>
+                <Row>
+                  {/* Navigation Tabs */}
+                  <Col xl={3}>
+                    <Nav className="nav-tabs flex-column nav-style-5">
+                      {steps.map((step) => (
+                        <Nav.Item key={step.key}>
+                          <Nav.Link eventKey={step.key} onClick={() => setActiveKey(step.key)} >
+                            <div className="d-flex justify-content-between align-items-center">
+                              <span>
+                                <i className="ri-tools-line me-2 align-middle d-inline-block"></i>
+                                {step.label}
+                              </span>
+                              <div style={{ width: 30, height: 30 }}>
+                                <CircularProgressbar
+                                  value={percentage}
+                                  text={`${percentage}%`}
+                                />
+                              </div>
+                            </div>
+                          </Nav.Link>
+                        </Nav.Item>
+                      ))}
+                    </Nav>
+                  </Col>
 
-              {/* Tab Content */}
-              <Col xl={9}>
-                <Tab.Content>
-                  {/* === Step 1 === */}
-                  <Tab.Pane eventKey={1}>
-                    <TradeWiseWorkshops goNext={goNext} />
-                  </Tab.Pane>
+                  {/* Tab Content */}
+                  <Col xl={9}>
+                    <Tab.Content>
+                      {/* === Step 1 === */}
+                      <Tab.Pane eventKey={1}>
+                        <TradeWiseWorkshops goNext={goNext} />
+                      </Tab.Pane>
 
-                  {/* === Step 2 === */}
-                  <Tab.Pane eventKey={2}>
-                    <TradeWiseClassrooms  goPrevious={goPrevious} goNext={goNext} />
-                  </Tab.Pane>
+                      {/* === Step 2 === */}
+                      <Tab.Pane eventKey={2}>
+                        <TradeWiseClassrooms goPrevious={goPrevious} goNext={goNext} />
+                      </Tab.Pane>
 
-                  {/* === Step 3 === */}
-                  <Tab.Pane eventKey={3}>
-                    <MultipurposeHall  goPrevious={goPrevious} goNext={goNext} />
-                  </Tab.Pane>
+                      {/* === Step 3 === */}
+                      <Tab.Pane eventKey={3}>
+                        <MultipurposeHall goPrevious={goPrevious} goNext={goNext} />
+                      </Tab.Pane>
 
-                  {/* === Step 4 === */}
-                  <Tab.Pane eventKey={4}>
-                    <ITLab finish={finish}  goPrevious={goPrevious} goNext={goNext} />
-                  </Tab.Pane>
+                      {/* === Step 4 === */}
+                      <Tab.Pane eventKey={4}>
+                        <ITLab finish={finish} goPrevious={goPrevious} goNext={goNext} />
+                      </Tab.Pane>
 
-                  {/* === Step 5 === */}
-                  <Tab.Pane eventKey={5}>
-                    <Library finish={finish}  goPrevious={goPrevious} goNext={goNext} />
-                  </Tab.Pane>
+                      {/* === Step 5 === */}
+                      <Tab.Pane eventKey={5}>
+                        <Library finish={finish} goPrevious={goPrevious} goNext={goNext} />
+                      </Tab.Pane>
 
-                  {/* === Step 6 === */}
-                  <Tab.Pane eventKey={6}>
-                    <PlacementNCounsellingRoom  goPrevious={goPrevious} goNext={goNext} />
-                  </Tab.Pane>
+                      {/* === Step 6 === */}
+                      <Tab.Pane eventKey={6}>
+                        <PlacementNCounsellingRoom goPrevious={goPrevious} goNext={goNext} />
+                      </Tab.Pane>
 
-                  {/* === Step 7 === */}
-                  <Tab.Pane eventKey={7}>
-                    <AdministrativeArea finish={finish} goPrevious={goPrevious} />
-                  </Tab.Pane>
-                </Tab.Content>
-              </Col>
-            </Row>
-          </Tab.Container>
+                      {/* === Step 7 === */}
+                      <Tab.Pane eventKey={7}>
+                        <AdministrativeArea finish={finish} goPrevious={goPrevious} />
+                      </Tab.Pane>
+                    </Tab.Content>
+                  </Col>
+                </Row>
+              </Tab.Container>
+            </Card.Body>
+          </Card>
+
         </>
 
       }
@@ -201,7 +211,7 @@ export const CivilInfrastructureView = () => {
           </tr>
         </tbody>
       </table>
-<table
+      <table
         width="98%"
         border={1}
         style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}

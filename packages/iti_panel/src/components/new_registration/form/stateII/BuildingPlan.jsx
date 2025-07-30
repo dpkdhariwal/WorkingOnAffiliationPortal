@@ -17,7 +17,9 @@ import { UPDATE_BUILDING_DETAILS, STAGE_II__FEE_PAID, STAGE_II__FEE_EXEMPTED } f
 
 import { Form as BootstrapForm } from "react-bootstrap";
 
-
+import { set_stage_ii_form_flow } from "../../../../db/appList";
+import { useLocation } from "react-router-dom";
+import {setBuildingDetail} from "../../../../db/appList";
 
 const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
   const stage = useSelector((state) => state.reg.stepsII);
@@ -60,6 +62,10 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
 
   const designation = ["Secretary", "Chairperson", "President"];
 
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const appId = queryParams.get("appId");
+  const authUser = useSelector((state) => state.loginUserReducer);
 
   const submit = (values) => {
     Swal.fire({
@@ -76,10 +82,15 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
           title: "Saving...",
           didOpen: () => {
             Swal.showLoading();
-            dispatch({ type: UPDATE_BUILDING_DETAILS, payload: values });
-            dispatch({ type: "set_filled_step_II", payload: { step: 1 }, });
-            dispatch({ type: "reg_set_active_stepII", payload: { step: 2 } });
-            setActive(reg.stepsII[1]);
+            // dispatch({ type: UPDATE_BUILDING_DETAILS, payload: values });
+            // dispatch({ type: "set_filled_step_II", payload: { step: 1 }, });
+            // dispatch({ type: "reg_set_active_stepII", payload: { step: 2 } });
+            // setActive(reg.stepsII[1]);
+
+
+            setBuildingDetail(values, authUser, appId);
+
+
             Swal.close();
           },
         });

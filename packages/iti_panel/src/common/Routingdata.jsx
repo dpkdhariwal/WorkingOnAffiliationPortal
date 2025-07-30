@@ -32,7 +32,8 @@ import Test from "../components/test";
 import { lazy } from "react";
 
 
-import {NewAppRegistration} from "../screens/RegNewApplication/NewAppRegistration";
+import { NewAppRegistration } from "../screens/RegNewApplication/NewAppRegistration";
+import { AddNewMemberByState } from "../screens/state/state_admin/add-new-member";
 
 
 export const Routedata = [
@@ -158,8 +159,20 @@ export const Routedata = [
       {
         id: 1,
         path: "new-app-registration",
-        elementName: <NewAppRegistration/>,
+        elementName: <NewAppRegistration />,
       },
+
+      {
+        id: 1,
+        path: `member-list`,
+        elementName: <h5>To be Continue...</h5>,
+      },
+      {
+        id: 1,
+        path: `add-new-member`,
+        elementName: <AddNewMemberByState />,
+      },
+
 
     ],
   },

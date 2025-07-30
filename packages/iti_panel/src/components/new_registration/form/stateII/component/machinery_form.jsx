@@ -34,8 +34,10 @@ import Stepper from "@keyvaluesystems/react-stepper";
 
 import { STEPPER_STYLE } from "../../../../../constants";
 
-import {ItLabMte} from "../../stateII/ItLabMte"
-
+import { ItLabMte } from "../../stateII/ItLabMte"
+import { useLocation } from "react-router-dom";
+import { STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS } from "../../../../../constants";
+import { setAppFlow } from "../../../../../db/users";
 const schema = yup.object().shape({
   land_documents: yup.array().of(
     yup.object().shape({
@@ -284,8 +286,14 @@ const mteInfo = () => {
   ];
 
 
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const appId = queryParams.get("appId");
 
+  const markascomplete = () => {
+    setAppFlow(appId, STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS);
 
+  }
   return (
     <Fragment>
       {true && (
@@ -299,6 +307,7 @@ const mteInfo = () => {
           validationSchema={schema}
           onSubmit={(values) => {
             console.log("Form Values", values);
+
             // Swal.fire({
             //   title: "Saving on Local Storage",
             //   html: "Please wait...",
@@ -332,7 +341,6 @@ const mteInfo = () => {
                     orientation="horizontal"
                     labelPosition="top"
                     onStepClick={handleStepClick}
-                    // renderNode={(step, stepIndex) => <div key={stepIndex}>{step.stepLabel}</div>}
                     stepContent={(step, stepIndex) => {
                       console.log(step);
                       switch (step.stepFor) {
@@ -351,7 +359,6 @@ const mteInfo = () => {
                               padding: "5px",
                             }}
                           >
-                            {stepIndex}
                             <Tab.Container
                               id="left-tabs-example"
                               activeKey={activeKey}
@@ -796,6 +803,10 @@ const mteInfo = () => {
                     }}
                   />
                 </Card.Body>
+
+                <Card.Footer>
+                  <Button onClick={markascomplete}>Mark as Complete</Button>
+                </Card.Footer>
               </Card>
             </Form>
           )}

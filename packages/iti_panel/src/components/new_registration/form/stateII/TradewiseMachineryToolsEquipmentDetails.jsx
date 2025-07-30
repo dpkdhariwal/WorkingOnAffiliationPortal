@@ -23,6 +23,9 @@ import Stepper from "@keyvaluesystems/react-stepper";
 import ReqSign from "../comp/requiredSign";
 
 import MTE from "./component/machinery_form";
+import {setAppFlow} from "../../../../db/users";
+import { useLocation } from "react-router-dom";
+import {STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS} from "../../../../constants";
 
 const schema = yup.object().shape({
   land_documents: yup.array().of(
@@ -100,6 +103,10 @@ const TradewiseMachineryToolsEquipmentDetails = () => {
 
   const designation = ["Secretary", "Chairperson", "President"];
 
+   const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const appId = queryParams.get("appId");
+
   return (
     <Fragment>
       {true && (
@@ -113,6 +120,8 @@ const TradewiseMachineryToolsEquipmentDetails = () => {
           validationSchema={schema}
           onSubmit={(values) => {
             console.log("Form Values", values);
+                  setAppFlow(appId, STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS);
+            
             // Swal.fire({
             //   title: "Saving on Local Storage",
             //   html: "Please wait...",

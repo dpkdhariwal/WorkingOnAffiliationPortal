@@ -64,11 +64,11 @@ export const GoToStageIIForm = ({info}={}) => {
 };
 
 
-export const GoToStageIIAssessment = () => {
+export const GoToStageIIAssessment = ({info}={}) => {
   const navigate = useNavigate(); // <-- Hook for navigation
 
   const goNow = () => {
-    navigate("/dashboard/AssessmentII"); // <-- Your route here
+    navigate(`/dashboard/AssessmentII?appId=${info?.appId}`); // <-- Your route here
   };
 
   return (
@@ -78,11 +78,11 @@ export const GoToStageIIAssessment = () => {
   );
 };
 
-export const GoToStageIIStaffDetailForm = () => {
+export const GoToStageIIStaffDetailForm = ({info}={}) => {
   const navigate = useNavigate(); // <-- Hook for navigation
 
   const goNow = () => {
-    navigate("/dashboard/AddStaffDetail"); // <-- Your route here
+    navigate(`/dashboard/AddStaffDetail?appId=${info?.appId}`); // <-- Your route here
   };
 
   return (
@@ -92,16 +92,30 @@ export const GoToStageIIStaffDetailForm = () => {
   );
 };
 
-export const GoToInspectionSlotSelection = () => {
+export const GoToInspectionSlotSelection = ({info}={}) => {
   const navigate = useNavigate(); // <-- Hook for navigation
 
   const goNow = () => {
-    navigate("/dashboard/InspectionSlotSelection"); // <-- Your route here
+    navigate(`/dashboard/InspectionSlotSelection?appId=${info?.appId}`); // <-- Your route here
   };
 
   return (
     <Button onClick={goNow} size="sm"  variant='warning-gradient' className="rounded-pill btn-wave">
       Go to Form
+    </Button>
+  );
+};
+
+export const GoToBatchCreattion = ({info}={}) => {
+  const navigate = useNavigate(); // <-- Hook for navigation
+
+  const goNow = () => {
+    navigate(`/dashboard/CreateBatchForInspection?appId=${info?.appId}`); // <-- Your route here
+  };
+
+  return (
+    <Button onClick={goNow} size="sm"  variant='success-gradient' className="rounded-pill btn-wave">
+      Create Batch
     </Button>
   );
 };
