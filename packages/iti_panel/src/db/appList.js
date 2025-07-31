@@ -370,7 +370,6 @@ export const set_stage_ii_form_flow = async (authUser, appId) => {
 
 export const setBuildingDetail = async (data, authUser, appId) => {
   const db = await initDB();
-
   const Building_Detail = (({
     language_for_building_plan,
     document_of_building_plan,
@@ -380,7 +379,6 @@ export const setBuildingDetail = async (data, authUser, appId) => {
     document_of_building_plan,
     notarised_document_of_building_plan,
   }))(data);
-
   const bld_bcc = (({
     language_for_building_completion_certificate,
     building_completion_certificate,
@@ -394,7 +392,6 @@ export const setBuildingDetail = async (data, authUser, appId) => {
     name_of_bcc_issued_authority,
     date_of_bcc_issued,
   }))(data);
-
   const bld_photos = (({
     front_view_photo_of_building,
     side_view_photo_of_building,
@@ -404,40 +401,56 @@ export const setBuildingDetail = async (data, authUser, appId) => {
     side_view_photo_of_building,
     entrance_gate_photo_of_plot_with_signage_board,
   }))(data);
+
   // Prepare Photo in Row
   const photo_list = [
     {
-      photo_view: FRONT_VIEW_PHOTO_OF_BUILDING,
+      photoView: FRONT_VIEW_PHOTO_OF_BUILDING,
       photo_pth: bld_photos.front_view_photo_of_building,
     },
     {
-      photo_view: SIDE_VIEW_PHOTO_OF_BUILDING,
+      photoView: SIDE_VIEW_PHOTO_OF_BUILDING,
       photo_pth: bld_photos.side_view_photo_of_building,
     },
     {
-      photo_view: ENTRANCE_GATE_PHOTO_OF_PLOT_WITH_SIGNAGE_BOARD,
+      photoView: ENTRANCE_GATE_PHOTO_OF_PLOT_WITH_SIGNAGE_BOARD,
       photo_pth: bld_photos.entrance_gate_photo_of_plot_with_signage_board,
     },
   ];
 
-  await db.put(BLD_BUILDING_PLAN, {
-    ...Building_Detail,
-    id: Date.now() + Math.random(),
-    appId: appId,
-  });
-
-  await db.put(BLD_BCC, {
-    ...bld_bcc,
-    id: Date.now() + Math.random(),
-    appId: appId,
-  });
-
-  for (let index = 0; index <= photo_list.length; index++) {
-    const photo = photo_list[index];
-    await db.put(BLD_PHOTOS, {
-      ...photo,
+  // Check Building Plan Detail if Already Exist
+  let bld_plan = await db.getFromIndex(BLD_BUILDING_PLAN, "appId", appId);
+  if (bld_plan?.appId) {
+    console.log("exist");
+    await db.put(BLD_BUILDING_PLAN, {
+      ...bld_plan,
+      ...Building_Detail,
+      appId: appId,
+    });
+  } else {
+    await db.put(BLD_BUILDING_PLAN, {
+      ...Building_Detail,
       id: Date.now() + Math.random(),
       appId: appId,
     });
   }
+
+  // Check BCC  Detail if Already Exist
+  let bcc = await db.getFromIndex(BLD_BCC, "appId", appId);
+  if (bcc?.appId) {
+    await db.put(BLD_BCC, { ...bcc, ...bld_bcc, appId: appId, });
+  } else {
+    await db.put(BLD_BCC, { ...bld_bcc, id: Date.now() + Math.random(), appId: appId, });
+  }
+
+  // Check Building Photos if Already Exist
+  await Promise.all(photo_list.map(async (photo) => {
+    let p_exist = await db.getFromIndex(BLD_PHOTOS, "photoView_appId", [photo.photoView, appId]);
+    if (p_exist?.appId) {
+      await db.put(BLD_PHOTOS, { ...p_exist, ...photo, appId });
+    } else {
+      await db.put(BLD_PHOTOS, { ...photo, id: Date.now() + Math.random(), appId });
+    }
+  }));
+
 };

@@ -588,6 +588,20 @@ export const UPDATE_LEASE_DEED_DOCUMENT_INFO =
   "UPDATE_LEASE_DEED_DOCUMENT_INFO";
 export const ADD_MORE_LEASE_DOCUMENT = "ADD_MORE_LEASE_DOCUMENT";
 
+export const LANGUAGES = [
+  "Hindi",
+  "English",
+  "Bengali",
+  "Telugu",
+  "Marathi",
+  "Tamil",
+  "Urdu",
+  "Gujarati",
+  "Kannada",
+  "Odia",
+  "Malayalam",
+  "Punjabi",
+];
 export const languages = [
   "",
   "Hindi",
@@ -603,6 +617,8 @@ export const languages = [
   "Malayalam",
   "Punjabi",
 ];
+
+
 
 export const ID_Proof_Doc_list = [
   "Aadhaar Card",
@@ -1256,6 +1272,7 @@ export const AMENITIES_AREA = "Amenities Area";
 
 export const SIGNAGE_BOARDS = "Signage Boards";
 export const ELECTRICITY_CONNECTION_DETAILS = "Electricity Connection Details";
+export const MISCELLANEOUS = "Miscellaneous";
 export const FEE_PAYMENT_FOR_STAGEII = "Fee Payment For StageII";
 export const TRADEWISE_MACHINERY__TOOLS__EQUIPMENT_DETAILS =
   "Tradewise Machinery/Tools/Equipment Details";
@@ -1357,22 +1374,29 @@ export const STAGE_II_APP_FORM_FLOW = [
     stepLabel: "Electricity Connection Details",
     nextStep: FEE_PAYMENT_FOR_STAGEII,
   },
-  {
+   {
     stepNo: 6,
+    step: MISCELLANEOUS,
+    status: NOT_FILLED, // NOT_FILLED
+    stepLabel: "Miscellaneous",
+    nextStep: FEE_PAYMENT_FOR_STAGEII,
+  },
+  {
+    stepNo: 7,
     step: FEE_PAYMENT_FOR_STAGEII,
     status: NOT_FILLED, // NOT_FILLED
     stepLabel: "Fee Payment For StageII",
     nextStep: TRADEWISE_MACHINERY__TOOLS__EQUIPMENT_DETAILS,
   },
   {
-    stepNo: 7,
+    stepNo: 8,
     step: TRADEWISE_MACHINERY__TOOLS__EQUIPMENT_DETAILS,
     status: NOT_FILLED, // NOT_FILLED
     stepLabel: "Tradewise Machinery/Tools/Equipment Details",
     nextStep: null,
   },
   {
-    stepNo: 8,
+    stepNo: 9,
     step: DOCUMENT_UPLOADS,
     status: NOT_FILLED, // NOT_FILLED
     stepLabel: "Document Uploads",
@@ -1457,3 +1481,5 @@ export const STAGE_I_APP_FORM_FLOW = [
     updateDate: null,
   },
 ];
+
+

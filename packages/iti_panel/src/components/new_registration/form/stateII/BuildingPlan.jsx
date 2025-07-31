@@ -13,13 +13,13 @@ import Geotagged from "../../../geotagged";
 import ReactDOM from "react-dom/client";
 
 import { building_detail_yup_object } from "../../../../reducers/newAppReducer";
-import { UPDATE_BUILDING_DETAILS, STAGE_II__FEE_PAID, STAGE_II__FEE_EXEMPTED } from "../../../../constants";
+import { LANGUAGES, UPDATE_BUILDING_DETAILS, STAGE_II__FEE_PAID, STAGE_II__FEE_EXEMPTED } from "../../../../constants";
 
 import { Form as BootstrapForm } from "react-bootstrap";
 
 import { set_stage_ii_form_flow } from "../../../../db/appList";
 import { useLocation } from "react-router-dom";
-import {setBuildingDetail} from "../../../../db/appList";
+import { setBuildingDetail } from "../../../../db/appList";
 
 const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
   const stage = useSelector((state) => state.reg.stepsII);
@@ -127,7 +127,7 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
                   </Card.Header>
                   <Card.Body>
                     <h6>Building Plan</h6>
-                    <BuildingPlan languages={languages} handleChange={handleChange} touched={touched} errors={errors} values={values} />
+                    <BuildingPlan languages={languages} handleChange={handleChange} touched={touched} errors={errors} values={values} setFieldValue={setFieldValue} />
                     <br />
                     <hr />
                     <h6>Building Completion Certificate (BCC)</h6>
@@ -150,7 +150,8 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
                               !!errors.language_for_building_completion_certificate
                             }
                           >
-                            {languages.map((lang, i) => (
+                            <option value="" selected>Select</option>
+                            {LANGUAGES.map((lang, i) => (
                               <option key={i} value={lang}>
                                 {lang}
                               </option>
@@ -184,7 +185,9 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
                           <Form.Control required type="file"
                             name="building_completion_certificate"
                             // value={values.building_completion_certificate}
-                            onChange={handleChange}
+                            onChange={(event) => {
+                              setFieldValue("building_completion_certificate", event.currentTarget.files[0]);
+                            }}
                             isInvalid={
                               touched.building_completion_certificate &&
                               !!errors.building_completion_certificate
@@ -208,8 +211,9 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
                           {/* <div className="d-flex align-items-center gap-2"> */}
                           <Form.Control type="file" name="notarised_document_of_bcc"
                             // value={values.notarised_document_of_bcc}
-                            onChange={handleChange}
-                            isInvalid={
+                            onChange={(event) => {
+                              setFieldValue("notarised_document_of_bcc", event.currentTarget.files[0]);
+                            }} isInvalid={
                               touched.notarised_document_of_bcc &&
                               !!errors.notarised_document_of_bcc
                             } />
@@ -288,7 +292,9 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
                               {/* <div className="d-flex align-items-center gap-2"> */}
                               <Form.Control type="file" name="front_view_photo_of_building"
                                 //  value={values.front_view_photo_of_building}
-                                onChange={handleChange}
+                                onChange={(event) => {
+                                  setFieldValue("front_view_photo_of_building", event.currentTarget.files[0]);
+                                }}
                                 isInvalid={
                                   touched.front_view_photo_of_building &&
                                   !!errors.front_view_photo_of_building
@@ -314,7 +320,9 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
                               {/* <div className="d-flex align-items-center gap-2"> */}
                               <Form.Control type="file" name="side_view_photo_of_building"
                                 // value={values.side_view_photo_of_building}
-                                onChange={handleChange}
+                                onChange={(event) => {
+                                  setFieldValue("side_view_photo_of_building", event.currentTarget.files[0]);
+                                }}
                                 isInvalid={
                                   touched.side_view_photo_of_building &&
                                   !!errors.side_view_photo_of_building
@@ -341,7 +349,9 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
                               {/* <div className="d-flex align-items-center gap-2"> */}
                               <Form.Control type="file" name="entrance_gate_photo_of_plot_with_signage_board"
                                 // value={values.entrance_gate_photo_of_plot_with_signage_board}
-                                onChange={handleChange}
+                                onChange={(event) => {
+                                  setFieldValue("entrance_gate_photo_of_plot_with_signage_board", event.currentTarget.files[0]);
+                                }}
                                 isInvalid={
                                   touched.entrance_gate_photo_of_plot_with_signage_board &&
                                   !!errors.entrance_gate_photo_of_plot_with_signage_board
@@ -412,7 +422,7 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
 
 
 // Form to upload Building Plan
-export const BuildingPlan = ({ handleChange, touched, errors, values }) => {
+export const BuildingPlan = ({ handleChange, touched, errors, values, setFieldValue }) => {
   const languages = [
     "",
     "Hindi",
@@ -447,7 +457,8 @@ export const BuildingPlan = ({ handleChange, touched, errors, values }) => {
               !!errors.language_for_building_plan
             }
           >
-            {languages.map((lang, i) => (
+            <option value="" selected>Select</option>
+            {LANGUAGES.map((lang, i) => (
               <option key={i} value={lang} selected={i == 0}>
                 {lang}
               </option>
@@ -476,7 +487,9 @@ export const BuildingPlan = ({ handleChange, touched, errors, values }) => {
           </Form.Label>
           <Form.Control required type="file" name="document_of_building_plan"
             // value={values.document_of_building_plan}
-            onChange={handleChange}
+            onChange={(event) => {
+              setFieldValue("document_of_building_plan", event.currentTarget.files[0]);
+            }}
             isInvalid={
               touched.document_of_building_plan &&
               !!errors.document_of_building_plan
@@ -499,7 +512,9 @@ export const BuildingPlan = ({ handleChange, touched, errors, values }) => {
           </Form.Label>
           <Form.Control required type="file" name="notarised_document_of_building_plan"
             // value={values.notarised_document_of_building_plan}
-            onChange={handleChange}
+            onChange={(event) => {
+              setFieldValue("notarised_document_of_building_plan", event.currentTarget.files[0]);
+            }}
             isInvalid={
               touched.notarised_document_of_building_plan &&
               !!errors.notarised_document_of_building_plan

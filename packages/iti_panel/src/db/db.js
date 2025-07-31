@@ -143,6 +143,7 @@ export const initDB = async () => {
         });
         userStore.createIndex("appId", "appId", { unique: false });
         userStore.createIndex("userId", "userId", { unique: false });
+        userStore.createIndex("photoView_appId", ["photoView", "appId"]); 
       }
 
       if (!db.objectStoreNames.contains(APP_FORM_SUB_CIVIL_INFRA)) {
@@ -151,7 +152,7 @@ export const initDB = async () => {
         });
         userStore.createIndex("appId", "appId", { unique: false });
         userStore.createIndex("userId", "userId", { unique: false });
-        userStore.createIndex("appId_step", ["appId", "step"]); // compound index
+        userStore.createIndex("appId_step", ["appId", "step"]); 
       }
     },
   });
