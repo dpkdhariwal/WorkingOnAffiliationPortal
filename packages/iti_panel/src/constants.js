@@ -1155,8 +1155,8 @@ export const STEPPER_STYLE = {
   }),
   ActiveNode: () => ({
     backgroundColor: "#f40000f3",
-    width: "32px",
-    height: "32px",
+    width: "30px",
+    height: "30px",
     border: "2px solid #470d0df3",
     fontSize: "large",
   }),
@@ -1183,7 +1183,7 @@ export const STEPPER_STYLE = {
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 // Database Constants
-export const DB_VERSION = 3;
+export const DB_VERSION = 4;
 export const DB_NAME = "AffliationDB";
 export const USERS = "users";
 export const USER_ROLES = "userRoles";

@@ -22,48 +22,44 @@ import DocumentUploads from "../../components/new_registration/form/stateII/Docu
 import FeePayment from "../../components/new_registration/form/stateII/FeePayment";
 import { Amenities } from "../../components/new_registration/form/stateII/Amenities";
 import { SignageBoards } from "../../components/new_registration/form/stateII/SignageBoards";
+import { useLocation } from "react-router-dom";
 
-
+import { getStage2FormFlow } from "../../db/users";
 
 export const FormStageII = () => {
-  const stage = useSelector((state) => state.reg.stepsII);
-  const [activeStep, setActiveStep] = useState(0);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const appId = queryParams.get("appId");
+
+
   const data = STAGE_II_APP_FORM_FLOW.map((step) => ({ ...step, completed: step.status === FILLED }));
+  const [activeStep, setActiveStep] = useState(0);
   const [steps, setSteps] = useState(data);
 
 
-  const handleStepClick = (step, index) => { setActiveStep(index) };
-
-  const initialStepsArr = [
-    {
-      stepLabel: "IT Lab",
-      // stepDescription: "Fill Machinery/Tools/Equipment Details",
-      completed: false,
-      step: "IT Lab"
-    },
-    ...[{
-      stepLabel: "Fitter",
-      // stepDescription: "Fill Machinery/Tools/Equipment Details",
-      completed: false,
-      step: "trade"
-    },
-    {
-      stepLabel: "Electrician",
-      // stepDescription: "Fill Machinery/Tools/Equipment Details",
-      completed: false,
-      step: "trade"
-    },]
-  ];
-
+  // useEffect(() => {
+  //   const data = STAGE_II_APP_FORM_FLOW.map((step) => ({ ...step, completed: step.status === FILLED }));
+  //   const firstFilledIndex = STAGE_II_APP_FORM_FLOW.findIndex(step => step.status === FILLED);
+  //   const currentStep = firstFilledIndex !== -1 ? firstFilledIndex : 0;
+  //   console.log(data);
+  //   setSteps(data);
+  //   setActiveStep(currentStep);
+  // }, []);
+  useEffect(() => {
+    console.log(steps)
+  }, [steps]);
 
   useEffect(() => {
-    // const data = STAGE_II_APP_FORM_FLOW.map((step) => ({ ...step, completed: step.status === FILLED }));
-    const firstFilledIndex = STAGE_II_APP_FORM_FLOW.findIndex(step => step.status === FILLED);
+    loadData();
+  }, []);
+  const loadData = async () => {
+    var data = await getStage2FormFlow(appId);
+    data = data.map((step) => ({ ...step, completed: step.status === FILLED }));
+    const firstFilledIndex = data.findIndex(step => step.status === FILLED);
     const currentStep = firstFilledIndex !== -1 ? firstFilledIndex : 0;
-    console.log(data);
     setSteps(data);
     setActiveStep(currentStep);
-  }, []);
+  };
 
   const goToSection = (step, index) => {
     setActiveStep(step);
@@ -92,6 +88,7 @@ export const FormStageII = () => {
         return ''
     }
   }
+  const handleStepClick = (step, index) => { setActiveStep(index) };
 
   return (
     <Fragment>

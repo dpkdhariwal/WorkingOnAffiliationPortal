@@ -20,6 +20,9 @@ import { Form as BootstrapForm } from "react-bootstrap";
 import { set_stage_ii_form_flow } from "../../../../db/appList";
 import { useLocation } from "react-router-dom";
 import { setBuildingDetail } from "../../../../db/appList";
+import { getBuildingDetail } from "../../../../db/users";
+
+import FileViewer from "../../../../screens/application forms/fileViewer"
 
 const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
   const stage = useSelector((state) => state.reg.stepsII);
@@ -59,9 +62,7 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
     "Voter ID Card",
     "Driving License",
   ];
-
   const designation = ["Secretary", "Chairperson", "President"];
-
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const appId = queryParams.get("appId");
@@ -101,8 +102,16 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
   };
 
   const Building_Detail_initialValues = useSelector((state) => state.building_detail_reducer);
-
   const AppliInfo = useSelector((state) => state.AppliInfo);
+
+  const loadData = async () => {
+    const data = await getBuildingDetail(appId);
+    console.log(data);
+    formikRef.current.setValues(data); // update entire form
+  };
+  useEffect(() => {
+    loadData();
+  }, []);
 
   return (
     <Fragment>
@@ -439,6 +448,9 @@ export const BuildingPlan = ({ handleChange, touched, errors, values, setFieldVa
     "Punjabi",
   ];
 
+ 
+
+
   return (
     <Row style={{ marginTop: "1rem" }}>
       <Col md={4}>
@@ -510,22 +522,28 @@ export const BuildingPlan = ({ handleChange, touched, errors, values, setFieldVa
             Upload Hindi/English Notarised Copy of document
             <ReqSign />
           </Form.Label>
-          <Form.Control required type="file" name="notarised_document_of_building_plan"
-            // value={values.notarised_document_of_building_plan}
-            onChange={(event) => {
-              setFieldValue("notarised_document_of_building_plan", event.currentTarget.files[0]);
-            }}
-            isInvalid={
-              touched.notarised_document_of_building_plan &&
-              !!errors.notarised_document_of_building_plan
-            } />
-          {/* <Button variant="primary">Upload</Button> */}
-          {touched.notarised_document_of_building_plan &&
-            errors.notarised_document_of_building_plan && (
-              <BootstrapForm.Control.Feedback type="invalid">
-                {errors.notarised_document_of_building_plan}
-              </BootstrapForm.Control.Feedback>
-            )}
+          {typeof values.notarised_document_of_building_plan == 'object' ? (
+            <><Button onClick={()=>{viewFile(values.notarised_document_of_building_plan)}}>View File</Button>
+            <FileViewer file={values.notarised_document_of_building_plan}/></>
+            ) : (<>
+            <Form.Control required type="file" name="notarised_document_of_building_plan"
+              // value={values.notarised_document_of_building_plan}
+              onChange={(event) => {
+                setFieldValue("notarised_document_of_building_plan", event.currentTarget.files[0]);
+              }}
+              isInvalid={
+                touched.notarised_document_of_building_plan &&
+                !!errors.notarised_document_of_building_plan
+              } />
+            {/* <Button variant="primary">Upload</Button> */}
+            {touched.notarised_document_of_building_plan &&
+              errors.notarised_document_of_building_plan && (
+                <BootstrapForm.Control.Feedback type="invalid">
+                  {errors.notarised_document_of_building_plan}
+                </BootstrapForm.Control.Feedback>
+              )}
+          </>)}
+
         </Form.Group>
       </Col>
     </Row>

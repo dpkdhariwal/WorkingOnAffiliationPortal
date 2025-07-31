@@ -44,9 +44,19 @@ import {
   INSP_SLOT_SELECTION_COMPLETED,
   STAGE_I__DOCUMENT_UPLOADED,
   STAGE_I__SUBMITED,
-  STAGE_II__FILLED
+  STAGE_II__FILLED,
+  BLD_BUILDING_PLAN,
+  BLD_BCC,
+  BLD_PHOTOS,
+  FRONT_VIEW_PHOTO_OF_BUILDING,
+  SIDE_VIEW_PHOTO_OF_BUILDING,
+  ENTRANCE_GATE_PHOTO_OF_PLOT_WITH_SIGNAGE_BOARD,
+  APP_FORM_FLOW_STAGE_II
 } from "../constants";
 import { initDB } from "./db";
+
+import { Building_Detail_initialValues } from "../reducers/newAppReducer";
+
 
 export const addNewUser = async (app) => {
   console.log(app);
@@ -369,91 +379,91 @@ export const setActiveAppFlowNextStep = async (appId, nextStep) => {
   let data, oldStep, newStep;
   switch (nextStep) {
     case STAGE_I_FORM_FILLING:
-      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [ appId, STAGE_I_FORM_FILLING, ]);
+      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [appId, STAGE_I_FORM_FILLING,]);
       oldStep = data[0];
       newStep = { ...oldStep, stepStatus: "pending" };
       await db.put(APP_FLOW, newStep);
       break;
     case STAGE_I_FEE:
-      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [ appId, STAGE_I_FEE, ]);
+      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [appId, STAGE_I_FEE,]);
       oldStep = data[0];
       newStep = { ...oldStep, stepStatus: "pending" };
       await db.put(APP_FLOW, newStep);
       break;
     case STAGE_I_DOCUMENT_UPLAOD:
-      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [ appId, STAGE_I_DOCUMENT_UPLAOD, ]);
+      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [appId, STAGE_I_DOCUMENT_UPLAOD,]);
       oldStep = data[0];
       newStep = { ...oldStep, stepStatus: "pending" };
       await db.put(APP_FLOW, newStep);
       break;
     case STAGE_I_SUBMIT:
-      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [ appId, STAGE_I_SUBMIT, ]);
+      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [appId, STAGE_I_SUBMIT,]);
       oldStep = data[0];
       newStep = { ...oldStep, stepStatus: "pending" };
       await db.put(APP_FLOW, newStep);
       break;
     case STAGE_I__ASSESSMENT:
-      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [ appId, STAGE_I__ASSESSMENT, ]);
+      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [appId, STAGE_I__ASSESSMENT,]);
       oldStep = data[0];
       newStep = { ...oldStep, stepStatus: "pending" };
       await db.put(APP_FLOW, newStep);
       break;
     case NOC_ISSUANCE:
-      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [ appId, NOC_ISSUANCE, ]);
+      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [appId, NOC_ISSUANCE,]);
       oldStep = data[0];
       newStep = { ...oldStep, stepStatus: "pending" };
       await db.put(APP_FLOW, newStep);
       break;
     case STAGE_II_FORM_FILLING:
-      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [ appId, STAGE_II_FORM_FILLING, ]);
+      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [appId, STAGE_II_FORM_FILLING,]);
       oldStep = data[0];
       newStep = { ...oldStep, stepStatus: "pending" };
       await db.put(APP_FLOW, newStep);
       break;
     case STAGE_II_FEE:
-      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [ appId, STAGE_II_FEE, ]);
+      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [appId, STAGE_II_FEE,]);
       oldStep = data[0];
       newStep = { ...oldStep, stepStatus: "pending" };
       await db.put(APP_FLOW, newStep);
       break;
     case STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS:
-      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [ appId, STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS, ]);
+      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [appId, STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS,]);
       oldStep = data[0];
       newStep = { ...oldStep, stepStatus: "pending" };
       await db.put(APP_FLOW, newStep);
       break;
     case STAGE_II_DOCUMENT_UPLAOD:
-      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [ appId, STAGE_II_DOCUMENT_UPLAOD, ]);
+      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [appId, STAGE_II_DOCUMENT_UPLAOD,]);
       oldStep = data[0];
       newStep = { ...oldStep, stepStatus: "pending" };
       await db.put(APP_FLOW, newStep);
       break;
     case STAGE_II_SUBMIT:
-      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [ appId, STAGE_II_SUBMIT, ]);
+      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [appId, STAGE_II_SUBMIT,]);
       oldStep = data[0];
       newStep = { ...oldStep, stepStatus: "pending" };
       await db.put(APP_FLOW, newStep);
       break;
     case STAGE_II__ASSESSMENT:
-      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [ appId, STAGE_II__ASSESSMENT, ]);
+      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [appId, STAGE_II__ASSESSMENT,]);
       oldStep = data[0];
       newStep = { ...oldStep, stepStatus: "pending" };
       await db.put(APP_FLOW, newStep);
       break;
     case STAFF_DETAILS:
-      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [ appId, STAFF_DETAILS, ]);
+      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [appId, STAFF_DETAILS,]);
       oldStep = data[0];
       newStep = { ...oldStep, stepStatus: "pending" };
       await db.put(APP_FLOW, newStep);
       break;
     case INSP_SLOT_SELECTION:
-      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [ appId, INSP_SLOT_SELECTION, ]);
+      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [appId, INSP_SLOT_SELECTION,]);
       oldStep = data[0];
       newStep = { ...oldStep, stepStatus: "pending" };
       await db.put(APP_FLOW, newStep);
       break;
     case INSPENCTION:
-      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [ appId, INSPENCTION, ]);
+      data = await db.getAllFromIndex(APP_FLOW, "appId_step", [appId, INSPENCTION,]);
       oldStep = data[0];
       newStep = { ...oldStep, stepStatus: "pending" };
       await db.put(APP_FLOW, newStep);
@@ -467,3 +477,51 @@ export const getStepStatus = async (appId, step) => {
   const db = await initDB();
   return await db.getAllFromIndex(APP_FLOW, "appId_step", [appId, step]);
 };
+
+
+export const getBuildingDetail = async (appId) => {
+  const db = await initDB();
+  try {
+    // Read-only transaction for multiple stores
+    const tx = db.transaction([BLD_BUILDING_PLAN, BLD_BCC, BLD_PHOTOS], 'readonly');
+
+    // Building Plan
+    console.log(appId);
+    const storePlan = tx.objectStore(BLD_BUILDING_PLAN);
+    const bld_plan = await storePlan.index("appId").get(appId); // ✅ fixed
+
+    // BCC Detail
+    const storeBCC = tx.objectStore(BLD_BCC);
+    const bcc = await storeBCC.index("appId").get(appId);
+
+    // Building Photos
+    const storePhotos = tx.objectStore(BLD_PHOTOS);
+    const existing_BLD_PHOTOS = await storePhotos.index('appId').getAll(appId);
+
+    existing_BLD_PHOTOS.forEach(item => {
+      Building_Detail_initialValues[item.photoView] = item.photo_pth;
+    });
+    await tx.done;
+    return { ...Building_Detail_initialValues, ...bld_plan, ...bcc };
+  } catch (error) {
+    return {}
+  }
+};
+
+export const getStage2FormFlow = async (appId) => {
+  const db = await initDB();
+  try {
+    // Read-only transaction for multiple stores
+    const tx = db.transaction([APP_FORM_FLOW_STAGE_II], 'readonly');
+    // Building Photos
+    const storePhotos = tx.objectStore(APP_FORM_FLOW_STAGE_II);
+    const flow = await storePhotos.index('appId').getAll(appId);
+    flow.sort((a, b) => a.stepNo - b.stepNo);
+
+    await tx.done;
+    return flow;
+  } catch (error) {
+    return []
+  }
+};
+

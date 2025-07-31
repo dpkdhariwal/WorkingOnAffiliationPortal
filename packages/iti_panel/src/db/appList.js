@@ -24,6 +24,7 @@ import {
   BLD_BUILDING_PLAN,
   BLD_BCC,
   BLD_PHOTOS,
+  FILLED
 } from "../constants";
 
 import { initDB } from "./db";
@@ -370,87 +371,123 @@ export const set_stage_ii_form_flow = async (authUser, appId) => {
 
 export const setBuildingDetail = async (data, authUser, appId) => {
   const db = await initDB();
-  const Building_Detail = (({
-    language_for_building_plan,
-    document_of_building_plan,
-    notarised_document_of_building_plan,
-  }) => ({
-    language_for_building_plan,
-    document_of_building_plan,
-    notarised_document_of_building_plan,
-  }))(data);
-  const bld_bcc = (({
-    language_for_building_completion_certificate,
-    building_completion_certificate,
-    notarised_document_of_bcc,
-    name_of_bcc_issued_authority,
-    date_of_bcc_issued,
-  }) => ({
-    language_for_building_completion_certificate,
-    building_completion_certificate,
-    notarised_document_of_bcc,
-    name_of_bcc_issued_authority,
-    date_of_bcc_issued,
-  }))(data);
-  const bld_photos = (({
-    front_view_photo_of_building,
-    side_view_photo_of_building,
-    entrance_gate_photo_of_plot_with_signage_board,
-  }) => ({
-    front_view_photo_of_building,
-    side_view_photo_of_building,
-    entrance_gate_photo_of_plot_with_signage_board,
-  }))(data);
+  const Building_Detail = (({ language_for_building_plan, document_of_building_plan, notarised_document_of_building_plan, }) => ({ language_for_building_plan, document_of_building_plan, notarised_document_of_building_plan, }))(data);
+  const bld_bcc = (({ language_for_building_completion_certificate, building_completion_certificate, notarised_document_of_bcc, name_of_bcc_issued_authority, date_of_bcc_issued, }) => ({ language_for_building_completion_certificate, building_completion_certificate, notarised_document_of_bcc, name_of_bcc_issued_authority, date_of_bcc_issued, }))(data);
+  const bld_photos = (({ front_view_photo_of_building, side_view_photo_of_building, entrance_gate_photo_of_plot_with_signage_board, }) => ({ front_view_photo_of_building, side_view_photo_of_building, entrance_gate_photo_of_plot_with_signage_board, }))(data);
 
   // Prepare Photo in Row
-  const photo_list = [
-    {
-      photoView: FRONT_VIEW_PHOTO_OF_BUILDING,
-      photo_pth: bld_photos.front_view_photo_of_building,
-    },
-    {
-      photoView: SIDE_VIEW_PHOTO_OF_BUILDING,
-      photo_pth: bld_photos.side_view_photo_of_building,
-    },
-    {
-      photoView: ENTRANCE_GATE_PHOTO_OF_PLOT_WITH_SIGNAGE_BOARD,
-      photo_pth: bld_photos.entrance_gate_photo_of_plot_with_signage_board,
-    },
-  ];
+  const photo_list = [{ photoView: FRONT_VIEW_PHOTO_OF_BUILDING, photo_pth: bld_photos.front_view_photo_of_building, }, { photoView: SIDE_VIEW_PHOTO_OF_BUILDING, photo_pth: bld_photos.side_view_photo_of_building, }, { photoView: ENTRANCE_GATE_PHOTO_OF_PLOT_WITH_SIGNAGE_BOARD, photo_pth: bld_photos.entrance_gate_photo_of_plot_with_signage_board, },];
 
-  // Check Building Plan Detail if Already Exist
-  let bld_plan = await db.getFromIndex(BLD_BUILDING_PLAN, "appId", appId);
-  if (bld_plan?.appId) {
-    console.log("exist");
-    await db.put(BLD_BUILDING_PLAN, {
-      ...bld_plan,
-      ...Building_Detail,
-      appId: appId,
-    });
-  } else {
-    await db.put(BLD_BUILDING_PLAN, {
-      ...Building_Detail,
-      id: Date.now() + Math.random(),
-      appId: appId,
-    });
-  }
+  try {
+    const tx = db.transaction([BLD_BUILDING_PLAN, BLD_BCC, BLD_PHOTOS, APP_FORM_FLOW_STAGE_II], 'readwrite');
 
-  // Check BCC  Detail if Already Exist
-  let bcc = await db.getFromIndex(BLD_BCC, "appId", appId);
-  if (bcc?.appId) {
-    await db.put(BLD_BCC, { ...bcc, ...bld_bcc, appId: appId, });
-  } else {
-    await db.put(BLD_BCC, { ...bld_bcc, id: Date.now() + Math.random(), appId: appId, });
-  }
+    // Saving Building Plan
+    const store_bldPlan = tx.objectStore(BLD_BUILDING_PLAN);
+    const bld_plan = await store_bldPlan.index("appId").get(appId);
+    const data_bldPlan = bld_plan?.appId ? { ...bld_plan, ...Building_Detail, appId } : { ...Building_Detail, id: Date.now() + Math.random(), appId };
+    await store_bldPlan.put(data_bldPlan);
+    // await tx.done;
 
-  // Check Building Photos if Already Exist
-  await Promise.all(photo_list.map(async (photo) => {
-    let p_exist = await db.getFromIndex(BLD_PHOTOS, "photoView_appId", [photo.photoView, appId]);
-    if (p_exist?.appId) {
-      await db.put(BLD_PHOTOS, { ...p_exist, ...photo, appId });
-    } else {
-      await db.put(BLD_PHOTOS, { ...photo, id: Date.now() + Math.random(), appId });
+    // Saving BCC Detail
+    const store_BLD_BCC = tx.objectStore(BLD_BCC);
+    const bcc = await store_BLD_BCC.index("appId").get(appId);
+    const data_BLD_BCC = bcc?.appId ? { ...bcc, ...bld_bcc, appId } : { ...bld_bcc, id: Date.now() + Math.random(), appId };
+    await store_BLD_BCC.put(data_BLD_BCC);
+    // await tx.done;
+
+    // Building Photos
+    const store_BLD_PHOTOS = tx.objectStore(BLD_PHOTOS);
+    for (const photo of photo_list) {
+      const existing_BLD_PHOTOS = await store_BLD_PHOTOS.index('photoView_appId').get([photo.photoView, appId]);
+      const data = existing_BLD_PHOTOS ? { ...existing_BLD_PHOTOS, ...photo, appId } : { ...photo, id: Date.now() + Math.random(), appId };
+      await store_BLD_PHOTOS.put(data);
     }
-  }));
 
+
+    // Stage II Form Flow Prepar
+    const FormFlowStageII = tx.objectStore(APP_FORM_FLOW_STAGE_II);
+    const row = await FormFlowStageII.index("appId").get(appId);
+    if (row?.appId) {
+      // Get specific step record
+      const stepRow = await FormFlowStageII.index("appId_step").get([appId, BUILDING_DETAIL]);
+      if (stepRow) {
+        // Update status to FILLED
+        await FormFlowStageII.put({ ...stepRow, status: FILLED });
+      }
+    }
+    else {
+      await set_stage_ii_form_flow(authUser, appId);
+    }
+    await tx.done;
+  } catch (error) {
+    console.log(error);
+  }
 };
+// export const setBuildingDetail = async (data, authUser, appId) => {
+//   const db = await initDB();
+//   const Building_Detail = (({ language_for_building_plan, document_of_building_plan, notarised_document_of_building_plan, }) => ({ language_for_building_plan, document_of_building_plan, notarised_document_of_building_plan, }))(data);
+//   const bld_bcc = (({ language_for_building_completion_certificate, building_completion_certificate, notarised_document_of_bcc, name_of_bcc_issued_authority, date_of_bcc_issued, }) => ({ language_for_building_completion_certificate, building_completion_certificate, notarised_document_of_bcc, name_of_bcc_issued_authority, date_of_bcc_issued, }))(data);
+//   const bld_photos = (({ front_view_photo_of_building, side_view_photo_of_building, entrance_gate_photo_of_plot_with_signage_board, }) => ({ front_view_photo_of_building, side_view_photo_of_building, entrance_gate_photo_of_plot_with_signage_board, }))(data);
+
+//   // Prepare Photo in Row
+//   const photo_list = [{ photoView: FRONT_VIEW_PHOTO_OF_BUILDING, photo_pth: bld_photos.front_view_photo_of_building, }, { photoView: SIDE_VIEW_PHOTO_OF_BUILDING, photo_pth: bld_photos.side_view_photo_of_building, }, { photoView: ENTRANCE_GATE_PHOTO_OF_PLOT_WITH_SIGNAGE_BOARD, photo_pth: bld_photos.entrance_gate_photo_of_plot_with_signage_board, },];
+
+
+//   // Task 1: Save BCC
+//   const saveBuildingPlan = () =>
+//     new Promise(async (resolve, reject) => {
+//       try {
+//         const tx = db.transaction(BLD_BUILDING_PLAN, 'readwrite'); // start transaction
+//         const store = tx.objectStore(BLD_BUILDING_PLAN);
+//         const bld_plan = await store.index("appId").get(appId);
+//         const data = bld_plan?.appId ? { ...bld_plan, ...Building_Detail, appId } : { ...Building_Detail, id: Date.now() + Math.random(), appId };
+//         await store.put(data); // insert or update
+//         await tx.done; // commit the transaction
+//         resolve(bld_plan ? 'updated' : 'inserted');
+//       } catch (error) {
+//         reject(error); // auto-aborts transaction on error
+//       }
+//     });
+
+
+//   // Check BCC  Detail if Already Exist
+//   const saveBCCDetails = () => new Promise(async (resolve, reject) => {
+//     try {
+//       const tx = db.transaction(BLD_BCC, 'readwrite'); // create a transaction
+//       const store = tx.objectStore(BLD_BCC);
+//       const bcc = await store.index("appId").get(appId);
+//       const data = bcc?.appId ? { ...bcc, ...bld_bcc, appId } : { ...bld_bcc, id: Date.now() + Math.random(), appId };
+//       await store.put(data); // insert or update
+//       await tx.done; // commit transaction
+//       resolve(bcc ? 'updated' : 'inserted');
+//     } catch (error) {
+//       reject(error); // transaction auto-aborts on error
+//     }
+//   });
+
+
+//   // Saving Building Photos
+//   const saveBldPhotos = () => {
+//     return new Promise(async (resolve, reject) => {
+//       try {
+//         const tx = db.transaction(BLD_PHOTOS, 'readwrite');
+//         const store = tx.objectStore(BLD_PHOTOS);
+//         for (const photo of photo_list) {
+//           const existing = await store.index('photoView_appId').get([photo.photoView, appId]);
+//           const data = existing ? { ...existing, ...photo, appId } : { ...photo, id: Date.now() + Math.random(), appId };
+//           await store.put(data); // Insert or update
+//         }
+//         await tx.done; // Commit the transaction
+//         resolve('success');
+//       } catch (err) {
+//         reject('failed');
+//       }
+//     });
+//   };
+
+//   return await Promise.all([
+//     saveBuildingPlan(),
+//     saveBCCDetails(),
+//     saveBldPhotos()
+//   ]);
+// };
