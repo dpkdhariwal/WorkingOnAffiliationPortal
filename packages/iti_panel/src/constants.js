@@ -618,6 +618,9 @@ export const languages = [
   "Punjabi",
 ];
 
+export const ACTIVE = "ACTIVE";
+export const IN_ACTIVE = "IN_ACTIVE";
+
 
 
 export const ID_Proof_Doc_list = [
@@ -997,6 +1000,51 @@ export const AppFlow = [
   },
 ];
 
+export const tradeList = [
+  {
+    tradeId: "tradeId01",
+    tradeName: "Fitter",
+    UnitStrength: 20,
+    WorkshopAreaRequirment: 88,
+    WorkshopAreaUnit: 'sq.m',
+    PowerNorms: 3.51,
+    PowerUnit: 'KW',
+    unitInShift1: 2,
+    unitInShift2: 1,
+    unitInShift3: 0,
+  },
+  {
+    tradeId: "tradeId02",
+    tradeName: "Electrician",
+    UnitStrength: 20,
+    WorkshopAreaRequirment: 98,
+    WorkshopAreaUnit: 'sq.m',
+    PowerNorms: 3,
+    PowerUnit: 'KW',
+    unitInShift1: 2,
+    unitInShift2: 1,
+    unitInShift3: 0,
+  },
+];
+
+export const work_shop_list = () => {
+  const workshopRequired = 2;
+  const workshopList = [];
+
+  for (let i = 1; i <= workshopRequired; i++) {
+    tradeList.forEach((trade) => {
+      workshopList.push({
+        ...trade,
+        Particulars: 'Workshop ' + i,
+        Required_Area_As_per_norms: trade.WorkshopAreaRequirment,
+        WorkshopAreaUnit: trade.WorkshopAreaUnit,
+      });
+    });
+  }
+
+  return workshopList.sort((a, b) => a.tradeName.localeCompare(b.tradeName));
+};
+
 // Workshop Information to be filled Start
 export const work_shop_info_to_be_filled = [
   {
@@ -1012,9 +1060,8 @@ export const work_shop_info_to_be_filled = [
     Required_Area_As_per_norms: "200sqm",
   },
 ];
-export const UPDATE_TRADEWISE_WORKSHOP_DETAILS =
-  "UPDATE_TRADEWISE_WORKSHOP_DETAILS";
-// Workshop Information to be filled End
+export const UPDATE_TRADEWISE_WORKSHOP_DETAILS = "UPDATE_TRADEWISE_WORKSHOP_DETAILS";
+
 
 // Classroom Information to be filled Start
 export const classrooms_info_to_be_filled = [
@@ -1183,7 +1230,7 @@ export const STEPPER_STYLE = {
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 // Database Constants
-export const DB_VERSION = 4;
+export const DB_VERSION = 9;
 export const DB_NAME = "AffliationDB";
 export const USERS = "users";
 export const USER_ROLES = "userRoles";
@@ -1218,6 +1265,8 @@ export const ENTRANCE_GATE_PHOTO_OF_PLOT_WITH_SIGNAGE_BOARD =
 
 // export const Civil_Infrastructure_Detail = "Civil Infrastructure Detail";
 // export const Civil_Infrastructure_Detail = "Civil Infrastructure Detail";
+export const TRADEWISE_WORKSHOP = "tradewise_workshop";
+
 
 // Sample Users
 export const SAMPLE_USERS = [
@@ -1294,6 +1343,7 @@ export const STAGE_II_APP_FORM_FLOW = [
     status: NOT_FILLED, // NOT_FILLED
     stepLabel: "Building Detail",
     nextStep: CIVIL_INFRASTRUCTURE_DETAIL,
+    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
   },
   {
     stepNo: 2,
@@ -1301,55 +1351,69 @@ export const STAGE_II_APP_FORM_FLOW = [
     status: NOT_FILLED, // NOT_FILLED
     stepLabel: "Civil Infrastructure Detail",
     nextStep: AMENITIES_AREA,
+    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
     subSteps: [
       {
         stepNo: 1,
         step: CIC.TRADEWISE_WORKSHOP,
-        status: FILLED, // NOT_FILLED
+        status: NOT_FILLED, // FILLED || NOT_FILLED 
         stepTitle: "Tradewise Workshop",
         nextStep: CIC.TRADEWISE_CLASSROOMS,
+        stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+
       },
       {
         stepNo: 2,
         step: CIC.TRADEWISE_CLASSROOMS,
-        status: FILLED, // NOT_FILLED
+        status: NOT_FILLED, // NOT_FILLED
         stepTitle: "TradeWise Classrooms",
         nextStep: CIC.MULTIPURPOSE_HALL,
+        stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
       },
       {
         stepNo: 3,
         step: CIC.MULTIPURPOSE_HALL,
-        status: FILLED, // NOT_FILLED
+        status: NOT_FILLED, // NOT_FILLED
         stepTitle: "Multipurpose hall",
         nextStep: CIC.IT_LAB,
+        stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+
       },
       {
         stepNo: 4,
         step: CIC.IT_LAB,
-        status: FILLED, // NOT_FILLED
+        status: NOT_FILLED, // NOT_FILLED
         stepTitle: "IT Lab",
         nextStep: CIC.LIBRARY,
+        stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+
       },
       {
         stepNo: 5,
         step: CIC.LIBRARY,
-        status: FILLED, // NOT_FILLED
+        status: NOT_FILLED, // NOT_FILLED
         stepTitle: "Library",
         nextStep: CIC.PLACEMENT_AND_COUNSELLING_ROOM,
+        stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+
       },
       {
         stepNo: 6,
         step: CIC.PLACEMENT_AND_COUNSELLING_ROOM,
-        status: FILLED, // NOT_FILLED
+        status: NOT_FILLED, // NOT_FILLED
         stepTitle: "Placement and counselling room",
         nextStep: CIC.ADMINISTRATIVE_AREA,
+        stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+
       },
       {
         stepNo: 8,
         step: CIC.ADMINISTRATIVE_AREA,
-        status: FILLED, // NOT_FILLED
+        status: NOT_FILLED, // NOT_FILLED
         stepTitle: "Administrative Area",
         nextStep: null,
+        stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+
       },
     ],
   },
@@ -1359,6 +1423,7 @@ export const STAGE_II_APP_FORM_FLOW = [
     status: NOT_FILLED, // NOT_FILLED
     stepLabel: "Amenities Area",
     nextStep: SIGNAGE_BOARDS,
+    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
   },
   {
     stepNo: 4,
@@ -1366,6 +1431,8 @@ export const STAGE_II_APP_FORM_FLOW = [
     status: NOT_FILLED, // NOT_FILLED
     stepLabel: "Signage Boards",
     nextStep: ELECTRICITY_CONNECTION_DETAILS,
+    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+
   },
   {
     stepNo: 5,
@@ -1373,13 +1440,17 @@ export const STAGE_II_APP_FORM_FLOW = [
     status: NOT_FILLED, // NOT_FILLED
     stepLabel: "Electricity Connection Details",
     nextStep: FEE_PAYMENT_FOR_STAGEII,
+    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+
   },
-   {
+  {
     stepNo: 6,
     step: MISCELLANEOUS,
     status: NOT_FILLED, // NOT_FILLED
     stepLabel: "Miscellaneous",
     nextStep: FEE_PAYMENT_FOR_STAGEII,
+    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+
   },
   {
     stepNo: 7,
@@ -1387,6 +1458,8 @@ export const STAGE_II_APP_FORM_FLOW = [
     status: NOT_FILLED, // NOT_FILLED
     stepLabel: "Fee Payment For StageII",
     nextStep: TRADEWISE_MACHINERY__TOOLS__EQUIPMENT_DETAILS,
+    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+
   },
   {
     stepNo: 8,
@@ -1394,6 +1467,7 @@ export const STAGE_II_APP_FORM_FLOW = [
     status: NOT_FILLED, // NOT_FILLED
     stepLabel: "Tradewise Machinery/Tools/Equipment Details",
     nextStep: null,
+    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
   },
   {
     stepNo: 9,
@@ -1401,6 +1475,8 @@ export const STAGE_II_APP_FORM_FLOW = [
     status: NOT_FILLED, // NOT_FILLED
     stepLabel: "Document Uploads",
     nextStep: null,
+    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+
   },
 ];
 
@@ -1483,3 +1559,49 @@ export const STAGE_I_APP_FORM_FLOW = [
 ];
 
 
+
+// Workshop
+// Workshop
+const WORKSHOP_1 = "WORKSHOP_1";
+const WORKSHOP_2 = "WORKSHOP_2";
+const WORKSHOP_3 = "WORKSHOP_3";
+const WORKSHOP_4 = "WORKSHOP_4";
+const WORKSHOP_5 = "WORKSHOP_5";
+const WORKSHOP_6 = "WORKSHOP_6";
+const WORKSHOP_7 = "WORKSHOP_7";
+const WORKSHOP_8 = "WORKSHOP_8";
+const WORKSHOP_9 = "WORKSHOP_9";
+const WORKSHOP_10 = "WORKSHOP_10";
+const WORKSHOP_11 = "WORKSHOP_11";
+const WORKSHOP_12 = "WORKSHOP_12";
+const WORKSHOP_13 = "WORKSHOP_13";
+const WORKSHOP_14 = "WORKSHOP_14";
+const WORKSHOP_15 = "WORKSHOP_15";
+const WORKSHOP_16 = "WORKSHOP_16";
+const WORKSHOP_17 = "WORKSHOP_17";
+const WORKSHOP_18 = "WORKSHOP_18";
+const WORKSHOP_19 = "WORKSHOP_19";
+const WORKSHOP_20 = "WORKSHOP_20";
+
+export const WorkshopName = {
+  0: WORKSHOP_1,
+  1: WORKSHOP_2,
+  2: WORKSHOP_3,
+  3: WORKSHOP_4,
+  4: WORKSHOP_5,
+  5: WORKSHOP_6,
+  6: WORKSHOP_7,
+  7: WORKSHOP_8,
+  8: WORKSHOP_9,
+  9: WORKSHOP_10,
+  10: WORKSHOP_11,
+  11: WORKSHOP_12,
+  12: WORKSHOP_13,
+  13: WORKSHOP_14,
+  14: WORKSHOP_15,
+  15: WORKSHOP_16,
+  16: WORKSHOP_17,
+  17: WORKSHOP_18,
+  18: WORKSHOP_19,
+  19: WORKSHOP_20
+}

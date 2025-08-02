@@ -26,6 +26,7 @@ import {
   BLD_PHOTOS,
   FILLED
 } from "../constants";
+import * as imp from "../constants";
 
 import { initDB } from "./db";
 
@@ -340,24 +341,13 @@ export const setAppFlow = async (authUser, appId) => {
 export const set_stage_ii_form_flow = async (authUser, appId) => {
   const db = await initDB();
   STAGE_II_APP_FORM_FLOW.forEach(async (flow) => {
-    const flowData = {
-      ...flow,
-      id: Date.now() + Math.random(),
-      appId: appId,
-      userId: authUser.id,
-    };
+    const flowData = { ...flow, id: Date.now() + Math.random(), appId: appId, userId: authUser.id, };
     await db.put(APP_FORM_FLOW_STAGE_II, flowData);
-
     if ("subSteps" in flow) {
       switch (flow.step) {
-        case BUILDING_DETAIL:
-          flowData.subSteps.forEach(async (flow) => {
-            const flowData = {
-              ...flow,
-              id: Date.now() + Math.random(),
-              appId: appId,
-              userId: authUser.id,
-            };
+        case imp.CIVIL_INFRASTRUCTURE_DETAIL:
+          flow.subSteps.forEach(async (flow) => {
+            const flowData = { ...flow, id: Date.now() + Math.random(), appId: appId, userId: authUser.id, };
             await db.put(APP_FORM_SUB_CIVIL_INFRA, flowData);
           });
           break;
@@ -380,6 +370,16 @@ export const setBuildingDetail = async (data, authUser, appId) => {
 
   try {
     const tx = db.transaction([BLD_BUILDING_PLAN, BLD_BCC, BLD_PHOTOS, APP_FORM_FLOW_STAGE_II], 'readwrite');
+
+
+
+    // Stage II Form Flow Prepar
+    const FormFlowStageII = tx.objectStore(APP_FORM_FLOW_STAGE_II);
+    const row = await FormFlowStageII.index("appId").get(appId);
+    if (!row?.appId) {
+      await set_stage_ii_form_flow(authUser, appId);
+    }
+
 
     // Saving Building Plan
     const store_bldPlan = tx.objectStore(BLD_BUILDING_PLAN);
@@ -404,21 +404,14 @@ export const setBuildingDetail = async (data, authUser, appId) => {
     }
 
 
-    // Stage II Form Flow Prepar
-    const FormFlowStageII = tx.objectStore(APP_FORM_FLOW_STAGE_II);
-    const row = await FormFlowStageII.index("appId").get(appId);
-    if (row?.appId) {
-      // Get specific step record
-      const stepRow = await FormFlowStageII.index("appId_step").get([appId, BUILDING_DETAIL]);
-      if (stepRow) {
-        // Update status to FILLED
-        await FormFlowStageII.put({ ...stepRow, status: FILLED });
-      }
+    // Get specific step record
+    const stepRow = await FormFlowStageII.index("appId_step").get([appId, BUILDING_DETAIL]);
+    if (stepRow?.appId) {
+      await FormFlowStageII.put({ ...stepRow, status: FILLED });
     }
-    else {
-      await set_stage_ii_form_flow(authUser, appId);
-    }
+
     await tx.done;
+
   } catch (error) {
     console.log(error);
   }

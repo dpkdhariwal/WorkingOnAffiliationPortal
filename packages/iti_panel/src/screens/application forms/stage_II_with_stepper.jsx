@@ -45,6 +45,7 @@ export const FormStageII = () => {
   //   setSteps(data);
   //   setActiveStep(currentStep);
   // }, []);
+
   useEffect(() => {
     console.log(steps)
   }, [steps]);
@@ -52,6 +53,7 @@ export const FormStageII = () => {
   useEffect(() => {
     loadData();
   }, []);
+  
   const loadData = async () => {
     var data = await getStage2FormFlow(appId);
     data = data.map((step) => ({ ...step, completed: step.status === FILLED }));

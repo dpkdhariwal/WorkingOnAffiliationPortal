@@ -42,8 +42,8 @@ const steps = [
   { key: 6, label: "Placement and counselling room", filled: false },
   { key: 7, label: "Administrative Area", filled: false },
 ];
-
 export default function MultiStepWithIndividualForms({ setActive }) {
+
   const [activeKey, setActiveKey] = useState(steps[0].key);
   const dispatch = useDispatch();
 

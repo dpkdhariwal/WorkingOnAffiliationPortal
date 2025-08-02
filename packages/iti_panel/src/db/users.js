@@ -51,7 +51,14 @@ import {
   FRONT_VIEW_PHOTO_OF_BUILDING,
   SIDE_VIEW_PHOTO_OF_BUILDING,
   ENTRANCE_GATE_PHOTO_OF_PLOT_WITH_SIGNAGE_BOARD,
-  APP_FORM_FLOW_STAGE_II
+  APP_FORM_FLOW_STAGE_II,
+  TRADEWISE_WORKSHOP,
+  tradeList,
+  WorkshopName,
+  APP_FORM_SUB_CIVIL_INFRA,
+  CIC,
+  FILLED,
+  ACTIVE
 } from "../constants";
 import { initDB } from "./db";
 
@@ -523,5 +530,160 @@ export const getStage2FormFlow = async (appId) => {
   } catch (error) {
     return []
   }
+};
+
+
+export const setCheckListTradewiseWorkShop = async (authUser, appId) => {
+  const db = await initDB();
+  try {
+    // Read-only transaction for multiple stores
+    const tx = db.transaction([TRADEWISE_WORKSHOP], 'readwrite');
+    for (const [index, obj] of tradeList.entries()) {
+      const { tradeId, tradeName, unitInShift1, unitInShift2, unitInShift3 } = obj;
+      const maximum_unit = Math.max(unitInShift1, unitInShift2, unitInShift3);
+
+      for (let index = 0; index < maximum_unit; index++) {
+        const workshop = WorkshopName[index];
+        console.log(workshop, appId);
+
+        var newObj = { userId: authUser.id, tradeId: tradeId, workshop: workshop, appId: appId, area: '', photo: '', submitDate: null, updateDate: null };
+        // Fetching Tradewise Workshop Detail If Exist
+        const store = tx.objectStore(TRADEWISE_WORKSHOP);
+        const twws = await store.index("tradeId_workshop_appId").get([tradeId, workshop, appId]);
+        console.log(twws);
+        const data_twws = twws?.appId ? { ...twws, ...newObj } : { ...newObj, id: Date.now() + Math.random() };
+        await store.put(data_twws);
+      }
+    }
+
+    await tx.done;
+    // return { ...Building_Detail_initialValues, ...bld_plan, ...bcc };
+  } catch (error) {
+    console.error(error);
+  }
+
+};
+export const getTradeInfoByTradeId = (tradeId) => {
+  return tradeList.find((trade) => trade.tradeId === tradeId);
+
+}
+export const getTradewiseWorkShop = async (appId) => {
+  const db = await initDB();
+  try {
+    // Read-only transaction for multiple stores
+    const tx = db.transaction([TRADEWISE_WORKSHOP], 'readonly');
+    // Building Photos
+    const workshops = tx.objectStore(TRADEWISE_WORKSHOP);
+    let allList = await workshops.index('appId').getAll(appId);
+
+    // allList = allList.map(async (item) => {
+    //   const tradeInfo = await getTradeInfoByTradeId(item.tradeId); // <-- await here!
+    //   return {...item, tradeInfo:tradeInfo};
+    // })
+
+    const finalList = await Promise.all(
+      allList.map(async (item) => {
+        const tradeInfo = await getTradeInfoByTradeId(item.tradeId);
+        return { ...item, tradeInfo };
+      })
+    );
+
+
+    // allList.sort((a, b) => a.stepNo - b.stepNo);
+
+    await tx.done;
+    return finalList;
+  } catch (error) {
+    return []
+  }
+};
+export const setTradewiseWorkShop = async (values, authUser, appId) => {
+  const db = await initDB();
+  try {
+    // Read-only transaction for multiple stores
+    const tx = db.transaction([TRADEWISE_WORKSHOP, APP_FORM_SUB_CIVIL_INFRA], 'readwrite');
+
+    for (const key in values) {
+      const splited = key.split('>');
+
+      // console.log(splited[0]);
+      var tradeId = splited[1];
+      var workshop = splited[2];
+      // console.log(keyString, photo, tradeId, workshop, area);
+      const store = tx.objectStore(TRADEWISE_WORKSHOP);
+      const twws = await store.index("tradeId_workshop_appId").get([tradeId, workshop, appId]);
+
+      if (splited[0] === "area" && twws?.appId) {
+        await store.put({ ...twws, area: values[key], submitDate: new Date().toISOString(), updateDate: new Date().toISOString() });
+      } else if (splited[0] === "photo" && twws?.appId) {
+        await store.put({ ...twws, photo: values[key], submitDate: new Date().toISOString(), updateDate: new Date().toISOString() });
+      }
+    }
+
+
+    const store = tx.objectStore(APP_FORM_SUB_CIVIL_INFRA);
+    const stepInfo = await store.index("appId_step").get([appId, CIC.TRADEWISE_WORKSHOP]);
+    console.log(stepInfo);
+    await store.put({ ...stepInfo, status: FILLED, submitDate: new Date().toISOString(), updateDate: new Date().toISOString() });
+
+    // Set Active Next Step
+    await setActiveCivilInfraSubSteps(appId, stepInfo.nextStep);
+
+    await tx.done;
+  } catch (error) {
+    return {}
+  }
+
+};
+
+export const setActiveCivilInfraSubSteps = async (appId, toActiveStep) => {
+  // Update the app flow status
+  const db = await initDB();
+  let currentState;
+  try {
+    // Read-only transaction for multiple stores
+    const tx = db.transaction([APP_FORM_SUB_CIVIL_INFRA], 'readwrite');
+    const store = tx.objectStore(APP_FORM_SUB_CIVIL_INFRA);
+    switch (toActiveStep) {
+      case CIC.TRADEWISE_WORKSHOP:
+        currentState = await store.index("appId_step").get([appId, CIC.TRADEWISE_WORKSHOP]);
+        await store.put({ ...currentState, stepStatus: ACTIVE });
+        break;
+      case CIC.TRADEWISE_CLASSROOMS:
+        currentState = await store.index("appId_step").get([appId, CIC.TRADEWISE_CLASSROOMS]);
+        await store.put({ ...currentState, stepStatus: ACTIVE });
+        break;
+      case CIC.MULTIPURPOSE_HALL:
+        currentState = await store.index("appId_step").get([appId, CIC.MULTIPURPOSE_HALL]);
+        await store.put({ ...currentState, stepStatus: ACTIVE });
+        break;
+      case CIC.IT_LAB:
+        currentState = await store.index("appId_step").get([appId, CIC.IT_LAB]);
+        await store.put({ ...currentState, stepStatus: ACTIVE });
+        break;
+      case CIC.LIBRARY:
+        currentState = await store.index("appId_step").get([appId, CIC.LIBRARY]);
+        await store.put({ ...currentState, stepStatus: ACTIVE });
+        break;
+      case CIC.PLACEMENT_AND_COUNSELLING_ROOM:
+        currentState = await store.index("appId_step").get([appId, CIC.PLACEMENT_AND_COUNSELLING_ROOM]);
+        await store.put({ ...currentState, stepStatus: ACTIVE });
+        break;
+      case CIC.ADMINISTRATIVE_AREA:
+        currentState = await store.index("appId_step").get([appId, CIC.ADMINISTRATIVE_AREA]);
+        await store.put({ ...currentState, stepStatus: ACTIVE });
+        break;
+      default:
+        break;
+    }
+    await tx.done;
+  } catch (error) {
+    return {}
+  }
+
+
+
+
+
 };
 

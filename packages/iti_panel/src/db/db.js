@@ -22,6 +22,7 @@ import {
   APP_FORM_SUB_CIVIL_INFRA,
   BLD_BCC,
   BLD_PHOTOS,
+  TRADEWISE_WORKSHOP
 } from "../constants";
 
 export const initDB = async () => {
@@ -143,7 +144,7 @@ export const initDB = async () => {
         });
         userStore.createIndex("appId", "appId", { unique: false });
         userStore.createIndex("userId", "userId", { unique: false });
-        userStore.createIndex("photoView_appId", ["photoView", "appId"]); 
+        userStore.createIndex("photoView_appId", ["photoView", "appId"]);
       }
 
       if (!db.objectStoreNames.contains(APP_FORM_SUB_CIVIL_INFRA)) {
@@ -152,8 +153,21 @@ export const initDB = async () => {
         });
         userStore.createIndex("appId", "appId", { unique: false });
         userStore.createIndex("userId", "userId", { unique: false });
-        userStore.createIndex("appId_step", ["appId", "step"]); 
+        userStore.createIndex("appId_step", ["appId", "step"]);
       }
+
+
+      if (!db.objectStoreNames.contains(TRADEWISE_WORKSHOP)) {
+        const userStore = db.createObjectStore(TRADEWISE_WORKSHOP, {
+          keyPath: "id",
+        });
+        userStore.createIndex("appId", "appId", { unique: false });
+        userStore.createIndex("userId", "userId", { unique: false });
+        userStore.createIndex("workshop", "workshop", { unique: false });
+        userStore.createIndex("tradeId_workshop_appId", ["tradeId","workshop", "appId"]); // compound index
+
+      }
+
     },
   });
 };
@@ -173,3 +187,6 @@ export const createIndexes = async () => {
     },
   });
 };
+
+
+
