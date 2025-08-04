@@ -45,18 +45,12 @@ const Start = () => {
             <div className="card-title">New Application</div>
           </Card.Header>
           <Card.Body>
-            <h6 className="card-title fw-semibold">Some Heading</h6>
             <p className="card-text">
-              Lorem Ipsum is simply dummy text of the printing and typesetting
-              industry. Lorem Ipsum has been the industry's standard dummy text
-              ever since the 1500s, when an unknown printer took a galley of
-              type and scrambled it to make a type specimen book. It has
-              survived not only five centuries, but also the leap into
-              electronic typesetting, remaining essentially unchanged. It was
-              popularised in the 1960s with the release of Letraset sheets
-              containing Lorem Ipsum passages, and more recently with desktop
-              publishing software like Aldus PageMaker including versions of
-              Lorem Ipsum.
+              <div>
+                <p style={{ marginBlockEnd: '0px' }}>As per the Affiliation Norms 2025, the accreditation process has been streamlined into two key stages. The following section will elaborate on each step of accreditation process in detail.</p>
+                <b>Stage-I  Application:</b><p style={{ marginBlockEnd: '0px' }} >Stage-I application of the affiliation process pertains to the submission of preliminary details by the applicant for establishing a new ITI. This stage involves providing essential information about the applicant entity, proposed institute details, land particulars, and the trades/units for which affiliation is sought.</p>
+                <b>Stage-II  Application:</b><p>Upon receipt of the No Objection Certificate (NOC), the applicant shall proceed to Stage-II. In Stage-II, the applicant shall submit detailed information regarding civil infrastructure, electricity connection, and machinery.</p>
+              </div>
             </p>
             <SelectCategory />
           </Card.Body>

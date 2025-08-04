@@ -107,7 +107,7 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
   const loadData = async () => {
     const data = await getBuildingDetail(appId);
     console.log(data);
-    formikRef.current.setValues(data); // update entire form
+    // formikRef.current.setValues(data); // update entire form
   };
   useEffect(() => {
     loadData();
@@ -115,315 +115,317 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
 
   return (
     <Fragment>
-      {AppliInfo.stage_II_fee_status === STAGE_II__FEE_PAID || AppliInfo.stage_II_fee_status === STAGE_II__FEE_EXEMPTED ? (<BuildingPlanView />) :
-        <>
-          <Formik
-            innerRef={formikRef}
-            initialValues={Building_Detail_initialValues}
-            validationSchema={yup.object().shape(building_detail_yup_object)}
-            onSubmit={(values) => {
-              submit(values);
-              console.log("Form Values", values);
-            }}
-          >
-            {({ handleSubmit, handleChange, setFieldValue, values, errors, touched }) => (
-              <Form onSubmit={handleSubmit}>
-                <Card className="custom-card border border-primary">
-                  <Card.Header>
-                    <div className="card-title" style={{ textTransform: "none" }}>
-                      <h5> Building Details</h5>
-                    </div>
-                  </Card.Header>
-                  <Card.Body>
-                    <h6>Building Plan</h6>
-                    <BuildingPlan languages={languages} handleChange={handleChange} touched={touched} errors={errors} values={values} setFieldValue={setFieldValue} />
-                    <br />
-                    <hr />
-                    <h6>Building Completion Certificate (BCC)</h6>
-                    <Row style={{ marginTop: "1rem" }}>
-                      <Col md={4}>
-                        <Form.Group>
-                          <Form.Label>
-                            Document Language for Building Completion Certificate
-                            (BCC)
-                            <ReqSign />
-                          </Form.Label>
-                          <Field
-                            required
-                            name="language_for_building_completion_certificate"
-                            as="select"
-                            className="form-control"
-                            onChange={handleChange}
-                            isInvalid={
-                              touched.language_for_building_completion_certificate &&
-                              !!errors.language_for_building_completion_certificate
-                            }
-                          >
-                            <option value="" selected>Select</option>
-                            {LANGUAGES.map((lang, i) => (
-                              <option key={i} value={lang}>
-                                {lang}
-                              </option>
-                            ))}
-                          </Field>
-                          {touched.language_for_building_completion_certificate && errors.language_for_building_completion_certificate && (
-                            <Form.Control.Feedback
-                              type="invalid"
-                              className="d-block"
-                            >
-                              {errors.language_for_building_completion_certificate}
-                            </Form.Control.Feedback>
-                          )}
-                        </Form.Group>
-                      </Col>
-                      <Col md={4}>
-                        <Form.Group>
-                          <Form.Label>
-                            Upload Original Building Completion Certificate (BCC)
-                            <ReqSign />
-                            <br />
-                            (As per Annexure-10):{" "}
-                            <Button
-                              variant="link"
-                              className="rounded-pill btn-wave"
-                            >
-                              Download Format
-                            </Button>
-                          </Form.Label>
-                          {/* <div className="d-flex align-items-center gap-2"> */}
-                          <Form.Control required type="file"
-                            name="building_completion_certificate"
-                            // value={values.building_completion_certificate}
-                            onChange={(event) => {
-                              setFieldValue("building_completion_certificate", event.currentTarget.files[0]);
-                            }}
-                            isInvalid={
-                              touched.building_completion_certificate &&
-                              !!errors.building_completion_certificate
-                            } />
-                          {/* <Button variant="primary">Upload</Button> */}
-                          {/* </div> */}
-                          {touched.notarised_document_of_building_plan &&
-                            errors.building_completion_certificate && (
-                              <BootstrapForm.Control.Feedback type="invalid">
-                                {errors.building_completion_certificate}
-                              </BootstrapForm.Control.Feedback>
-                            )}
-                        </Form.Group>
-                      </Col>
-                      <Col md={4}>
-                        <Form.Group>
-                          <Form.Label>
-                            Upload Hindi/English Notarised Copy of document
-                            <ReqSign />
-                          </Form.Label>
-                          {/* <div className="d-flex align-items-center gap-2"> */}
-                          <Form.Control type="file" name="notarised_document_of_bcc"
-                            // value={values.notarised_document_of_bcc}
-                            onChange={(event) => {
-                              setFieldValue("notarised_document_of_bcc", event.currentTarget.files[0]);
-                            }} isInvalid={
-                              touched.notarised_document_of_bcc &&
-                              !!errors.notarised_document_of_bcc
-                            } />
-                          {/* <Button variant="primary">Upload</Button> */}
-                          {/* </div> */}
-                          {touched.notarised_document_of_bcc &&
-                            errors.notarised_document_of_bcc && (
-                              <BootstrapForm.Control.Feedback type="invalid">
-                                {errors.notarised_document_of_bcc}
-                              </BootstrapForm.Control.Feedback>
-                            )}
-                        </Form.Group>
-                      </Col>
-                    </Row>
-                    <br />
-                    <hr />
-                    <h6>Name of Issuing Authority for BCC</h6>
-                    <Row style={{ marginTop: "1rem" }}>
-                      <Col md={6}>
-                        <Form.Group>
-                          <Form.Label>
-                            Name of issued Authority
-                            <ReqSign />
-                          </Form.Label>
-                          <Field placeholder="Enter BCC Issued Authority Name" required name="name_of_bcc_issued_authority" as={Form.Control} value={values.name_of_bcc_issued_authority} onChange={handleChange}
-                            isInvalid={
-                              touched.name_of_bcc_issued_authority &&
-                              !!errors.name_of_bcc_issued_authority
-                            } />
-                          {touched.name_of_bcc_issued_authority &&
-                            errors.name_of_bcc_issued_authority && (
-                              <BootstrapForm.Control.Feedback type="invalid">
-                                {errors.name_of_bcc_issued_authority}
-                              </BootstrapForm.Control.Feedback>
-                            )}
-                        </Form.Group>
-                      </Col>
-                      <Col md={6}>
-                        <Form.Group>
-                          <Form.Label>
-                            Date of Issued
-                            <ReqSign />
-                          </Form.Label>
-                          <Form.Control required type="date" name="date_of_bcc_issued" as={Form.Control} value={values.date_of_bcc_issued} onChange={handleChange}
-                            isInvalid={
-                              touched.date_of_bcc_issued &&
-                              !!errors.date_of_bcc_issued
-                            } />
-                          {touched.date_of_bcc_issued &&
-                            errors.date_of_bcc_issued && (
-                              <BootstrapForm.Control.Feedback type="invalid">
-                                {errors.date_of_bcc_issued}
-                              </BootstrapForm.Control.Feedback>
-                            )}
-                        </Form.Group>
-                      </Col>
-                    </Row>
-                    <hr />
-                    <Card className="custom-card border border-info ">
-                      <Card.Header>
-                        <div
-                          className="card-title"
-                          style={{ textTransform: "none" }}
+      <>
+        <Formik
+          enableReinitialize
+          innerRef={formikRef}
+          initialValues={Building_Detail_initialValues}
+          validationSchema={yup.object().shape(building_detail_yup_object)}
+          onSubmit={(values) => {
+            submit(values);
+            console.log("Form Values", values);
+          }}
+        >
+          {({ handleSubmit, handleChange, setFieldValue, values, errors, touched }) => (
+            <Form onSubmit={handleSubmit}>
+              <Card className="custom-card border border-primary">
+                <Card.Header>
+                  <div className="card-title" style={{ textTransform: "none" }}>
+                    <h5> Building Details</h5>
+                  </div>
+                </Card.Header>
+                <Card.Body>
+                  <h6>Building Plan</h6>
+                  <BuildingPlan languages={languages} handleChange={handleChange} touched={touched} errors={errors} values={values} setFieldValue={setFieldValue} />
+                  <br />
+                  <hr />
+                  <h6>Building Completion Certificate (BCC)</h6>
+                  <Row style={{ marginTop: "1rem" }}>
+                    <Col md={4}>
+                      <Form.Group>
+                        <Form.Label>
+                          Document Language for Building Completion Certificate
+                          (BCC)
+                          <ReqSign />
+                        </Form.Label>
+                        <Field
+                          required
+                          name="language_for_building_completion_certificate"
+                          as="select"
+                          className="form-control"
+                          onChange={handleChange}
+                          isInvalid={
+                            touched.language_for_building_completion_certificate &&
+                            !!errors.language_for_building_completion_certificate
+                          }
                         >
-                          Photos of Building
-                        </div>
-                      </Card.Header>
-                      <Card.Body>
-                        <Row style={{ marginTop: "1rem" }}>
-                          <Col md={6}>
-                            <Form.Group>
-                              <Form.Label>
-                                Upload Front View Photo of Building
-                                <ReqSign />
-                              </Form.Label>
-                              {/* <div className="d-flex align-items-center gap-2"> */}
-                              <Form.Control type="file" name="front_view_photo_of_building"
-                                //  value={values.front_view_photo_of_building}
-                                onChange={(event) => {
-                                  setFieldValue("front_view_photo_of_building", event.currentTarget.files[0]);
-                                }}
-                                isInvalid={
-                                  touched.front_view_photo_of_building &&
-                                  !!errors.front_view_photo_of_building
-                                } /> {touched.front_view_photo_of_building &&
-                                  errors.front_view_photo_of_building && (
-                                    <BootstrapForm.Control.Feedback type="invalid">
-                                      {errors.front_view_photo_of_building}
-                                    </BootstrapForm.Control.Feedback>
-                                  )}
-                              {/* <Button variant="primary">Upload</Button> */}
-                              {/* </div> */}
-                              <Form.Control.Feedback type="invalid">
-                                Select Document
-                              </Form.Control.Feedback>
-                            </Form.Group>
-                          </Col>
-                          <Col md={6}>
-                            <Form.Group>
-                              <Form.Label>
-                                Upload Side View Photo of Building
-                                <ReqSign />
-                              </Form.Label>
-                              {/* <div className="d-flex align-items-center gap-2"> */}
-                              <Form.Control type="file" name="side_view_photo_of_building"
-                                // value={values.side_view_photo_of_building}
-                                onChange={(event) => {
-                                  setFieldValue("side_view_photo_of_building", event.currentTarget.files[0]);
-                                }}
-                                isInvalid={
-                                  touched.side_view_photo_of_building &&
-                                  !!errors.side_view_photo_of_building
-                                } /> {touched.side_view_photo_of_building &&
-                                  errors.side_view_photo_of_building && (
-                                    <BootstrapForm.Control.Feedback type="invalid">
-                                      {errors.side_view_photo_of_building}
-                                    </BootstrapForm.Control.Feedback>
-                                  )}
-                              {/* <Button variant="primary">Upload</Button>
+                          <option value="" selected>Select</option>
+                          {LANGUAGES.map((lang, i) => (
+                            <option key={i} value={lang}>
+                              {lang}
+                            </option>
+                          ))}
+                        </Field>
+                        {touched.language_for_building_completion_certificate && errors.language_for_building_completion_certificate && (
+                          <Form.Control.Feedback
+                            type="invalid"
+                            className="d-block"
+                          >
+                            {errors.language_for_building_completion_certificate}
+                          </Form.Control.Feedback>
+                        )}
+                      </Form.Group>
+                    </Col>
+                    <Col md={4}>
+                      <Form.Group>
+                        <Form.Label>
+                          Upload Original Building Completion Certificate (BCC)
+                          <ReqSign />
+                          <br />
+                          (As per Annexure-10):{" "}
+                          <Button
+                            variant="link"
+                            className="rounded-pill btn-wave"
+                          >
+                            Download Format
+                          </Button>
+                        </Form.Label>
+                        {/* <div className="d-flex align-items-center gap-2"> */}
+                        <Form.Control required type="file"
+                          name="building_completion_certificate"
+                          // value={values.building_completion_certificate}
+                          onChange={(event) => {
+                            setFieldValue("building_completion_certificate", event.currentTarget.files[0]);
+                          }}
+                          isInvalid={
+                            touched.building_completion_certificate &&
+                            !!errors.building_completion_certificate
+                          } />
+                        {/* <Button variant="primary">Upload</Button> */}
+                        {/* </div> */}
+                        {touched.notarised_document_of_building_plan &&
+                          errors.building_completion_certificate && (
+                            <BootstrapForm.Control.Feedback type="invalid">
+                              {errors.building_completion_certificate}
+                            </BootstrapForm.Control.Feedback>
+                          )}
+                      </Form.Group>
+                    </Col>
+                    <Col md={4}>
+                      <Form.Group>
+                        <Form.Label>
+                          Upload Hindi/English Notarised Copy of document
+                          <ReqSign />
+                        </Form.Label>
+                        {/* <div className="d-flex align-items-center gap-2"> */}
+                        <Form.Control type="file" name="notarised_document_of_bcc"
+                          // value={values.notarised_document_of_bcc}
+                          onChange={(event) => {
+                            setFieldValue("notarised_document_of_bcc", event.currentTarget.files[0]);
+                          }} isInvalid={
+                            touched.notarised_document_of_bcc &&
+                            !!errors.notarised_document_of_bcc
+                          } />
+                        {/* <Button variant="primary">Upload</Button> */}
+                        {/* </div> */}
+                        {touched.notarised_document_of_bcc &&
+                          errors.notarised_document_of_bcc && (
+                            <BootstrapForm.Control.Feedback type="invalid">
+                              {errors.notarised_document_of_bcc}
+                            </BootstrapForm.Control.Feedback>
+                          )}
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                  <br />
+                  <hr />
+                  <h6>Name of Issuing Authority for BCC</h6>
+                  <Row style={{ marginTop: "1rem" }}>
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label>
+                          Name of issued Authority
+                          <ReqSign />
+                        </Form.Label>
+                        <Field placeholder="Enter BCC Issued Authority Name" required name="name_of_bcc_issued_authority" as={Form.Control} value={values.name_of_bcc_issued_authority} onChange={handleChange}
+                          isInvalid={
+                            touched.name_of_bcc_issued_authority &&
+                            !!errors.name_of_bcc_issued_authority
+                          } />
+                        {touched.name_of_bcc_issued_authority &&
+                          errors.name_of_bcc_issued_authority && (
+                            <BootstrapForm.Control.Feedback type="invalid">
+                              {errors.name_of_bcc_issued_authority}
+                            </BootstrapForm.Control.Feedback>
+                          )}
+                      </Form.Group>
+                    </Col>
+                    <Col md={6}>
+                      <Form.Group>
+                        <Form.Label>
+                          Date of Issued
+                          <ReqSign />
+                        </Form.Label>
+                        <Form.Control required type="date" name="date_of_bcc_issued" as={Form.Control} value={values.date_of_bcc_issued} onChange={handleChange}
+                          isInvalid={
+                            touched.date_of_bcc_issued &&
+                            !!errors.date_of_bcc_issued
+                          } />
+                        {touched.date_of_bcc_issued &&
+                          errors.date_of_bcc_issued && (
+                            <BootstrapForm.Control.Feedback type="invalid">
+                              {errors.date_of_bcc_issued}
+                            </BootstrapForm.Control.Feedback>
+                          )}
+                      </Form.Group>
+                    </Col>
+                  </Row>
+                  <hr />
+                  <Card className="custom-card border border-info ">
+                    <Card.Header>
+                      <div
+                        className="card-title"
+                        style={{ textTransform: "none" }}
+                      >
+                        Photos of Building
+                      </div>
+                    </Card.Header>
+                    <Card.Body>
+                      <Row style={{ marginTop: "1rem" }}>
+                        <Col md={6}>
+                          <Form.Group>
+                            <Form.Label>
+                              Upload Front View Photo of Building
+                              <ReqSign />
+                            </Form.Label>
+                            {/* <div className="d-flex align-items-center gap-2"> */}
+                            <Form.Control type="file" name="front_view_photo_of_building"
+                              //  value={values.front_view_photo_of_building}
+                              onChange={(event) => {
+                                setFieldValue("front_view_photo_of_building", event.currentTarget.files[0]);
+                              }}
+                              isInvalid={
+                                touched.front_view_photo_of_building &&
+                                !!errors.front_view_photo_of_building
+                              } /> {touched.front_view_photo_of_building &&
+                                errors.front_view_photo_of_building && (
+                                  <BootstrapForm.Control.Feedback type="invalid">
+                                    {errors.front_view_photo_of_building}
+                                  </BootstrapForm.Control.Feedback>
+                                )}
+                            {/* <Button variant="primary">Upload</Button> */}
+                            {/* </div> */}
+                            <Form.Control.Feedback type="invalid">
+                              Select Document
+                            </Form.Control.Feedback>
+                          </Form.Group>
+                        </Col>
+                        <Col md={6}>
+                          <Form.Group>
+                            <Form.Label>
+                              Upload Side View Photo of Building
+                              <ReqSign />
+                            </Form.Label>
+                            {/* <div className="d-flex align-items-center gap-2"> */}
+                            <Form.Control type="file" name="side_view_photo_of_building"
+                              // value={values.side_view_photo_of_building}
+                              onChange={(event) => {
+                                setFieldValue("side_view_photo_of_building", event.currentTarget.files[0]);
+                              }}
+                              isInvalid={
+                                touched.side_view_photo_of_building &&
+                                !!errors.side_view_photo_of_building
+                              } /> {touched.side_view_photo_of_building &&
+                                errors.side_view_photo_of_building && (
+                                  <BootstrapForm.Control.Feedback type="invalid">
+                                    {errors.side_view_photo_of_building}
+                                  </BootstrapForm.Control.Feedback>
+                                )}
+                            {/* <Button variant="primary">Upload</Button>
                           </div> */}
-                              <Form.Control.Feedback type="invalid">
-                                Select Document
-                              </Form.Control.Feedback>
-                            </Form.Group>
-                          </Col>
-                          <Col md={6} style={{ marginTop: "10px" }}>
-                            <Form.Group>
-                              <Form.Label>
-                                Upload Entrance Gate Photo of Plot (with Signage
-                                Board)
-                                <ReqSign />
-                              </Form.Label>
-                              {/* <div className="d-flex align-items-center gap-2"> */}
-                              <Form.Control type="file" name="entrance_gate_photo_of_plot_with_signage_board"
-                                // value={values.entrance_gate_photo_of_plot_with_signage_board}
-                                onChange={(event) => {
-                                  setFieldValue("entrance_gate_photo_of_plot_with_signage_board", event.currentTarget.files[0]);
-                                }}
-                                isInvalid={
-                                  touched.entrance_gate_photo_of_plot_with_signage_board &&
-                                  !!errors.entrance_gate_photo_of_plot_with_signage_board
-                                } /> {touched.entrance_gate_photo_of_plot_with_signage_board &&
-                                  errors.entrance_gate_photo_of_plot_with_signage_board && (
-                                    <BootstrapForm.Control.Feedback type="invalid">
-                                      {errors.entrance_gate_photo_of_plot_with_signage_board}
-                                    </BootstrapForm.Control.Feedback>
-                                  )}
-                              {/* <Button variant="primary">Upload</Button>
+                            <Form.Control.Feedback type="invalid">
+                              Select Document
+                            </Form.Control.Feedback>
+                          </Form.Group>
+                        </Col>
+                        <Col md={6} style={{ marginTop: "10px" }}>
+                          <Form.Group>
+                            <Form.Label>
+                              Upload Entrance Gate Photo of Plot (with Signage
+                              Board)
+                              <ReqSign />
+                            </Form.Label>
+                            {/* <div className="d-flex align-items-center gap-2"> */}
+                            <Form.Control type="file" name="entrance_gate_photo_of_plot_with_signage_board"
+                              // value={values.entrance_gate_photo_of_plot_with_signage_board}
+                              onChange={(event) => {
+                                setFieldValue("entrance_gate_photo_of_plot_with_signage_board", event.currentTarget.files[0]);
+                              }}
+                              isInvalid={
+                                touched.entrance_gate_photo_of_plot_with_signage_board &&
+                                !!errors.entrance_gate_photo_of_plot_with_signage_board
+                              } /> {touched.entrance_gate_photo_of_plot_with_signage_board &&
+                                errors.entrance_gate_photo_of_plot_with_signage_board && (
+                                  <BootstrapForm.Control.Feedback type="invalid">
+                                    {errors.entrance_gate_photo_of_plot_with_signage_board}
+                                  </BootstrapForm.Control.Feedback>
+                                )}
+                            {/* <Button variant="primary">Upload</Button>
                           </div> */}
-                              <Form.Control.Feedback type="invalid">
-                                Select Document
-                              </Form.Control.Feedback>
-                            </Form.Group>
-                          </Col>
-                        </Row>
-                        <hr />
-                        <div className="invoice-notes text-danger">
-                          <label className="main-content-label tx-13">Notes</label>
-                          <p>
-                            <ol>
-                              <li>Upload Geo tagged Photo</li>
-                              <li>
-                                Geotagged photo may be taken from any apps having
-                                such functionality, These geotagged photos must
-                                mention <b>date, time, latitude and longitude.</b>
-                              </li>
-                            </ol>
-                          </p>
-                        </div>
-                      </Card.Body>
-                    </Card>
-                  </Card.Body>
-                  <Card.Footer>
-                    <div className="d-flex justify-content-between mb-3">
+                            <Form.Control.Feedback type="invalid">
+                              Select Document
+                            </Form.Control.Feedback>
+                          </Form.Group>
+                        </Col>
+                      </Row>
+                      <hr />
+                      <div className="invoice-notes text-danger">
+                        <label className="main-content-label tx-13">Notes</label>
+                        <p>
+                          <ol>
+                            <li>Upload Geo tagged Photo</li>
+                            <li>
+                              Geotagged photo may be taken from any apps having
+                              such functionality, These geotagged photos must
+                              mention <b>date, time, latitude and longitude.</b>
+                            </li>
+                          </ol>
+                        </p>
+                      </div>
+                    </Card.Body>
+                  </Card>
+                </Card.Body>
+                <Card.Footer>
+                  <div className="d-flex justify-content-between mb-3">
+                    <Button
+                      className="p-2"
+                      variant="success"
+                      onClick={() => formikRef.current?.submitForm()}
+                    >
+                      Save & Continue
+                    </Button>
+
+                    {stepInfo.filled === true && (
                       <Button
                         className="p-2"
-                        variant="success"
-                        onClick={() => formikRef.current?.submitForm()}
+                        variant="warning"
+                        onClick={() => {
+                          setActive(reg.stepsII[1]);
+                        }}
                       >
-                        Save & Continue
+                        Next
                       </Button>
-
-                      {stepInfo.filled === true && (
-                        <Button
-                          className="p-2"
-                          variant="warning"
-                          onClick={() => {
-                            setActive(reg.stepsII[1]);
-                          }}
-                        >
-                          Next
-                        </Button>
-                      )}
-                    </div>
-                  </Card.Footer>
-                </Card>
-              </Form>
-            )}
-          </Formik>
-        </>
-      }
+                    )}
+                  </div>
+                </Card.Footer>
+              </Card>
+            </Form>
+          )}
+        </Formik>
+      </>
+      {/* {AppliInfo.stage_II_fee_status === STAGE_II__FEE_PAID || AppliInfo.stage_II_fee_status === STAGE_II__FEE_EXEMPTED ? (<BuildingPlanView />) :
+        
+      } */}
     </Fragment>
   );
 };
@@ -448,7 +450,7 @@ export const BuildingPlan = ({ handleChange, touched, errors, values, setFieldVa
     "Punjabi",
   ];
 
- 
+
 
 
   return (
@@ -523,9 +525,9 @@ export const BuildingPlan = ({ handleChange, touched, errors, values, setFieldVa
             <ReqSign />
           </Form.Label>
           {typeof values.notarised_document_of_building_plan == 'object' ? (
-            <><Button onClick={()=>{viewFile(values.notarised_document_of_building_plan)}}>View File</Button>
-            <FileViewer file={values.notarised_document_of_building_plan}/></>
-            ) : (<>
+            <><Button onClick={() => { viewFile(values.notarised_document_of_building_plan) }}>View File</Button>
+              <FileViewer file={values.notarised_document_of_building_plan} /></>
+          ) : (<>
             <Form.Control required type="file" name="notarised_document_of_building_plan"
               // value={values.notarised_document_of_building_plan}
               onChange={(event) => {

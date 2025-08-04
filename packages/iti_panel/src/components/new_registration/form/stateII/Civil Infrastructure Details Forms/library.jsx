@@ -1,4 +1,3 @@
-import React, { useState, useRef } from "react";
 import {
     Tab,
     Nav,
@@ -20,30 +19,130 @@ import { validationSchema } from "../../../../../reducers/tradeWiseWorkshopReduc
 import { useSelector, useDispatch } from "react-redux";
 import { it_library_to_be_filled, UPDATE_LIBRARY_DETAILS } from "../../../../../constants";
 
-import {  Form, Modal } from "react-bootstrap";
+import { Form, Modal } from "react-bootstrap";
 
 import * as yup from "yup";
 
 import * as formik from "formik";
+import React from "react";
 
+import { Fragment, useEffect, useState, useRef } from "react";
+import { useLocation } from "react-router-dom";
+import * as dbUser from "../../../../../db/users";
+import * as cons from "../../../../../constants";
+import { CIC } from "../../../../../constants";
 
-export const Library = ({ goPrevious, goNext }) => {
+export const Library = ({ steps, goPrevious, goNext }) => {
+
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const appId = queryParams.get("appId");
+    const authUser = useSelector((state) => state.loginUserReducer);
 
     const initialValues = useSelector((state) => state.TradeWiseWorkshopReducer);
     const dispatch = useDispatch();
 
 
     const submit = (values) => {
-        dispatch({ type: UPDATE_LIBRARY_DETAILS, payload: values });
+        // dispatch({ type: UPDATE_MULTIPURPOSEHALL_DETAILS, payload: values });
         goNext();
     };
 
+    const [list, setList] = useState([]);
+
+    const loadData = async () => {
+        console.log("dfadfadf");
+        let result = await dbUser.getCommonAreaByParticular(appId, cons.LIBRARY.particular);
+        setList(result)
+    }
+
+    useEffect(() => {
+        prepare_initialValues(list);
+    }, [list]);
+
+    const [currentStep, setCurrentStep] = useState({});
+
+    const [iniValue, setIniValue] = useState({});
+    const [validationSchema, setValidationSchema] = useState({});
+
+
+    const prepare_initialValues = (list) => {
+        console.log(list);
+        const obj = {
+            ...Object.fromEntries(
+                list.map((item, index) => {
+                    const { area } = getSetFieldsName(item);
+                    return [`${area}`, ''];
+                })
+            ),
+            ...Object.fromEntries(
+                list.map((item, index) => {
+                    const { photo } = getSetFieldsName(item);
+                    return [`${photo}`, '']
+                })
+            ),
+        };
+        console.log(obj);
+        setIniValue(obj);
+        return obj;
+    }
+
+    const getSetFieldsName = (item) => {
+        console.log(item);
+        const area = `area>${item.particular}`;
+        const photo = `photo>${item.particular}`;
+        return { area, photo };
+    }
+
+    const Schema = () => {
+        let obj = {
+            ...Object.fromEntries(
+                list.map((item, index) => {
+                    const { area } = getSetFieldsName(item);
+                    return [`${area}`, Yup.number().required("Enter Available Area").min(0, "Area must be positive"),];
+                })
+            ),
+            ...Object.fromEntries(
+                list.map((item, index) => {
+                    const { photo } = getSetFieldsName(item);
+                    return [`${photo}`, Yup.mixed().required("Select Geo Taged File")]
+                })
+            ),
+        };
+        console.log(obj);
+        setValidationSchema(Yup.object(obj))
+    }
+
+    useEffect(() => {
+        loadData();
+    }, [])
+
+    useEffect(() => {
+        console.log(iniValue);
+        Schema();
+    }, [iniValue])
+
+
+    const prepareToSave = (values) => {
+        console.log(values);
+        // setTradewiseClassRooms(values, authUser, appId);
+        // console.log(input);
+        goNext(currentStep);
+    };
+
+    useEffect(() => {
+        const currentStep = steps.subSteps.find(step => step.step === CIC.LIBRARY);
+        setCurrentStep(currentStep)
+    }, [])
+
+
     return (
         <Formik
-            initialValues={initialValues}
+            enableReinitialize
+            initialValues={iniValue}
             validationSchema={validationSchema}
             onSubmit={(values) => {
-                submit(values)
+                prepareToSave(values);
             }}
         >
             {({ handleSubmit, setFieldValue }) => (
@@ -61,50 +160,24 @@ export const Library = ({ goPrevious, goNext }) => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {it_library_to_be_filled.map((item, index) => {
-                                            const fileField = `${item.tradeId}_workshop_${index}`;
-                                            const workshopAreaField = `${item.tradeId}_workshopArea_${index}`;
-
+                                        {list.map((item, index) => {
+                                            console.log(item);
+                                            let fields = getSetFieldsName(item);
                                             return (
                                                 <tr key={index}>
-                                                    <td>{item.Particulars}</td>
-                                                    <td>{item.Required_Area_As_per_norms}</td>
+                                                    <td>{item.particular}</td>
+                                                    <td>{item.RequiredArea} {item.AreaUnit}</td>
                                                     <td>
-                                                        <Field
-                                                            type="number"
-                                                            name={workshopAreaField}
-                                                            as={BForm.Control}
-
-                                                        />
-                                                        <div className="text-danger">
-                                                            <ErrorMessage name={workshopAreaField} />
-                                                        </div>
+                                                        <Field type="number" name={fields.area} as={BForm.Control} />
+                                                        <div className="text-danger"><ErrorMessage name={fields.area} /></div>
                                                     </td>
                                                     <td>
-                                                        <input
-                                                            type="file"
-                                                            name={fileField}
-                                                            className="form-control"
-                                                            onChange={(event) => {
-                                                                setFieldValue(
-                                                                    fileField,
-                                                                    event.currentTarget.files[0]
-                                                                );
-                                                            }}
-                                                        />
-                                                        <div className="text-danger">
-                                                            <ErrorMessage
-                                                                name={fileField}
-                                                                component="div"
-                                                                className="text-danger"
-                                                            />
-
-                                                        </div>
-
-
+                                                        <input type="file" name={fields.photo} className="form-control" onChange={(event) => { setFieldValue(fields.photo, event.currentTarget.files[0]); }} />
+                                                        <div className="text-danger"><ErrorMessage name={fields.photo} component="div" className="text-danger" /> </div>
                                                     </td>
                                                 </tr>
                                             );
+
                                         })}
                                     </tbody>
                                 </Table>
@@ -114,7 +187,7 @@ export const Library = ({ goPrevious, goNext }) => {
                             <Button variant="secondary" onClick={goPrevious}>
                                 Previous
                             </Button>
-                            <Button onClick={goNext} type="submit">Save & Next</Button>
+                            <Button type="submit">Save & Next</Button>
                         </Card.Footer>
                     </Card>
                 </FormikForm>
@@ -125,62 +198,62 @@ export const Library = ({ goPrevious, goNext }) => {
 
 
 export const Assessment_Library = () => {
-const MaxData = [
-    { value: "Document is not legible", label: "Document is not legible" },
-    { value: "Document is irrelevant", label: "Document is irrelevant" },
-    {
-      value: "Document lacks required information",
-      label: "Document lacks required information",
-    },
-    {
-      value:
-        "Document is not approved by the competent authority in the State/ UT",
-      label:
-        "Document is not approved by the competent authority in the State/ UT",
-    },
-    {
-      value:
-        "Address on the document does not match with the proposed land/ building address",
-      label:
-        "Address on the document does not match with the proposed land/ building address",
-    },
-    {
-      value:
-        "Document does not indicate the workshop for all trade/units, classrooms, IT Lab, Administrative area, Amenities area etc.",
-      label:
-        "Document does not indicate the workshop for all trade/units, classrooms, IT Lab, Administrative area, Amenities area etc.",
-    },
-    {
-      value: "Any other reason, please specify",
-      label: "Any other reason, please specify",
-    },
-  ];
+    const MaxData = [
+        { value: "Document is not legible", label: "Document is not legible" },
+        { value: "Document is irrelevant", label: "Document is irrelevant" },
+        {
+            value: "Document lacks required information",
+            label: "Document lacks required information",
+        },
+        {
+            value:
+                "Document is not approved by the competent authority in the State/ UT",
+            label:
+                "Document is not approved by the competent authority in the State/ UT",
+        },
+        {
+            value:
+                "Address on the document does not match with the proposed land/ building address",
+            label:
+                "Address on the document does not match with the proposed land/ building address",
+        },
+        {
+            value:
+                "Document does not indicate the workshop for all trade/units, classrooms, IT Lab, Administrative area, Amenities area etc.",
+            label:
+                "Document does not indicate the workshop for all trade/units, classrooms, IT Lab, Administrative area, Amenities area etc.",
+        },
+        {
+            value: "Any other reason, please specify",
+            label: "Any other reason, please specify",
+        },
+    ];
 
-  const { Formik } = formik;
-  const formRef2 = useRef();
-  const dispatch = useDispatch();
+    const { Formik } = formik;
+    const formRef2 = useRef();
+    const dispatch = useDispatch();
 
-  const [showXlModal, setShowXlModal] = useState(false);
-  const [selectedSize, setSelectedSize] = useState("");
+    const [showXlModal, setShowXlModal] = useState(false);
+    const [selectedSize, setSelectedSize] = useState("");
 
-  const handleShowModal = (size) => {
-    switch (size) {
-      case "xl":
-        setShowXlModal(true);
-        break;
-      default:
-        break;
-    }
-    setSelectedSize(size);
-  };
+    const handleShowModal = (size) => {
+        switch (size) {
+            case "xl":
+                setShowXlModal(true);
+                break;
+            default:
+                break;
+        }
+        setSelectedSize(size);
+    };
 
-  const handleCloseModal = () => {
-    setShowXlModal(false);
-    setSelectedSize("");
-  };
+    const handleCloseModal = () => {
+        setShowXlModal(false);
+        setSelectedSize("");
+    };
 
-  const [formData, setFormData] = useState({});
-  const [formSubmited, setFormSubmited] = useState(false);
+    const [formData, setFormData] = useState({});
+    const [formSubmited, setFormSubmited] = useState(false);
 
     return (
         <>
@@ -192,33 +265,33 @@ const MaxData = [
                     borderStyle: "dashed",
                     borderWidth: "thin",
                     padding: "10px",
-                    marginBottom:"10px"
+                    marginBottom: "10px"
                 }}
             >
                 <Col xl={6} lg={6} md={6} sm={6}>
                     <table className="custom-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Particulars</th>
-                                            <th>Required Area</th>
-                                            <th>Available Area</th>
-                                            <th>Upload Photo <ReqSign /></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {it_library_to_be_filled.map((item, index) => {
+                        <thead>
+                            <tr>
+                                <th>Particulars</th>
+                                <th>Required Area</th>
+                                <th>Available Area</th>
+                                <th>Upload Photo <ReqSign /></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {it_library_to_be_filled.map((item, index) => {
 
-                                            return (
-                                                <tr key={index}>
-                                                    <td>{item.Particulars}</td>
-                                                    <td>{item.Required_Area_As_per_norms}</td>
-                                                    <td>xyz</td>
-                                                    <td><Button size="sm">View Document</Button></td>
-                                                </tr>
-                                            );
-                                        })}
-                                    </tbody>
-                                </table>
+                                return (
+                                    <tr key={index}>
+                                        <td>{item.Particulars}</td>
+                                        <td>{item.Required_Area_As_per_norms}</td>
+                                        <td>xyz</td>
+                                        <td><Button size="sm">View Document</Button></td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
                 </Col>
                 <Col xl={6} lg={6} md={6} sm={6}>
                     <div style={{ padding: 2, background: "#E0ECF5", borderRadius: 6 }}>

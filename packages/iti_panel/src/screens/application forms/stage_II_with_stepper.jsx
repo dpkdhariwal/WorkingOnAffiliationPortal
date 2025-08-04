@@ -11,7 +11,9 @@ import {
   ELECTRICITY_CONNECTION_DETAILS,
   FEE_PAYMENT_FOR_STAGEII,
   TRADEWISE_MACHINERY__TOOLS__EQUIPMENT_DETAILS,
-  DOCUMENT_UPLOADS, CIVIL_INFRASTRUCTURE_DETAIL
+  DOCUMENT_UPLOADS, CIVIL_INFRASTRUCTURE_DETAIL,
+  IN_ACTIVE,
+  ACTIVE
 } from "../../constants";
 
 import BuildingPlan from "../../components/new_registration/form/stateII/BuildingPlan";
@@ -33,10 +35,11 @@ export const FormStageII = () => {
 
 
   const data = STAGE_II_APP_FORM_FLOW.map((step) => ({ ...step, completed: step.status === FILLED }));
+
   const [activeStep, setActiveStep] = useState(0);
   const [steps, setSteps] = useState(data);
 
-
+  
   // useEffect(() => {
   //   const data = STAGE_II_APP_FORM_FLOW.map((step) => ({ ...step, completed: step.status === FILLED }));
   //   const firstFilledIndex = STAGE_II_APP_FORM_FLOW.findIndex(step => step.status === FILLED);
@@ -53,14 +56,28 @@ export const FormStageII = () => {
   useEffect(() => {
     loadData();
   }, []);
-  
+
+  const getLastActiveStep = (data) => {
+    // Get the index of the first FILLED step
+    const firstFilledIndex = data.findIndex(step => step.status === FILLED || step.stepStatus === ACTIVE);
+    // Get the index of the last FILLED step
+    const reversedIndex = [...data].reverse().findIndex(step => step.status === FILLED || step.stepStatus === ACTIVE);
+    const lastFilledIndex = reversedIndex !== -1 ? data.length - 1 - reversedIndex : -1;
+    // Set activeStep to firstFilledIndex (or you can set lastFilledIndex)
+    const currentStep = firstFilledIndex !== -1 ? firstFilledIndex : 0;
+
+    // Debug/log
+    console.log("First FILLED index:", firstFilledIndex);
+    console.log("Last FILLED index:", lastFilledIndex);
+    setActiveStep(lastFilledIndex);
+  }
+
   const loadData = async () => {
     var data = await getStage2FormFlow(appId);
-    data = data.map((step) => ({ ...step, completed: step.status === FILLED }));
-    const firstFilledIndex = data.findIndex(step => step.status === FILLED);
-    const currentStep = firstFilledIndex !== -1 ? firstFilledIndex : 0;
+    data = data.map((step) => { return { ...step, completed: step.status === FILLED } });
+    console.log(data);
     setSteps(data);
-    setActiveStep(currentStep);
+    getLastActiveStep(data)
   };
 
   const goToSection = (step, index) => {
@@ -68,12 +85,12 @@ export const FormStageII = () => {
   };
 
   const setStepContent = (step, stepIndex) => {
-    console.log(step, stepIndex);
+    console.log(steps, step, stepIndex);
     switch (step.step) {
       case BUILDING_DETAIL:
         return <BuildingPlan setActive={goToSection} />
       case CIVIL_INFRASTRUCTURE_DETAIL:
-        return <CivilInfrastructureDetails setActive={goToSection} stepInfo={activeStep} />
+        return <CivilInfrastructureDetails step={step} setActive={goToSection} stepInfo={activeStep} />
       case AMENITIES_AREA:
         return <Amenities setActive={goToSection} stepInfo={activeStep} />
       case SIGNAGE_BOARDS:
@@ -90,7 +107,9 @@ export const FormStageII = () => {
         return ''
     }
   }
-  const handleStepClick = (step, index) => { setActiveStep(index) };
+  const handleStepClick = (step, index) => {
+    if (step.stepStatus === ACTIVE || step.status === FILLED) { setActiveStep(index) }
+  };
 
   return (
     <Fragment>

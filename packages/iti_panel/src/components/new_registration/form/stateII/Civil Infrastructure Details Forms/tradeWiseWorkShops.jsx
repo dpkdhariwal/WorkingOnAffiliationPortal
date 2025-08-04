@@ -18,13 +18,16 @@ import Swal from "sweetalert2";
 import { validationSchema } from "../../../../../reducers/tradeWiseWorkshopReducer";
 
 import { useSelector, useDispatch } from "react-redux";
-import { work_shop_info_to_be_filled, UPDATE_TRADEWISE_WORKSHOP_DETAILS, work_shop_list, tradeList } from "../../../../../constants";
+import { work_shop_info_to_be_filled, UPDATE_TRADEWISE_WORKSHOP_DETAILS, work_shop_list, tradeList, TRADEWISE_WORKSHOP, CIC } from "../../../../../constants";
 import { setTradewiseWorkShop, setCheckListTradewiseWorkShop, getTradewiseWorkShop } from "../../../../../db/users";
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import { WorkshopName } from "../../../../../constants";
 
-export const TradeWiseWorkshops = ({ goNext }) => {
+export const TradeWiseWorkshops = ({ steps, goNext }) => {
+
+    const [currentStep, setCurrentStep] = useState({});
+
 
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
@@ -48,25 +51,7 @@ export const TradeWiseWorkshops = ({ goNext }) => {
         const input = values;
         setTradewiseWorkShop(values, authUser, appId);
         console.log(input);
-        
-
-        // const resultArray = Object.values(resultMap);
-        // console.log(resultArray);
-
-        // // setTradewiseWorkShop(resultArray, authUser, appId);
-
-
-        // // Revers It
-        // const output = {};
-        // resultArray.forEach(item => {
-        //     const { tradeId, index, workshopArea, workshop } = item;
-
-        //     output[`${tradeId}_workshopArea_${index}`] = workshopArea;
-        //     output[`${tradeId}_workshop_${index}`] = workshop;
-        // });
-
-        // console.log(output);
-
+        goNext(currentStep);
     };
 
 
@@ -91,53 +76,26 @@ export const TradeWiseWorkshops = ({ goNext }) => {
         return obj;
     }
 
-    useEffect(() => {
-        // let object = {};
-        // tradeList.forEach((obj, i) => {
-        //     console.log(i);
-        //     const result = prepare_initialValues(obj, i);
-        //     object = { ...object, ...result };
-        //     console.log(object);
-        // });
-
-        // let check1 = tradeList.map((obj, i) => ({ ...obj, fields: prepare_initialValues(obj, i) }));
-        // setWorkShopList(check1);
-        // console.log(check1);
-
-
-        // New Test 
-        // let NewList = [];
-        // tradeList.forEach((obj, i) => {
-        //     let fieldsName = prepare_initialValues(obj, i);
-        //     console.log(fieldsName);
-        //     const {area, photo} = fieldsName;
-        //     console.log(area, photo);
-        //     for (const key in fieldsName) {
-        //         console.log("key:", key);
-        //         let newobj = { ...obj, Particulars:'workshop', field: { area,photo } }
-        //         NewList.push(newobj);
-        //     }
-        // });
-        // setWorkShopList(NewList);
-    }, []);
 
 
     const loadData = async () => {
-        console.log("Hellow")
         await setCheckListTradewiseWorkShop(authUser, appId);
 
         await getTradewiseWorkShop(appId).then((data) => {
             setWorkShopList(data);
             prepare_initialValues(data);
-
-            // console.log(data);
         })
 
     }
 
     useEffect(() => {
         loadData();
+    }, [])
 
+
+    useEffect(() => {
+        const currentStep = steps.subSteps.find(step => step.step === CIC.TRADEWISE_WORKSHOP);
+        setCurrentStep(currentStep)
     }, [])
 
 
@@ -216,7 +174,7 @@ export const TradeWiseWorkshops = ({ goNext }) => {
                                     <tbody>
                                         {workShopList.map((item, index) => {
 
-                                                console.log(item);
+                                            console.log(item);
 
                                             let fields = getSetFieldsName(item);
                                             console.log(fields);

@@ -55,12 +55,15 @@ import {
   TRADEWISE_WORKSHOP,
   tradeList,
   WorkshopName,
+  ClassroomName,
   APP_FORM_SUB_CIVIL_INFRA,
   CIC,
   FILLED,
-  ACTIVE
+  ACTIVE,
+  TRADEWISE_CLASSROOMS
 } from "../constants";
 import { initDB } from "./db";
+import * as cons from "../constants";
 
 import { Building_Detail_initialValues } from "../reducers/newAppReducer";
 
@@ -511,6 +514,7 @@ export const getBuildingDetail = async (appId) => {
     await tx.done;
     return { ...Building_Detail_initialValues, ...bld_plan, ...bcc };
   } catch (error) {
+    console.error(error);
     return {}
   }
 };
@@ -519,19 +523,234 @@ export const getStage2FormFlow = async (appId) => {
   const db = await initDB();
   try {
     // Read-only transaction for multiple stores
-    const tx = db.transaction([APP_FORM_FLOW_STAGE_II], 'readonly');
+    const tx = db.transaction([APP_FORM_FLOW_STAGE_II, APP_FORM_SUB_CIVIL_INFRA], 'readonly');
     // Building Photos
     const storePhotos = tx.objectStore(APP_FORM_FLOW_STAGE_II);
+
     const flow = await storePhotos.index('appId').getAll(appId);
     flow.sort((a, b) => a.stepNo - b.stepNo);
+    let subStepsStore, subSteps;
+    const finalList = await Promise.all(
+      flow.map(async (item) => {
+        console.log(item);
+        switch (item.step) {
+          case cons.BUILDING_DETAIL:
+            return item;
+          case cons.CIVIL_INFRASTRUCTURE_DETAIL:
+            subStepsStore = tx.objectStore(APP_FORM_SUB_CIVIL_INFRA);
+            subSteps = await subStepsStore.index('appId').getAll(appId);
+            return { ...item, subSteps };
+          case cons.AMENITIES_AREA:
+            return item;
+          case cons.SIGNAGE_BOARDS:
+            return item;
+          case cons.ELECTRICITY_CONNECTION_DETAILS:
+            return item;
+          case cons.FEE_PAYMENT_FOR_STAGEII:
+            return item;
+          case cons.TRADEWISE_MACHINERY__TOOLS__EQUIPMENT_DETAILS:
+            return item;
+          case cons.DOCUMENT_UPLOADS:
+            return item;
+          default:
+            return item;
+        }
+      })
+    );
 
+
+    setCommonCivilInfra(appId);
+
+
+    console.log(finalList);
     await tx.done;
-    return flow;
+    return finalList;
   } catch (error) {
     return []
   }
 };
 
+// MultiPurpose Hall
+
+export const setMultipurposeHall = async (authUser, appId) => {
+  const db = await initDB();
+  try {
+    // Read-only transaction for multiple stores
+    console.log(authUser, appId);
+    const tx = db.transaction([cons.MULTIPURPOSE_HALL], 'readwrite');
+    var newObj = { userId: authUser.id, tradeId: tradeId, particular: classroom, appId: appId, area: '', photo: '', submitDate: null, updateDate: null };
+
+    // Fetching Tradewise classroom Detail If Exist
+    const store = tx.objectStore(cons.MULTIPURPOSE_HALL);
+    const twcs = await store.index("tradeId_classroom_appId").get([tradeId, classroom, appId]);
+    const data_twws = twcs?.appId ? { ...twcs, ...newObj } : { ...newObj, id: Date.now() + Math.random() };
+    await store.put(data_twws);
+
+    await tx.done;
+  } catch (error) {
+    console.error(error);
+  }
+
+};
+
+// export const setCommonCivilInfra = async (values, authUser, appId, particular) => {
+//   const db = await initDB();
+//   try {
+
+//     console.log(values, authUser, appId, particular);
+
+
+//     // // Read-only transaction for multiple stores
+//     // console.log(appId);
+//     // const tx = db.transaction([cons.COMMON_CIVIL_INFRASTRUCTURE], 'readwrite');
+
+//     // console.log(cons.COMMON_AREA, cons.ADMINISTRATIVE_AREA);
+
+//     // // Preparing Common Area
+//     // for (const [index, obj] of cons.COMMON_AREA.entries()) {
+//     //   console.log(obj);
+//     //   const { particular } = obj;
+//     //   const store = tx.objectStore(cons.COMMON_CIVIL_INFRASTRUCTURE);
+//     //   const exist = await store.index("appId_particular").get([appId, particular]);
+//     //   if (!exist?.appId) {
+//     //     await store.put({ ...obj, appId, id: Date.now() + Math.random() });
+//     //   }
+//     // }
+
+//     // // Preparing Administrative Area
+//     // for (const [index, obj] of cons.ADMINISTRATIVE_AREA.entries()) {
+//     //   const { particular } = obj;
+//     //   const store = tx.objectStore(cons.COMMON_CIVIL_INFRASTRUCTURE);
+//     //   const exist = await store.index("appId_particular").get([appId, particular]);
+//     //   if (!exist?.appId) {
+//     //     await store.put({ ...obj, appId, id: Date.now() + Math.random() });
+//     //   }
+//     // }
+
+//     await tx.done;
+//   } catch (error) {
+//     console.error(error);
+//   }
+
+// };
+
+
+export const getCommonAreaByParticular = async (appId, particular) => {
+  const db = await initDB();
+  try {
+    console.log(appId, particular);
+    const tx = db.transaction([cons.COMMON_CIVIL_INFRASTRUCTURE], 'readonly');
+    console.log(tx);
+    const infra = tx.objectStore(cons.COMMON_CIVIL_INFRASTRUCTURE);
+    let finalList = await infra.index('appId_particular').getAll([appId, particular]);
+    await tx.done;
+    return finalList;
+  } catch (error) {
+    console.lor(error);
+    return {}
+  }
+};
+
+
+export const setCheckListTradewiseClassrooms = async (authUser, appId) => {
+  const db = await initDB();
+  try {
+    // Read-only transaction for multiple stores
+    console.log(authUser, appId);
+    const tx = db.transaction([TRADEWISE_CLASSROOMS], 'readwrite');
+    for (const [index, obj] of tradeList.entries()) {
+      const { tradeId, tradeName, unitInShift1, unitInShift2, unitInShift3 } = obj;
+      const maximum_unit = Math.max(unitInShift1, unitInShift2, unitInShift3);
+
+      for (let index = 0; index < maximum_unit; index++) {
+        const classroom = ClassroomName[index];
+
+        var newObj = { userId: authUser.id, tradeId: tradeId, classroom: classroom, appId: appId, area: '', photo: '', submitDate: null, updateDate: null };
+
+        // Fetching Tradewise classroom Detail If Exist
+        const store = tx.objectStore(TRADEWISE_CLASSROOMS);
+        const twcs = await store.index("tradeId_classroom_appId").get([tradeId, classroom, appId]);
+        const data_twws = twcs?.appId ? { ...twcs, ...newObj } : { ...newObj, id: Date.now() + Math.random() };
+        await store.put(data_twws);
+      }
+    }
+    await tx.done;
+  } catch (error) {
+    console.error(error);
+  }
+
+};
+export const getTradewiseClassRooms = async (appId) => {
+  const db = await initDB();
+  try {
+    // Read-only transaction for multiple stores
+    const tx = db.transaction([TRADEWISE_CLASSROOMS], 'readonly');
+    // Building Photos
+    const classrooms = tx.objectStore(TRADEWISE_CLASSROOMS);
+    let allList = await classrooms.index('appId').getAll(appId);
+
+    // allList = allList.map(async (item) => {
+    //   const tradeInfo = await getTradeInfoByTradeId(item.tradeId); // <-- await here!
+    //   return {...item, tradeInfo:tradeInfo};
+    // })
+
+    const finalList = await Promise.all(
+      allList.map(async (item) => {
+        const tradeInfo = await getTradeInfoByTradeId(item.tradeId);
+        return { ...item, tradeInfo };
+      })
+    );
+
+
+    // allList.sort((a, b) => a.stepNo - b.stepNo);
+
+    await tx.done;
+    return finalList;
+  } catch (error) {
+    return []
+  }
+};
+
+export const setTradewiseClassRooms = async (values, authUser, appId) => {
+  const db = await initDB();
+  try {
+    // Read-only transaction for multiple stores
+    const tx = db.transaction([TRADEWISE_CLASSROOMS, APP_FORM_SUB_CIVIL_INFRA], 'readwrite');
+
+
+    for (const key in values) {
+      const splited = key.split('>');
+
+      // // console.log(splited[0]);
+      var tradeId = splited[1];
+      var classroom = splited[2];
+      console.log(splited, tradeId, classroom, appId);
+
+      const store = tx.objectStore(TRADEWISE_CLASSROOMS);
+      const twws = await store.index("tradeId_classroom_appId").get([tradeId, classroom, appId]);
+
+      if (splited[0] === "area" && twws?.appId) {
+        await store.put({ ...twws, area: values[key], submitDate: new Date().toISOString(), updateDate: new Date().toISOString() });
+      } else if (splited[0] === "photo" && twws?.appId) {
+        await store.put({ ...twws, photo: values[key], submitDate: new Date().toISOString(), updateDate: new Date().toISOString() });
+      }
+    }
+
+    const store = tx.objectStore(APP_FORM_SUB_CIVIL_INFRA);
+    const stepInfo = await store.index("appId_step").get([appId, CIC.TRADEWISE_CLASSROOMS]);
+    await store.put({ ...stepInfo, status: FILLED, submitDate: new Date().toISOString(), updateDate: new Date().toISOString() });
+
+    // Set Active Next Step
+    console.log(stepInfo);
+    await setActiveCivilInfraSubSteps(appId, stepInfo.nextStep);
+
+    await tx.done;
+  } catch (error) {
+    console.error(error);
+    return {}
+  }
+
+};
 
 export const setCheckListTradewiseWorkShop = async (authUser, appId) => {
   const db = await initDB();
@@ -687,3 +906,47 @@ export const setActiveCivilInfraSubSteps = async (appId, toActiveStep) => {
 
 };
 
+
+
+
+
+export const setCommonCivilInfra = async (values, authUser, appId) => {
+  const db = await initDB();
+  try {
+    // Read-only transaction for multiple stores
+    const tx = db.transaction([TRADEWISE_CLASSROOMS, APP_FORM_SUB_CIVIL_INFRA], 'readwrite');
+
+
+    for (const key in values) {
+      const splited = key.split('>');
+
+      // // console.log(splited[0]);
+      var tradeId = splited[1];
+      var classroom = splited[2];
+      console.log(splited, tradeId, classroom, appId);
+
+      const store = tx.objectStore(TRADEWISE_CLASSROOMS);
+      const twws = await store.index("tradeId_classroom_appId").get([tradeId, classroom, appId]);
+
+      if (splited[0] === "area" && twws?.appId) {
+        await store.put({ ...twws, area: values[key], submitDate: new Date().toISOString(), updateDate: new Date().toISOString() });
+      } else if (splited[0] === "photo" && twws?.appId) {
+        await store.put({ ...twws, photo: values[key], submitDate: new Date().toISOString(), updateDate: new Date().toISOString() });
+      }
+    }
+
+    const store = tx.objectStore(APP_FORM_SUB_CIVIL_INFRA);
+    const stepInfo = await store.index("appId_step").get([appId, CIC.TRADEWISE_CLASSROOMS]);
+    await store.put({ ...stepInfo, status: FILLED, submitDate: new Date().toISOString(), updateDate: new Date().toISOString() });
+
+    // Set Active Next Step
+    console.log(stepInfo);
+    await setActiveCivilInfraSubSteps(appId, stepInfo.nextStep);
+
+    await tx.done;
+  } catch (error) {
+    console.error(error);
+    return {}
+  }
+
+};

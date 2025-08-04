@@ -358,6 +358,68 @@ export const set_stage_ii_form_flow = async (authUser, appId) => {
     }
   });
 };
+export const setActiveStage2FlowNextStep = async (appId, toActiveStep) => {
+  // Update the app flow status
+  const db = await initDB();
+  let data, oldStep, newStep, currentState;
+
+  try {
+    // Read-only transaction for multiple stores
+    const tx = db.transaction([APP_FORM_FLOW_STAGE_II], 'readwrite');
+    const store = tx.objectStore(APP_FORM_FLOW_STAGE_II);
+    switch (toActiveStep) {
+      case imp.BLD_BUILDING_PLAN:
+        currentState = await store.index("appId_step").get([appId, imp.BLD_BUILDING_PLAN]);
+        await store.put({ ...currentState, stepStatus: imp.ACTIVE });
+        break;
+      case imp.CIVIL_INFRASTRUCTURE_DETAIL:
+        currentState = await store.index("appId_step").get([appId, imp.CIVIL_INFRASTRUCTURE_DETAIL]);
+        await store.put({ ...currentState, stepStatus: imp.ACTIVE });
+        break;
+      case imp.AMENITIES_AREA:
+        currentState = await store.index("appId_step").get([appId, imp.AMENITIES_AREA]);
+        await store.put({ ...currentState, stepStatus: imp.ACTIVE });
+        break;
+
+      case imp.SIGNAGE_BOARDS:
+        currentState = await store.index("appId_step").get([appId, imp.SIGNAGE_BOARDS]);
+        await store.put({ ...currentState, stepStatus: imp.ACTIVE });
+        break;
+
+      case imp.ELECTRICITY_CONNECTION_DETAILS:
+        currentState = await store.index("appId_step").get([appId, imp.ELECTRICITY_CONNECTION_DETAILS]);
+        await store.put({ ...currentState, stepStatus: imp.ACTIVE });
+        break;
+
+      case imp.MISCELLANEOUS:
+        currentState = await store.index("appId_step").get([appId, imp.MISCELLANEOUS]);
+        await store.put({ ...currentState, stepStatus: imp.ACTIVE });
+        break;
+
+      case imp.FEE_PAYMENT_FOR_STAGEII:
+        currentState = await store.index("appId_step").get([appId, imp.FEE_PAYMENT_FOR_STAGEII]);
+        await store.put({ ...currentState, stepStatus: imp.ACTIVE });
+        break;
+
+      case imp.TRADEWISE_MACHINERY__TOOLS__EQUIPMENT_DETAILS:
+        currentState = await store.index("appId_step").get([appId, imp.TRADEWISE_MACHINERY__TOOLS__EQUIPMENT_DETAILS]);
+        await store.put({ ...currentState, stepStatus: imp.ACTIVE });
+        break;
+
+      case imp.DOCUMENT_UPLOADS:
+        currentState = await store.index("appId_step").get([appId, imp.DOCUMENT_UPLOADS]);
+        await store.put({ ...currentState, stepStatus: imp.ACTIVE });
+        break;
+
+      default:
+        break;
+    }
+    await tx.done;
+  } catch (error) {
+    return {}
+  }
+
+};
 
 export const setBuildingDetail = async (data, authUser, appId) => {
   const db = await initDB();
@@ -408,6 +470,7 @@ export const setBuildingDetail = async (data, authUser, appId) => {
     const stepRow = await FormFlowStageII.index("appId_step").get([appId, BUILDING_DETAIL]);
     if (stepRow?.appId) {
       await FormFlowStageII.put({ ...stepRow, status: FILLED });
+      setActiveStage2FlowNextStep(appId, stepRow.nextStep)
     }
 
     await tx.done;

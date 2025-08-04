@@ -22,7 +22,9 @@ import {
   APP_FORM_SUB_CIVIL_INFRA,
   BLD_BCC,
   BLD_PHOTOS,
-  TRADEWISE_WORKSHOP
+  TRADEWISE_WORKSHOP,
+  TRADEWISE_CLASSROOMS,
+  COMMON_CIVIL_INFRASTRUCTURE
 } from "../constants";
 
 export const initDB = async () => {
@@ -165,7 +167,25 @@ export const initDB = async () => {
         userStore.createIndex("userId", "userId", { unique: false });
         userStore.createIndex("workshop", "workshop", { unique: false });
         userStore.createIndex("tradeId_workshop_appId", ["tradeId","workshop", "appId"]); // compound index
+      }
 
+      if (!db.objectStoreNames.contains(TRADEWISE_CLASSROOMS)) {
+        const userStore = db.createObjectStore(TRADEWISE_CLASSROOMS, {
+          keyPath: "id",
+        });
+        userStore.createIndex("appId", "appId", { unique: false });
+        userStore.createIndex("userId", "userId", { unique: false });
+        userStore.createIndex("workshop", "workshop", { unique: false });
+        userStore.createIndex("tradeId_classroom_appId", ["tradeId","classroom", "appId"]); // compound index
+      }
+
+
+      if (!db.objectStoreNames.contains(COMMON_CIVIL_INFRASTRUCTURE)) {
+        const userStore = db.createObjectStore(COMMON_CIVIL_INFRASTRUCTURE, { keyPath: "id", });
+        userStore.createIndex("appId", "appId", { unique: false });
+        userStore.createIndex("userId", "userId", { unique: false });
+        userStore.createIndex("particular", "particular", { unique: false });
+        userStore.createIndex("appId_particular", ["appId", "particular"]); // compound index
       }
 
     },

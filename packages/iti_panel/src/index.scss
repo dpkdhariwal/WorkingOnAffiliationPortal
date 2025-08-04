@@ -177,3 +177,11 @@ input[type="checkbox"].form-check-input:checked {
     // padding-left: 20px;
     // font-size: 16px;
 }
+
+
+.nav-tabs .nav-link.disabled {
+  opacity: 1 !important;
+  color: #495057 !important; /* Bootstrap default text color */
+  cursor: pointer !important;
+  // background-color: transparent !important;
+}

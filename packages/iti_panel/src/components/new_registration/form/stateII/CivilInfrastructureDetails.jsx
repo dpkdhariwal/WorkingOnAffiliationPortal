@@ -25,33 +25,25 @@ import { PlacementNCounsellingRoom } from "../stateII/Civil Infrastructure Detai
 import { AdministrativeArea } from "../stateII/Civil Infrastructure Details Forms/AdministrativeArea";
 
 
-
-
-
-import { STAGE_II__FEE_PAID, STAGE_II__FEE_EXEMPTED } from "../../../../constants";
+import {
+  STAGE_II__FEE_PAID, STAGE_II__FEE_EXEMPTED, IN_ACTIVE, CIC, NOT_FILLED, FILLED,
+  ACTIVE
+} from "../../../../constants";
 
 import { useSelector, useDispatch } from "react-redux";
+import { useEffect } from "react";
 
-
-const steps = [
-  { key: 1, label: "TradeWise Workshops", filled: false },
-  { key: 2, label: "TradeWise Classrooms", filled: false },
-  { key: 3, label: "Multipurpose hall", filled: false },
-  { key: 4, label: "IT Lab", filled: false },
-  { key: 5, label: "Library", filled: false },
-  { key: 6, label: "Placement and counselling room", filled: false },
-  { key: 7, label: "Administrative Area", filled: false },
-];
-export default function MultiStepWithIndividualForms({ setActive }) {
-
-  const [activeKey, setActiveKey] = useState(steps[0].key);
+export default function MultiStepWithIndividualForms({ setActive, step }) {
+  const [steps, setSteps] = useState([]);
+  const [activeKey, setActiveKey] = useState();
   const dispatch = useDispatch();
 
   const currentIndex = steps.findIndex((s) => s.key === activeKey);
   const isLast = currentIndex === steps.length - 1;
 
-  const goNext = () => {
-    if (!isLast) setActiveKey(steps[currentIndex + 1].key);
+  const goNext = (steps) => {
+    console.log(steps.nextStep);
+    setActiveKey(steps.nextStep)
   };
 
   const goPrevious = () => {
@@ -67,93 +59,123 @@ export default function MultiStepWithIndividualForms({ setActive }) {
     setActive(reg.stepsII[2]);
   }
 
+  const getSetActiveKey = (data) => {
+    // Get the index of the first FILLED step
+    const firstFilledIndex = data.findIndex(step => step.status === FILLED || step.stepStatus === ACTIVE);
+    // Get the index of the last FILLED step
+    const reversedIndex = [...data].reverse().findIndex(step => step.status === FILLED || step.stepStatus === ACTIVE);
+    const lastFilledIndex = reversedIndex !== -1 ? data.length - 1 - reversedIndex : -1;
+    // Set activeStep to firstFilledIndex (or you can set lastFilledIndex)
+    const currentStep = firstFilledIndex !== -1 ? firstFilledIndex : 0;
+
+    // Debug/log
+    console.log("First FILLED index:", firstFilledIndex);
+    console.log("Last FILLED index:", data[lastFilledIndex].key);
+
+    setActiveKey(data[lastFilledIndex].key);
+  }
+
+  const loadSteps = () => {
+    let newData = step?.subSteps.map((data, index) => {
+      console.log(data);
+      return { ...data, key: data.step, label: data.step, filled: false }
+    });
+    newData.sort((a, b) => a.stepNo - b.stepNo);
+    setSteps(newData);
+    console.log(newData);
+    getSetActiveKey(newData);
+  }
+
+  const onSelectTab = (key) => {
+    console.log(key);
+    setActiveKey(key)
+  }
+
+
+  useEffect(() => {
+  }, [activeKey])
+
+  useEffect(() => {
+    setActiveKey(CIC.TRADEWISE_WORKSHOP);
+    loadSteps();
+    console.log(step);
+  }, [])
+
   const AppliInfo = useSelector((state) => state.AppliInfo);
   return (
     <>
-      {AppliInfo.stage_II_fee_status === STAGE_II__FEE_PAID || AppliInfo.stage_II_fee_status === STAGE_II__FEE_EXEMPTED ? (<CivilInfrastructureView />) :
+      {/* {AppliInfo.stage_II_fee_status === STAGE_II__FEE_PAID || AppliInfo.stage_II_fee_status === STAGE_II__FEE_EXEMPTED ? (<CivilInfrastructureView />) : <></> } */}
 
-        <>
-          <Card className="custom-card border border-primary">
-            <Card.Header>
-              <div className="card-title" style={{ textTransform: "none" }}>
-                <h5> Building Details</h5>
-              </div>
-            </Card.Header>
-            <Card.Body>
-              <Tab.Container activeKey={activeKey}
-                onSelect={(key) => { console.log(key) }}>
-                <Row>
-                  {/* Navigation Tabs */}
-                  <Col xl={3}>
-                    <Nav className="nav-tabs flex-column nav-style-5">
-                      {steps.map((step) => (
-                        <Nav.Item key={step.key}>
-                          <Nav.Link eventKey={step.key} onClick={() => setActiveKey(step.key)} >
-                            <div className="d-flex justify-content-between align-items-center">
-                              <span>
-                                <i className="ri-tools-line me-2 align-middle d-inline-block"></i>
-                                {step.label}
-                              </span>
-                              <div style={{ width: 30, height: 30 }}>
-                                <CircularProgressbar
-                                  value={percentage}
-                                  text={`${percentage}%`}
-                                />
-                              </div>
-                            </div>
-                          </Nav.Link>
-                        </Nav.Item>
-                      ))}
-                    </Nav>
-                  </Col>
+      <Card className="custom-card border border-primary">
+        <Card.Header>
+          <div className="card-title" style={{ textTransform: "none" }}> <h5> Building Details</h5> </div>
+        </Card.Header>
+        <Card.Body>
+          <Tab.Container activeKey={activeKey} onSelect={(key) => { onSelectTab(key) }}>
+            <Row>
+              {/* Navigation Tabs */}
+              <Col xl={3}>
+                <Nav className="nav-tabs flex-column nav-style-1">
+                  {steps.map((step) => {
+                    console.log(step);
+                    return (
+                      <Nav.Item key={step.key} style={{ cursor: 'pointer' }} >
+                        {/* className={`${step.status === FILLED ? 'navbar-success' : ''}`} */}
+                        <Nav.Link  style={{ marginTop: '5px' }} eventKey={step.step} disabled={step.stepStatus === IN_ACTIVE && step.status === NOT_FILLED}  >
+                          <div className="d-flex justify-content-between align-items-center">
+                            <span> <i className="ri-tools-line me-2 align-middle d-inline-block"></i> {step.label} </span>
+                            <div style={{ width: 30, height: 30 }}> <CircularProgressbar value={percentage} text={`${percentage}%`} /> </div>
+                          </div>
+                        </Nav.Link>
+                      </Nav.Item>
+                    )
+                  })}
+                </Nav>
+              </Col>
 
-                  {/* Tab Content */}
-                  <Col xl={9}>
-                    <Tab.Content>
-                      {/* === Step 1 === */}
-                      <Tab.Pane eventKey={1}>
-                        <TradeWiseWorkshops goNext={goNext} />
-                      </Tab.Pane>
+              {/* Tab Content */}
+              <Col xl={9}>
+                <Tab.Content>
+                  {/* === Step 1 === */}
+                  <Tab.Pane eventKey={CIC.TRADEWISE_WORKSHOP}>
+                    <TradeWiseWorkshops steps={step} goNext={goNext} />
+                  </Tab.Pane>
 
-                      {/* === Step 2 === */}
-                      <Tab.Pane eventKey={2}>
-                        <TradeWiseClassrooms goPrevious={goPrevious} goNext={goNext} />
-                      </Tab.Pane>
+                  {/* === Step 2 === */}
+                  <Tab.Pane eventKey={CIC.TRADEWISE_CLASSROOMS}>
+                    <TradeWiseClassrooms steps={step} goPrevious={goPrevious} goNext={goNext} />
+                  </Tab.Pane>
 
-                      {/* === Step 3 === */}
-                      <Tab.Pane eventKey={3}>
-                        <MultipurposeHall goPrevious={goPrevious} goNext={goNext} />
-                      </Tab.Pane>
+                  {/* === Step 3 === */}
+                  <Tab.Pane eventKey={CIC.MULTIPURPOSE_HALL}>
+                    <MultipurposeHall steps={step} goPrevious={goPrevious} goNext={goNext} />
+                  </Tab.Pane>
 
-                      {/* === Step 4 === */}
-                      <Tab.Pane eventKey={4}>
-                        <ITLab finish={finish} goPrevious={goPrevious} goNext={goNext} />
-                      </Tab.Pane>
+                  {/* === Step 4 === */}
+                  <Tab.Pane eventKey={CIC.IT_LAB}>
+                    <ITLab steps={step} finish={finish} goPrevious={goPrevious} goNext={goNext} />
+                  </Tab.Pane>
 
-                      {/* === Step 5 === */}
-                      <Tab.Pane eventKey={5}>
-                        <Library finish={finish} goPrevious={goPrevious} goNext={goNext} />
-                      </Tab.Pane>
+                  {/* === Step 5 === */}
+                  <Tab.Pane eventKey={CIC.LIBRARY}>
+                    <Library steps={step} finish={finish} goPrevious={goPrevious} goNext={goNext} />
+                  </Tab.Pane>
 
-                      {/* === Step 6 === */}
-                      <Tab.Pane eventKey={6}>
-                        <PlacementNCounsellingRoom goPrevious={goPrevious} goNext={goNext} />
-                      </Tab.Pane>
+                  {/* === Step 6 === */}
+                  <Tab.Pane eventKey={CIC.PLACEMENT_AND_COUNSELLING_ROOM}>
+                    <PlacementNCounsellingRoom steps={step} goPrevious={goPrevious} goNext={goNext} />
+                  </Tab.Pane>
 
-                      {/* === Step 7 === */}
-                      <Tab.Pane eventKey={7}>
-                        <AdministrativeArea finish={finish} goPrevious={goPrevious} />
-                      </Tab.Pane>
-                    </Tab.Content>
-                  </Col>
-                </Row>
-              </Tab.Container>
-            </Card.Body>
-          </Card>
-
-        </>
-
-      }
+                  {/* === Step 7 === */}
+                  <Tab.Pane eventKey={CIC.ADMINISTRATIVE_AREA}>
+                    <AdministrativeArea steps={step} finish={finish} goPrevious={goPrevious} />
+                  </Tab.Pane>
+                </Tab.Content>
+              </Col>
+            </Row>
+          </Tab.Container>
+        </Card.Body>
+      </Card>
     </>
 
 

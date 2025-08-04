@@ -1206,6 +1206,8 @@ export const STEPPER_STYLE = {
     height: "30px",
     border: "2px solid #470d0df3",
     fontSize: "large",
+    // borderStyle: "double",
+    // borderWidth: "thick"
   }),
 
   CompletedNode: () => ({
@@ -1221,16 +1223,18 @@ export const STEPPER_STYLE = {
     };
   },
   Node: (step, stepIndex) => {
-    console.log(step, stepIndex);
-    return {
-      backgroundColor: "#8a0202ff",
-    };
+    switch (step.status) {
+      case FILLED:
+        return { backgroundColor: "#8a0202ff" };
+      default:
+        break;
+    }
   },
 };
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 // Database Constants
-export const DB_VERSION = 9;
+export const DB_VERSION = 13;
 export const DB_NAME = "AffliationDB";
 export const USERS = "users";
 export const USER_ROLES = "userRoles";
@@ -1266,6 +1270,12 @@ export const ENTRANCE_GATE_PHOTO_OF_PLOT_WITH_SIGNAGE_BOARD =
 // export const Civil_Infrastructure_Detail = "Civil Infrastructure Detail";
 // export const Civil_Infrastructure_Detail = "Civil Infrastructure Detail";
 export const TRADEWISE_WORKSHOP = "tradewise_workshop";
+export const TRADEWISE_CLASSROOMS = "tradewise_classrooms";
+export const COMMON_CIVIL_INFRASTRUCTURE = "common_civil_infrastructure";
+
+
+
+
 
 
 // Sample Users
@@ -1343,7 +1353,7 @@ export const STAGE_II_APP_FORM_FLOW = [
     status: NOT_FILLED, // NOT_FILLED
     stepLabel: "Building Detail",
     nextStep: CIVIL_INFRASTRUCTURE_DETAIL,
-    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+    stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
   },
   {
     stepNo: 2,
@@ -1351,7 +1361,7 @@ export const STAGE_II_APP_FORM_FLOW = [
     status: NOT_FILLED, // NOT_FILLED
     stepLabel: "Civil Infrastructure Detail",
     nextStep: AMENITIES_AREA,
-    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+    stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
     subSteps: [
       {
         stepNo: 1,
@@ -1359,7 +1369,7 @@ export const STAGE_II_APP_FORM_FLOW = [
         status: NOT_FILLED, // FILLED || NOT_FILLED 
         stepTitle: "Tradewise Workshop",
         nextStep: CIC.TRADEWISE_CLASSROOMS,
-        stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+        stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
 
       },
       {
@@ -1368,7 +1378,7 @@ export const STAGE_II_APP_FORM_FLOW = [
         status: NOT_FILLED, // NOT_FILLED
         stepTitle: "TradeWise Classrooms",
         nextStep: CIC.MULTIPURPOSE_HALL,
-        stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+        stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
       },
       {
         stepNo: 3,
@@ -1376,7 +1386,7 @@ export const STAGE_II_APP_FORM_FLOW = [
         status: NOT_FILLED, // NOT_FILLED
         stepTitle: "Multipurpose hall",
         nextStep: CIC.IT_LAB,
-        stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+        stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
 
       },
       {
@@ -1385,7 +1395,7 @@ export const STAGE_II_APP_FORM_FLOW = [
         status: NOT_FILLED, // NOT_FILLED
         stepTitle: "IT Lab",
         nextStep: CIC.LIBRARY,
-        stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+        stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
 
       },
       {
@@ -1394,7 +1404,7 @@ export const STAGE_II_APP_FORM_FLOW = [
         status: NOT_FILLED, // NOT_FILLED
         stepTitle: "Library",
         nextStep: CIC.PLACEMENT_AND_COUNSELLING_ROOM,
-        stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+        stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
 
       },
       {
@@ -1403,7 +1413,7 @@ export const STAGE_II_APP_FORM_FLOW = [
         status: NOT_FILLED, // NOT_FILLED
         stepTitle: "Placement and counselling room",
         nextStep: CIC.ADMINISTRATIVE_AREA,
-        stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+        stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
 
       },
       {
@@ -1412,7 +1422,7 @@ export const STAGE_II_APP_FORM_FLOW = [
         status: NOT_FILLED, // NOT_FILLED
         stepTitle: "Administrative Area",
         nextStep: null,
-        stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+        stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
 
       },
     ],
@@ -1423,7 +1433,7 @@ export const STAGE_II_APP_FORM_FLOW = [
     status: NOT_FILLED, // NOT_FILLED
     stepLabel: "Amenities Area",
     nextStep: SIGNAGE_BOARDS,
-    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+    stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
   },
   {
     stepNo: 4,
@@ -1431,7 +1441,7 @@ export const STAGE_II_APP_FORM_FLOW = [
     status: NOT_FILLED, // NOT_FILLED
     stepLabel: "Signage Boards",
     nextStep: ELECTRICITY_CONNECTION_DETAILS,
-    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+    stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
 
   },
   {
@@ -1440,7 +1450,7 @@ export const STAGE_II_APP_FORM_FLOW = [
     status: NOT_FILLED, // NOT_FILLED
     stepLabel: "Electricity Connection Details",
     nextStep: FEE_PAYMENT_FOR_STAGEII,
-    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+    stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
 
   },
   {
@@ -1449,7 +1459,7 @@ export const STAGE_II_APP_FORM_FLOW = [
     status: NOT_FILLED, // NOT_FILLED
     stepLabel: "Miscellaneous",
     nextStep: FEE_PAYMENT_FOR_STAGEII,
-    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+    stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
 
   },
   {
@@ -1458,7 +1468,7 @@ export const STAGE_II_APP_FORM_FLOW = [
     status: NOT_FILLED, // NOT_FILLED
     stepLabel: "Fee Payment For StageII",
     nextStep: TRADEWISE_MACHINERY__TOOLS__EQUIPMENT_DETAILS,
-    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+    stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
 
   },
   {
@@ -1467,7 +1477,7 @@ export const STAGE_II_APP_FORM_FLOW = [
     status: NOT_FILLED, // NOT_FILLED
     stepLabel: "Tradewise Machinery/Tools/Equipment Details",
     nextStep: null,
-    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+    stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
   },
   {
     stepNo: 9,
@@ -1475,7 +1485,7 @@ export const STAGE_II_APP_FORM_FLOW = [
     status: NOT_FILLED, // NOT_FILLED
     stepLabel: "Document Uploads",
     nextStep: null,
-    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+    stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
 
   },
 ];
@@ -1605,3 +1615,108 @@ export const WorkshopName = {
   18: WORKSHOP_19,
   19: WORKSHOP_20
 }
+
+
+
+// Classrooms
+const CLASSROOM_1 = "CLASSROOM_1";
+const CLASSROOM_2 = "CLASSROOM_2";
+const CLASSROOM_3 = "CLASSROOM_3";
+const CLASSROOM_4 = "CLASSROOM_4";
+const CLASSROOM_5 = "CLASSROOM_5";
+const CLASSROOM_6 = "CLASSROOM_6";
+const CLASSROOM_7 = "CLASSROOM_7";
+const CLASSROOM_8 = "CLASSROOM_8";
+const CLASSROOM_9 = "CLASSROOM_9";
+const CLASSROOM_10 = "CLASSROOM_10";
+const CLASSROOM_11 = "CLASSROOM_11";
+const CLASSROOM_12 = "CLASSROOM_12";
+const CLASSROOM_13 = "CLASSROOM_13";
+const CLASSROOM_14 = "CLASSROOM_14";
+const CLASSROOM_15 = "CLASSROOM_15";
+const CLASSROOM_16 = "CLASSROOM_16";
+const CLASSROOM_17 = "CLASSROOM_17";
+const CLASSROOM_18 = "CLASSROOM_18";
+const CLASSROOM_19 = "CLASSROOM_19";
+const CLASSROOM_20 = "CLASSROOM_20";
+
+export const ClassroomName = {
+  0: CLASSROOM_1,
+  1: CLASSROOM_2,
+  2: CLASSROOM_3,
+  3: CLASSROOM_4,
+  4: CLASSROOM_5,
+  5: CLASSROOM_6,
+  6: CLASSROOM_7,
+  7: CLASSROOM_8,
+  8: CLASSROOM_9,
+  9: CLASSROOM_10,
+  10: CLASSROOM_11,
+  11: CLASSROOM_12,
+  12: CLASSROOM_13,
+  13: CLASSROOM_14,
+  14: CLASSROOM_15,
+  15: CLASSROOM_16,
+  16: CLASSROOM_17,
+  17: CLASSROOM_18,
+  18: CLASSROOM_19,
+  19: CLASSROOM_20
+};
+
+
+
+
+// Civil Infrastructure Details KEYS
+export const CIK = {
+  MULTIPURPOSE_HALL: "MULTIPURPOSE_HALL",
+  IT_LAB: "IT_LAB",
+  LIBRARY: "LIBRARY",
+  PLACEMENT_AND_COUNSELLING_ROOM: "PLACEMENT_AND_COUNSELLING_ROOM",
+  PRINCIPAL_ROOM: "PRINCIPAL_ROOM",
+  RECEPTION_CUM_WAITING_LOBBY: "RECEPTION_CUM_WAITING_LOBBY",
+  STAFF_ROOM: "STAFF_ROOM",
+  ADMINISTRATIVE_HALL_SECTION: "ADMINISTRATIVE_HALL_SECTION"
+};
+export const units = { sqm: "sq. m", };
+// Common Area
+export const MULTIPURPOSE_HALL = { particular: CIK.MULTIPURPOSE_HALL, RequiredArea: 110, AreaUnit: units.sqm, info: "Minimum width of multipurpose hall / courtyard shall be 5m." };
+export const IT_LAB = { particular: CIK.IT_LAB, RequiredArea: 200, AreaUnit: units.sqm, info: "minimum width of multipurpose hall / courtyard shall be 5m." };
+export const LIBRARY = { particular: CIK.LIBRARY, RequiredArea: 200, AreaUnit: units.sqm };
+export const PLACEMENT_AND_COUNSELLING_ROOM = { particular: CIK.PLACEMENT_AND_COUNSELLING_ROOM, RequiredArea: 200, AreaUnit: units.sqm };
+
+export const COMMON_AREA = [MULTIPURPOSE_HALL, IT_LAB, LIBRARY, PLACEMENT_AND_COUNSELLING_ROOM];
+
+// Administrative Area
+export const Principal_Room = { particular: CIK.PRINCIPAL_ROOM, RequiredArea: 200, AreaUnit: units.sqm };
+export const Reception_cum_waiting_lobby = { particular: CIK.RECEPTION_CUM_WAITING_LOBBY, RequiredArea: 200, AreaUnit: units.sqm };
+export const Staff_Room = { particular: CIK.STAFF_ROOM, RequiredArea: 200, AreaUnit: units.sqm };
+export const Administrative_Hall_Section = { particular: CIK.ADMINISTRATIVE_HALL_SECTION, RequiredArea: 200, AreaUnit: units.sqm };
+export const ADMINISTRATIVE_AREA = [Principal_Room, Reception_cum_waiting_lobby, Staff_Room, Administrative_Hall_Section]
+
+
+// Amenities
+export const AMNT = {
+  LIBRARY_AND_READING_ROOM: "Library & reading room",
+  FIRST_AID_ROOM: "First-Aid Room",
+  PLAYGROUND: "Playground",
+  DRINKING_WATER_FACILITY: "Drinking water facility",
+  AVAILABILITY_OF_STAIRCASES: "Availability of staircases",
+  TOILETS_WATER_CLOSETS: "Toilets/Water Closets",
+  GENERAL_PARKING_DETAILS: "General Parking Details",
+};
+export const A_LIBRARY_AND_READING_ROOM = { particular: AMNT.LIBRARY_AND_READING_ROOM, RequiredArea: 200, AreaUnit: units.sqm };
+export const A_FIRST_AID_ROOM = { particular: AMNT.FIRST_AID_ROOM, RequiredArea: 200, AreaUnit: units.sqm };
+
+export const A_PLAYGROUND = { particular: AMNT.PLAYGROUND, };
+export const A_DRINKING_WATER_FACILITY = { particular: AMNT.DRINKING_WATER_FACILITY };
+export const A_AVAILABILITY_OF_STAIRCASES = { particular: AMNT.AVAILABILITY_OF_STAIRCASES };
+export const A_TOILETS_WATER_CLOSETS = { particular: AMNT.TOILETS_WATER_CLOSETS };
+export const A_GENERAL_PARKING_DETAILS = { particular: AMNT.GENERAL_PARKING_DETAILS };
+
+
+
+
+
+
+
+
