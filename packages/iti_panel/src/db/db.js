@@ -70,10 +70,10 @@ export const initDB = async () => {
       }
 
       if (!db.objectStoreNames.contains(PROPOSED_INSTI_DETAILS)) {
-        const userStore = db.createObjectStore(PROPOSED_INSTI_DETAILS, {
-          keyPath: "id",
-        });
+        const userStore = db.createObjectStore(PROPOSED_INSTI_DETAILS, { keyPath: "id", });
         userStore.createIndex("appId", "appId", { unique: true });
+        userStore.createIndex("userId", "userId", { unique: true });
+        
       }
       if (!db.objectStoreNames.contains(PROPOSED_INSTI_ADDRESSES)) {
         const userStore = db.createObjectStore(PROPOSED_INSTI_ADDRESSES, {

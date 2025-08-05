@@ -13,23 +13,44 @@ import { UPDATE_SET_FEE_STATUS } from "../../../../constants"
 import { useContext } from "react";
 import { AppStatusContext } from "../../../../services/context";
 import { useLocation } from "react-router-dom";
-import {setAppCurrentStatus} from "../../../../db/users";
+import { setAppCurrentStatus } from "../../../../db/users";
+import { getStageIFeeInfo } from "../../../../db/forms/stageI/get/get";
+import { markAsCompleteStageStep, setActiveStage1NextStep } from "../../../../db/forms/stageI/set/set";
 
-const FeePayment = ({ setActive }) => {
+const FeePayment = ({ step, setActive }) => {
 
   const { Formik } = formik;
   const dispatch = useDispatch();
   const { appStatus } = useContext(AppStatusContext);
 
+  const [propInstiInfo, setPropInstiInfo] = useState({});
 
   const navigate = useNavigate();
 
-  const PropInstiInfo = useSelector((state) => state.ProposedInstituteInfo);
+  // const PropInstiInfo = useSelector((state) => state.ProposedInstituteInfo);
   const reg = useSelector((state) => state.reg);
 
-    const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-    const appId = queryParams.get("appId");
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const appId = queryParams.get("appId");
+
+  const authUser = useSelector((state) => state.loginUserReducer);
+
+  const getStepInfo = async () => {
+    console.log(appId);
+    let result = await getStageIFeeInfo(appId);
+    setPropInstiInfo(result);
+  }
+
+
+  const markAsComplete = async () => {
+    await markAsCompleteStageStep(authUser, appId, step.step)
+    await setActiveStage1NextStep(appId, step.nextStep);
+  }
+
+  useEffect(() => {
+    getStepInfo()
+  }, []);
 
   const submit = (values) => {
     Swal.fire({
@@ -47,8 +68,10 @@ const FeePayment = ({ setActive }) => {
           didOpen: () => {
             Swal.showLoading();
 
-            setAppCurrentStatus(appId, PropInstiInfo.type_of_institute).then((data)=>{
+            setAppCurrentStatus(appId, PropInstiInfo.type_of_institute).then((data) => {
               console.log(data);
+              markAsComplete();
+
             })
 
             // let newState = dispatch({ type: UPDATE_SET_FEE_STATUS, payload: PropInstiInfo });
@@ -142,7 +165,7 @@ const FeePayment = ({ setActive }) => {
                 </label>
               </div>
 
-              {PropInstiInfo.type_of_institute === "Government" ? (<Card
+              {propInstiInfo.type_of_institute === "Government" ? (<Card
                 className="custom-card border border-primary"
                 style={{ marginTop: "1rem" }}
               >
@@ -191,7 +214,7 @@ const FeePayment = ({ setActive }) => {
                     </ol>
                   </p>
                 </Card.Body>
-              </Card>) : PropInstiInfo.type_of_institute === "Private" ? (<Card
+              </Card>) : propInstiInfo.type_of_institute === "Private" ? (<Card
                 className="custom-card border border-primary"
                 style={{ marginTop: "1rem" }}
               >
@@ -250,12 +273,12 @@ const FeePayment = ({ setActive }) => {
               </Card>) : ''}
             </Card.Body>
             <Card.Footer className="d-flex justify-content-end">
-              {PropInstiInfo.type_of_institute === "Government" ? (
+              {propInstiInfo.type_of_institute === "Government" ? (
                 <Button size="lg" variant="facebook" onClick={() => formikRef.current?.submitForm()}
                 >
                   Save & Next
                 </Button>
-              ) : PropInstiInfo.type_of_institute === "Private" ? (
+              ) : propInstiInfo.type_of_institute === "Private" ? (
                 <Button size="lg" variant="instagram" onClick={() => formikRef.current?.submitForm()} >
                   Pay
                 </Button>

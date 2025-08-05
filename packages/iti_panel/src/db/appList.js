@@ -115,13 +115,13 @@ export const setEntityDetails = async (data, authUser, appId) => {
 
 
 export const setProposedInstDetails = async (step, data, appId, authUser) => {
-  // const db = await initDB();
-  // const proposedInstDetails = (({ name_of_applicant_institute, type_of_institute, institute_location, is_falls_under_hill_area_hill, Falls_Under_Hill_Area_Hill__Supporting_Doc, is_falls_under_border_district, Falls_Under_Border_District__Supporting_Doc, under_msti_category, Whether_the_institute_is_exclusive_for_women_trainees, latitude, Longitude, }) => ({ name_of_applicant_institute, type_of_institute, institute_location, is_falls_under_hill_area_hill, Falls_Under_Hill_Area_Hill__Supporting_Doc, is_falls_under_border_district, Falls_Under_Border_District__Supporting_Doc, under_msti_category, Whether_the_institute_is_exclusive_for_women_trainees, latitude, Longitude, }))(data);
+  const db = await initDB();
+  const proposedInstDetails = (({ name_of_applicant_institute, type_of_institute, institute_location, is_falls_under_hill_area_hill, Falls_Under_Hill_Area_Hill__Supporting_Doc, is_falls_under_border_district, Falls_Under_Border_District__Supporting_Doc, under_msti_category, Whether_the_institute_is_exclusive_for_women_trainees, latitude, Longitude, }) => ({ name_of_applicant_institute, type_of_institute, institute_location, is_falls_under_hill_area_hill, Falls_Under_Hill_Area_Hill__Supporting_Doc, is_falls_under_border_district, Falls_Under_Border_District__Supporting_Doc, under_msti_category, Whether_the_institute_is_exclusive_for_women_trainees, latitude, Longitude, }))(data);
 
-  // const proposedInstAddress = (({ cmp_post_state, cmp_post_address, cmp_post_district, cmp_post_city, cmp_post_block_or_tehsil, cmp_post_sector_village, cmp_post_pincode, cmp_post_plot_number_khasara_number, cmp_post_landmark, }) => ({ cmp_post_state, cmp_post_address, cmp_post_district, cmp_post_city, cmp_post_block_or_tehsil, cmp_post_sector_village, cmp_post_pincode, cmp_post_plot_number_khasara_number, cmp_post_landmark, }))(data);
+  const proposedInstAddress = (({ cmp_post_state, cmp_post_address, cmp_post_district, cmp_post_city, cmp_post_block_or_tehsil, cmp_post_sector_village, cmp_post_pincode, cmp_post_plot_number_khasara_number, cmp_post_landmark, }) => ({ cmp_post_state, cmp_post_address, cmp_post_district, cmp_post_city, cmp_post_block_or_tehsil, cmp_post_sector_village, cmp_post_pincode, cmp_post_plot_number_khasara_number, cmp_post_landmark, }))(data);
 
-  // const id_proposedInstDetails = await db.put(PROPOSED_INSTI_DETAILS, { ...proposedInstDetails, id: Date.now() + Math.random(), appId: appId, });
-  // const id_proposedInstAddress = await db.put(PROPOSED_INSTI_ADDRESSES, { ...proposedInstAddress, id: Date.now() + Math.random(), appId: appId, });
+  const id_proposedInstDetails = await db.put(PROPOSED_INSTI_DETAILS, { ...proposedInstDetails, id: Date.now() + Math.random(), appId: appId, userId:authUser.id });
+  const id_proposedInstAddress = await db.put(PROPOSED_INSTI_ADDRESSES, { ...proposedInstAddress, id: Date.now() + Math.random(), appId: appId, userId:authUser.id });
 
   console.log(step);
   markAsCompleteStageStep(authUser, appId, step.step)

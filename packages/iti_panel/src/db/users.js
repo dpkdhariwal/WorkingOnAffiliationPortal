@@ -66,6 +66,7 @@ import { initDB } from "./db";
 import * as cons from "../constants";
 
 import { Building_Detail_initialValues } from "../reducers/newAppReducer";
+import { markAsCompleteStageStep, setActiveStage1NextStep } from "./forms/stageI/set/set";
 
 
 export const addNewUser = async (app) => {
@@ -119,7 +120,7 @@ export const getSetUserRoles = async () => {
 
 export const getAppListByUserId = async (userId) => {
   const db = await initDB();
-  let result = await db.getAllFromIndex(APPLIST, "userId", userId);
+  let result = await db.getAllFromIndex(PROPOSED_INSTI_DETAILS, "userId", userId);
 
   const enrichedApps = await Promise.all(
     result.map(async (app) => {
@@ -229,33 +230,21 @@ export const setAppCurrentStatus = async (appId, type_of_institute) => {
   let oldStatus = result[0];
   switch (type_of_institute) {
     case "Government":
-      oldStatus = {
-        ...oldStatus,
-        ...{
-          app_status: STAGE_I__FEE_EXEMPTED,
-          stage_I_fee_status: STAGE_I__FEE_EXEMPTED,
-          app_status_awaiting: STAGE_I__DOCUMENT_PENDING,
-        },
-      };
+      oldStatus = { ...oldStatus, ...{ app_status: STAGE_I__FEE_EXEMPTED, stage_I_fee_status: STAGE_I__FEE_EXEMPTED, app_status_awaiting: STAGE_I__DOCUMENT_PENDING, }, };
       await db.put(APPLIST, oldStatus);
       setAppFlow(appId, STAGE_I_FORM_FILLING);
       setAppFlow(appId, STAGE_I_FEE, type_of_institute);
       break;
     case "Private":
-      oldStatus = {
-        ...oldStatus,
-        ...{
-          app_status: STAGE_I__FEE_PAID,
-          stage_I_fee_status: STAGE_I__FEE_PAID,
-          app_status_awaiting: STAGE_I__DOCUMENT_PENDING,
-        },
-      };
+      oldStatus = { ...oldStatus, ...{ app_status: STAGE_I__FEE_PAID, stage_I_fee_status: STAGE_I__FEE_PAID, app_status_awaiting: STAGE_I__DOCUMENT_PENDING, }, };
       await db.put(APPLIST, oldStatus);
       setAppFlow(appId, STAGE_I_FORM_FILLING);
       setAppFlow(appId, STAGE_I_FEE);
-
       break;
   }
+
+
+
 };
 
 export const setAppFlow = async (appId, step, type_of_institute = null) => {
@@ -528,7 +517,7 @@ export const getStage1FormFlow = async (appId) => {
     const flow = await list.index('appId').getAll(appId);
     console.log(flow);
     flow.sort((a, b) => a.stepNo - b.stepNo);
-    const finalList = await Promise.all(flow.map(async (item) => { return item; }) );
+    const finalList = await Promise.all(flow.map(async (item) => { return item; }));
     console.log(finalList);
     await tx.done;
     return finalList;
