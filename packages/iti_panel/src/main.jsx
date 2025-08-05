@@ -16,6 +16,9 @@ import "animate.css";
 import { Provider } from "react-redux";
 import Store from "./common/redux/Store.jsx";
 
+import { SignInPage } from 'layout';
+
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Fragment>
     <Provider store={Store}>
@@ -38,7 +41,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 
               <Route
                 path={`${import.meta.env.BASE_URL}`}
-                element={<Signin />}
+                element={<SignInPage />}
               ></Route>
               {/* <Route index element={<Signin />} /> */}
               {Routedata.map((idx) => (
