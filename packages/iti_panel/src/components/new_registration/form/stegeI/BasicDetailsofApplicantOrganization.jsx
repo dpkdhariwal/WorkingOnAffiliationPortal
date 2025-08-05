@@ -90,13 +90,11 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
           title: "Saving...",
           didOpen: () => {
             Swal.showLoading();
-            dispatch({ type: UPDATE_ENTITY_DETAILS, payload: values });
-            dispatch({ type: "set_filled_step", payload: { step: 0 }, });
-            dispatch({ type: "reg_set_active_step", payload: { step: 1 } });
-            setActive(reg.steps[1]);
-
-
-            console.log(authUser);
+            // dispatch({ type: UPDATE_ENTITY_DETAILS, payload: values });
+            // dispatch({ type: "set_filled_step", payload: { step: 0 }, });
+            // dispatch({ type: "reg_set_active_step", payload: { step: 1 } });
+            // setActive(reg.steps[1]);
+            console.log(values, authUser, appId);
             setEntityDetails(values, authUser, appId);
             Swal.close();
           },

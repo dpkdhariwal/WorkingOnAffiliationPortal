@@ -20,7 +20,9 @@ import { useContext } from "react";
 import { AppStatusContext } from "../../../../services/context";
 
 
-const DetailsOfTheProposedInstitute = ({ setActive }) => {
+const DetailsOfTheProposedInstitute = ({ step, setActive }) => {
+  const authUser = useSelector((state) => state.loginUserReducer);
+
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const appId = queryParams.get("appId");
@@ -77,13 +79,13 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
             console.log(values);
 
             Swal.showLoading();
-            dispatch({ type: UPDATE_PURPOSED_INSTI_INFO, payload: values });
-            dispatch({ type: "set_filled_step", payload: { step: 1 }, });
-            dispatch({ type: "reg_set_active_step", payload: { step: 2 } });
-            setActive(reg.steps[2]);
-
-            let result = setProposedInstDetails(values, appId);
-            console.log(result);
+            // dispatch({ type: UPDATE_PURPOSED_INSTI_INFO, payload: values });
+            // dispatch({ type: "set_filled_step", payload: { step: 1 }, });
+            // dispatch({ type: "reg_set_active_step", payload: { step: 2 } });
+            // setActive(reg.steps[2]);
+            // console.log(step);
+            let result = setProposedInstDetails(step, values, appId, authUser);
+            // console.log(result);
 
             Swal.close();
           },
@@ -125,7 +127,7 @@ const DetailsOfTheProposedInstitute = ({ setActive }) => {
         initialValues={{}}
       >
         {({ handleSubmit, handleChange, values, errors, touched, setFieldValue }) => {
-          
+
           console.log(values);
           return (
             <Card className="custom-card shadow">

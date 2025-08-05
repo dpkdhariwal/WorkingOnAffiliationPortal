@@ -1233,8 +1233,10 @@ export const STEPPER_STYLE = {
 };
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-// Database Constants
-export const DB_VERSION = 13;
+// Database Stores 
+
+
+export const DB_VERSION = 15;
 export const DB_NAME = "AffliationDB";
 export const USERS = "users";
 export const USER_ROLES = "userRoles";
@@ -1245,8 +1247,7 @@ export const ENTITY_ADDRESS = "ent_EntityAddress";
 export const OTHER_ITI = "ent_otherIti";
 
 export const PROPOSED_INSTI_DETAILS = "proposed_proposedInstituteDetails";
-export const PROPOSED_INSTI_ADDRESSES =
-  "proposed_proposedInstituteAddressesDetails";
+export const PROPOSED_INSTI_ADDRESSES = "proposed_proposedInstituteAddressesDetails";
 
 export const NEW_INSTI_TRADE_LIST = "trades_newInstTrades";
 
@@ -1255,6 +1256,7 @@ export const LAND_OWNED_LANDS_DETAILS = "land_owned_lands";
 export const LAND_LEASED_LANDS_DETAILS = "land_leased_lands";
 
 export const APP_FLOW = "app_flow";
+export const APP_FORM_FLOW_STAGE_I = "form_flow_stage_i";
 export const APP_FORM_FLOW_STAGE_II = "form_flow_stage_ii";
 export const APP_FORM_SUB_CIVIL_INFRA = "app_form_sub_civil_infra";
 
@@ -1264,8 +1266,7 @@ export const BLD_PHOTOS = "bld_photos";
 // Photo Types
 export const FRONT_VIEW_PHOTO_OF_BUILDING = "front_view_photo_of_building";
 export const SIDE_VIEW_PHOTO_OF_BUILDING = "side_view_photo_of_building";
-export const ENTRANCE_GATE_PHOTO_OF_PLOT_WITH_SIGNAGE_BOARD =
-  "entrance_gate_photo_of_plot_with_signage_board";
+export const ENTRANCE_GATE_PHOTO_OF_PLOT_WITH_SIGNAGE_BOARD = "entrance_gate_photo_of_plot_with_signage_board";
 
 // export const Civil_Infrastructure_Detail = "Civil Infrastructure Detail";
 // export const Civil_Infrastructure_Detail = "Civil Infrastructure Detail";
@@ -1520,6 +1521,7 @@ export const STAGE_I_APP_FORM_FLOW = [
     nextStep: ST1FC.DETAILS_OF_THE_PROPOSED_INSTITUTE.step,
     submitDate: null,
     updateDate: null,
+    stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
   },
   {
     stepNo: 2,
@@ -1529,6 +1531,8 @@ export const STAGE_I_APP_FORM_FLOW = [
     nextStep: ST1FC.DETAILS_OF_TRADE_UNIT_FOR_AFFILIATION,
     submitDate: null,
     updateDate: null,
+    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+
   },
   {
     stepNo: 3,
@@ -1538,6 +1542,8 @@ export const STAGE_I_APP_FORM_FLOW = [
     nextStep: ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step,
     submitDate: null,
     updateDate: null,
+    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+
   },
   {
     stepNo: 4,
@@ -1547,6 +1553,8 @@ export const STAGE_I_APP_FORM_FLOW = [
     nextStep: ST1FC.FEE_PAYMENT.step,
     submitDate: null,
     updateDate: null,
+    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+
   },
   {
     stepNo: 5,
@@ -1556,6 +1564,8 @@ export const STAGE_I_APP_FORM_FLOW = [
     nextStep: ST1FC.DOCUMENTS_UPLOAD.step,
     submitDate: null,
     updateDate: null,
+    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+
   },
   {
     stepNo: 6,
@@ -1565,6 +1575,8 @@ export const STAGE_I_APP_FORM_FLOW = [
     nextStep: LAST,
     submitDate: null,
     updateDate: null,
+    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+
   },
 ];
 

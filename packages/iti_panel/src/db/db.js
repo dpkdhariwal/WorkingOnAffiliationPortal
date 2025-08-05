@@ -26,6 +26,7 @@ import {
   TRADEWISE_CLASSROOMS,
   COMMON_CIVIL_INFRASTRUCTURE
 } from "../constants";
+import * as cons from "../constants";
 
 export const initDB = async () => {
   return await openDB(DB_NAME, DB_VERSION, {
@@ -116,6 +117,13 @@ export const initDB = async () => {
         userStore.createIndex("appId_step", ["appId", "step"]); // compound index
       }
 
+      if (!db.objectStoreNames.contains(cons.APP_FORM_FLOW_STAGE_I)) {
+        const userStore = db.createObjectStore(cons.APP_FORM_FLOW_STAGE_I, { keyPath: "id", });
+        userStore.createIndex("appId", "appId", { unique: false });
+        userStore.createIndex("userId", "userId", { unique: false });
+        userStore.createIndex("appId_step", ["appId", "step"]); // compound index
+      }
+
       if (!db.objectStoreNames.contains(APP_FORM_FLOW_STAGE_II)) {
         const userStore = db.createObjectStore(APP_FORM_FLOW_STAGE_II, {
           keyPath: "id",
@@ -166,7 +174,7 @@ export const initDB = async () => {
         userStore.createIndex("appId", "appId", { unique: false });
         userStore.createIndex("userId", "userId", { unique: false });
         userStore.createIndex("workshop", "workshop", { unique: false });
-        userStore.createIndex("tradeId_workshop_appId", ["tradeId","workshop", "appId"]); // compound index
+        userStore.createIndex("tradeId_workshop_appId", ["tradeId", "workshop", "appId"]); // compound index
       }
 
       if (!db.objectStoreNames.contains(TRADEWISE_CLASSROOMS)) {
@@ -176,7 +184,7 @@ export const initDB = async () => {
         userStore.createIndex("appId", "appId", { unique: false });
         userStore.createIndex("userId", "userId", { unique: false });
         userStore.createIndex("workshop", "workshop", { unique: false });
-        userStore.createIndex("tradeId_classroom_appId", ["tradeId","classroom", "appId"]); // compound index
+        userStore.createIndex("tradeId_classroom_appId", ["tradeId", "classroom", "appId"]); // compound index
       }
 
 

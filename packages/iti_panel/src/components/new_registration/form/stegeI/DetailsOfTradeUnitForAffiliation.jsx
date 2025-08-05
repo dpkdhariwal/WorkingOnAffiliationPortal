@@ -22,10 +22,11 @@ import { setInstTradeDetails } from "../../../../db/appList";
 import { useLocation } from "react-router-dom";
 
 
-const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
+const DetailsOfDocumentsToBeUploaded = ({ step, setActive }) => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const appId = queryParams.get("appId");
+  const authUser = useSelector((state) => state.loginUserReducer);
 
 
   const reg = useSelector((state) => state.reg);
@@ -48,13 +49,13 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
           didOpen: () => {
 
             Swal.showLoading();
-            dispatch({ type: UPDATE_TRADE_UNIT, payload: values });
-            dispatch({ type: "set_filled_step", payload: { step: 2 }, });
-            dispatch({ type: "reg_set_active_step", payload: { step: 3 } });
-            setActive(reg.steps[3]);
+            // dispatch({ type: UPDATE_TRADE_UNIT, payload: values });
+            // dispatch({ type: "set_filled_step", payload: { step: 2 }, });
+            // dispatch({ type: "reg_set_active_step", payload: { step: 3 } });
+            // setActive(reg.steps[3]);
 
 
-            let result = setInstTradeDetails(values, appId);
+            let result = setInstTradeDetails(values, appId, step, authUser);
             console.log(result);
             Swal.close();
 

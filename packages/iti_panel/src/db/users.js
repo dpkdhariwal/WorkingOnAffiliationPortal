@@ -519,6 +519,23 @@ export const getBuildingDetail = async (appId) => {
   }
 };
 
+
+export const getStage1FormFlow = async (appId) => {
+  const db = await initDB();
+  try {
+    const tx = db.transaction([cons.APP_FORM_FLOW_STAGE_I], 'readwrite');
+    const list = tx.objectStore(cons.APP_FORM_FLOW_STAGE_I);
+    const flow = await list.index('appId').getAll(appId);
+    console.log(flow);
+    flow.sort((a, b) => a.stepNo - b.stepNo);
+    const finalList = await Promise.all(flow.map(async (item) => { return item; }) );
+    console.log(finalList);
+    await tx.done;
+    return finalList;
+  } catch (error) {
+    return []
+  }
+};
 export const getStage2FormFlow = async (appId) => {
   const db = await initDB();
   try {

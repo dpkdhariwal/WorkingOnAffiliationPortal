@@ -25,7 +25,7 @@ import { STAGE_I__FEE_PAID, STAGE_I__FEE_EXEMPTED, STAGE_I__SUBMIT_PENDING, STAG
 import { AppStatusContext } from "../../services/context";
 import { getAppCurrentStatus } from "../../db/users";
 
-import {StageIForm} from "./stage_I_with_stepper";
+import { StageIForm } from "./stage_I_with_stepper";
 
 const New_registration = () => {
   const reg = useSelector((state) => state.reg);
@@ -60,20 +60,20 @@ const New_registration = () => {
           activepage="New Registration"
         />
 
-        <StageIForm/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        
+        <StageIForm />
+        {/* <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+ */}
 
 
-        <Stepper>
+        {false && (<> <Stepper>
           {reg.steps.map((item, index) => {
             return (
               <div
@@ -93,36 +93,36 @@ const New_registration = () => {
             );
           })}
         </Stepper>
-        {activeStep.label === "Applicant Entity Details" ? (
-          <BasicDetailsofApplicantOrganization setActive={goToSection} />
-        ) : activeStep.label === "Applicant Entity Details" ? (
-          <BasicDetailsofApplicantOrganization setActive={goToSection} />
-        ) : activeStep.label === "Details of the Proposed Institute" ? (
-          <DetailsOfTheProposedInstitute setActive={goToSection} />
-        ) : activeStep.label ===
-          "Details of Trade(s)/Unit(s) for Affiliation" ? (
-          <DetailsOfTradeUnitForAffiliation setActive={goToSection} />
-        ) : // To be Work
-          activeStep.label === "Details of the Land to be used for the ITI" ? (
-            <DetailsOfTheLandToBeUsedForTheITI setActive={goToSection} />
+          {activeStep.label === "Applicant Entity Details" ? (
+            <BasicDetailsofApplicantOrganization setActive={goToSection} />
+          ) : activeStep.label === "Applicant Entity Details" ? (
+            <BasicDetailsofApplicantOrganization setActive={goToSection} />
+          ) : activeStep.label === "Details of the Proposed Institute" ? (
+            <DetailsOfTheProposedInstitute setActive={goToSection} />
+          ) : activeStep.label ===
+            "Details of Trade(s)/Unit(s) for Affiliation" ? (
+            <DetailsOfTradeUnitForAffiliation setActive={goToSection} />
           ) : // To be Work
-            activeStep.label === "Preview of Application" ? (
-              <PreviewOfApplication setActive={goToSection} />
+            activeStep.label === "Details of the Land to be used for the ITI" ? (
+              <DetailsOfTheLandToBeUsedForTheITI setActive={goToSection} />
             ) : // To be Work
-              activeStep.label === "Fee Payment" ? (
-                appStatus?.stage_I_fee_status === STAGE_I__FEE_PAID ? (<StageIPaidInfo />) : appStatus?.stage_I_fee_status === STAGE_I__FEE_EXEMPTED ? (<StageIExemtedInfo />) : <FeePayment setActive={goToSection} />
+              activeStep.label === "Preview of Application" ? (
+                <PreviewOfApplication setActive={goToSection} />
               ) : // To be Work
-                activeStep.label === "Documents Upload" ? (
-                  (appStatus?.stage_I_fee_status === STAGE_I__FEE_PENDING) ? (<h5>First Complete the Stage-I and Pay the Fee</h5>) :
-                    (appStatus?.stage_I_fee_status === STAGE_I__FEE_PAID || appStatus?.stage_I_fee_status === STAGE_I__FEE_EXEMPTED && appStatus?.app_status_awaiting == STAGE_I__DOCUMENT_PENDING) ? (<DetailsOfDocumentsToBeUploaded setActive={goToSection} />) :
-                      <>
-                        <LandDocuments view={true} />
-                        <Documents view={true} />
-                      </>
-                ) : (
-                  // To be Work
-                  <p>Something Went Wrong</p>
-                )}
+                activeStep.label === "Fee Payment" ? (
+                  appStatus?.stage_I_fee_status === STAGE_I__FEE_PAID ? (<StageIPaidInfo />) : appStatus?.stage_I_fee_status === STAGE_I__FEE_EXEMPTED ? (<StageIExemtedInfo />) : <FeePayment setActive={goToSection} />
+                ) : // To be Work
+                  activeStep.label === "Documents Upload" ? (
+                    (appStatus?.stage_I_fee_status === STAGE_I__FEE_PENDING) ? (<h5>First Complete the Stage-I and Pay the Fee</h5>) :
+                      (appStatus?.stage_I_fee_status === STAGE_I__FEE_PAID || appStatus?.stage_I_fee_status === STAGE_I__FEE_EXEMPTED && appStatus?.app_status_awaiting == STAGE_I__DOCUMENT_PENDING) ? (<DetailsOfDocumentsToBeUploaded setActive={goToSection} />) :
+                        <>
+                          <LandDocuments view={true} />
+                          <Documents view={true} />
+                        </>
+                  ) : (
+                    // To be Work
+                    <p>Something Went Wrong</p>
+                  )}</>)}
       </AppStatusContext.Provider>
     </Fragment>
   );
