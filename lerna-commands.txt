@@ -80,3 +80,4 @@ npm install knex -g
 
 
 
+npm install "file:../packages/ui_layouts_collaborate"
