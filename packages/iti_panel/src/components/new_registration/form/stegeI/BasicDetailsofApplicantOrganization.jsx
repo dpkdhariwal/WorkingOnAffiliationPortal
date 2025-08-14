@@ -26,12 +26,18 @@ import { getDbEntityDetails } from "../../../../db/users";
 import { useLocation } from "react-router-dom";
 import { useContext } from "react";
 import { AppStatusContext } from "../../../../services/context";
+import { ApplicantEntityMobile } from "./formComponent/ApplicantEntityMobileNumber";
+import { ApplicantAddressPincode } from "./formComponent/ApplicantEntityAddressPincode";
+import { Navigations } from "../../../Assessment/components";
 
 
-const BasicDetailsofApplicantOrganization = ({ setActive }) => {
+const BasicDetailsofApplicantOrganization = ({ setActive, refreshSteps }) => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const appId = queryParams.get("appId");
+  const aff_category = queryParams.get("aff_category");
+  const aff_sub_category = queryParams.get("aff_sub_category");
+
   const { appStatus } = useContext(AppStatusContext);
 
   useEffect(() => {
@@ -46,8 +52,6 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
 
   const EntityDetails = useSelector((state) => state.EntityDetails);
 
-
-
   const AppliInfo = useSelector((state) => state.AppliInfo);
 
   const authUser = useSelector((state) => state.loginUserReducer);
@@ -58,7 +62,13 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
     const data = await getDbEntityDetails(appId);
     const combinedData = { ...data.entityAddress[0], ...data.entityDetail[0], ...data.otherIti[0] };
     console.log(combinedData);
-    let newData = { ...initialValues, ...combinedData };
+    let newData;
+    if (aff_category) {
+      newData = { ...initialValues, ...combinedData, aff_category: aff_category, aff_sub_category: aff_sub_category };
+    }
+    else {
+      newData = { ...initialValues, ...combinedData };
+    }
     formikRef.current.setValues(newData); // update entire form
   };
 
@@ -75,35 +85,32 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
   const stageI1_info = useSelector((state) => state.theme.new_registration);
   // useEffect(() => { console.log("stageI1_info", stageI1_info); }, []);
 
-  const submit = (values) => {
-    Swal.fire({
+  const submit = async (values) => {
+    const confirmResult = await Swal.fire({
       title: "Are you sure?",
       text: "Do you want to save the form data?",
       icon: "question",
       showCancelButton: true,
       confirmButtonText: "Yes, save it!",
       cancelButtonText: "Cancel",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // User confirmed – now show loading or save directly
-        Swal.fire({
-          title: "Saving...",
-          didOpen: () => {
-            Swal.showLoading();
-            // dispatch({ type: UPDATE_ENTITY_DETAILS, payload: values });
-            // dispatch({ type: "set_filled_step", payload: { step: 0 }, });
-            // dispatch({ type: "reg_set_active_step", payload: { step: 1 } });
-            // setActive(reg.steps[1]);
-            console.log(values, authUser, appId);
-            setEntityDetails(values, authUser, appId);
-            Swal.close();
-          },
-        });
-      } else {
-        console.log("User cancelled save");
-      }
     });
+
+    if (!confirmResult.isConfirmed) {
+      console.log("User cancelled save");
+      return;
+    }
+
+    try {
+      console.log(values, authUser, appId);
+      const result = await setEntityDetails(values, authUser, appId);
+      result === true ? refreshSteps() : '';
+      Swal.fire("Saved!", "Your form data has been saved.", "success");
+    } catch (error) {
+      console.error(error);
+      Swal.fire("Error", "Something went wrong while saving.", "error");
+    }
   };
+
 
   const formikRef = useRef();
 
@@ -489,35 +496,37 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
                                 )}
                             </Form.Group>
 
-                            <Form.Group
-                              as={Col}
-                              md="3"
-                              controlId="validationCustom02"
-                            >
-                              <Form.Label>
-                                Applicant Entity Pincode
-                                <span style={{ color: "red" }}>*</span>
-                              </Form.Label>
-                              <Form.Control
-                                required
-                                type="text"
-                                placeholder="Pincode"
-                                name="ApplicantEntityPincode"
-                                value={values.ApplicantEntityPincode}
+                            <Col md={3}>
+                              <ApplicantAddressPincode values={values} touched={touched} errors={errors} handleChange={handleChange} />
+                              {/* <Form.Group
+                                controlId="validationCustom02"
+                              >
+                                <Form.Label>
+                                  Applicant Entity Pincode
+                                  <span style={{ color: "red" }}>*</span>
+                                </Form.Label>
+                                <Form.Control
+                                  required
+                                  type="text"
+                                  placeholder="Pincode"
+                                  name="ApplicantEntityPincode"
+                                  value={values.ApplicantEntityPincode}
 
-                                onChange={handleChange}
-                                isInvalid={
-                                  touched.ApplicantEntityPincode &&
-                                  !!errors.ApplicantEntityPincode
-                                }
-                              />
-                              {touched.ApplicantEntityPincode &&
-                                errors.ApplicantEntityPincode && (
-                                  <Form.Control.Feedback type="invalid">
-                                    {errors.ApplicantEntityPincode}
-                                  </Form.Control.Feedback>
-                                )}
-                            </Form.Group>
+                                  onChange={handleChange}
+                                  isInvalid={
+                                    touched.ApplicantEntityPincode &&
+                                    !!errors.ApplicantEntityPincode
+                                  }
+                                />
+                                {touched.ApplicantEntityPincode &&
+                                  errors.ApplicantEntityPincode && (
+                                    <Form.Control.Feedback type="invalid">
+                                      {errors.ApplicantEntityPincode}
+                                    </Form.Control.Feedback>
+                                  )}
+                              </Form.Group> */}
+                            </Col>
+
 
                             <Form.Group
                               as={Col}
@@ -588,8 +597,9 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
                           <ApplicantEntityEmailId values={values} touched={touched} errors={errors} handleChange={handleChange} />
                         </Col>
 
-
                         <Form.Group as={Col} md="6" controlId="validationCustom02">
+                          <ApplicantEntityMobile values={values} touched={touched} errors={errors} handleChange={handleChange} />
+                          {/* 
                           <Form.Label>
                             Applicant Contact Number
                             <span style={{ color: "red" }}>*</span>
@@ -598,13 +608,23 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
                             <Form.Control
                               required
                               type="text"
+                              inputMode="numeric"
+                              pattern="\d*"
                               name="ApplicantContactNumber"
                               placeholder="Applicant Contact Number"
                               value={values.ApplicantContactNumber}
-                              onChange={handleChange}
+                              onChange={(e) => {
+                                // Keep only digits and limit to 10 characters
+                                const cleanedValue = e.target.value.replace(/\D/g, "").slice(0, 10);
+                                handleChange({
+                                  target: {
+                                    name: e.target.name,
+                                    value: cleanedValue,
+                                  },
+                                });
+                              }}
                               isInvalid={
-                                touched.ApplicantContactNumber &&
-                                !!errors.ApplicantContactNumber
+                                touched.ApplicantContactNumber && !!errors.ApplicantContactNumber
                               }
                             />
                             <Button variant="primary">Verify</Button>
@@ -615,7 +635,7 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
                                   {errors.ApplicantContactNumber}
                                 </Form.Control.Feedback>
                               )}
-                          </div>
+                          </div> */}
                         </Form.Group>
                       </Row>
 
@@ -1057,32 +1077,36 @@ const BasicDetailsofApplicantOrganization = ({ setActive }) => {
                                               </Form.Control.Feedback>
                                             )}
                                         </Form.Group>
-                                        <Form.Group
-                                          as={Col}
-                                          md="3"
-                                          controlId="validationCustom02"
-                                        >
-                                          <Form.Label>
-                                            Pincode<span style={{ color: "red" }}>*</span>
-                                          </Form.Label>
-                                          <Form.Control
-                                            required
-                                            type="text"
-                                            placeholder="Pincode"
-                                            name="run_Pincode"
-                                            value={values.run_Pincode}
-                                            onChange={handleChange}
-                                            isInvalid={
-                                              touched.run_Pincode &&
-                                              !!errors.run_Pincode
-                                            }
-                                          />
-                                          {touched.run_Pincode && errors.run_Pincode && (
-                                            <Form.Control.Feedback type="invalid">
-                                              {errors.run_Pincode}
-                                            </Form.Control.Feedback>
-                                          )}
-                                        </Form.Group>
+                                        <Col md={3}>
+                                          <ApplicantAddressPincode values={values} touched={touched} errors={errors} handleChange={handleChange} />
+                                          {/* <Form.Group
+                                            as={Col}
+                                            md="3"
+                                            controlId="validationCustom02"
+                                          >
+                                            <Form.Label>
+                                              Pincode<span style={{ color: "red" }}>*</span>
+                                            </Form.Label>
+                                            <Form.Control
+                                              required
+                                              type="text"
+                                              placeholder="Pincode"
+                                              name="run_Pincode"
+                                              value={values.run_Pincode}
+                                              onChange={handleChange}
+                                              isInvalid={
+                                                touched.run_Pincode &&
+                                                !!errors.run_Pincode
+                                              }
+                                            />
+                                            {touched.run_Pincode && errors.run_Pincode && (
+                                              <Form.Control.Feedback type="invalid">
+                                                {errors.run_Pincode}
+                                              </Form.Control.Feedback>
+                                            )}
+                                          </Form.Group> */}
+                                        </Col>
+
 
                                         <Form.Group
                                           as={Col}
@@ -1192,7 +1216,19 @@ BasicDetailsofApplicantOrganization.propTypes = {
 };
 export default BasicDetailsofApplicantOrganization;
 
-export const Assessment_Basic_Detail = () => {
+export const Assessment_Basic_Detail = ({ appId, isView = false, nav }) => {
+
+  const [id, setId] = useState(appId);
+
+
+
+  useEffect(() => {
+    console.log(id);
+  }, [id]);
+
+  // console.log(nav.next());
+
+  
 
   return (
     <>
@@ -1361,10 +1397,9 @@ export const Assessment_Basic_Detail = () => {
           </table>
 
         </Col>
-
       </Row>
 
-
+      <Navigations nav={nav} onNext={()=>{nav.next()}}  />
     </>
   );
 };

@@ -11,9 +11,11 @@ import { languages, ADD_MORE_LAND_DOCUMENT, SET_STAGE_I__DOCUMENT_STATUS, STAGE_
 import { land_documents_yupObject } from "../../../../reducers/document_upload";
 import { useContext } from "react";
 import { AppStatusContext } from "../../../../services/context";
-import {setAppFlow} from "../../../../db/users";
+import { setAppFlow } from "../../../../db/users";
 import { useLocation } from "react-router-dom";
+import { markAsCompleteStageStep } from "../../../../db/forms/stageI/set/set";
 
+import * as C from "../../../../constants";
 
 const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
   const dispatch = useDispatch();
@@ -22,39 +24,70 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
   const land_documents_initial_values = useSelector((state) => state.land_documents_reducer);
   const reg = useSelector((state) => state.reg);
   const { appStatus } = useContext(AppStatusContext);
-    const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-    const appId = queryParams.get("appId");
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const appId = queryParams.get("appId");
+    const authUser = useSelector((state) => state.loginUserReducer);
 
-  const submit = (values) => {
-    Swal.fire({
+  const submit = async (values) => {
+
+
+    const confirmResult = await Swal.fire({
       title: "Are you sure?",
       text: "Do you want to save the form data?",
       icon: "question",
       showCancelButton: true,
       confirmButtonText: "Yes, save it!",
       cancelButtonText: "Cancel",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // User confirmed – now show loading or save directly
-        Swal.fire({
-          title: "Saving...",
-          didOpen: () => {
-            Swal.showLoading();
-
-            setAppFlow(appId, STAGE_I_DOCUMENT_UPLAOD);
-
-            // dispatch({ type: SET_STAGE_I__DOCUMENT_STATUS, payload: values });
-            dispatch({ type: "set_filled_step", payload: { step: 5 }, });
-            dispatch({ type: "reg_set_active_step", payload: { step: 5 } });
-            setActive(reg.steps[5]);
-
-          },
-        });
-      } else {
-        console.log("User cancelled save");
-      }
     });
+
+    if (!confirmResult.isConfirmed) {
+      console.log("User cancelled save");
+      return;
+    }
+
+    try {
+      let result = await setAppFlow(appId, STAGE_I_DOCUMENT_UPLAOD);
+      markAsCompleteStageStep(authUser, appId, C.ST1FC.DOCUMENTS_UPLOAD.step);
+      console.log(result);
+
+      // dispatch({ type: SET_STAGE_I__DOCUMENT_STATUS, payload: values });
+      // dispatch({ type: "set_filled_step", payload: { step: 5 }, });
+      // dispatch({ type: "reg_set_active_step", payload: { step: 5 } });
+      // setActive(reg.steps[5]);
+
+      // let result = setProposedInstDetails(step, values, appId, authUser);
+      // result === true ? refreshSteps() : '';
+      Swal.fire("Saved!", "Your form data has been saved.", "success");
+    } catch (error) {
+      console.error(error);
+      Swal.fire("Error", "Something went wrong while saving.", "error");
+    }
+
+
+    // Swal.fire({
+    //   title: "Are you sure?",
+    //   text: "Do you want to save the form data?",
+    //   icon: "question",
+    //   showCancelButton: true,
+    //   confirmButtonText: "Yes, save it!",
+    //   cancelButtonText: "Cancel",
+    // }).then((result) => {
+    //   if (result.isConfirmed) {
+    //     // User confirmed – now show loading or save directly
+    //     Swal.fire({
+    //       title: "Saving...",
+    //       didOpen: () => {
+    //         Swal.showLoading();
+
+
+
+    //       },
+    //     });
+    //   } else {
+    //     console.log("User cancelled save");
+    //   }
+    // });
   };
 
   const submitNow = () => {

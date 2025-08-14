@@ -16,7 +16,8 @@ import { useLocation } from "react-router-dom";
 import { setAppCurrentStatus } from "../../../../db/users";
 import { getStageIFeeInfo } from "../../../../db/forms/stageI/get/get";
 import { markAsCompleteStageStep, setActiveStage1NextStep } from "../../../../db/forms/stageI/set/set";
-
+import { getAppFlowInfoByStep } from "../../../../db/forms/app/app";
+import * as C from "../../../../constants"
 const FeePayment = ({ step, setActive }) => {
 
   const { Formik } = formik;
@@ -24,6 +25,8 @@ const FeePayment = ({ step, setActive }) => {
   const { appStatus } = useContext(AppStatusContext);
 
   const [propInstiInfo, setPropInstiInfo] = useState({});
+  const [feeInfo, setFeeInfo] = useState({});
+
 
   const navigate = useNavigate();
 
@@ -35,6 +38,13 @@ const FeePayment = ({ step, setActive }) => {
   const appId = queryParams.get("appId");
 
   const authUser = useSelector((state) => state.loginUserReducer);
+
+
+  const getAppStatusByKey = async () => {
+    let result = await getAppFlowInfoByStep(appId, C.STAGE_I_FEE);
+    setFeeInfo(result);
+    // setPropInstiInfo(result);
+  }
 
   const getStepInfo = async () => {
     console.log(appId);
@@ -50,6 +60,7 @@ const FeePayment = ({ step, setActive }) => {
 
   useEffect(() => {
     getStepInfo()
+    getAppStatusByKey()
   }, []);
 
   const submit = (values) => {
@@ -68,7 +79,7 @@ const FeePayment = ({ step, setActive }) => {
           didOpen: () => {
             Swal.showLoading();
 
-            setAppCurrentStatus(appId, PropInstiInfo.type_of_institute).then((data) => {
+            setAppCurrentStatus(appId, propInstiInfo.type_of_institute).then((data) => {
               console.log(data);
               markAsComplete();
 
@@ -111,7 +122,8 @@ const FeePayment = ({ step, setActive }) => {
 
   return (
     <Fragment>
-      <Formik
+
+      {feeInfo.status === C.STAGE_I__FEE_PAID ? (<StageIPaidInfo />) : feeInfo.status === C.STAGE_I__FEE_EXEMPTED ? (<StageIExemtedInfo />) : <Formik
         innerRef={formikRef}
 
         validationSchema={yup.object().shape({
@@ -140,7 +152,7 @@ const FeePayment = ({ step, setActive }) => {
                     application would be allowed after fee payment.</li></ul></p>
               <div className="d-grid gap-2 mb-4">
                 {/* <ViewApplication /> */}
-                <Button size="lg" onClick={() => navigate('/dashboard/application_stage_1_form')}>
+                <Button size="lg" onClick={() => navigate(`/dashboard/application_stage_1_form?appId=${appId}`)}>
                   View Application
                 </Button>              </div>
 
@@ -286,9 +298,182 @@ const FeePayment = ({ step, setActive }) => {
             </Card.Footer>
           </Card>
         )}
-      </Formik>
+      </Formik>}
+
+
+
+
     </Fragment>
   );
 };
 
 export default FeePayment;
+export const StageIExemtedInfo = () => {
+
+  return (
+    <>
+
+      <div>
+        <Card className="custom-card border border-primary">
+          {/* <Card.Header>
+            <div className="card-title" style={{ textTransform: "none" }}>
+              <h5> Stage-I Fee Exempted</h5>
+            </div>
+          </Card.Header> */}
+          <Card.Body>
+            <Row style={{ marginTop: "1rem" }}>
+              <Col md={12}>
+                <div className="jumbotron">
+                  <h1 className="display-4"> ✅ Successfully stage-I complited.</h1>
+                  <p className="lead">
+                    Thank you for submitting your application, your Registration for Stage I has been Completed. <br /> You can now upload relavent documents of stage I
+                  </p>
+                </div>
+              </Col>
+            </Row>
+          </Card.Body>
+          {/* <Card.Footer>
+          
+        </Card.Footer> */}
+        </Card>
+
+        <Card className="custom-card border border-primary">
+          {/* <Card.Header>
+            <div className="card-title" style={{ textTransform: "none" }}>
+              <h5> Stage I Fee Exempted</h5>
+            </div>
+          </Card.Header> */}
+          <Card.Body>
+            <Row style={{ marginTop: "1rem" }}>
+              <Col md={12}>
+                <table style={{ width: "98%" }} className="custom-table"
+                >
+                  <tbody>
+                    <tr>
+                      <th>Allication Id:</th>
+                      <td>ABC123</td>
+                    </tr>
+                    <tr>
+                      <th>Payment Status:</th>
+                      <td>Exempted</td>
+                    </tr>
+                    <tr>
+                      <th>Status:</th>
+                      <td>Successfull</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </Col>
+            </Row>
+          </Card.Body>
+          <Card.Footer>
+            <div className="d-flex justify-content-between mb-3">
+              <Button
+                className="p-2" variant="warning">
+                Previous
+              </Button>
+              <Button className="p-2"
+                variant="success"
+              >
+                Upload Document
+              </Button>
+            </div>
+          </Card.Footer>
+        </Card>
+      </div>
+
+    </>
+  )
+
+}
+
+export const StageIPaidInfo = () => {
+
+  return (
+    <>
+
+      <div>
+        <Card className="custom-card border border-primary">
+          {/* <Card.Header>
+            <div className="card-title" style={{ textTransform: "none" }}>
+              <h5> Stage-I Fee Exempted</h5>
+            </div>
+          </Card.Header> */}
+          <Card.Body>
+            <Row style={{ marginTop: "1rem" }}>
+              <Col md={12}>
+                <div className="jumbotron">
+                  <h1 className="display-4"> ✅ Payment Successfully Stage-I Completed</h1>
+                  <p className="lead">
+                    Thank you, for submitting your Application. <br />
+                    Your Registration for Stage-I has been completed. You can now upload relavent document
+                  </p>
+                  <p className="lead">
+                    Your Payment has been received and recorded successfully. Please keep the Transation Id for your reference.
+                  </p>
+                </div>
+              </Col>
+            </Row>
+          </Card.Body>
+          {/* <Card.Footer>
+          
+        </Card.Footer> */}
+        </Card>
+
+        <Card className="custom-card border border-primary">
+          {/* <Card.Header>
+            <div className="card-title" style={{ textTransform: "none" }}>
+              <h5> Stage I Fee Exempted</h5>
+            </div>
+          </Card.Header> */}
+          <Card.Body>
+            <Row style={{ marginTop: "1rem" }}>
+              <Col md={12}>
+                <table style={{ width: "98%" }} className="custom-table"
+                >
+                  <tbody>
+                    <tr>
+                      <th>Allication Id:</th>
+                      <td>ABC123</td>
+                    </tr>
+                    <tr>
+                      <th>Transaction ID:</th>
+                      <td>ABC123</td>
+                    </tr>
+                    <tr>
+                      <th>Payment Date:</th>
+                      <td>Paid</td>
+                    </tr>
+                    <tr>
+                      <th>Amount Paid:</th>
+                      <td>Rs. 10,000</td>
+                    </tr>
+                    <tr>
+                      <th>Status:</th>
+                      <td>Successfull</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </Col>
+            </Row>
+          </Card.Body>
+          <Card.Footer>
+            <div className="d-flex justify-content-between mb-3">
+              <Button
+                className="p-2" variant="warning">
+                Previous
+              </Button>
+              <Button className="p-2"
+                variant="success"
+              >
+                Upload Document
+              </Button>
+            </div>
+          </Card.Footer>
+        </Card>
+      </div>
+
+    </>
+  )
+
+}

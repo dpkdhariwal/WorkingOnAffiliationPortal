@@ -55,6 +55,8 @@ import AssessmentCivilInfraStruction from "./stage-II/AssessmentCivilInfraStruct
 
 const LINE_HEIGHT = 400;
 
+import {StageIAssessment} from "../../screens/state/assessor/stage_I_assessment";
+
 
 import {setAppFlow} from "../../db/users";
 import {STAGE_I__ASSESSMENT} from "../../constants";
@@ -240,13 +242,19 @@ const Assessment = () => {
 
   return (
     <Fragment>
-      {/* <Pageheader
-        mainheading="Assessment"
+      <Pageheader
+        mainheading="Document Verification"
         parentfolder="Dashboard"
-        activepage="Assessment"
-      /> */}
+        activepage="Stage I"
+      />
 
-      <Card className="custom-card" style={{ marginTop: "10px" }}>
+
+        <StageIAssessment/>
+      <br/>
+      <br/>
+
+
+      {false && (<Card className="custom-card" style={{ marginTop: "10px" }}>
         <Card.Header>
           <div className="card-title">Assessment-I</div>
         </Card.Header>
@@ -400,16 +408,12 @@ const Assessment = () => {
                 <Assessment_DetailsOfDocumentsToBeUploaded />
                 <LandDocuments />
                 <Documents />
-
-
                 <MarkAsCompleteStageIAssessment />
-
-
               </Tab.Pane>
             </Tab.Content>
           </Tab.Container>
         </Card.Body>
-      </Card>
+      </Card>)}
     </Fragment>
   );
 };
@@ -417,7 +421,7 @@ const Assessment = () => {
 export default Assessment;
 
 
-const MarkAsCompleteStageIAssessment = () => {
+export const MarkAsCompleteStageIAssessment = () => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const appId = queryParams.get("appId");

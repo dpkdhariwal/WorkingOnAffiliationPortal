@@ -46,7 +46,7 @@ const getSetStep = (info, i) => {
     case 'pending':
       return <AffTimeLineItem variant="pending" key={i}><PendingStep info={info} /></AffTimeLineItem>
     case 'on-progress':
-      return <AffTimeLineItem variant="inProgress" key={i}><PendingStep  info={info}variant="inProgress"  /></AffTimeLineItem>
+      return <AffTimeLineItem variant="inProgress" key={i}><PendingStep  info={info} variant="inProgress"  /></AffTimeLineItem>
     case 'completed':
       return <AffTimeLineItem variant="completed" key={i}><CompletedStep info={info} variant="completed"  /></AffTimeLineItem>
     default:

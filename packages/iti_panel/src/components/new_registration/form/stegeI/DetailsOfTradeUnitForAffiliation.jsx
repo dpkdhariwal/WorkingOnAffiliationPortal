@@ -20,6 +20,7 @@ import { ctsTrades, UPDATE_TRADE_UNIT } from "../../../../constants";
 
 import { setInstTradeDetails } from "../../../../db/appList";
 import { useLocation } from "react-router-dom";
+import { Navigations } from "../../../Assessment/components";
 
 
 const DetailsOfDocumentsToBeUploaded = ({ step, setActive }) => {
@@ -27,6 +28,9 @@ const DetailsOfDocumentsToBeUploaded = ({ step, setActive }) => {
   const queryParams = new URLSearchParams(location.search);
   const appId = queryParams.get("appId");
   const authUser = useSelector((state) => state.loginUserReducer);
+
+
+  console.log(step);
 
 
   const reg = useSelector((state) => state.reg);
@@ -212,7 +216,7 @@ const DetailsOfDocumentsToBeUploaded = ({ step, setActive }) => {
 export default DetailsOfDocumentsToBeUploaded;
 
 
-export const Assessment_DetailsOfDocumentsToBeUploaded = () => {
+export const Assessment_DetailsOfDocumentsToBeUploaded = ({ step, view: viewProp = false, isView = false, nav }) => {
   const MaxData = [
     { value: "Document is not legible", label: "Document is not legible" },
     { value: "Document is irrelevant", label: "Document is irrelevant" },
@@ -298,6 +302,13 @@ export const Assessment_DetailsOfDocumentsToBeUploaded = () => {
   ];
   // const stageI1_info = useSelector((state) => state.theme.new_registration);
   const index = 1;
+
+
+  useEffect(() => {
+    console.log(step);
+  }, [step])
+
+
   return (
     <>
       <div
@@ -328,12 +339,12 @@ export const Assessment_DetailsOfDocumentsToBeUploaded = () => {
               <th style={{ border: "1px solid black" }}>Unit in Shift 3</th>
             </tr>
             {["Electrician", "Fitter", "Welder", "COPA"].map((trade, idx) => (
-              <><tr key={idx}>
+              <tr key={idx}>
                 <td style={{ border: "1px solid black" }}>{trade}</td>
                 <td style={{ border: "1px solid black" }}>Unit in Shift 1</td>
                 <td style={{ border: "1px solid black" }}>Unit in Shift 2</td>
                 <td style={{ border: "1px solid black" }}>Unit in Shift 3</td>
-              </tr></>
+              </tr>
             ))}
           </tbody>
         </table>
@@ -684,6 +695,29 @@ export const Assessment_DetailsOfDocumentsToBeUploaded = () => {
       ))} */}
 
 
+    {/* {isView==false && (<div style={{
+        backgroundColor: "rgb(245, 245, 245)",
+        margin: "10px 0px 0px",
+        borderRadius: 6,
+        borderStyle: "dashed",
+        borderWidth: "thin",
+        padding: "10px",
+      }} className="d-flex justify-content-between mb-3">
+        <div className="p-2">
+          <Button variant="warning">
+            Previous
+          </Button>
+        </div>
+        <div className="p-2">
+          <Button variant="success" >
+            Save & Next
+          </Button>
+        </div>
+      </div>)} */}
+      
+            <Navigations nav={nav}  />
+      
+
       <Modal show={showXlModal} onHide={handleCloseModal} size="xl">
         <Modal.Header closeButton>
           <Modal.Title as="h6">Review Instructions</Modal.Title>
@@ -693,6 +727,7 @@ export const Assessment_DetailsOfDocumentsToBeUploaded = () => {
           will act as guide to him. DGT admin can provide sample documents also.
         </Modal.Body>
       </Modal>
+
     </>
   );
 };

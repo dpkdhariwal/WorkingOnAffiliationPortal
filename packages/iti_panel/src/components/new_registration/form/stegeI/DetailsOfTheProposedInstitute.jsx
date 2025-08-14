@@ -20,7 +20,7 @@ import { useContext } from "react";
 import { AppStatusContext } from "../../../../services/context";
 
 
-const DetailsOfTheProposedInstitute = ({ step, setActive }) => {
+const DetailsOfTheProposedInstitute = ({ step, setActive, refreshSteps }) => {
   const authUser = useSelector((state) => state.loginUserReducer);
 
   const location = useLocation();
@@ -60,40 +60,31 @@ const DetailsOfTheProposedInstitute = ({ step, setActive }) => {
   const formikRef = useRef();
   const reg = useSelector((state) => state.reg);
 
-  const submit = (values) => {
-    Swal.fire({
+  const submit = async (values) => {
+
+    const confirmResult = await Swal.fire({
       title: "Are you sure?",
       text: "Do you want to save the form data?",
       icon: "question",
       showCancelButton: true,
       confirmButtonText: "Yes, save it!",
       cancelButtonText: "Cancel",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // User confirmed – now show loading or save directly
-        Swal.fire({
-          title: "Saving...",
-          didOpen: () => {
-
-
-            console.log(values);
-
-            Swal.showLoading();
-            // dispatch({ type: UPDATE_PURPOSED_INSTI_INFO, payload: values });
-            // dispatch({ type: "set_filled_step", payload: { step: 1 }, });
-            // dispatch({ type: "reg_set_active_step", payload: { step: 2 } });
-            // setActive(reg.steps[2]);
-            // console.log(step);
-            let result = setProposedInstDetails(step, values, appId, authUser);
-            // console.log(result);
-
-            Swal.close();
-          },
-        });
-      } else {
-        console.log("User cancelled save");
-      }
     });
+
+    if (!confirmResult.isConfirmed) {
+      console.log("User cancelled save");
+      return;
+    }
+
+    try {
+      let result = setProposedInstDetails(step, values, appId, authUser);
+      result === true ? refreshSteps() : '';
+      Swal.fire("Saved!", "Your form data has been saved.", "success");
+    } catch (error) {
+      console.error(error);
+      Swal.fire("Error", "Something went wrong while saving.", "error");
+    }
+
   };
 
   const PropInstiInfo = useSelector((state) => state.ProposedInstituteInfo);
@@ -442,7 +433,18 @@ const DetailsOfTheProposedInstitute = ({ step, setActive }) => {
                                 type="text"
                                 placeholder="Pincode"
                                 name="cmp_post_pincode"
-                                onChange={handleChange}
+                                inputMode="numeric"
+                                pattern="\d*"
+                                onChange={(e) => {
+                                  // Keep only digits and limit to 10 characters
+                                  const cleanedValue = e.target.value.replace(/\D/g, "").slice(0, 6);
+                                  handleChange({
+                                    target: {
+                                      name: e.target.name,
+                                      value: cleanedValue,
+                                    },
+                                  });
+                                }}
                                 isInvalid={touched.cmp_post_pincode && !!errors.cmp_post_pincode}
                                 value={values.cmp_post_pincode}
 
@@ -473,7 +475,8 @@ const DetailsOfTheProposedInstitute = ({ step, setActive }) => {
                                 name="cmp_post_plot_number_khasara_number"
                                 onChange={handleChange}
                                 isInvalid={touched.cmp_post_plot_number_khasara_number && !!errors.cmp_post_plot_number_khasara_number}
-                                value={values.cmp_post_pincode}
+                                value={values.cmp_post_plot_number_khasara_number}
+
 
                               />
                               {touched.cmp_post_plot_number_khasara_number && errors.cmp_post_plot_number_khasara_number && (
@@ -910,18 +913,29 @@ const DetailsOfTheProposedInstitute = ({ step, setActive }) => {
                                 <Form.Control
                                   required
                                   type="text"
+                                  inputMode="decimal" // mobile numeric keyboard with dot
                                   placeholder="Latitude"
                                   name="latitude"
-                                  onChange={handleChange}
+                                  onChange={(e) => {
+                                    // Allow only digits and one decimal point
+                                    const cleanedValue = e.target.value.replace(/[^0-9.]/g, "");
+
+                                    // Prevent multiple decimals
+                                    const validValue = cleanedValue.split('.').length > 2
+                                      ? cleanedValue.slice(0, -1)
+                                      : cleanedValue;
+
+                                    handleChange({
+                                      target: {
+                                        name: e.target.name,
+                                        value: validValue,
+                                      },
+                                    });
+                                  }}
                                   value={values.latitude}
-                                  isInvalid={
-                                    touched.latitude &&
-                                    !!errors.latitude
-                                  }
+                                  isInvalid={touched.latitude && !!errors.latitude}
                                 />
-                                <Button variant="outline-secondary">
-                                  Degree
-                                </Button>
+                                <Button variant="outline-secondary">Degree</Button>
                                 <Button variant="outline-secondary">N</Button>
                               </InputGroup>
 
@@ -951,7 +965,23 @@ const DetailsOfTheProposedInstitute = ({ step, setActive }) => {
                                   type="text"
                                   placeholder="Longitude"
                                   name="Longitude"
-                                  onChange={handleChange}
+                                  inputMode="decimal" // mobile numeric keyboard with dot
+                                  onChange={(e) => {
+                                    // Allow only digits and one decimal point
+                                    const cleanedValue = e.target.value.replace(/[^0-9.]/g, "");
+
+                                    // Prevent multiple decimals
+                                    const validValue = cleanedValue.split('.').length > 2
+                                      ? cleanedValue.slice(0, -1)
+                                      : cleanedValue;
+
+                                    handleChange({
+                                      target: {
+                                        name: e.target.name,
+                                        value: validValue,
+                                      },
+                                    });
+                                  }}
                                   value={values.Longitude}
                                   isInvalid={
                                     touched.Longitude &&

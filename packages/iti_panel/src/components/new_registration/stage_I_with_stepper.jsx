@@ -48,17 +48,18 @@ export const StageIForm = () => {
     try {
       switch (step.step) {
         case ST1FC.APPLICANT_ENTITY_DETAILS.step:
-          return <BasicDetailsofApplicantOrganization step={step} setActive={goToSection} />
+          return <BasicDetailsofApplicantOrganization step={step} setActive={goToSection} refreshSteps={loadData} />
         case ST1FC.DETAILS_OF_THE_PROPOSED_INSTITUTE.step:
-          return <DetailsOfTheProposedInstitute step={step} setActive={goToSection} />
+          return <DetailsOfTheProposedInstitute step={step} setActive={goToSection} refreshSteps={loadData} />
         case ST1FC.DETAILS_OF_TRADE_UNIT_FOR_AFFILIATION.step:
-          return <DetailsOfTradeUnitForAffiliation step={step} setActive={goToSection} />
+          return <DetailsOfTradeUnitForAffiliation step={step} setActive={goToSection} refreshSteps={loadData} />
         case ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step:
-          return <DetailsOfTheLandToBeUsedForTheITI step={step} setActive={goToSection} />
+          return <DetailsOfTheLandToBeUsedForTheITI step={step} setActive={goToSection} refreshSteps={loadData} />
         case ST1FC.FEE_PAYMENT.step:
-          return <FeePayment step={step} setActive={goToSection} />
+          return <FeePayment step={step} setActive={goToSection} refreshSteps={loadData} />
         case ST1FC.DOCUMENTS_UPLOAD.step:
-          return <DetailsOfDocumentsToBeUploaded step={step} setActive={goToSection} />
+          console.log(step);
+          return <DetailsOfDocumentsToBeUploaded step={step} setActive={goToSection} refreshSteps={loadData} />
         default:
           return ''
       }
@@ -92,7 +93,7 @@ export const StageIForm = () => {
     }
     else {
       console.log(data.length);
-      data = data.map((step) => { return { ...step, completed: step.status === FILLED } });
+      data = data.map((step) => { return { ...step, completed: step?.status === FILLED } });
       console.log(data);
       setSteps(data);
     }
@@ -100,6 +101,8 @@ export const StageIForm = () => {
   useEffect(() => {
     loadData();
   }, []);
+
+
   return (
     <Fragment>
       <Stepper

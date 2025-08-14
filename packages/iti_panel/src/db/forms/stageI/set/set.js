@@ -3,6 +3,8 @@ import { initDB } from "../../../db";
 import * as C from "../../../../constants";
 
 
+import * as get from "../get/get";
+
 
 export const markAsCompleteStageStep = async (authUser, appId, step) => {
   const db = await initDB();
@@ -25,7 +27,7 @@ export const setActiveStage1NextStep = async (appId, step) => {
   // Update the app flow status
   const db = await initDB();
   let data, oldStep, newStep, currentState;
-  try {    
+  try {
     const tx = db.transaction([C.APP_FORM_FLOW_STAGE_I], 'readwrite');
     const store = tx.objectStore(C.APP_FORM_FLOW_STAGE_I);
     currentState = await store.index("appId_step").get([appId, step]);
@@ -34,8 +36,149 @@ export const setActiveStage1NextStep = async (appId, step) => {
   } catch (error) {
     return {}
   }
-
 };
+
+export const setNewStatusOfAppByStep = async (appId, step, newStatus) => {
+  // Update the app flow status
+  const db = await initDB();
+  let currentState;
+  try {
+    const tx = db.transaction([C.APP_FLOW], 'readwrite');
+    const store = tx.objectStore(C.APP_FLOW);
+    currentState = await store.index("appId_step").get([appId, step]);
+    await store.put({ ...currentState, status: newStatus });
+    await tx.done;
+  } catch (error) {
+    return {}
+  }
+};
+
+
+export const set_da_status_possasion_of_land = async (appId, values) => {
+  console.log(appId, values);
+  const db = await initDB();
+  let currentState, id, toStore;
+  id = Date.now() + Math.random();
+  try {
+    const tx = db.transaction([C.DA_LAND_DOCUMENTS], 'readwrite');
+    const store = tx.objectStore(C.DA_LAND_DOCUMENTS);
+    currentState = await store.index("appId_key_isDraft").get([appId, C.DA1_KEYS.LAND_DOCUMENT, 'yes']);
+    console.log(values);
+    toStore = currentState?.appId ? { ...currentState, ...values } : { ...values, id: id, appId: appId, key: C.DA1_KEYS.LAND_DOCUMENT, isDraft: C.SL.YES };
+    await store.put(toStore);
+    await tx.done;
+  } catch (error) {
+    console.error(error);
+    return {}
+  }
+};
+
+export const get_da_status_possasion_of_land = async (appId) => {
+  console.log(appId);
+  const db = await initDB();
+  let currentState, id;
+  try {
+    const tx = db.transaction([C.DA_LAND_DOCUMENTS], 'readwrite');
+    const store = tx.objectStore(C.DA_LAND_DOCUMENTS);
+    currentState = await store.index("appId_key_isDraft").getAll([appId, C.DA1_KEYS.LAND_DOCUMENT, 'yes']);
+    await tx.done;
+    console.log(currentState);
+    return currentState;
+  } catch (error) {
+    console.error(error);
+    return {}
+  }
+};
+
+
+export const set_da_status_land_area = async (appId, values) => {
+  console.log(appId, values);
+  const db = await initDB();
+  let currentState, id, toStore;
+  id = Date.now() + Math.random();
+  try {
+    const tx = db.transaction([C.DA_LAND_DOCUMENTS], 'readwrite');
+    const store = tx.objectStore(C.DA_LAND_DOCUMENTS);
+    currentState = await store.index("appId_key_isDraft").get([appId, C.DA1_KEYS.LAND_AREA, 'yes']);
+    console.log(values);
+    toStore = currentState?.appId ? { ...currentState, ...values } : { ...values, id: id, appId: appId, key: C.DA1_KEYS.LAND_AREA, isDraft: C.SL.YES };
+    await store.put(toStore);
+    await tx.done;
+  } catch (error) {
+    console.error(error);
+    return {}
+  }
+};
+
+export const get_da_status_land_area = async (appId) => {
+  console.log(appId);
+  const db = await initDB();
+  let currentState, id;
+  try {
+    const tx = db.transaction([C.DA_LAND_DOCUMENTS], 'readwrite');
+    const store = tx.objectStore(C.DA_LAND_DOCUMENTS);
+    currentState = await store.index("appId_key_isDraft").getAll([appId, C.DA1_KEYS.LAND_AREA, 'yes']);
+    await tx.done;
+    console.log(currentState);
+    return currentState;
+  } catch (error) {
+    console.error(error);
+    return {}
+  }
+};
+
+export const set_da_status = async (appId, values, stage, key) => {
+  console.log(appId, values, stage, key);
+  const db = await initDB();
+  let currentState, id, toStore;
+  id = Date.now() + Math.random();
+
+  switch (stage) {
+    case C.abbreviation.STAGE_I.key:
+      console.log(appId, values, stage, key);
+      try {
+        const tx = db.transaction([C.DA_STAGE_I_VERIFICATIONS], 'readwrite');
+        const store = tx.objectStore(C.DA_STAGE_I_VERIFICATIONS);
+        currentState = await store.index("appId_key_isDraft").get([appId, key, 'yes']);
+        console.log(values);
+        toStore = currentState?.appId ? { ...currentState, ...values } : { ...values, id: id, appId: appId, key: key, isDraft: C.SL.YES };
+        await store.put(toStore);
+        await tx.done;
+      } catch (error) {
+        console.error(error);
+        return {}
+      }
+      break;
+
+    default:
+      break;
+  }
+};
+
+export const get_da_status = async (appId, stage, key) => {
+  const db = await initDB();
+  let currentState;
+  switch (stage) {
+    case C.abbreviation.STAGE_I.key:
+      try {
+            const tx = db.transaction([C.DA_STAGE_I_VERIFICATIONS], 'readwrite');
+            const store = tx.objectStore(C.DA_STAGE_I_VERIFICATIONS);
+            currentState = await store.index("appId_key_isDraft").getAll([appId, key, 'yes']);
+            console.log(currentState);
+            await tx.done;
+            return currentState;
+          } catch (error) {
+            console.error(error);
+            return {}
+          }
+    default:
+      break;
+  }
+
+  return currentState;
+};
+
+
 
 // // Set Application Flow
 // export const setAppFlow = async (authUser, appId) => {

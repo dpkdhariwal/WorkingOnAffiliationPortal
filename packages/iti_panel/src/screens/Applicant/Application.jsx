@@ -256,11 +256,20 @@ const SelectCategoryModal = (props) => {
 
 const SelectCategory = () => {
   const [modalShow, setModalShow] = useState(false);
+  const navigate = useNavigate();
+   const gotoApplicationForm = async () => {
+    const appId = Date.now() + Math.random();
+    navigate(`/dashboard/new_registration?appId=${appId}`);
+
+  };
   return (
     <div>
-      <Button size="lg" variant="success" onClick={() => setModalShow(true)}>
+      <Button size="lg" variant="success" onClick={() => gotoApplicationForm()}>
         Start New Application
       </Button>
+      {/* <Button size="lg" variant="success" onClick={() => setModalShow(true)}>
+        Start New Application
+      </Button> */}
       <SelectCategoryModal
         show={modalShow}
         onHide={() => setModalShow(false)}

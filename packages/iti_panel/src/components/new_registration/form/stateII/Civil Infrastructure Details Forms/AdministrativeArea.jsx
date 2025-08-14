@@ -87,8 +87,8 @@ export const AdministrativeArea = ({ steps, goPrevious, finish }) => {
 
     const getSetFieldsName = (item) => {
         console.log(item);
-        const area = `area>${item.particular}`;
-        const photo = `photo>${item.particular}`;
+        const area = `area>${item?.particular}`;
+        const photo = `photo>${item?.particular}`;
         return { area, photo };
     }
 
@@ -164,8 +164,8 @@ export const AdministrativeArea = ({ steps, goPrevious, finish }) => {
                                             let fields = getSetFieldsName(item);
                                             return (
                                                 <tr key={index}>
-                                                    <td>{item.particular}</td>
-                                                    <td>{item.RequiredArea} {item.AreaUnit}</td>
+                                                    <td>{item?.particular}</td>
+                                                    <td>{item?.RequiredArea} {item?.AreaUnit}</td>
                                                     <td>
                                                         <Field type="number" name={fields.area} as={BForm.Control} />
                                                         <div className="text-danger"><ErrorMessage name={fields.area} /></div>
@@ -277,7 +277,7 @@ export const Assessment_AdministrativeArea = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {administrativeArea.map((item, index) => {
+                            {cons.administrativeArea.map((item, index) => {
 
                                 return (
                                     <tr key={index}>

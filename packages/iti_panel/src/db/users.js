@@ -120,7 +120,7 @@ export const getSetUserRoles = async () => {
 
 export const getAppListByUserId = async (userId) => {
   const db = await initDB();
-  let result = await db.getAllFromIndex(PROPOSED_INSTI_DETAILS, "userId", userId);
+  let result = await db.getAllFromIndex(ENTITY_DETAILS, "userId", userId);
 
   const enrichedApps = await Promise.all(
     result.map(async (app) => {
@@ -140,7 +140,7 @@ export const getAppListByUserId = async (userId) => {
 };
 export const getAppListByStateAssessor = async (AuthUser) => {
   const db = await initDB();
-  let result = await db.getAll(APPLIST);
+  let result = await db.getAll(PROPOSED_INSTI_DETAILS);
 
   const enrichedApps = await Promise.all(
     result.map(async (app) => {
@@ -159,7 +159,7 @@ export const getAppListByStateAssessor = async (AuthUser) => {
 };
 export const getAppListByRdsde = async (AuthUser) => {
   const db = await initDB();
-  let result = await db.getAll(APPLIST);
+  let result = await db.getAll(PROPOSED_INSTI_DETAILS);
 
   const enrichedApps = await Promise.all(
     result.map(async (app) => {
@@ -230,14 +230,15 @@ export const setAppCurrentStatus = async (appId, type_of_institute) => {
   let oldStatus = result[0];
   switch (type_of_institute) {
     case "Government":
-      oldStatus = { ...oldStatus, ...{ app_status: STAGE_I__FEE_EXEMPTED, stage_I_fee_status: STAGE_I__FEE_EXEMPTED, app_status_awaiting: STAGE_I__DOCUMENT_PENDING, }, };
-      await db.put(APPLIST, oldStatus);
+      // oldStatus = { ...oldStatus, ...{ app_status: STAGE_I__FEE_EXEMPTED, stage_I_fee_status: STAGE_I__FEE_EXEMPTED, app_status_awaiting: STAGE_I__DOCUMENT_PENDING, }, };
+      // console.log(oldStatus);
+      // await db.put(APPLIST, oldStatus);
       setAppFlow(appId, STAGE_I_FORM_FILLING);
       setAppFlow(appId, STAGE_I_FEE, type_of_institute);
       break;
     case "Private":
-      oldStatus = { ...oldStatus, ...{ app_status: STAGE_I__FEE_PAID, stage_I_fee_status: STAGE_I__FEE_PAID, app_status_awaiting: STAGE_I__DOCUMENT_PENDING, }, };
-      await db.put(APPLIST, oldStatus);
+      // oldStatus = { ...oldStatus, ...{ app_status: STAGE_I__FEE_PAID, stage_I_fee_status: STAGE_I__FEE_PAID, app_status_awaiting: STAGE_I__DOCUMENT_PENDING, }, };
+      // await db.put(APPLIST, oldStatus);
       setAppFlow(appId, STAGE_I_FORM_FILLING);
       setAppFlow(appId, STAGE_I_FEE);
       break;
@@ -517,7 +518,19 @@ export const getStage1FormFlow = async (appId) => {
     const flow = await list.index('appId').getAll(appId);
     console.log(flow);
     flow.sort((a, b) => a.stepNo - b.stepNo);
-    const finalList = await Promise.all(flow.map(async (item) => { return item; }));
+    const finalList = await Promise.all(flow.map(async (item) => {
+
+      switch (item.step) {
+        case cons.ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step:
+          // check possession_of_land
+          console.log(item.step);
+          return item;
+        default:
+          return item;
+      }
+
+
+    }));
     console.log(finalList);
     await tx.done;
     return finalList;

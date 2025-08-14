@@ -1,8 +1,10 @@
+// @use './assets/scss/variables';
+// @use './assets/scss/switcher';
+
+@import "./assets/scss/variables";
+@import "./assets/scss/switcher.scss";
 @import "../src/assets/css/bootstrap.css";
 @import "./assets/css/icons.css";
-@import "./assets/scss/variables";
-
-@import "./assets/scss/switcher.scss";
 
 @import "simplebar-react/dist/simplebar.min.css";
 
@@ -12,9 +14,8 @@
 
 @import "./assets/css/styles.css";
 
-
-@import url('datatables.net-bs5');
-@import url('datatables.net-select-bs5');
+@import url("datatables.net-bs5");
+@import url("datatables.net-select-bs5");
 
 // @import 'datatables.net-dt';
 // // @import 'datatables.net-responsive-dt';
@@ -34,11 +35,6 @@
 // @import url('datatables.net-bs4');
 // @import url('datatables.net-buttons-bs4');
 // @import url('datatables.net-select-bs4');
-
-
-
-
-
 
 .app-sidebar {
   *::-webkit-scrollbar {
@@ -152,8 +148,6 @@ input[type="checkbox"].form-check-input:checked {
   border-radius: 5px;
 }
 
-
-
 // View Tables
 .custom-table {
   border: 1px solid black;
@@ -170,14 +164,11 @@ input[type="checkbox"].form-check-input:checked {
   border: 1px solid black;
 }
 
-
-
 .card ul {
-    list-style-type: none !important;
-    // padding-left: 20px;
-    // font-size: 16px;
+  list-style-type: none !important;
+  // padding-left: 20px;
+  // font-size: 16px;
 }
-
 
 .nav-tabs .nav-link.disabled {
   opacity: 1 !important;

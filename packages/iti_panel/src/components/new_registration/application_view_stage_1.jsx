@@ -15,12 +15,17 @@ import { InstituteLocation } from "../new_registration/form/stegeI/view/stage_1/
 
 import { LandDocuments } from "../new_registration/form/stegeI/view/stage_1/detail_of_proposed_institute/assessment_view/land_documents"
 import { Documents } from "../new_registration/form/stegeI/view/stage_1/detail_of_proposed_institute/assessment_view/documents"
+import { useLocation } from "react-router-dom";
 
 
 
 const ViewApplicationStageOne = () => {
   const reg = useSelector((state) => state.reg);
   const [activeStep, setActiveStep] = useState(reg.steps[0]);
+
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const appId = queryParams.get("appId");
 
   useEffect(() => {
     console.log(activeStep);
@@ -37,18 +42,18 @@ const ViewApplicationStageOne = () => {
         activepage="View Application Stage-I"
       />
 
-      <Assessment_Basic_Detail />
+      <Assessment_Basic_Detail appId={appId} />
 
-      <Name_of_the_institute />
+      <Name_of_the_institute appId={appId} />
 
-      <AddressOfInstitute />
+      <AddressOfInstitute appId={appId} />
 
-      <InstituteLocation />
+      <InstituteLocation appId={appId} />
 
-      <Assessment_DetailsOfDocumentsToBeUploaded />
+      <Assessment_DetailsOfDocumentsToBeUploaded appId={appId} />
 
-      <LandDocuments view={true} />
-      <Documents view={true} />
+      <LandDocuments appId={appId} view={true} />
+      <Documents appId={appId} view={true} />
 
     </Fragment>
   );

@@ -50,82 +50,165 @@ export const appSetup = async (authUser, appId) => {
 }
 
 export const setEntityDetails = async (data, authUser, appId) => {
+  const db = await initDB();
+
   try {
-    appSetup(authUser, appId);
-    const db = await initDB();
+    // appSetup(authUser, appId);
+    const formattedDate = new Date().toISOString(); // "2025-08-05T07:25:13.123Z"
+
     const entityBasicDetail = (({ aff_category, aff_sub_category, category, name_of_applicant_entity, ApplicantEntityEmailId, isApplicantEntityEmailIdVerified, ApplicantContactNumber, Is_the_applicant_running_any_other_iti, }) => ({ aff_category, aff_sub_category, category, name_of_applicant_entity, ApplicantEntityEmailId, isApplicantEntityEmailIdVerified, ApplicantContactNumber, Is_the_applicant_running_any_other_iti, }))(data);
     const entityAddress = (({ state_of_other_iti, ApplicantEntityState, ApplicantEntityDistrict, ApplicantEntityTown_City, ApplicantEntityBlock_Tehsil, ApplicantEntitySector_Village, ApplicantEntityPincode, ApplicantEntityPlotNumber_KhasaraNumber_GataNumber, ApplicantEntityLandmark, }) => ({ state_of_other_iti, ApplicantEntityState, ApplicantEntityDistrict, ApplicantEntityTown_City, ApplicantEntityBlock_Tehsil, ApplicantEntitySector_Village, ApplicantEntityPincode, ApplicantEntityPlotNumber_KhasaraNumber_GataNumber, ApplicantEntityLandmark, }))(data);
     const other_itis = (({ run_ITIName, run_MISCode, run_State, run_District, run_TownCity, run_BlockTehsil, run_Pincode, run_PlotNumber_KhasaraNumber, run_Landmark, }) => ({ run_ITIName, run_MISCode, run_State, run_District, run_TownCity, run_BlockTehsil, run_Pincode, run_PlotNumber_KhasaraNumber, run_Landmark, }))(data);
 
     // Read-only transaction for multiple stores
-    const tx = db.transaction([APP_FORM_FLOW_STAGE_II, ENTITY_DETAILS, ENTITY_ADDRESS, OTHER_ITI], 'readwrite');
-    const store_1 = tx.objectStore(ENTITY_DETAILS);
-    const store_2 = tx.objectStore(ENTITY_ADDRESS);
-    const store_3 = tx.objectStore(OTHER_ITI);
+    const tx = db.transaction([cons.APP_FORM_FLOW_STAGE_II, cons.ENTITY_DETAILS, cons.ENTITY_ADDRESS, cons.OTHER_ITI, cons.APP_FLOW, cons.APP_FORM_FLOW_STAGE_I, cons.APP_FORM_FLOW_STAGE_II, cons.APP_FORM_SUB_CIVIL_INFRA], 'readwrite');
+
+    const store_1 = tx.objectStore(cons.ENTITY_DETAILS);
+    const store_2 = tx.objectStore(cons.ENTITY_ADDRESS);
+    const store_3 = tx.objectStore(cons.OTHER_ITI);
+    const store_4 = tx.objectStore(cons.APP_FLOW);
+    const store_5 = tx.objectStore(cons.APP_FORM_FLOW_STAGE_I);
+    const store_6 = tx.objectStore(cons.APP_FORM_FLOW_STAGE_II);
+    const store_7 = tx.objectStore(cons.APP_FORM_SUB_CIVIL_INFRA);
+
+    // Setup Application Flow
+    let list = await store_4.index('appId').getAll(appId);
+    if (list.length === 0) {
+      for (const [index, flow] of AppFlow.entries()) {
+        let step = await store_4.index('appId').getAll(appId);
+        await store_4.put({ ...flow, id: Date.now() + Math.random(), appId: appId, userId: authUser.id });
+      }
+    }
+
+
+    // Setup Stage I Flow
+    list = await store_5.index('appId').getAll(appId);
+    if (list.length === 0) {
+      list = await Promise.all(cons.STAGE_I_APP_FORM_FLOW.map(async (step) => {
+        switch (step.step) {
+          case cons.ST1FC.APPLICANT_ENTITY_DETAILS.step:
+            return { ...step, status: cons.FILLED };
+          case cons.ST1FC.DETAILS_OF_THE_PROPOSED_INSTITUTE.step:
+            return { ...step, stepStatus: cons.ACTIVE };
+          default:
+            return step;
+        }
+      }))
+      for (const [index, flow] of list.entries()) {
+        let step = await store_5.index('appId_step').get([appId, flow.step]);
+        if (!step) {
+          await store_5.put({ ...flow, submitDate: formattedDate, id: Date.now() + Math.random(), appId, userId: authUser.id, });
+        }
+      }
+    }
+
+
+
+    // Setup Stage II Flow 
+    list = await store_6.index('appId').getAll(appId);
+    if (list.length === 0) {
+      for (const [index, flow] of cons.STAGE_II_APP_FORM_FLOW.entries()) {
+        let step = await store_6.index('appId_step').get([appId, flow.step]);
+        if (!step) {
+          await store_6.put({ ...flow, submitDate: formattedDate, id: Date.now() + Math.random(), appId, userId: authUser.id, });
+        }
+        // Setup Sub Flow
+        if ("subSteps" in flow) {
+          switch (flow.step) {
+            case imp.CIVIL_INFRASTRUCTURE_DETAIL:
+              {
+                let exist = await store_7.index('appId').getAll(appId);
+                if (exist.length === 0) {
+                  for (const [index, subFlow] of flow.subSteps.entries()) {
+                    await store_7.put({ ...subFlow, submitDate: formattedDate, id: Date.now() + Math.random(), appId, userId: authUser.id, });
+                  }
+                }
+                break;
+              }
+            default:
+              break;
+          }
+        }
+      }
+    }
+
 
     // Entity Detail
     let data_1 = await store_1.index("appId").get(appId);
-    if (data_1?.appId) {
-      await store_1.put({ ...data_1, ...entityBasicDetail });
-    }
-    else {
-      await store_1.put({ ...entityBasicDetail, id: Date.now() + Math.random(), appId: appId, });
-    }
+    data_1?.appId ? store_1.put({ ...data_1, ...entityBasicDetail }) : store_1.put({ ...entityBasicDetail, id: Date.now() + Math.random(), appId: appId, userId: authUser.id })
+
 
     // Entity Address
     let data_2 = await store_2.index("appId").get(appId);
-    if (data_2?.appId) {
-      await store_2.put({ ...data_2, ...entityAddress });
-    }
-    else {
-      await store_2.put({ ...entityAddress, id: Date.now() + Math.random(), appId: appId, });
-    }
+    data_2?.appId ? store_2.put({ ...data_2, ...entityAddress }) : await store_2.put({ ...entityAddress, id: Date.now() + Math.random(), appId: appId, userId: authUser.id });
 
-    // Other ITI
+
+
+    // // Other ITI
     let data_3 = await store_3.index("appId").get(appId);
-    if (data_3?.appId) {
-      await store_3.put({ ...data_3, ...other_itis });
-    }
-    else {
-      await store_3.put({ ...other_itis, id: Date.now() + Math.random(), appId: appId, });
-    }
+    data_3?.appId ? store_3.put({ ...data_3, ...other_itis }) : await store_3.put({ ...other_itis, id: Date.now() + Math.random(), appId: appId, userId: authUser.id });
 
-    markAsCompleteStageStep(authUser, appId, imp.ST1FC.APPLICANT_ENTITY_DETAILS.step);
-    setActiveStage1NextStep(appId, imp.ST1FC.DETAILS_OF_THE_PROPOSED_INSTITUTE.step);
-
+    // markAsCompleteStageStep(authUser, appId, imp.ST1FC.APPLICANT_ENTITY_DETAILS.step);
+    // setActiveStage1NextStep(appId, imp.ST1FC.DETAILS_OF_THE_PROPOSED_INSTITUTE.step);
     await tx.done;
+    return true;
   } catch (error) {
     console.log(error);
   }
-
-
-  // Mark As Filled
-  // try {
-  //   // Read-only transaction for multiple stores
-  //   const tx = db.transaction([APP_FLOW], 'readwrite');
-  //   const store = tx.objectStore(APP_FLOW);
-  //   currentState = await store.index("appId_step").get([appId, imp.BLD_BUILDING_PLAN]);
-  //   await store.put({ ...currentState, stepStatus: imp.ACTIVE });
-  //   await tx.done;
-  // } catch (error) {
-  //   return {}
-  // }
-
 };
 
 
 export const setProposedInstDetails = async (step, data, appId, authUser) => {
   const db = await initDB();
+  const formattedDate = new Date().toISOString(); // "2025-08-05T07:25:13.123Z"
   const proposedInstDetails = (({ name_of_applicant_institute, type_of_institute, institute_location, is_falls_under_hill_area_hill, Falls_Under_Hill_Area_Hill__Supporting_Doc, is_falls_under_border_district, Falls_Under_Border_District__Supporting_Doc, under_msti_category, Whether_the_institute_is_exclusive_for_women_trainees, latitude, Longitude, }) => ({ name_of_applicant_institute, type_of_institute, institute_location, is_falls_under_hill_area_hill, Falls_Under_Hill_Area_Hill__Supporting_Doc, is_falls_under_border_district, Falls_Under_Border_District__Supporting_Doc, under_msti_category, Whether_the_institute_is_exclusive_for_women_trainees, latitude, Longitude, }))(data);
-
   const proposedInstAddress = (({ cmp_post_state, cmp_post_address, cmp_post_district, cmp_post_city, cmp_post_block_or_tehsil, cmp_post_sector_village, cmp_post_pincode, cmp_post_plot_number_khasara_number, cmp_post_landmark, }) => ({ cmp_post_state, cmp_post_address, cmp_post_district, cmp_post_city, cmp_post_block_or_tehsil, cmp_post_sector_village, cmp_post_pincode, cmp_post_plot_number_khasara_number, cmp_post_landmark, }))(data);
+  let currentStepInfo = step;
 
-  const id_proposedInstDetails = await db.put(PROPOSED_INSTI_DETAILS, { ...proposedInstDetails, id: Date.now() + Math.random(), appId: appId, userId:authUser.id });
-  const id_proposedInstAddress = await db.put(PROPOSED_INSTI_ADDRESSES, { ...proposedInstAddress, id: Date.now() + Math.random(), appId: appId, userId:authUser.id });
+  try {
+    // Check if exist
+    const tx = db.transaction([cons.PROPOSED_INSTI_DETAILS, cons.PROPOSED_INSTI_ADDRESSES, cons.APP_FORM_FLOW_STAGE_I], 'readwrite');
+    const store = tx.objectStore(cons.PROPOSED_INSTI_DETAILS);
+    step = await store.index('appId_userId').get([appId, authUser.id]);
+    if (step?.appId) {
+      await store.put({ ...step, ...proposedInstDetails });
+    }
+    else {
+      await store.put({ ...proposedInstDetails, id: Date.now() + Math.random(), appId: appId, userId: authUser.id });
+    }
+    const store2 = tx.objectStore(cons.PROPOSED_INSTI_ADDRESSES);
+    let step2 = await store2.index('appId').get(appId);
+    if (step2?.appId) {
+      await store2.put({ ...step2, ...proposedInstAddress });
+    }
+    else {
+      await store2.put({ ...proposedInstAddress, id: Date.now() + Math.random(), appId: appId });
+    }
 
-  console.log(step);
-  markAsCompleteStageStep(authUser, appId, step.step)
-  setActiveStage1NextStep(appId, step.nextStep.step);
+
+    // Marking up Steps Status 
+    const store_1 = tx.objectStore(cons.APP_FORM_FLOW_STAGE_I);
+    console.log(currentStepInfo);
+    let d1 = await store_1.index('appId_step').get([appId, currentStepInfo.step]);
+    if (d1) {
+      await store_1.put({ ...d1, stepStatus: cons.ACTIVE, status: cons.FILLED, submitDate: formattedDate, userId: authUser.id });
+    }
+
+    // Marking Active Next Step
+    let currentState = await store_1.index("appId_step").get([appId, currentStepInfo.nextStep.step]);
+    await store_1.put({ ...currentState, stepStatus: cons.ACTIVE });
+
+    await tx.done;
+    return true
+  } catch (error) {
+    console.log(error);
+  }
+
+  // const id_proposedInstDetails = await db.put(PROPOSED_INSTI_DETAILS, { ...proposedInstDetails, id: Date.now() + Math.random(), appId: appId, userId: authUser.id });
+  // const id_proposedInstAddress = await db.put(PROPOSED_INSTI_ADDRESSES, { ...proposedInstAddress, id: Date.now() + Math.random(), appId: appId });
+
+  // markAsCompleteStageStep(authUser, appId, step.step)
+  // setActiveStage1NextStep(appId, step.nextStep.step);
   // return { id_proposedInstDetails, id_proposedInstAddress, };
 };
 
@@ -161,8 +244,12 @@ export const setInstLandDetails = async (data, appId, step, authUser) => {
   const id_3 = await db.put(LAND_LEASED_LANDS_DETAILS, { ...land_leased, id: Date.now() + Math.random(), appId: appId, });
 
 
+
   await markAsCompleteStageStep(authUser, appId, step.step)
   await setActiveStage1NextStep(appId, step.nextStep);
+
+  // Setup Document Verification Info
+
   return { id_1, id_2, id_3, };
 };
 
@@ -172,9 +259,8 @@ export const setAppFlow = async (authUser, appId) => {
     const flowData = { ...flow, id: Date.now() + Math.random(), appId: appId, userId: authUser.id };
     await db.put(APP_FLOW, flowData);
   });
-  console.log(authUser, appId);
-  await set_stage_i_form_flow(authUser, appId);
-  await set_stage_ii_form_flow(authUser, appId);
+  // await set_stage_i_form_flow(authUser, appId);
+  // await set_stage_ii_form_flow(authUser, appId);
 };
 
 // Stage I
@@ -213,6 +299,8 @@ export const set_stage_ii_form_flow = async (authUser, appId) => {
         await store.put({ ...flow, submitDate: formattedDate, id: Date.now() + Math.random(), appId, userId: authUser.id, });
       }
 
+      console.log(flow);
+
       // Setup Sub Steps
       if ("subSteps" in flow) {
         switch (flow.step) {
@@ -220,6 +308,7 @@ export const set_stage_ii_form_flow = async (authUser, appId) => {
             {
               let s1 = tx.objectStore(cons.APP_FORM_SUB_CIVIL_INFRA);
               let exist = await s1.index('appId').getAll(appId);
+              console.log(exist);
               if (exist.length === 0) {
                 for (const [index, subFlow] of flow.subSteps.entries()) {
                   await s1.put({ ...subFlow, submitDate: formattedDate, id: Date.now() + Math.random(), appId, userId: authUser.id, });
@@ -331,10 +420,11 @@ export const setBuildingDetail = async (data, authUser, appId) => {
   // Prepare Photo in Row
   const photo_list = [{ photoView: FRONT_VIEW_PHOTO_OF_BUILDING, photo_pth: bld_photos.front_view_photo_of_building, }, { photoView: SIDE_VIEW_PHOTO_OF_BUILDING, photo_pth: bld_photos.side_view_photo_of_building, }, { photoView: ENTRANCE_GATE_PHOTO_OF_PLOT_WITH_SIGNAGE_BOARD, photo_pth: bld_photos.entrance_gate_photo_of_plot_with_signage_board, },];
 
+
+  console.log(data, authUser, appId);
+
   try {
     const tx = db.transaction([BLD_BUILDING_PLAN, BLD_BCC, BLD_PHOTOS, APP_FORM_FLOW_STAGE_II], 'readwrite');
-
-
 
     // Stage II Form Flow Prepar
     const FormFlowStageII = tx.objectStore(APP_FORM_FLOW_STAGE_II);

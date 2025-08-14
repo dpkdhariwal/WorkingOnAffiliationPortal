@@ -46,7 +46,7 @@ const New_registration = () => {
       <br/>
       
 
-      <Stepper>
+      {false && (<><Stepper>
         {reg.stepsII.map((item, index) => {
           console.log(item); // Valid logging outside JSX
           return (
@@ -89,7 +89,7 @@ const New_registration = () => {
               <p>Something Went Wrong</p>
             )}
         </Card.Body>
-      </Card>
+      </Card></>)}
     </Fragment>
   );
 };

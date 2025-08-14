@@ -53,10 +53,9 @@ export const initDB = async () => {
       }
 
       if (!db.objectStoreNames.contains(ENTITY_DETAILS)) {
-        const userStore = db.createObjectStore(ENTITY_DETAILS, {
-          keyPath: "id",
-        });
+        const userStore = db.createObjectStore(ENTITY_DETAILS, { keyPath: "id", });
         userStore.createIndex("appId", "appId", { unique: true });
+        userStore.createIndex("userId", "userId", { unique: false });
       }
       if (!db.objectStoreNames.contains(ENTITY_ADDRESS)) {
         const userStore = db.createObjectStore(ENTITY_ADDRESS, {
@@ -72,13 +71,10 @@ export const initDB = async () => {
       if (!db.objectStoreNames.contains(PROPOSED_INSTI_DETAILS)) {
         const userStore = db.createObjectStore(PROPOSED_INSTI_DETAILS, { keyPath: "id", });
         userStore.createIndex("appId", "appId", { unique: true });
-        userStore.createIndex("userId", "userId", { unique: true });
-        
+        userStore.createIndex("appId_userId", ["appId", "userId"]); // compound index
       }
       if (!db.objectStoreNames.contains(PROPOSED_INSTI_ADDRESSES)) {
-        const userStore = db.createObjectStore(PROPOSED_INSTI_ADDRESSES, {
-          keyPath: "id",
-        });
+        const userStore = db.createObjectStore(PROPOSED_INSTI_ADDRESSES, { keyPath: "id", });
         userStore.createIndex("appId", "appId", { unique: true });
       }
 
@@ -194,6 +190,37 @@ export const initDB = async () => {
         userStore.createIndex("userId", "userId", { unique: false });
         userStore.createIndex("particular", "particular", { unique: false });
         userStore.createIndex("appId_particular", ["appId", "particular"]); // compound index
+      }
+
+      if (!db.objectStoreNames.contains(cons.APP_ASSESSMENT_FLOW_STAGE_I)) {
+        const userStore = db.createObjectStore(cons.APP_ASSESSMENT_FLOW_STAGE_I, { keyPath: "id", });
+        userStore.createIndex("userId", "userId", { unique: false });
+        userStore.createIndex("appId", "appId", { unique: false });
+        userStore.createIndex("step", "step", { unique: false });
+        userStore.createIndex("appId_step", ["appId", "step"]); // compound index
+      }
+
+      if (!db.objectStoreNames.contains(cons.DA_LAND_DOCUMENTS)) {
+        const userStore = db.createObjectStore(cons.DA_LAND_DOCUMENTS, { keyPath: "id", });
+        userStore.createIndex("userId", "userId", { unique: false });
+        userStore.createIndex("appId", "appId", { unique: false });
+        userStore.createIndex("key", "key", { unique: false });
+        userStore.createIndex("appId_key", ["appId", "key"]);
+        userStore.createIndex("appId_key_isDraft", ["appId", "key", "isDraft"]);
+        userStore.createIndex("isDraft", "isDraft", { unique: false });
+      }
+      // else {
+      //   db.deleteObjectStore(cons.DA_LAND_DOCUMENTS);
+      // }
+
+      if (!db.objectStoreNames.contains(cons.DA_STAGE_I_VERIFICATIONS)) {
+        const userStore = db.createObjectStore(cons.DA_STAGE_I_VERIFICATIONS, { keyPath: "id", });
+        userStore.createIndex("userId", "userId", { unique: false });
+        userStore.createIndex("appId", "appId", { unique: false });
+        userStore.createIndex("key", "key", { unique: false });
+        userStore.createIndex("appId_key", ["appId", "key"]);
+        userStore.createIndex("appId_key_isDraft", ["appId", "key", "isDraft"]);
+        userStore.createIndex("isDraft", "isDraft", { unique: false });
       }
 
     },

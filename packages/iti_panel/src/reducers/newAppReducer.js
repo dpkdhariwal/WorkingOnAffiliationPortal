@@ -205,34 +205,37 @@ export const initialValues = {
   aff_sub_category: "",
 
   category: "",
-  name_of_applicant_entity: "xyz",
+  name_of_applicant_entity: "",
 
   state_of_other_iti: "",
   // CategoryOfApplicantEntity: "",
   // NameOfApplicantEntity: "",
-  ApplicantEntityState: "xyz",
-  ApplicantEntityDistrict: "xyz",
-  ApplicantEntityTown_City: "xyz",
-  ApplicantEntityBlock_Tehsil: "xyz",
-  ApplicantEntitySector_Village: "xyz",
-  ApplicantEntityPincode: "xyz",
-  ApplicantEntityPlotNumber_KhasaraNumber_GataNumber: "xyz",
-  ApplicantEntityLandmark: "xyz",
-  ApplicantEntityEmailId: "xyz",
+  ApplicantEntityState: "",
+  ApplicantEntityDistrict: "",
+  ApplicantEntityTown_City: "",
+  ApplicantEntityBlock_Tehsil: "",
+  ApplicantEntitySector_Village: "",
+  ApplicantEntityPincode: "",
+  ApplicantEntityPlotNumber_KhasaraNumber_GataNumber: "",
+  ApplicantEntityLandmark: "",
+  ApplicantEntityEmailId: "",
   isApplicantEntityEmailIdVerified: false,
-  ApplicantContactNumber: "xyz",
 
-  Is_the_applicant_running_any_other_iti: "xyz",
+  ApplicantContactNumber: "",
+  isApplicantEntityMobileNumberVerified: false,
+  
 
-  run_ITIName: "xyz",
-  run_MISCode: "xyz",
-  run_State: "xyz",
-  run_District: "xyz",
-  run_TownCity: "xyz",
-  run_BlockTehsil: "xyz",
-  run_Pincode: "xyz",
-  run_PlotNumber_KhasaraNumber: "xyz",
-  run_Landmark: "xyz",
+  Is_the_applicant_running_any_other_iti: "",
+
+  run_ITIName: "",
+  run_MISCode: "",
+  run_State: "",
+  run_District: "",
+  run_TownCity: "",
+  run_BlockTehsil: "",
+  run_Pincode: "",
+  run_PlotNumber_KhasaraNumber: "",
+  run_Landmark: "",
 };
 export const EntityDetails = (state = initialValues, action) => {
   let { type, payload } = action;
@@ -268,7 +271,11 @@ export const yupObject = {
   ApplicantEntitySector_Village: yup
     .string()
     .required("Please enter Sector/Village"),
-  ApplicantEntityPincode: yup.string().required("Please enter Pincode"),
+  ApplicantEntityPincode: yup
+  .string()
+  .required("Please enter 6 Digit Pincode number")
+  .matches(/^\d{6}$/, "Please enter a valid 6-digit pincode"),
+
   ApplicantEntityPlotNumber_KhasaraNumber_GataNumber: yup
     .string()
     .required("Please enter Plot Number/Khasara Number/Gata Number"),
@@ -292,7 +299,10 @@ export const yupObject = {
       }
     ),
 
-  ApplicantContactNumber: yup.string().required("Please enter contact number"),
+  ApplicantContactNumber: yup
+  .string()
+  .required("Please enter contact number")
+  .matches(/^[6-9]\d{9}$/, "Please enter a valid 10-digit mobile number"),
 
   // Is_the_applicant_running_any_other_iti: yup
   //   .string()

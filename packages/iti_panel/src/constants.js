@@ -770,8 +770,7 @@ export const STAGE_I__SUBMITED = "STAGE_I__SUBMITED";
 // export const STAGE_I__APP_SUBMIT_PENDING = "STAGE_I__APP_SUBMIT_PENDING";
 // export const STAGE_I__APP_SUBMITED = "STAGE_I__APP_SUBMITED";
 export const STAGE_I__ASSESSMENT_PENDING = "STAGE_I__ASSESSMENT_PENDING";
-export const STAGE_I__ASSESSMENT_ON_PROGRESS =
-  "STAGE_I__ASSESSMENT_ON_PROGRESS";
+export const STAGE_I__ASSESSMENT_ON_PROGRESS = "STAGE_I__ASSESSMENT_ON_PROGRESS";
 export const STAGE_I__ASSESSMENT_COMPLETED = "STAGE_I__ASSESSMENT_COMPLETED";
 
 // export const AppFlow = {
@@ -1236,7 +1235,7 @@ export const STEPPER_STYLE = {
 // Database Stores 
 
 
-export const DB_VERSION = 15;
+export const DB_VERSION = 23;
 export const DB_NAME = "AffliationDB";
 export const USERS = "users";
 export const USER_ROLES = "userRoles";
@@ -1257,6 +1256,8 @@ export const LAND_LEASED_LANDS_DETAILS = "land_leased_lands";
 
 export const APP_FLOW = "app_flow";
 export const APP_FORM_FLOW_STAGE_I = "form_flow_stage_i";
+export const APP_ASSESSMENT_FLOW_STAGE_I = "APP_ASSESSMENT_FLOW_STAGE_I";
+
 export const APP_FORM_FLOW_STAGE_II = "form_flow_stage_ii";
 export const APP_FORM_SUB_CIVIL_INFRA = "app_form_sub_civil_infra";
 
@@ -1273,6 +1274,12 @@ export const ENTRANCE_GATE_PHOTO_OF_PLOT_WITH_SIGNAGE_BOARD = "entrance_gate_pho
 export const TRADEWISE_WORKSHOP = "tradewise_workshop";
 export const TRADEWISE_CLASSROOMS = "tradewise_classrooms";
 export const COMMON_CIVIL_INFRASTRUCTURE = "common_civil_infrastructure";
+
+
+// Desktop Assessment Table
+export const DA_LAND_DOCUMENTS = "DA_LAND_DOCUMENTS";
+export const DA_STAGE_I_VERIFICATIONS = "DA_STAGE_I_VERIFICATIONS";
+
 
 
 
@@ -1354,7 +1361,7 @@ export const STAGE_II_APP_FORM_FLOW = [
     status: NOT_FILLED, // NOT_FILLED
     stepLabel: "Building Detail",
     nextStep: CIVIL_INFRASTRUCTURE_DETAIL,
-    stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
+    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
   },
   {
     stepNo: 2,
@@ -1362,7 +1369,7 @@ export const STAGE_II_APP_FORM_FLOW = [
     status: NOT_FILLED, // NOT_FILLED
     stepLabel: "Civil Infrastructure Detail",
     nextStep: AMENITIES_AREA,
-    stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
+    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
     subSteps: [
       {
         stepNo: 1,
@@ -1434,7 +1441,7 @@ export const STAGE_II_APP_FORM_FLOW = [
     status: NOT_FILLED, // NOT_FILLED
     stepLabel: "Amenities Area",
     nextStep: SIGNAGE_BOARDS,
-    stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
+    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
   },
   {
     stepNo: 4,
@@ -1442,7 +1449,7 @@ export const STAGE_II_APP_FORM_FLOW = [
     status: NOT_FILLED, // NOT_FILLED
     stepLabel: "Signage Boards",
     nextStep: ELECTRICITY_CONNECTION_DETAILS,
-    stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
+    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
 
   },
   {
@@ -1451,7 +1458,7 @@ export const STAGE_II_APP_FORM_FLOW = [
     status: NOT_FILLED, // NOT_FILLED
     stepLabel: "Electricity Connection Details",
     nextStep: FEE_PAYMENT_FOR_STAGEII,
-    stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
+    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
 
   },
   {
@@ -1460,7 +1467,7 @@ export const STAGE_II_APP_FORM_FLOW = [
     status: NOT_FILLED, // NOT_FILLED
     stepLabel: "Miscellaneous",
     nextStep: FEE_PAYMENT_FOR_STAGEII,
-    stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
+    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
 
   },
   {
@@ -1469,7 +1476,7 @@ export const STAGE_II_APP_FORM_FLOW = [
     status: NOT_FILLED, // NOT_FILLED
     stepLabel: "Fee Payment For StageII",
     nextStep: TRADEWISE_MACHINERY__TOOLS__EQUIPMENT_DETAILS,
-    stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
+    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
 
   },
   {
@@ -1478,7 +1485,7 @@ export const STAGE_II_APP_FORM_FLOW = [
     status: NOT_FILLED, // NOT_FILLED
     stepLabel: "Tradewise Machinery/Tools/Equipment Details",
     nextStep: null,
-    stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
+    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
   },
   {
     stepNo: 9,
@@ -1486,8 +1493,7 @@ export const STAGE_II_APP_FORM_FLOW = [
     status: NOT_FILLED, // NOT_FILLED
     stepLabel: "Document Uploads",
     nextStep: null,
-    stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
-
+    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
   },
 ];
 
@@ -1511,6 +1517,7 @@ export const ST1FC = {
   },
   FEE_PAYMENT: { label: "Fee Payment", step: "FEE_PAYMENT" },
   DOCUMENTS_UPLOAD: { label: "Documents Upload", step: "DOCUMENTS_UPLOAD" },
+  REVIEW_ASSESSMENT: { label: "Review Assessment", step: "REVIEW_ASSESSMENT" },
 };
 export const STAGE_I_APP_FORM_FLOW = [
   {
@@ -1579,6 +1586,18 @@ export const STAGE_I_APP_FORM_FLOW = [
 
   },
 ];
+
+export const DA1_KEYS = {
+  LAND_DOCUMENT: "LAND_DOCUMENT",
+  LAND_AREA: "LAND_AREA",
+  ID_PROOF_OF_AUTHORIZED_SIGNATORY: "ID Proof of Authorized Signatory",
+  REGISTRATION_CERTIFICATE_OF_APPLICANT_ORGANIZATION: "Registration Certificate of Applicant Organization",
+  ID_PROOF_OF_SECRETARY_CHAIRPERSON_PRESIDENT: "ID Proof of Secretary/Chairperson/President",
+  RESOLUTION_CERTIFICATE: "Resolution Certificate"
+}
+
+
+
 
 
 
@@ -1729,6 +1748,232 @@ export const A_GENERAL_PARKING_DETAILS = { particular: AMNT.GENERAL_PARKING_DETA
 
 
 
+// Status List
+export const SL = {
+  COMPLETED: "COMPLETED",
+  ON_PROGRESS: "ON_PROGRESS",
+  ACTIVE: "ACTIVE",
+  IN_ACTIVE: "IN_ACTIVE",
+  VERIFIED: "VERIFIED",
+  NC: "NC",
+  PENDING_FOR_VERIFICATION: "PENDING_FOR_VERIFICATION",
+  YES: "yes",
+  NO: "no",
+
+}
 
 
+export const STAGE_II = {
+  AppFormStepper: {
+    BUILDING_DETAIL: { key: 'BUILDING_DETAIL', label: BUILDING_DETAIL },
+    CIVIL_INFRASTRUCTURE_DETAIL: { key: 'CIVIL_INFRASTRUCTURE_DETAIL', label: CIVIL_INFRASTRUCTURE_DETAIL },
+    AMENITIES_AREA: { key: 'AMENITIES_AREA', label: AMENITIES_AREA },
+    SIGNAGE_BOARDS: { key: 'SIGNAGE_BOARDS', label: SIGNAGE_BOARDS },
+    ELECTRICITY_CONNECTION_DETAILS: { key: 'ELECTRICITY_CONNECTION_DETAILS', label: ELECTRICITY_CONNECTION_DETAILS },
+    MISCELLANEOUS: { key: 'MISCELLANEOUS', label: MISCELLANEOUS },
+    FEE_PAYMENT_FOR_STAGEII: { key: 'FEE_PAYMENT_FOR_STAGEII', label: FEE_PAYMENT_FOR_STAGEII },
+    TRADEWISE_MACHINERY__TOOLS__EQUIPMENT_DETAILS: {
+      key: 'TRADEWISE_MACHINERY__TOOLS__EQUIPMENT_DETAILS',
+      label: TRADEWISE_MACHINERY__TOOLS__EQUIPMENT_DETAILS
+    },
+    DOCUMENT_UPLOADS: { key: 'DOCUMENT_UPLOADS', label: DOCUMENT_UPLOADS },
+  }
+};
+
+
+
+
+export const ASSESSMENT_STAGE_II_FLOW = [
+  {
+    stepNo: 1,
+    stepLabel: "Building Detail",
+    step: BUILDING_DETAIL,
+    status: SL.COMPLETED, //SL.COMPLETED || SL.ON_PROGRESS
+    nextStep: CIVIL_INFRASTRUCTURE_DETAIL,
+    stepStatus: SL.ACTIVE, // SL.ACTIVE || SL.IN_ACTIVE
+    subSteps: [
+      {
+        stepNo: 1,
+        stepLabel: "Building Detail",
+        step: "Building Plan",
+        status: SL.VERIFIED, // SL.VERIFIED ||  SL.NC ||  SL.PENDING_FOR_VERIFICATION 
+        nextStep: CIC.TRADEWISE_CLASSROOMS,
+        stepStatus: SL.ACTIVE, // SL.ACTIVE || SL.IN_ACTIVE
+      },
+      {
+        stepNo: 2,
+        stepLabel: "Building Completion Certificate (BCC)",
+        step: "Building Completion Certificate (BCC)",
+        status: SL.VERIFIED, // SL.VERIFIED ||  SL.NC ||  SL.PENDING_FOR_VERIFICATION 
+        nextStep: CIC.MULTIPURPOSE_HALL,
+        stepStatus: SL.ACTIVE, // SL.ACTIVE || SL.IN_ACTIVE
+      },
+      {
+        stepNo: 3,
+        stepLabel: "Photos of Building",
+        step: "Photos of Building",
+        status: SL.VERIFIED, // SL.VERIFIED ||  SL.NC ||  SL.PENDING_FOR_VERIFICATION 
+        nextStep: CIC.IT_LAB,
+        stepStatus: SL.ACTIVE, // SL.ACTIVE || SL.IN_ACTIVE
+      },
+    ],
+  },
+  {
+    stepNo: 2,
+    stepLabel: "Civil Infrastructure Detail",
+    step: CIVIL_INFRASTRUCTURE_DETAIL,
+    status: SL.COMPLETED, // SL.ON_PROGRESS
+    nextStep: AMENITIES_AREA,
+    stepStatus: SL.ACTIVE, // SL.ACTIVE || SL.IN_ACTIVE
+    subSteps: [
+      {
+        stepNo: 1,
+        step: CIC.TRADEWISE_WORKSHOP,
+        status: NOT_FILLED, // FILLED || NOT_FILLED 
+        stepTitle: "Tradewise Workshop",
+        nextStep: CIC.TRADEWISE_CLASSROOMS,
+        stepStatus: SL.ACTIVE, // SL.ACTIVE || SL.IN_ACTIVE
+        workshopList: [
+          {
+            TradeName: 'Fitter',
+            Particulars: 'WORKSHOP_1',
+            status: SL.VERIFIED, // SL.VERIFIED ||  SL.NC ||  SL.PENDING_FOR_VERIFICATION 
+          },
+          {
+            TradeName: 'Fitter',
+            Particulars: 'WORKSHOP_2',
+            status: SL.VERIFIED, // SL.VERIFIED ||  SL.NC ||  SL.PENDING_FOR_VERIFICATION 
+          },
+        ]
+      },
+      {
+        stepNo: 2,
+        step: CIC.TRADEWISE_CLASSROOMS,
+        status: NOT_FILLED, // NOT_FILLED
+        stepTitle: "TradeWise Classrooms",
+        nextStep: CIC.MULTIPURPOSE_HALL,
+        stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+        classroomList: [
+          {
+            TradeName: 'Fitter',
+            Particulars: 'CLASSROOM_1',
+            status: SL.VERIFIED, // SL.VERIFIED ||  SL.NC ||  SL.PENDING_FOR_VERIFICATION 
+          },
+          {
+            TradeName: 'Fitter',
+            Particulars: 'CLASSROOM_2',
+            status: SL.VERIFIED, // SL.VERIFIED ||  SL.NC ||  SL.PENDING_FOR_VERIFICATION 
+          },
+        ]
+      },
+      {
+        stepNo: 3,
+        step: CIC.MULTIPURPOSE_HALL,
+        status: NOT_FILLED, // NOT_FILLED
+        stepTitle: "Multipurpose hall",
+        nextStep: CIC.IT_LAB,
+        stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+      },
+      {
+        stepNo: 4,
+        step: CIC.IT_LAB,
+        status: NOT_FILLED, // NOT_FILLED
+        stepTitle: "IT Lab",
+        nextStep: CIC.LIBRARY,
+        stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+
+      },
+      {
+        stepNo: 5,
+        step: CIC.LIBRARY,
+        status: NOT_FILLED, // NOT_FILLED
+        stepTitle: "Library",
+        nextStep: CIC.PLACEMENT_AND_COUNSELLING_ROOM,
+        stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+
+      },
+      {
+        stepNo: 6,
+        step: CIC.PLACEMENT_AND_COUNSELLING_ROOM,
+        status: NOT_FILLED, // NOT_FILLED
+        stepTitle: "Placement and counselling room",
+        nextStep: CIC.ADMINISTRATIVE_AREA,
+        stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+
+      },
+      {
+        stepNo: 8,
+        step: CIC.ADMINISTRATIVE_AREA,
+        status: NOT_FILLED, // NOT_FILLED
+        stepTitle: "Administrative Area",
+        nextStep: null,
+        stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+
+      },
+    ],
+  },
+  {
+    stepNo: 3,
+    stepLabel: "Amenities Area",
+    step: AMENITIES_AREA,
+    status: SL.COMPLETED, // SL.ON_PROGRESS
+    nextStep: SIGNAGE_BOARDS,
+    stepStatus: SL.ACTIVE, // SL.ACTIVE || SL.IN_ACTIVE
+  },
+  {
+    stepNo: 4,
+    stepLabel: "Signage Boards",
+    step: SIGNAGE_BOARDS,
+    status: SL.COMPLETED, // SL.ON_PROGRESS
+    nextStep: ELECTRICITY_CONNECTION_DETAILS,
+    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+
+  },
+  {
+    stepNo: 5,
+    stepLabel: "Electricity Connection Details",
+    step: ELECTRICITY_CONNECTION_DETAILS,
+    status: SL.COMPLETED, // SL.ON_PROGRESS
+    nextStep: FEE_PAYMENT_FOR_STAGEII,
+    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+  },
+  {
+    stepNo: 6,
+    stepLabel: "Miscellaneous",
+    step: MISCELLANEOUS,
+    status: SL.COMPLETED, // SL.ON_PROGRESS
+    nextStep: FEE_PAYMENT_FOR_STAGEII,
+    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+  },
+  {
+    stepNo: 7,
+    stepLabel: "Fee Payment For StageII",
+    step: FEE_PAYMENT_FOR_STAGEII,
+    status: SL.COMPLETED, // SL.ON_PROGRESS
+    nextStep: TRADEWISE_MACHINERY__TOOLS__EQUIPMENT_DETAILS,
+    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+  },
+  {
+    stepNo: 8,
+    stepLabel: "Tradewise Machinery/Tools/Equipment Details",
+    step: TRADEWISE_MACHINERY__TOOLS__EQUIPMENT_DETAILS,
+    status: SL.COMPLETED, // SL.ON_PROGRESS
+    nextStep: null,
+    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+  },
+  {
+    stepNo: 9,
+    stepLabel: "Document Uploads",
+    step: DOCUMENT_UPLOADS,
+    status: SL.COMPLETED, // SL.ON_PROGRESS
+    nextStep: null,
+    stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
+  },
+];
+
+
+export const abbreviation = {
+  STAGE_I: { key: "STAGE_I" },
+  STAGE_II: { key: "STAGE_II" },
+}
 

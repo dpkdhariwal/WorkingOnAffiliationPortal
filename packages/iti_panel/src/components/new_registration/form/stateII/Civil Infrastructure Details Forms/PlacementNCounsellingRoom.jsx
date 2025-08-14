@@ -278,7 +278,7 @@ export const Assessment_PlacementNCounsellingRoom = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {placement_n_counselling_room_to_be_filled.map((item, index) => {
+                            {cons.placement_n_counselling_room_to_be_filled.map((item, index) => {
                                 return (
                                     <tr key={index}>
                                         <td>{item.Particulars}</td>

@@ -9,6 +9,8 @@ import { Customlayout } from "./components/Customlayout";
 import { Routedata } from "./common/Routingdata";
 import Error505 from "./components/custompages/Error505";
 import Signin from "./screens/Auth/Signin.jsx";
+import SigninPortable from "./screens/Auth/Signin_portable.jsx";
+
 import Signup from "./components/custompages/Signup";
 import Forgetpassword from "./components/custompages/Forgetpassword.jsx";
 // import LandingPage from "./landingpage/Landingpage.jsx";
@@ -41,7 +43,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 
               <Route
                 path={`${import.meta.env.BASE_URL}`}
-                element={<SignInPage />}
+                element={<SignInPage login={<SigninPortable />} />}
               ></Route>
               {/* <Route index element={<Signin />} /> */}
               {Routedata.map((idx) => (

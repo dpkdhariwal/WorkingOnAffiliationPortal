@@ -147,7 +147,7 @@ export const PendingStep = ({ info, variant }) => {
           case STAGE_I__ASSESSMENT_COMPLETED:
             return <h5>DD</h5>
           case STAGE_I__ASSESSMENT_ON_PROGRESS:
-            return <h5>DD</h5>
+            return authUser.userType === 'state_assessor' ? <GoToStageIAssessment info={info} /> : ''
           case STAGE_I__ASSESSMENT_PENDING:
             return authUser.userType === 'state_assessor' ? <GoToStageIAssessment info={info} /> : ''
           // return action.GoToStageIAssessment();

@@ -154,8 +154,8 @@ const Header = ({ local_varaiable, ThemeChanger }) => {
         theme.dataNavLayout === "horizontal" && !isDarkMode
           ? "dark"
           : isDarkMode
-          ? "dark"
-          : "dark",
+            ? "dark"
+            : "dark",
     };
 
     ThemeChanger(updatedTheme);
@@ -654,9 +654,8 @@ const Header = ({ local_varaiable, ThemeChanger }) => {
                 </Button>
               </InputGroup> */}
               <div
-                className={`header-search ${
-                  isSearchDropVisible ? "searchdrop" : ""
-                }`}
+                className={`header-search ${isSearchDropVisible ? "searchdrop" : ""
+                  }`}
                 ref={searchRef}
               >
                 <div className="p-3">
@@ -874,11 +873,10 @@ const Header = ({ local_varaiable, ThemeChanger }) => {
                 onClick={openFullscreen}
               >
                 <i
-                  className={`fe ${
-                    isFullScreen
+                  className={`fe ${isFullScreen
                       ? "fe-minimize full-screen-close "
                       : "fe-maximize full-screen-open"
-                  } header-link-icon`}
+                    } header-link-icon`}
                 ></i>
               </Link>
             </div>
@@ -1277,7 +1275,7 @@ const Header = ({ local_varaiable, ThemeChanger }) => {
                   <i className="fe fe-headphones fs-16 align-middle me-2"></i>
                   Support
                 </Dropdown.Item>
-                <Dropdown.Item as={Link} to="/SignIn" className="d-flex">
+                <Dropdown.Item as={Link} to="/" className="d-flex">
                   <i className="fe fe-power fs-16 align-middle me-2"></i>Log Out
                 </Dropdown.Item>
               </Dropdown.Menu>

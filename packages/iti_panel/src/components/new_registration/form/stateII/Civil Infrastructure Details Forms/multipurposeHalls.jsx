@@ -63,6 +63,7 @@ export const MultipurposeHall = ({ steps, goPrevious, goNext }) => {
     }
 
     useEffect(() => {
+        console.log(list);
         prepare_initialValues(list);
     }, [list]);
 
