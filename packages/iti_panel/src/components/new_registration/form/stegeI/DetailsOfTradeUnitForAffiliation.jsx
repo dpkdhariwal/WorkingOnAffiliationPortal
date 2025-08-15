@@ -17,10 +17,12 @@ import { ADD_MORE_TRADE } from "../../../../constants";
 
 import { trade_unit_reducer_yupObject } from "../../../../reducers/newAppReducer";
 import { ctsTrades, UPDATE_TRADE_UNIT } from "../../../../constants";
+import * as C from "../../../../constants";
 
 import { setInstTradeDetails } from "../../../../db/appList";
 import { useLocation } from "react-router-dom";
 import { Navigations } from "../../../Assessment/components";
+import { markAsCompleteStageAssessmentFlow, setStageIAssessmentFlow } from "../../../../db/forms/stageI/set/set";
 
 
 const DetailsOfDocumentsToBeUploaded = ({ step, setActive }) => {
@@ -217,6 +219,9 @@ export default DetailsOfDocumentsToBeUploaded;
 
 
 export const Assessment_DetailsOfDocumentsToBeUploaded = ({ step, view: viewProp = false, isView = false, nav }) => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const appId = queryParams.get("appId");
   const MaxData = [
     { value: "Document is not legible", label: "Document is not legible" },
     { value: "Document is irrelevant", label: "Document is irrelevant" },
@@ -308,6 +313,13 @@ export const Assessment_DetailsOfDocumentsToBeUploaded = ({ step, view: viewProp
     console.log(step);
   }, [step])
 
+
+  const onNext = async () => {
+    // Set Flow if Not exit 
+    let result = await setStageIAssessmentFlow(appId);
+    let data = await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_TRADE_UNIT_FOR_AFFILIATION.step);
+    nav.next();
+  }
 
   return (
     <>
@@ -695,7 +707,7 @@ export const Assessment_DetailsOfDocumentsToBeUploaded = ({ step, view: viewProp
       ))} */}
 
 
-    {/* {isView==false && (<div style={{
+      {/* {isView==false && (<div style={{
         backgroundColor: "rgb(245, 245, 245)",
         margin: "10px 0px 0px",
         borderRadius: 6,
@@ -714,9 +726,9 @@ export const Assessment_DetailsOfDocumentsToBeUploaded = ({ step, view: viewProp
           </Button>
         </div>
       </div>)} */}
-      
-            <Navigations nav={nav}  />
-      
+
+      <Navigations nav={nav} onNext={onNext} />
+
 
       <Modal show={showXlModal} onHide={handleCloseModal} size="xl">
         <Modal.Header closeButton>

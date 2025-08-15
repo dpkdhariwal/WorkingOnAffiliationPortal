@@ -1235,7 +1235,7 @@ export const STEPPER_STYLE = {
 // Database Stores 
 
 
-export const DB_VERSION = 23;
+export const DB_VERSION = 25;
 export const DB_NAME = "AffliationDB";
 export const USERS = "users";
 export const USER_ROLES = "userRoles";
@@ -1279,6 +1279,9 @@ export const COMMON_CIVIL_INFRASTRUCTURE = "common_civil_infrastructure";
 // Desktop Assessment Table
 export const DA_LAND_DOCUMENTS = "DA_LAND_DOCUMENTS";
 export const DA_STAGE_I_VERIFICATIONS = "DA_STAGE_I_VERIFICATIONS";
+export const TBL_ASSESSMENTS_STATUS = "ASSESSMENT_STATUS";
+export const DA_STAGE_I_VERIFICATIONS_CHECKLIST = "DA_STAGE_I_VERIFICATIONS_CHECKLIST";
+
 
 
 
@@ -1757,9 +1760,11 @@ export const SL = {
   VERIFIED: "VERIFIED",
   NC: "NC",
   PENDING_FOR_VERIFICATION: "PENDING_FOR_VERIFICATION",
+  PENDING: "PENDING",
   YES: "yes",
   NO: "no",
-
+  PENDING_AT_APPLICANT: "PENDING_AT_APPLICANT",
+  
 }
 
 
@@ -1975,5 +1980,121 @@ export const ASSESSMENT_STAGE_II_FLOW = [
 export const abbreviation = {
   STAGE_I: { key: "STAGE_I" },
   STAGE_II: { key: "STAGE_II" },
+}
+
+
+
+export const ASSESSMENT_STAGE_I_KEYS = {
+  POSSESSION_OF_LAND: "POSSESSION_OF_LAND",
+  LAND_DOCUMENTS: "LAND_DOCUMENTS",
+  LAND_USE_LAND_CONVERSION_CERTIFICATE: "LAND_USE_LAND_CONVERSION_CERTIFICATE",
+  LEASE_DEED_DOCUMENTS: "LEASE_DEED_DOCUMENTS",
+  LAND_AREA: "LAND_AREA",
+  ID_PROOF_OF_AUTHORIZED_SIGNATORY: "ID Proof of Authorized Signatory",
+  REGISTRATION_CERTIFICATE_OF_APPLICANT_ORGANIZATION: "Registration Certificate of Applicant Organization",
+  ID_PROOF_OF_SECRETARY_CHAIRPERSON_PRESIDENT: "ID Proof of Secretary/Chairperson/President",
+  RESOLUTION_CERTIFICATE: "Resolution Certificate"
+}
+
+export const ASSESSMENT_STAGE_I_FLOW = [
+  {
+    stepNo: 1,
+    step: ST1FC.APPLICANT_ENTITY_DETAILS.step,
+    status: SL.PENDING, //SL.COMPLETED || SL.ON_PROGRESS || 
+    stepLabel: ST1FC.APPLICANT_ENTITY_DETAILS.label,
+    nextStep: ST1FC.DETAILS_OF_THE_PROPOSED_INSTITUTE.step,
+    stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
+    DA: false,
+  },
+  {
+    stepNo: 2,
+    step: ST1FC.DETAILS_OF_THE_PROPOSED_INSTITUTE.step,
+    status: SL.PENDING, //SL.COMPLETED || SL.ON_PROGRESS
+    stepLabel: ST1FC.DETAILS_OF_THE_PROPOSED_INSTITUTE.label,
+    nextStep: ST1FC.DETAILS_OF_TRADE_UNIT_FOR_AFFILIATION.step,
+    stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
+    DA: false,
+  },
+  {
+    stepNo: 3,
+    step: ST1FC.DETAILS_OF_TRADE_UNIT_FOR_AFFILIATION.step,
+    status: SL.PENDING, //SL.COMPLETED || SL.ON_PROGRESS
+    stepLabel: ST1FC.DETAILS_OF_TRADE_UNIT_FOR_AFFILIATION.label,
+    nextStep: ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step,
+    stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
+    DA: false,
+  },
+  {
+    stepNo: 4,
+    step: ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step,
+    status: SL.PENDING, //SL.COMPLETED || SL.ON_PROGRESS
+    stepLabel: ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.label,
+    nextStep: ST1FC.DOCUMENTS_UPLOAD.step,
+    stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
+    DA: true,
+    VerificationList: [
+      {
+        check: ASSESSMENT_STAGE_I_KEYS.POSSESSION_OF_LAND,
+        da_status: SL.PENDING, stage: abbreviation.STAGE_I.key,
+        step: ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step,
+      },
+      {
+        check: ASSESSMENT_STAGE_I_KEYS.LAND_AREA,
+        da_status: SL.PENDING,
+        stage: abbreviation.STAGE_I.key,
+        step: ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step,
+      }
+    ]
+  },
+  {
+    stepNo: 5,
+    step: ST1FC.DOCUMENTS_UPLOAD.step,
+    status: SL.PENDING, //SL.COMPLETED || SL.ON_PROGRESS
+    stepLabel: ST1FC.DOCUMENTS_UPLOAD.label,
+    stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
+    nextStep: ST1FC.REVIEW_ASSESSMENT.step,
+    DA: true,
+    VerificationList: [
+      {
+        check: ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_AUTHORIZED_SIGNATORY,
+        da_status: SL.PENDING,
+        stage: abbreviation.STAGE_I.key,
+        step: ST1FC.DOCUMENTS_UPLOAD.step
+
+      },
+      {
+        check: ASSESSMENT_STAGE_I_KEYS.REGISTRATION_CERTIFICATE_OF_APPLICANT_ORGANIZATION,
+        da_status: SL.PENDING,
+        stage: abbreviation.STAGE_I.key,
+        step: ST1FC.DOCUMENTS_UPLOAD.step
+      },
+      {
+        check: ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_SECRETARY_CHAIRPERSON_PRESIDENT,
+        da_status: SL.PENDING,
+        stage: abbreviation.STAGE_I.key,
+        step: ST1FC.DOCUMENTS_UPLOAD.step
+      },
+      {
+        check: ASSESSMENT_STAGE_I_KEYS.RESOLUTION_CERTIFICATE,
+        da_status: SL.PENDING,
+        stage: abbreviation.STAGE_I.key,
+        step: ST1FC.DOCUMENTS_UPLOAD.step
+      },
+    ]
+  },
+  {
+    stepNo: 6,
+    step: ST1FC.REVIEW_ASSESSMENT.step,
+    status: SL.PENDING, //SL.COMPLETED || SL.ON_PROGRESS
+    stepLabel: ST1FC.REVIEW_ASSESSMENT.label,
+    stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
+    nextStep: LAST,
+  },
+];
+window.ASSESSMENT_STAGE_I_FLOW = ASSESSMENT_STAGE_I_FLOW;
+
+export const ASSESSMENT_STATUS = {
+  assessment_id: null,
+  assessment_status: SL.PENDING // COMPLETED || ON_PROGRESS || PENDING
 }
 

@@ -11,11 +11,11 @@ import { useLocation } from "react-router-dom";
 import { Link, useNavigate } from "react-router-dom";
 
 
-import { getAppCurrentStatus, getStage1FormFlow } from "../../../db/users";
+import { getAppCurrentStatus, getStage1FormFlow, setAppFlow } from "../../../db/users";
 import { STEPPER_STYLE, STAGE_I_APP_FORM_FLOW, FILLED, ST1FC } from "../../../constants";
 import * as C from "../../../constants";
 import * as cons from "../../../constants";
-import { ASSESSMENT_STAGE_I_FLOW, getAppFlowByStep } from "../../../db/forms/stageI/get/get";
+import { getAppFlowByStep } from "../../../db/forms/stageI/get/get";
 import { Assessment_Basic_Detail } from "../../../components/new_registration/form/stegeI/BasicDetailsofApplicantOrganization";
 import { Assessment_Proposed_Institute } from "../../../components/new_registration/form/stegeI/DetailsOfTheProposedInstitute";
 import { Name_of_the_institute } from "../../../components/new_registration/form/stegeI/view/stage_1/detail_of_proposed_institute/assessment_view/name_of_the_institute";
@@ -34,13 +34,13 @@ import {
   ResolutionCertificate
 } from "../../../components/new_registration/form/stegeI/view/stage_1/detail_of_proposed_institute/assessment_view/documents"
 import { MarkAsCompleteStageIAssessment } from "../../../components/Assessment/AssessmentI";
-import { setNewStatusOfAppByStep } from "../../../db/forms/stageI/set/set";
+import { getAssessmentStageIFlowById, getAssessmentStatus, markAsCompleteStageAssessmentFlow, setAssessmentStatus, setNewStatusOfAppByStep, setStageIAssessmentFlow } from "../../../db/forms/stageI/set/set";
 
 import { Navigations } from "../../../components/Assessment/components"
 
 
 export const StageIAssessment = () => {
-  const [activeStep, setActiveStep] = useState(4);
+  const [activeStep, setActiveStep] = useState(0);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const appId = queryParams.get("appId");
@@ -48,6 +48,7 @@ export const StageIAssessment = () => {
   const [status, setStatus] = useState({});
   const [firstIndex, setFirstIndex] = useState(0);
   const [lastIndex, setLastIndex] = useState(0);
+  const [assessmentStatus, setAssessmentStatus] = useState({});
 
 
 
@@ -97,13 +98,13 @@ export const StageIAssessment = () => {
   };
 
   const setStepContent = (step, stepIndex) => {
-    console.log(step, step.step);
+    console.log(step, stepIndex);
     try {
       switch (step.step) {
         case ST1FC.APPLICANT_ENTITY_DETAILS.step:
           return <Assessment_Basic_Detail nav={object(step, stepIndex)} />;
         case ST1FC.DETAILS_OF_THE_PROPOSED_INSTITUTE.step:
-          return <DetailOfProposedInsti step={step} nav={object(step, stepIndex)}  />;
+          return <DetailOfProposedInsti step={step} nav={object(step, stepIndex)} />;
         case ST1FC.DETAILS_OF_TRADE_UNIT_FOR_AFFILIATION.step:
           return <Assessment_DetailsOfDocumentsToBeUploaded step={step} nav={object(step, stepIndex)} />;
         case ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step:
@@ -137,14 +138,29 @@ export const StageIAssessment = () => {
     // let result_1 = await getStage1FormFlow(appId);
     // console.log(result_1);
     let result = await getAppFlowByStep(appId, C.STAGE_I__ASSESSMENT);
+    console.log(result);
     setStatus(result.status);
-    let data = await ASSESSMENT_STAGE_I_FLOW.map((step) => ({ ...step, completed: step.status === C.SL.COMPLETED }));
+
+    // Assessment Status
+    let a_status = await getAssessmentStatus(appId);
+    console.log(a_status);
+    setAssessmentStatus(a_status);
+
+
+    // get Application flow by App Id
+    let app_stage_da_flow = await getAssessmentStageIFlowById(appId);
+    console.log(app_stage_da_flow);
+    setSteps(app_stage_da_flow);
+
+
+    // Statick for Testing
+    // let data = await C.ASSESSMENT_STAGE_I_FLOW.map((step) => ({ ...step, completed: step.status === C.SL.COMPLETED }));
     // console.log(data);
-    setSteps(data);
+    // setSteps(data);
     // setActiveStep(0);
 
     const firstIndex = 0;                 // Always 0 for the first element
-    const lastIndex = data.length - 1;   // Length minus 1 for the last element
+    const lastIndex = app_stage_da_flow.length - 1;   // Length minus 1 for the last element
     setFirstIndex(firstIndex);
     setLastIndex(lastIndex);
   };
@@ -167,9 +183,19 @@ export const StageIAssessment = () => {
   );
 };
 
-export const DetailOfProposedInsti = ({ step, view: viewProp = false, isView = false, nav })=>{
-  return <><Name_of_the_institute /><AddressOfInstitute /><InstituteLocation />       <Navigations nav={nav}  />
- </>;
+export const DetailOfProposedInsti = ({ step, view: viewProp = false, isView = false, nav }) => {
+
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const appId = queryParams.get("appId");
+  const onNext = async () => {
+    let result = await setStageIAssessmentFlow(appId);
+    let data = await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_THE_PROPOSED_INSTITUTE.step);
+    nav.next();
+  }
+
+  return <><Name_of_the_institute /><AddressOfInstitute /><InstituteLocation /> <Navigations onNext={onNext} nav={nav} />
+  </>;
 }
 
 
@@ -205,7 +231,23 @@ const StartDocsVerification = ({ startDocsVerification }) => {
 
 const ReviewAssessment = ({ step, view: viewProp = false, isView = false, nav }) => {
 
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const appId = queryParams.get("appId");
+
   console.log(nav);
+
+  const onLast = async () => {
+
+    // Mark as Complete Review this Stage 
+    let data = await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.REVIEW_ASSESSMENT.step);
+
+    // Mark as Compelete Assessment and Set Pending Applicant if Entities Not Verfied  
+    let result = await setAssessmentStatus(appId, C.SL.COMPLETED, C.SL.PENDING_AT_APPLICANT);
+
+    // Mark Stage Asessement as Completed and App Flow Also marks As Completed 
+    setAppFlow(appId, C.STAGE_I__ASSESSMENT);
+  }
 
   return <>
     <Assessment_Basic_Detail isView={true} />
@@ -229,6 +271,6 @@ const ReviewAssessment = ({ step, view: viewProp = false, isView = false, nav })
     <ResolutionCertificate isView={true} />
     {/* Ends Here */}
 
-    <Navigations nav={nav} />
+    <Navigations nav={nav} onLast={onLast} />
     <MarkAsCompleteStageIAssessment /></>;
 }

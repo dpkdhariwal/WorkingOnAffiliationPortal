@@ -29,7 +29,9 @@ import { AppStatusContext } from "../../../../services/context";
 import { ApplicantEntityMobile } from "./formComponent/ApplicantEntityMobileNumber";
 import { ApplicantAddressPincode } from "./formComponent/ApplicantEntityAddressPincode";
 import { Navigations } from "../../../Assessment/components";
+import { markAsCompleteStageAssessmentFlow, setStageIAssessmentFlow } from "../../../../db/forms/stageI/set/set";
 
+import * as C from "../../../../constants";
 
 const BasicDetailsofApplicantOrganization = ({ setActive, refreshSteps }) => {
   const location = useLocation();
@@ -1216,32 +1218,30 @@ BasicDetailsofApplicantOrganization.propTypes = {
 };
 export default BasicDetailsofApplicantOrganization;
 
-export const Assessment_Basic_Detail = ({ appId, isView = false, nav }) => {
-
-  const [id, setId] = useState(appId);
+export const Assessment_Basic_Detail = ({ isView = false, nav }) => {
 
 
-
-  useEffect(() => {
-    console.log(id);
-  }, [id]);
 
   // console.log(nav.next());
 
-  
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const appId = queryParams.get("appId");
+  const [id, setId] = useState(appId);
+
+  const onNext = async () => {
+
+    // Set Flow if Not exit 
+    let result = await setStageIAssessmentFlow(appId);
+    let data = await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.APPLICANT_ENTITY_DETAILS.step);
+    nav.next();
+  }
+  useEffect(() => { console.log(id); }, [id]);
+
 
   return (
     <>
-      <Row
-        style={{
-          backgroundColor: "rgb(245, 245, 245)",
-          margin: "10px 0px 0px",
-          borderRadius: 6,
-          borderStyle: "dashed",
-          borderWidth: "thin",
-          padding: "2px",
-        }}
-      >
+      <Row style={{ backgroundColor: "rgb(245, 245, 245)", margin: "10px 0px 0px", borderRadius: 6, borderStyle: "dashed", borderWidth: "thin", padding: "2px", }} >
         <Col xl={12} lg={12} md={12} sm={12}>
 
           <table
@@ -1399,7 +1399,7 @@ export const Assessment_Basic_Detail = ({ appId, isView = false, nav }) => {
         </Col>
       </Row>
 
-      <Navigations nav={nav} onNext={()=>{nav.next()}}  />
+      <Navigations nav={nav} onNext={() => { onNext() }} />
     </>
   );
 };

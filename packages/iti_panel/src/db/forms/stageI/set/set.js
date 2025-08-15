@@ -161,16 +161,16 @@ export const get_da_status = async (appId, stage, key) => {
   switch (stage) {
     case C.abbreviation.STAGE_I.key:
       try {
-            const tx = db.transaction([C.DA_STAGE_I_VERIFICATIONS], 'readwrite');
-            const store = tx.objectStore(C.DA_STAGE_I_VERIFICATIONS);
-            currentState = await store.index("appId_key_isDraft").getAll([appId, key, 'yes']);
-            console.log(currentState);
-            await tx.done;
-            return currentState;
-          } catch (error) {
-            console.error(error);
-            return {}
-          }
+        const tx = db.transaction([C.DA_STAGE_I_VERIFICATIONS], 'readwrite');
+        const store = tx.objectStore(C.DA_STAGE_I_VERIFICATIONS);
+        currentState = await store.index("appId_key_isDraft").getAll([appId, key, 'yes']);
+        console.log(currentState);
+        await tx.done;
+        return currentState;
+      } catch (error) {
+        console.error(error);
+        return {}
+      }
     default:
       break;
   }
@@ -179,124 +179,103 @@ export const get_da_status = async (appId, stage, key) => {
 };
 
 
+export const setStageIAssessmentFlow = async (appId) => {
+  const db = await initDB();
+  try {
+    const tx = db.transaction([C.TBL_ASSESSMENTS_STATUS, C.APP_ASSESSMENT_FLOW_STAGE_I, C.DA_STAGE_I_VERIFICATIONS_CHECKLIST], 'readwrite');
+    const store = tx.objectStore(C.APP_ASSESSMENT_FLOW_STAGE_I);
+    const vrfcn_store = tx.objectStore(C.DA_STAGE_I_VERIFICATIONS_CHECKLIST);
+    const asmt_store = tx.objectStore(C.TBL_ASSESSMENTS_STATUS);
 
-// // Set Application Flow
-// export const setAppFlow = async (authUser, appId) => {
-//   const db = await initDB();
-//   C.AppFlow.forEach(async (flow) => {
-//     const flowData = { ...flow, id: Date.now() + Math.random(), appId: appId, userId: authUser.id };
-//     await db.put(C.APP_FLOW, flowData);
-//   });
-//   await set_stage_i_form_flow(authUser, appId);
-// };
+    let assessment_id = Date.now() + Math.random();
 
-// export const setEntityDetails = async (data, authUser, appId) => {
-//   try {
-//     const db = await initDB();
-//     // Create New App and Save Current Status
-//     const obj = { ...AppliInfoInitialValues, appId: appId, id: appId, userId: authUser.id, };
-//     delete obj.app_flow_status; // or use destructuring for a new object
+    let asmt_data = await asmt_store.index("appId").getAll(appId);
 
-//     await db.put(APPLIST, obj);
+    if (asmt_data.length === 0) {
 
-//     const entityBasicDetail = (({ aff_category, aff_sub_category, category, name_of_applicant_entity, ApplicantEntityEmailId, isApplicantEntityEmailIdVerified, ApplicantContactNumber, Is_the_applicant_running_any_other_iti, }) => ({ aff_category, aff_sub_category, category, name_of_applicant_entity, ApplicantEntityEmailId, isApplicantEntityEmailIdVerified, ApplicantContactNumber, Is_the_applicant_running_any_other_iti, }))(data);
-//     const entityAddress = (({ state_of_other_iti, ApplicantEntityState, ApplicantEntityDistrict, ApplicantEntityTown_City, ApplicantEntityBlock_Tehsil, ApplicantEntitySector_Village, ApplicantEntityPincode, ApplicantEntityPlotNumber_KhasaraNumber_GataNumber, ApplicantEntityLandmark, }) => ({ state_of_other_iti, ApplicantEntityState, ApplicantEntityDistrict, ApplicantEntityTown_City, ApplicantEntityBlock_Tehsil, ApplicantEntitySector_Village, ApplicantEntityPincode, ApplicantEntityPlotNumber_KhasaraNumber_GataNumber, ApplicantEntityLandmark, }))(data);
-//     const other_itis = (({ run_ITIName, run_MISCode, run_State, run_District, run_TownCity, run_BlockTehsil, run_Pincode, run_PlotNumber_KhasaraNumber, run_Landmark, }) => ({ run_ITIName, run_MISCode, run_State, run_District, run_TownCity, run_BlockTehsil, run_Pincode, run_PlotNumber_KhasaraNumber, run_Landmark, }))(data);
+      await asmt_store.put({ ...C.ASSESSMENT_STATUS, assessment_id: assessment_id, id: Date.now() + Math.random(), appId: appId });
 
-//     // check if exist
-//     try {
-//       // Read-only transaction for multiple stores
-//       const tx = db.transaction([APP_FORM_FLOW_STAGE_II, ENTITY_DETAILS, ENTITY_ADDRESS, OTHER_ITI], 'readwrite');
-//       const store_1 = tx.objectStore(ENTITY_DETAILS);
-//       const store_2 = tx.objectStore(ENTITY_ADDRESS);
-//       const store_3 = tx.objectStore(OTHER_ITI);
+      for (const [index, flow] of C.ASSESSMENT_STAGE_I_FLOW.entries()) {
+        let id = Date.now() + Math.random();
+        await store.put({ ...flow, id: id, appId: appId, assessment_id: assessment_id, });
+        if (flow?.VerificationList) {
+          for (const [index, ver] of flow.VerificationList.entries()) {
+            let id = Date.now() + Math.random();
+            await vrfcn_store.put({ ...ver, id: id, appId: appId, assessment_id: assessment_id, });
+          }
+        }
+      }
+    }
+    await tx.done;
+  } catch (error) {
+    console.error(error);
+  }
 
-//       // Entity Detail
-//       let data_1 = await store_1.index("appId").get(appId);
-//       if (data_1?.appId) {
-//         await store_1.put({ ...data_1, ...entityBasicDetail });
-//       }
-//       else {
-//         await store_1.put({ ...entityBasicDetail, id: Date.now() + Math.random(), appId: appId, });
-//       }
+};
 
-//       // Entity Address
-//       let data_2 = await store_2.index("appId").get(appId);
-//       if (data_2?.appId) {
-//         await store_2.put({ ...data_2, ...entityAddress });
-//       }
-//       else {
-//         await store_2.put({ ...entityAddress, id: Date.now() + Math.random(), appId: appId, });
-//       }
+export const markAsCompleteStageAssessmentFlow = async (appId, step) => {
+  const db = await initDB();
+  const formattedDate = new Date().toISOString(); // "2025-08-05T07:25:13.123Z"
+  try {
+    const tx = db.transaction([C.APP_ASSESSMENT_FLOW_STAGE_I], 'readwrite');
+    const store = tx.objectStore(C.APP_ASSESSMENT_FLOW_STAGE_I);
+    let d1 = await store.index('appId_step').get([appId, step]);
+    if (d1) {
+      await store.put({ ...d1, status: C.SL.COMPLETED, completionDate: formattedDate });
+      if (d1?.nextStep) {
+        let d2 = await store.index('appId_step').get([appId, d1?.nextStep]);
+        await store.put({ ...d2, stepStatus: C.SL.ACTIVE });
+      }
+    }
+    await tx.done;
+  } catch (error) {
+    console.log(error);
+    return {}
+  }
+}
 
-//       // Other ITI
-//       let data_3 = await store_3.index("appId").get(appId);
-//       if (data_3?.appId) {
-//         await store_3.put({ ...data_3, ...other_itis });
-//       }
-//       else {
-//         await store_3.put({ ...other_itis, id: Date.now() + Math.random(), appId: appId, });
-//       }
-
-//       //   const entityId = await db.put(ENTITY_DETAILS, { ...entityBasicDetail, id: Date.now() + Math.random(), appId: appId, });
-//       // const entityAddressId = await db.put(ENTITY_ADDRESS, { ...entityAddress, id: Date.now() + Math.random(), appId: appId, });
-//       // if (entityBasicDetail.Is_the_applicant_running_any_other_iti == "yes") {
-//       //   const insertedId = await db.put(OTHER_ITI, { ...other_itis, id: Date.now() + Math.random(), appId: appId, });
-//       // }
-
-
-//       // console.log(data, authUser, appId);
-//       await setAppFlow(authUser, appId);
-
-//       await tx.done;
-//     } catch (error) {
-//       return {}
-//     }
-
-
-
-//   } catch (error) {
-//     console.log(error);
-//   }
-
-
-//   // Mark As Filled
-//   // try {
-//   //   // Read-only transaction for multiple stores
-//   //   const tx = db.transaction([APP_FLOW], 'readwrite');
-//   //   const store = tx.objectStore(APP_FLOW);
-//   //   currentState = await store.index("appId_step").get([appId, imp.BLD_BUILDING_PLAN]);
-//   //   await store.put({ ...currentState, stepStatus: imp.ACTIVE });
-//   //   await tx.done;
-//   // } catch (error) {
-//   //   return {}
-//   // }
-
-// };
+export const getAssessmentStatus = async (appId) => {
+  const db = await initDB();
+  try {
+    const tx = db.transaction([C.TBL_ASSESSMENTS_STATUS], 'readwrite');
+    const store = tx.objectStore(C.TBL_ASSESSMENTS_STATUS);
+    let d1 = await store.index('appId').get(appId);
+    await tx.done;
+    return d1;
+  } catch (error) {
+    console.log(error);
+    return {}
+  }
+};
+export const setAssessmentStatus = async (appId, status, pendingAt = null) => {
+  const db = await initDB();
+  try {
+    const tx = db.transaction([C.TBL_ASSESSMENTS_STATUS], 'readwrite');
+    const store = tx.objectStore(C.TBL_ASSESSMENTS_STATUS);
+    let d1 = await store.index('appId').get(appId);
+    
+    await store.put({ ...d1, assessment_status: status, pendingAt: pendingAt });
+    await tx.done;
+    // return d1;
+  } catch (error) {
+    console.log(error);
+    return {}
+  }
+};
 
 
-
-
-// // Stage I
-// export const set_stage_i_form_flow = async (authUser, appId) => {
-//   const db = await initDB();
-
-//   try {
-//     const tx = db.transaction([C.APP_FORM_FLOW_STAGE_I], 'readwrite');
-//     const store = tx.objectStore(C.APP_FORM_FLOW_STAGE_I);
-//     for (const [index, flow] of C.STAGE_I_APP_FORM_FLOW.entries()) {
-//       let step = await store.index('appId_step').get([appId, flow.step]);
-//       if (!step) {
-//         await store.put(C.APP_FORM_FLOW_STAGE_I, { ...flow, id: Date.now() + Math.random(), appId, userId: authUser.id, });
-//       }
-//     }
-//     await tx.done;
-//   } catch (error) {
-//     console.lor(error);
-//     return {}
-//   }
-
-// };
-
-
-
+export const getAssessmentStageIFlowById = async (appId) => {
+  const db = await initDB();
+  try {
+    const tx = db.transaction([C.APP_ASSESSMENT_FLOW_STAGE_I], 'readwrite');
+    const store = tx.objectStore(C.APP_ASSESSMENT_FLOW_STAGE_I);
+    let d1 = await store.index('appId').getAll(appId);
+    d1.sort((a, b) => a.stepNo - b.stepNo);
+    await tx.done;
+    d1 = await d1.map((step) => ({ ...step, completed: step.status === C.SL.COMPLETED }));
+    return d1;
+  } catch (error) {
+    console.log(error);
+    return {}
+  }
+};

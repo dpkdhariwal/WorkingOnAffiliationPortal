@@ -244,7 +244,7 @@ const Assessment = () => {
     <Fragment>
       
       <Pageheader
-        mainheading="Document Verificationnnnnnnnnnnnnn"
+        mainheading="Document Verification"
         parentfolder="Dashboard"
         activepage="Stage I"
       />

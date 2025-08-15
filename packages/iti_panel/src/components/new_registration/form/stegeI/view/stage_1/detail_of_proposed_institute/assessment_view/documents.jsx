@@ -19,7 +19,9 @@ import { Navigations } from "../../../../../../../Assessment/components"
 
 export const Documents = ({ step, view: viewProp = false, isView = false, nav }) => {
 
-
+ const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const appId = queryParams.get("appId");
   const [view, setView] = useState(viewProp);
 
   const MaxData = [
@@ -99,7 +101,11 @@ export const Documents = ({ step, view: viewProp = false, isView = false, nav })
     // Step 2: If all valid, submit all
     if (validations.every(Boolean)) {
       Object.values(submitHandlersRef.current).forEach(({ submit }) => submit());
-      console.log(nav.next());
+
+      let result = await set.setStageIAssessmentFlow(appId);
+      let data = await set.markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DOCUMENTS_UPLOAD.step);
+      nav.next();
+
     } else {
       console.warn("Some forms have validation errors!");
     }
@@ -126,13 +132,13 @@ export const Documents = ({ step, view: viewProp = false, isView = false, nav })
           };
 
           switch (item.check) {
-            case get.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_AUTHORIZED_SIGNATORY:
+            case C.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_AUTHORIZED_SIGNATORY:
               return <IdProofOfAuthorizedSignatory isView={isView} key={index} registerSubmit={register} />
-            case get.ASSESSMENT_STAGE_I_KEYS.REGISTRATION_CERTIFICATE_OF_APPLICANT_ORGANIZATION:
+            case C.ASSESSMENT_STAGE_I_KEYS.REGISTRATION_CERTIFICATE_OF_APPLICANT_ORGANIZATION:
               return <RegistrationCertificateOfApplicantOrganization isView={isView} key={index} registerSubmit={register} />
-            case get.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_SECRETARY_CHAIRPERSON_PRESIDENT:
+            case C.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_SECRETARY_CHAIRPERSON_PRESIDENT:
               return <IdProofOfSecretaryChairpersonPresident isView={isView} key={index} registerSubmit={register} />
-            case get.ASSESSMENT_STAGE_I_KEYS.RESOLUTION_CERTIFICATE:
+            case C.ASSESSMENT_STAGE_I_KEYS.RESOLUTION_CERTIFICATE:
               return <ResolutionCertificate isView={isView} key={index} registerSubmit={register} />
             default:
               return <h2>{item.check}</h2>

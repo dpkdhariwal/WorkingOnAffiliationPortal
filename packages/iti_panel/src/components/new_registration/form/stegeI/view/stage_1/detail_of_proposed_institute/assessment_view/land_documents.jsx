@@ -15,10 +15,13 @@ import * as set from "../../../../../../../../db/forms/stageI/set/set";
 
 import { get_da_status_possasion_of_land, set_da_status_possasion_of_land } from "../../../../../../../../db/forms/stageI/set/set";
 import { Navigations } from "../../../../../../../Assessment/components";
-
+import * as C from "../../../../../../../../constants";
 
 export const LandDocuments = ({ step, view: viewProp = false, isView = false, nav }) => {
   console.log(step);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const appId = queryParams.get("appId");
 
   const [view, setView] = useState(viewProp);
   const MaxData = [
@@ -76,7 +79,12 @@ export const LandDocuments = ({ step, view: viewProp = false, isView = false, na
   const [formData, setFormData] = useState({});
   const [formSubmited, setFormSubmited] = useState(false);
 
-
+const onNext = async () => {
+    // Set Flow if Not exit 
+    let result = await set.setStageIAssessmentFlow(appId);
+    let data = await set.markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step);
+    nav.next();
+  }
   return (
     <>
       <div style={{ backgroundColor: "rgb(245, 245, 245)", margin: "10px 0px 0px", borderRadius: 6, borderStyle: "dashed", borderWidth: "thin", padding: "10px", }}>
@@ -87,9 +95,9 @@ export const LandDocuments = ({ step, view: viewProp = false, isView = false, na
 
         {step?.VerificationList?.map((item, index) => {
           switch (item.check) {
-            case get.ASSESSMENT_STAGE_I_KEYS.POSSESSION_OF_LAND:
+            case C.ASSESSMENT_STAGE_I_KEYS.POSSESSION_OF_LAND:
               return <PossessionOfLand />
-            case get.ASSESSMENT_STAGE_I_KEYS.LAND_AREA:
+            case C.ASSESSMENT_STAGE_I_KEYS.LAND_AREA:
               return <LandArea />
             default:
               return <h2>{item.check}</h2>
@@ -1325,7 +1333,7 @@ export const LandDocuments = ({ step, view: viewProp = false, isView = false, na
         </div>
       </div>)} */}
 
-            <Navigations nav={nav}  />
+            <Navigations nav={nav} onNext={onNext}  />
       
 
     </>
