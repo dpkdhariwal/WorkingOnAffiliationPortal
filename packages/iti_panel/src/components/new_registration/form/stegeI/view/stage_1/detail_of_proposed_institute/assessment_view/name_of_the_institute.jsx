@@ -7,10 +7,16 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
 import { Formik, Field, FieldArray } from "formik";
+import { useLocation } from "react-router-dom";
 
-
+import * as set from "../../../../../../../../db/forms/stageI/set/set";
 
 export const Name_of_the_institute = () => {
+  // console.log(nav.next());
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const appId = queryParams.get("appId");
+ 
   const MaxData = [
     { value: "Document is not legible", label: "Document is not legible" },
     { value: "Document is irrelevant", label: "Document is irrelevant" },
@@ -64,7 +70,14 @@ export const Name_of_the_institute = () => {
   const [formData, setFormData] = useState({});
   const [formSubmited, setFormSubmited] = useState(false);
 
+  const [info, setInfo] = useState({});
+  const getInfo = async () => {
+    let info = await set.getDetails(appId);
+    setInfo(info);
+  }
+    useEffect(() => { getInfo() }, []);
 
+  useEffect(() => { console.log(info); }, [info]);
   return (
     <>
       <Row
@@ -91,8 +104,8 @@ export const Name_of_the_institute = () => {
                 <th style={{ border: "1px solid black" }}>Type of Institute</th>
               </tr>
               <tr>
-                <td style={{ border: "1px solid black" }}>Manohar Lal ITI</td>
-                <td style={{ border: "1px solid black" }}>Government</td>
+                <td style={{ border: "1px solid black" }}>{info?.proposed_insti_details?.name_of_applicant_institute}</td>
+                <td style={{ border: "1px solid black" }}>{info?.proposed_insti_details?.type_of_institute}</td>
               </tr>
             </tbody>
           </table>

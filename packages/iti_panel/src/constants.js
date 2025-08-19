@@ -1235,7 +1235,7 @@ export const STEPPER_STYLE = {
 // Database Stores 
 
 
-export const DB_VERSION = 25;
+export const DB_VERSION = 26;
 export const DB_NAME = "AffliationDB";
 export const USERS = "users";
 export const USER_ROLES = "userRoles";
@@ -1764,7 +1764,9 @@ export const SL = {
   YES: "yes",
   NO: "no",
   PENDING_AT_APPLICANT: "PENDING_AT_APPLICANT",
-  
+  REVIEWED:"REVIEWED", 
+  FORM:"FORM",
+  VIEW:"VIEW",
 }
 
 

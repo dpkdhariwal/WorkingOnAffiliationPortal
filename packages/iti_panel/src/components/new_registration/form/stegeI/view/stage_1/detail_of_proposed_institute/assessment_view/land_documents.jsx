@@ -1,4 +1,4 @@
-import { Fragment, useState, useRef, useEffect } from "react";
+import React, { createContext, useRef, useContext, Fragment, useState, useEffect } from "react";
 import { Row, Col, Card, Form, InputGroup, Button, Modal } from "react-bootstrap";
 import * as formik from "formik";
 import * as yup from "yup";
@@ -16,8 +16,13 @@ import * as set from "../../../../../../../../db/forms/stageI/set/set";
 import { get_da_status_possasion_of_land, set_da_status_possasion_of_land } from "../../../../../../../../db/forms/stageI/set/set";
 import { Navigations } from "../../../../../../../Assessment/components";
 import * as C from "../../../../../../../../constants";
+import SwalManager from "../../../../../../../../common/SwalManager";
 
-export const LandDocuments = ({ step, view: viewProp = false, isView = false, nav }) => {
+
+export const FunctionRegistryContext = createContext(null);
+export const useFunctionRegistry = () => useContext(FunctionRegistryContext);
+
+export const LandDocuments = ({ steps, step, view: viewProp = false, isView = false, nav }) => {
   console.log(step);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -79,14 +84,71 @@ export const LandDocuments = ({ step, view: viewProp = false, isView = false, na
   const [formData, setFormData] = useState({});
   const [formSubmited, setFormSubmited] = useState(false);
 
-const onNext = async () => {
+  const onNext = async () => {
     // Set Flow if Not exit 
     let result = await set.setStageIAssessmentFlow(appId);
-    let data = await set.markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step);
-    nav.next();
+    const confirmed = await SwalManager.confirmSave();
+    if (!confirmed) return;
+    try {
+      SwalManager.showLoading("Saving...");
+      await new Promise(res => setTimeout(res, 3000)); // Simulated API call
+      SwalManager.hide();
+
+      let keyName, data;
+
+      Object.entries(registry.current).map(async ([key, val]) => {
+        keyName = key;
+        data = val();
+        switch (keyName) {
+          case C.ASSESSMENT_STAGE_I_KEYS.POSSESSION_OF_LAND:
+            if (data?.hasOwnProperty("states")) {
+              const { anyChangesMade, editMode, reviewStatus, viewType } = data.states;
+              console.log(data, reviewStatus, viewType, editMode);
+              switch (reviewStatus) {
+                case C.SL.PENDING:
+                  if (viewType == C.SL.FORM) {
+                    data.formRef.current.submitForm();
+                  }
+                  break;
+                case C.SL.REVIEWED:
+                  if (viewType == C.SL.FORM && editMode == true) {
+                    data.formRef.current.submitForm();
+                  }
+                  break;
+                default:
+                  console.log(data);
+                  break;
+              }
+            }
+            break;
+          default:
+            console.log("Other key:", keyName, val);
+            break;
+        }
+      });
+
+      let reuslt = await SwalManager.success("Saved Successfully");
+      if (reuslt.isConfirmed) {
+        let data = await set.markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step);
+        // nav.next();
+      }
+    } catch (error) {
+      SwalManager.hide();
+      await SwalManager.error("Failed to save form data.");
+    }
   }
+
+
+  // Experiment Starts @dpkdhariwal
+  const registry = useRef([]); // store all child functions
+  const register2 = (index, obj) => {
+    registry.current[index] = obj;
+  };
+
+
+
   return (
-    <>
+    <FunctionRegistryContext.Provider value={register2}>
       <div style={{ backgroundColor: "rgb(245, 245, 245)", margin: "10px 0px 0px", borderRadius: 6, borderStyle: "dashed", borderWidth: "thin", padding: "10px", }}>
         {/* <hr className="custom-hr"/> */}
 
@@ -104,7 +166,7 @@ const onNext = async () => {
           }
         })}
 
-       
+
 
         {false && (<>
           <Row
@@ -1311,32 +1373,9 @@ const onNext = async () => {
           </Row>
         </>)}
       </div>
-      
-       
-      {/* {isView == false && (<div style={{
-        backgroundColor: "rgb(245, 245, 245)",
-        margin: "10px 0px 0px",
-        borderRadius: 6,
-        borderStyle: "dashed",
-        borderWidth: "thin",
-        padding: "10px",
-      }} className="d-flex justify-content-between mb-3">
-        <div className="p-2">
-          <Button variant="warning">
-            Previous
-          </Button>
-        </div>
-        <div className="p-2">
-          <Button variant="success" >
-            Save & Next
-          </Button>
-        </div>
-      </div>)} */}
 
-            <Navigations nav={nav} onNext={onNext}  />
-      
-
-    </>
+      {isView == false && <Navigations nav={nav} onNext={onNext} />}
+    </FunctionRegistryContext.Provider>
   );
 };
 
@@ -1421,6 +1460,12 @@ export const PossessionOfLand = ({ step, view: viewProp = false, isView = false 
   const formRef2 = useRef();
   const dispatch = useDispatch();
 
+  // @dpkdhariwal
+  const [anyChangesMade, setAnyChangesMade] = useState(false); // true || false
+  const [editMode, setEditMode] = useState(false); // true || false
+  const [reviewStatus, setReviewStatus] = useState(C.SL.PENDING); // REVIEWED || PENDING
+  const [viewType, setViewType] = useState(C.SL.VIEW); // FORM || VIEW
+  // End
   const [showXlModal, setShowXlModal] = useState(false);
   const [selectedSize, setSelectedSize] = useState("");
   const [initValue, setInitValue] = useState({ as_per_norms: "no", reason: "", assessor_comments: "", });
@@ -1443,7 +1488,13 @@ export const PossessionOfLand = ({ step, view: viewProp = false, isView = false 
 
 
   const submitAction = async (values) => {
+    console.log(values);
     await set_da_status_possasion_of_land(appId, values);
+
+    setAnyChangesMade(false);
+    setEditMode(false);
+    setReviewStatus(C.SL.REVIEWED);
+    setViewType(C.SL.VIEW);
   }
 
 
@@ -1456,15 +1507,28 @@ export const PossessionOfLand = ({ step, view: viewProp = false, isView = false 
       setInitValue(lastObj);
       setFormData(lastObj);
       setFormSubmited(true);
+
+      setReviewStatus(C.SL.REVIEWED);
+      setViewType(C.SL.VIEW);
     }
   }
 
   useEffect(() => {
-
     loadInfo();
-
   }, [appId]);
 
+
+
+
+  const formRef = useRef(); // create ref
+  const register = useFunctionRegistry();
+  useEffect(() => {
+    register(`${C.ASSESSMENT_STAGE_I_KEYS.POSSESSION_OF_LAND}`, () => {
+      return { formRef: formRef, formData: formData, states: { anyChangesMade, editMode, reviewStatus, viewType } }
+      console.log("Child A function executed!");
+    });
+  }, [formSubmited, anyChangesMade, editMode, reviewStatus, viewType]);
+  //End
   return (
     <>
       <Row
@@ -1529,6 +1593,7 @@ export const PossessionOfLand = ({ step, view: viewProp = false, isView = false 
           <div className="form-container">
             {formSubmited == false ? (
               <Formik
+                innerRef={formRef}
                 enableReinitialize
                 validationSchema={yup.object().shape({
                   as_per_norms: yup
@@ -1543,7 +1608,7 @@ export const PossessionOfLand = ({ step, view: viewProp = false, isView = false 
                   }),
 
                   assessor_comments: yup.string().when("as_per_norms", {
-                    is: (as_per_norms, reason) => as_per_norms === "no" && reason === "Any other reason, please specify",
+                    is: (as_per_norms, reason) => as_per_norms === "no" || reason === "Any other reason, please specify",
                     then: () =>
                       yup.string().required("Please provide your comments"),
                     otherwise: () => yup.string().notRequired(),
@@ -1702,11 +1767,11 @@ export const PossessionOfLand = ({ step, view: viewProp = false, isView = false 
 
                       </Form>
                     </Card.Body>
-                    <Card.Footer style={{ padding: "2px" }} className="d-flex justify-content-between">
+                    {/* <Card.Footer style={{ padding: "2px" }} className="d-flex justify-content-between">
                       <Button variant="primary" onClick={submitForm}>
                         Submit
                       </Button>
-                    </Card.Footer>
+                    </Card.Footer> */}
                   </Card>
                 )}
               </Formik>
@@ -2047,11 +2112,11 @@ export const LandArea = ({ step, view: viewProp = false, isView = false }) => {
 
                       </Form>
                     </Card.Body>
-                    <Card.Footer style={{ padding: "2px" }} className="d-flex justify-content-between">
+                    {/* <Card.Footer style={{ padding: "2px" }} className="d-flex justify-content-between">
                       <Button variant="primary" onClick={submitForm}>
                         Submit
                       </Button>
-                    </Card.Footer>
+                    </Card.Footer> */}
                   </Card>
                 )}
               </Formik>

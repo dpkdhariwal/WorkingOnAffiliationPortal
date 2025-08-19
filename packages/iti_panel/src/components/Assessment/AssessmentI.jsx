@@ -55,11 +55,11 @@ import AssessmentCivilInfraStruction from "./stage-II/AssessmentCivilInfraStruct
 
 const LINE_HEIGHT = 400;
 
-import {StageIAssessment} from "../../screens/state/assessor/stage_I_assessment";
+import { StageIAssessment } from "../../screens/state/assessor/stage_I_assessment";
 
 
-import {setAppFlow} from "../../db/users";
-import {STAGE_I__ASSESSMENT} from "../../constants";
+import { setAppFlow } from "../../db/users";
+import { STAGE_I__ASSESSMENT } from "../../constants";
 
 const Assessment = () => {
   const BuildingDetail = [
@@ -242,7 +242,7 @@ const Assessment = () => {
 
   return (
     <Fragment>
-      
+
       <Pageheader
         mainheading="Document Verification"
         parentfolder="Dashboard"
@@ -250,9 +250,9 @@ const Assessment = () => {
       />
 
 
-        <StageIAssessment/>
-      <br/>
-      <br/>
+      <StageIAssessment />
+      <br />
+      <br />
 
 
       {false && (<Card className="custom-card" style={{ marginTop: "10px" }}>
@@ -455,7 +455,7 @@ export const MarkAsCompleteStageIAssessment = () => {
           title: "Saving...",
           didOpen: () => {
 
-              setAppFlow(appId, STAGE_I__ASSESSMENT);
+            setAppFlow(appId, STAGE_I__ASSESSMENT);
 
             // Swal.showLoading();
             // dispatch({ type: UPDATE_ENTITY_DETAILS, payload: values });
@@ -476,9 +476,9 @@ export const MarkAsCompleteStageIAssessment = () => {
   return (
     <Fragment>
 
-        <div className="d-flex justify-content-end mb-3 " style={{marginTop:'15px'}}>
-                 <Button onClick={submit} className="btn-success" size="lg">Mark as Complete Stage I Document Verfication</Button>
-                </div>
+      <div className="d-flex justify-content-end mb-3 " style={{ marginTop: '15px' }}>
+        <Button onClick={submit} className="btn-success" size="lg">Mark as Complete Stage I Document Verfication</Button>
+      </div>
     </Fragment>
   );
 };

@@ -7,7 +7,9 @@ import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
 import { Formik, Field, FieldArray } from "formik";
+import { useLocation } from "react-router-dom";
 
+import * as set from "../../../../../../../../db/forms/stageI/set/set";
 
 
 export const InstituteLocation = () => {
@@ -65,6 +67,20 @@ export const InstituteLocation = () => {
   const [formSubmited, setFormSubmited] = useState(false);
 
 
+   // console.log(nav.next());
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const appId = queryParams.get("appId");
+    
+    const [info, setInfo] = useState({});
+    const getInfo = async () => {
+      let info = await set.getDetails(appId);
+      setInfo(info);
+    }
+    useEffect(() => { getInfo() }, []);
+  
+    useEffect(() => { console.log(info); }, [info]);
+
   return (
     <>
       <div style={{
@@ -89,7 +105,7 @@ export const InstituteLocation = () => {
               <th style={{ border: "1px solid black" }}>Type of Institute</th>
             </tr>
             <tr>
-              <td style={{ border: "1px solid black" }}>Urban</td>
+              <td style={{ border: "1px solid black" }}>{info?.proposed_insti_details?.institute_location}</td>
             </tr>
           </tbody>
         </table>
@@ -104,12 +120,13 @@ export const InstituteLocation = () => {
           <tbody>
             <tr>
               <th style={{ border: "1px solid black" }}>Falls Under Hill Area/Hill?</th>
-              <td style={{ border: "1px solid black" }}>Yes</td>
+              <td style={{ border: "1px solid black" }}>{info?.proposed_insti_details?.is_falls_under_hill_area_hill}</td>
             </tr>
-            <tr>
+            {info?.proposed_insti_details?.is_falls_under_hill_area_hill == "yes" && (<tr>
               <td style={{ border: "1px solid black" }}>Supporting Government Notification/Order/Circular</td>
               <td style={{ border: "1px solid black" }}><Button>View</Button></td>
-            </tr>
+            </tr>)}
+            
           </tbody>
         </table>
 
@@ -123,12 +140,12 @@ export const InstituteLocation = () => {
           <tbody>
             <tr>
               <th style={{ border: "1px solid black" }}>Falls Under Border District</th>
-              <td style={{ border: "1px solid black" }}>Yes</td>
+              <td style={{ border: "1px solid black" }}>{info?.proposed_insti_details?.is_falls_under_border_district}</td>
             </tr>
-            <tr>
+             {info?.proposed_insti_details?.is_falls_under_border_district == "yes" && (<tr>
               <td style={{ border: "1px solid black" }}>Supporting Government Notification/Order/Circular</td>
               <td style={{ border: "1px solid black" }}><Button>View</Button></td>
-            </tr>
+            </tr>)}
           </tbody>
         </table>
 
@@ -158,8 +175,8 @@ export const InstituteLocation = () => {
 
             </tr>
             <tr>
-              <td style={{ border: "1px solid black" }}>Yes</td>
-              <td style={{ border: "1px solid black" }}>Yes</td>
+              <td style={{ border: "1px solid black" }}>{info?.proposed_insti_details?.under_msti_category}</td>
+              <td style={{ border: "1px solid black" }}>{info?.proposed_insti_details?.Whether_the_institute_is_exclusive_for_women_trainees}</td>
 
             </tr>
 
@@ -191,8 +208,8 @@ export const InstituteLocation = () => {
 
             </tr>
             <tr>
-              <td style={{ border: "1px solid black" }}>1.7556789</td>
-              <td style={{ border: "1px solid black" }}>2.23456456</td>
+              <td style={{ border: "1px solid black" }}>{info?.proposed_insti_details?.latitude}</td>
+              <td style={{ border: "1px solid black" }}>{info?.proposed_insti_details?.Longitude}</td>
 
             </tr>
 

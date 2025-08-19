@@ -253,7 +253,7 @@ export const setAssessmentStatus = async (appId, status, pendingAt = null) => {
     const tx = db.transaction([C.TBL_ASSESSMENTS_STATUS], 'readwrite');
     const store = tx.objectStore(C.TBL_ASSESSMENTS_STATUS);
     let d1 = await store.index('appId').get(appId);
-    
+
     await store.put({ ...d1, assessment_status: status, pendingAt: pendingAt });
     await tx.done;
     // return d1;
@@ -262,7 +262,6 @@ export const setAssessmentStatus = async (appId, status, pendingAt = null) => {
     return {}
   }
 };
-
 
 export const getAssessmentStageIFlowById = async (appId) => {
   const db = await initDB();
@@ -278,4 +277,71 @@ export const getAssessmentStageIFlowById = async (appId) => {
     console.log(error);
     return {}
   }
+};
+
+
+export const getAssessmentProgressStatus = async (appId) => {
+  const db = await initDB();
+  try {
+    const tx = db.transaction([C.APP_ASSESSMENT_FLOW_STAGE_I], 'readonly');
+    const store = tx.objectStore(C.APP_ASSESSMENT_FLOW_STAGE_I);
+    let steps = await store.index('appId').getAll(appId);
+    await tx.done;
+
+    steps.sort((a, b) => a.stepNo - b.stepNo);
+
+    // Add computed flag
+    steps = steps.map(step => ({
+      ...step,
+      completed: step.status === C.SL.COMPLETED
+    }));
+    const allCompleted = steps.every(step => step.completed); // 👈 check here
+    console.log("All completed:", allCompleted);
+    return {
+      steps,
+      allCompleted
+    };
+  } catch (error) {
+    console.error(error);
+    return { steps: [], allCompleted: false };
+  }
+};
+
+
+export const getDetails = async (appId, stage=null, entity=null ) => {
+  const db = await initDB();
+  try {
+    const tx = db.transaction([C.ENTITY_DETAILS, C.ENTITY_ADDRESS, C.OTHER_ITI,C.PROPOSED_INSTI_DETAILS, C.PROPOSED_INSTI_ADDRESSES, C.NEW_INSTI_TRADE_LIST], 'readwrite');
+    const store_1 = tx.objectStore(C.ENTITY_DETAILS);
+    const store_2 = tx.objectStore(C.ENTITY_ADDRESS);
+    const store_3 = tx.objectStore(C.OTHER_ITI);
+    const store_4 = tx.objectStore(C.PROPOSED_INSTI_DETAILS);
+    const store_5 = tx.objectStore(C.PROPOSED_INSTI_ADDRESSES);
+    const store_6 = tx.objectStore(C.NEW_INSTI_TRADE_LIST);
+    
+    
+    
+
+    
+    
+    let entity_details = await store_1.index("appId").get(appId);
+    let entity_address = await store_2.index("appId").get(appId);
+    let other_iti = await store_3.index("appId").getAll(appId);
+
+    let proposed_insti_details = await store_4.index("appId").get(appId);
+    let proposed_insti_addresses = await store_5.index("appId").get(appId);
+
+
+    let new_insti_trade_list = await store_6.index("appId").getAll(appId);
+    
+    
+
+    
+    console.log(entity_details, entity_address, other_iti, proposed_insti_details, proposed_insti_addresses, new_insti_trade_list);
+    await tx.done;
+    return {entity_details, entity_address, other_iti, proposed_insti_details, proposed_insti_addresses, new_insti_trade_list};
+  } catch (error) {
+    console.error(error);
+  }
+
 };

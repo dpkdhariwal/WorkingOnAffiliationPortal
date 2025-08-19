@@ -1,25 +1,28 @@
-import { Fragment, useState, useRef, useEffect } from "react";
-import { Row, Col, Card, Form, InputGroup, Button, Modal } from "react-bootstrap";
+import React, { createContext, useRef, useContext, Fragment, useState, useEffect } from "react";
+import { Row, Col, Card, Form as BS, InputGroup, Button, Modal } from "react-bootstrap";
 import * as formik from "formik";
 import * as yup from "yup";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
-import { Formik, Field, FieldArray } from "formik";
+import { Formik, Field, FieldArray, Form, ErrorMessage, useFormikContext } from "formik";
 import { useLocation } from "react-router-dom";
-
 import * as get from "../../../../../../../../db/forms/stageI/get/get";
 import * as set from "../../../../../../../../db/forms/stageI/set/set";
-
 import * as C from "../../../../../../../../constants";
-
 import { Navigations } from "../../../../../../../Assessment/components"
+
+// import { Form, Field, ErrorMessage, useFormikContext } from "formik";
+import SwalManager from "../../../../../../../../common/SwalManager";
+
+export const FunctionRegistryContext = createContext(null);
+export const useFunctionRegistry = () => useContext(FunctionRegistryContext);
 
 
 export const Documents = ({ step, view: viewProp = false, isView = false, nav }) => {
 
- const location = useLocation();
+  const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const appId = queryParams.get("appId");
   const [view, setView] = useState(viewProp);
@@ -87,53 +90,101 @@ export const Documents = ({ step, view: viewProp = false, isView = false, nav })
 
   const handleAllSubmit = async () => {
 
-    // Step 1: Validate all forms
-    // console.log(submitHandlersRef.current);
+    const confirmed = await SwalManager.confirmSave();
+    if (!confirmed) return;
 
-    const validations = await Promise.all(
-      Object.values(submitHandlersRef.current).map(async ({ validate }) => {
-        const errors = await validate();
-        console.log(errors);
-        return Object.keys(errors).length === 0;
-      })
-    );
+    try {
+      SwalManager.showLoading("Saving...");
+      await new Promise(res => setTimeout(res, 3000)); // Simulated API call
+      SwalManager.hide();
 
-    // Step 2: If all valid, submit all
-    if (validations.every(Boolean)) {
-      Object.values(submitHandlersRef.current).forEach(({ submit }) => submit());
+      let keyName, data;
+      Object.entries(registry.current).map(async ([key, val]) => {
+        keyName = key;
+        data = val();
+        switch (keyName) {
+          case C.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_AUTHORIZED_SIGNATORY:
+          case C.ASSESSMENT_STAGE_I_KEYS.REGISTRATION_CERTIFICATE_OF_APPLICANT_ORGANIZATION:
+          case C.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_SECRETARY_CHAIRPERSON_PRESIDENT:
+          case C.ASSESSMENT_STAGE_I_KEYS.RESOLUTION_CERTIFICATE:
+            console.log(data);
+            if (data?.hasOwnProperty("states")) {
+              const { anyChangesMade, editMode, reviewStatus, viewType } = data.states;
+              switch (reviewStatus) {
+                case C.SL.PENDING:
+                  if (viewType == C.SL.FORM) {
+                    data.formRef.current.submitForm();
+                  }
+                  break;
+                case C.SL.REVIEWED:
+                  if (viewType == C.SL.FORM && editMode == true) {
+                    data.formRef.current.submitForm();
+                  }
+                  break;
+                default:
+                  console.log(data);
+                  break;
+              }
+            }
+            break;
+          default:
+            console.log("Other key:", keyName, val);
+            break;
+        }
+      });
 
-      let result = await set.setStageIAssessmentFlow(appId);
-      let data = await set.markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DOCUMENTS_UPLOAD.step);
-      nav.next();
-
-    } else {
-      console.warn("Some forms have validation errors!");
+      let reuslt = await SwalManager.success("Saved Successfully");
+      if (reuslt.isConfirmed) {
+        nav.next();
+      }
+    } catch (error) {
+      SwalManager.hide();
+      await SwalManager.error("Failed to save form data.");
     }
+
+
+
   };
   // nav.next();
 
 
+  const testFn = () => {
+    console.log('dfadfdf');
+  }
 
 
+  // Experiment Starts @dpkdhariwal
+  const registry = useRef([]); // store all child functions
+  const register2 = (index, obj) => {
+    registry.current[index] = obj;
+  };
+
+  // const callAction = (name, ...args) => {
+  //   console.log(registry);
+  //   if (registry.current[name]) {
+  //     return registry.current[name](...args);
+  //   } else {
+  //     console.warn(`No function registered for ${name}`);
+  //   }
+  // };
+
+
+  console.log(step);
+
+  // Experiment Ends here @dpkdhariwal
   return (
-    <>
-      <div style={{
-        backgroundColor: "rgb(245, 245, 245)",
-        margin: "10px 0px 0px",
-        borderRadius: 6,
-        borderStyle: "dashed",
-        borderWidth: "thin",
-        padding: "10px",
-      }}>
+    <FunctionRegistryContext.Provider value={register2}>
+      <div style={{ backgroundColor: "rgb(245, 245, 245)", margin: "10px 0px 0px", borderRadius: 6, borderStyle: "dashed", borderWidth: "thin", padding: "10px", }}>
+
         {step?.VerificationList?.map((item, index) => {
-          const register = (submit, validate) => {
-            console.log(typeof validate, typeof submit);
-            submitHandlersRef.current[index] = { submit, validate }
+
+          const register = (submit, validate, formVisibility, formSubmited, getLatestValue) => {
+            submitHandlersRef.current[index] = { submit, validate, formVisibility, formSubmited, getLatestValue }
           };
 
           switch (item.check) {
             case C.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_AUTHORIZED_SIGNATORY:
-              return <IdProofOfAuthorizedSignatory isView={isView} key={index} registerSubmit={register} />
+              return <IdProofOfAuthorizedSignatory isView={isView} key={index} registerSubmit={register} test={testFn} />
             case C.ASSESSMENT_STAGE_I_KEYS.REGISTRATION_CERTIFICATE_OF_APPLICANT_ORGANIZATION:
               return <RegistrationCertificateOfApplicantOrganization isView={isView} key={index} registerSubmit={register} />
             case C.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_SECRETARY_CHAIRPERSON_PRESIDENT:
@@ -144,8 +195,7 @@ export const Documents = ({ step, view: viewProp = false, isView = false, nav })
               return <h2>{item.check}</h2>
           }
         })}
-
-
+        
         {false && (<>
           <Row
             style={{
@@ -258,16 +308,16 @@ export const Documents = ({ step, view: viewProp = false, isView = false, nav })
                           </div>
                         </Card.Header>
                         <Card.Body>
-                          <Form ref={formRef2} onSubmit={handleSubmit} validated>
+                          <BS ref={formRef2} onSubmit={handleSubmit} validated>
                             <Row className="mb-3">
-                              <Form.Group>
-                                <Form.Label>
+                              <BS.Group>
+                                <BS.Label>
 
                                   Whether the ID Proof of Authorized Signatory is as per norms?
                                   <span style={{ color: "red" }}>*</span>
-                                </Form.Label>
+                                </BS.Label>
                                 <div>
-                                  <Form.Check
+                                  <BS.Check
                                     inline
                                     type="radio"
                                     label="Yes"
@@ -280,7 +330,7 @@ export const Documents = ({ step, view: viewProp = false, isView = false, nav })
                                       !!errors.as_per_norms
                                     }
                                   />
-                                  <Form.Check
+                                  <BS.Check
                                     inline
                                     type="radio"
                                     label="No"
@@ -295,23 +345,23 @@ export const Documents = ({ step, view: viewProp = false, isView = false, nav })
                                   />
                                 </div>
 
-                                <Form.Control.Feedback type="invalid">
+                                <BS.Control.Feedback type="invalid">
                                   {errors.category}
-                                </Form.Control.Feedback>
-                              </Form.Group>
+                                </BS.Control.Feedback>
+                              </BS.Group>
                             </Row>
                             {values.as_per_norms === "no" && (
                               <Row className="mb-3">
-                                <Form.Group
+                                <BS.Group
                                   as={Col}
                                   md="12"
                                   controlId="validationCustom02"
                                 >
-                                  <Form.Label>
+                                  <BS.Label>
                                     Select the Reason(s) and Raise
                                     Non-Conformities (NC)
                                     <span style={{ color: "red" }}>*</span>
-                                  </Form.Label>
+                                  </BS.Label>
                                   <Field
                                     required
                                     name="category"
@@ -327,23 +377,23 @@ export const Documents = ({ step, view: viewProp = false, isView = false, nav })
                                       );
                                     })}
                                   </Field>
-                                  <Form.Control.Feedback>
+                                  <BS.Control.Feedback>
                                     Looks good!
-                                  </Form.Control.Feedback>
-                                </Form.Group>
+                                  </BS.Control.Feedback>
+                                </BS.Group>
 
-                                <Form.Group
+                                <BS.Group
                                   required
                                   as={Col}
                                   md="12"
                                   controlId="text-area"
                                   style={{ marginTop: "1rem" }}
                                 >
-                                  <Form.Label>
+                                  <BS.Label>
                                     Any other reason, please specify{" "}
                                     <span style={{ color: "red" }}>*</span>
-                                  </Form.Label>
-                                  <Form.Control
+                                  </BS.Label>
+                                  <BS.Control
                                     name="assessor_comments"
                                     required
                                     as="textarea"
@@ -366,13 +416,13 @@ export const Documents = ({ step, view: viewProp = false, isView = false, nav })
                                         {errors.assessor_comments}
                                       </div>
                                     )}
-                                </Form.Group>
+                                </BS.Group>
                               </Row>
                             )}
                             <Button variant="primary" onClick={submitForm}>
                               Submit
                             </Button>
-                          </Form>
+                          </BS>
                         </Card.Body>
                         <Card.Footer></Card.Footer>
                       </Card>
@@ -539,15 +589,15 @@ export const Documents = ({ step, view: viewProp = false, isView = false, nav })
                           </div>
                         </Card.Header>
                         <Card.Body>
-                          <Form ref={formRef2} onSubmit={handleSubmit} validated>
+                          <BS ref={formRef2} onSubmit={handleSubmit} validated>
                             <Row className="mb-3">
-                              <Form.Group>
-                                <Form.Label>
+                              <BS.Group>
+                                <BS.Label>
                                   Whether the Registration Certificate of the Applicant Organization is as the norms?
                                   <span style={{ color: "red" }}>*</span>
-                                </Form.Label>
+                                </BS.Label>
                                 <div>
-                                  <Form.Check
+                                  <BS.Check
                                     inline
                                     type="radio"
                                     label="Yes"
@@ -560,7 +610,7 @@ export const Documents = ({ step, view: viewProp = false, isView = false, nav })
                                       !!errors.as_per_norms
                                     }
                                   />
-                                  <Form.Check
+                                  <BS.Check
                                     inline
                                     type="radio"
                                     label="No"
@@ -575,23 +625,23 @@ export const Documents = ({ step, view: viewProp = false, isView = false, nav })
                                   />
                                 </div>
 
-                                <Form.Control.Feedback type="invalid">
+                                <BS.Control.Feedback type="invalid">
                                   {errors.category}
-                                </Form.Control.Feedback>
-                              </Form.Group>
+                                </BS.Control.Feedback>
+                              </BS.Group>
                             </Row>
                             {values.as_per_norms === "no" && (
                               <Row className="mb-3">
-                                <Form.Group
+                                <BS.Group
                                   as={Col}
                                   md="12"
                                   controlId="validationCustom02"
                                 >
-                                  <Form.Label>
+                                  <BS.Label>
                                     Select the Reason(s) and Raise
                                     Non-Conformities (NC)
                                     <span style={{ color: "red" }}>*</span>
-                                  </Form.Label>
+                                  </BS.Label>
                                   <Field
                                     required
                                     name="category"
@@ -607,23 +657,23 @@ export const Documents = ({ step, view: viewProp = false, isView = false, nav })
                                       );
                                     })}
                                   </Field>
-                                  <Form.Control.Feedback>
+                                  <BS.Control.Feedback>
                                     Looks good!
-                                  </Form.Control.Feedback>
-                                </Form.Group>
+                                  </BS.Control.Feedback>
+                                </BS.Group>
 
-                                <Form.Group
+                                <BS.Group
                                   required
                                   as={Col}
                                   md="12"
                                   controlId="text-area"
                                   style={{ marginTop: "1rem" }}
                                 >
-                                  <Form.Label>
+                                  <BS.Label>
                                     Any other reason, please specify{" "}
                                     <span style={{ color: "red" }}>*</span>
-                                  </Form.Label>
-                                  <Form.Control
+                                  </BS.Label>
+                                  <BS.Control
                                     name="assessor_comments"
                                     required
                                     as="textarea"
@@ -646,13 +696,13 @@ export const Documents = ({ step, view: viewProp = false, isView = false, nav })
                                         {errors.assessor_comments}
                                       </div>
                                     )}
-                                </Form.Group>
+                                </BS.Group>
                               </Row>
                             )}
                             <Button variant="primary" onClick={submitForm}>
                               Submit
                             </Button>
-                          </Form>
+                          </BS>
                         </Card.Body>
                         <Card.Footer></Card.Footer>
                       </Card>
@@ -840,15 +890,15 @@ export const Documents = ({ step, view: viewProp = false, isView = false, nav })
                           </div>
                         </Card.Header>
                         <Card.Body>
-                          <Form ref={formRef2} onSubmit={handleSubmit} validated>
+                          <BS ref={formRef2} onSubmit={handleSubmit} validated>
                             <Row className="mb-3">
-                              <Form.Group>
-                                <Form.Label>
+                              <BS.Group>
+                                <BS.Label>
                                   Whether the ID Proof of Secretary/Chairperson/President is as per norms?
                                   <span style={{ color: "red" }}>*</span>
-                                </Form.Label>
+                                </BS.Label>
                                 <div>
-                                  <Form.Check
+                                  <BS.Check
                                     inline
                                     type="radio"
                                     label="Yes"
@@ -861,7 +911,7 @@ export const Documents = ({ step, view: viewProp = false, isView = false, nav })
                                       !!errors.as_per_norms
                                     }
                                   />
-                                  <Form.Check
+                                  <BS.Check
                                     inline
                                     type="radio"
                                     label="No"
@@ -876,23 +926,23 @@ export const Documents = ({ step, view: viewProp = false, isView = false, nav })
                                   />
                                 </div>
 
-                                <Form.Control.Feedback type="invalid">
+                                <BS.Control.Feedback type="invalid">
                                   {errors.category}
-                                </Form.Control.Feedback>
-                              </Form.Group>
+                                </BS.Control.Feedback>
+                              </BS.Group>
                             </Row>
                             {values.as_per_norms === "no" && (
                               <Row className="mb-3">
-                                <Form.Group
+                                <BS.Group
                                   as={Col}
                                   md="12"
                                   controlId="validationCustom02"
                                 >
-                                  <Form.Label>
+                                  <BS.Label>
                                     Select the Reason(s) and Raise
                                     Non-Conformities (NC)
                                     <span style={{ color: "red" }}>*</span>
-                                  </Form.Label>
+                                  </BS.Label>
                                   <Field
                                     required
                                     name="category"
@@ -908,23 +958,23 @@ export const Documents = ({ step, view: viewProp = false, isView = false, nav })
                                       );
                                     })}
                                   </Field>
-                                  <Form.Control.Feedback>
+                                  <BS.Control.Feedback>
                                     Looks good!
-                                  </Form.Control.Feedback>
-                                </Form.Group>
+                                  </BS.Control.Feedback>
+                                </BS.Group>
 
-                                <Form.Group
+                                <BS.Group
                                   required
                                   as={Col}
                                   md="12"
                                   controlId="text-area"
                                   style={{ marginTop: "1rem" }}
                                 >
-                                  <Form.Label>
+                                  <BS.Label>
                                     Any other reason, please specify{" "}
                                     <span style={{ color: "red" }}>*</span>
-                                  </Form.Label>
-                                  <Form.Control
+                                  </BS.Label>
+                                  <BS.Control
                                     name="assessor_comments"
                                     required
                                     as="textarea"
@@ -947,13 +997,13 @@ export const Documents = ({ step, view: viewProp = false, isView = false, nav })
                                         {errors.assessor_comments}
                                       </div>
                                     )}
-                                </Form.Group>
+                                </BS.Group>
                               </Row>
                             )}
                             <Button variant="primary" onClick={submitForm}>
                               Submit
                             </Button>
-                          </Form>
+                          </BS>
                         </Card.Body>
                         <Card.Footer></Card.Footer>
                       </Card>
@@ -1141,15 +1191,15 @@ export const Documents = ({ step, view: viewProp = false, isView = false, nav })
                           </div>
                         </Card.Header>
                         <Card.Body>
-                          <Form ref={formRef2} onSubmit={handleSubmit} validated>
+                          <BS ref={formRef2} onSubmit={handleSubmit} validated>
                             <Row className="mb-3">
-                              <Form.Group>
-                                <Form.Label>
+                              <BS.Group>
+                                <BS.Label>
                                   Whether the Resolution of the institute is as per norms?
                                   <span style={{ color: "red" }}>*</span>
-                                </Form.Label>
+                                </BS.Label>
                                 <div>
-                                  <Form.Check
+                                  <BS.Check
                                     inline
                                     type="radio"
                                     label="Yes"
@@ -1162,7 +1212,7 @@ export const Documents = ({ step, view: viewProp = false, isView = false, nav })
                                       !!errors.as_per_norms
                                     }
                                   />
-                                  <Form.Check
+                                  <BS.Check
                                     inline
                                     type="radio"
                                     label="No"
@@ -1177,23 +1227,23 @@ export const Documents = ({ step, view: viewProp = false, isView = false, nav })
                                   />
                                 </div>
 
-                                <Form.Control.Feedback type="invalid">
+                                <BS.Control.Feedback type="invalid">
                                   {errors.category}
-                                </Form.Control.Feedback>
-                              </Form.Group>
+                                </BS.Control.Feedback>
+                              </BS.Group>
                             </Row>
                             {values.as_per_norms === "no" && (
                               <Row className="mb-3">
-                                <Form.Group
+                                <BS.Group
                                   as={Col}
                                   md="12"
                                   controlId="validationCustom02"
                                 >
-                                  <Form.Label>
+                                  <BS.Label>
                                     Select the Reason(s) and Raise
                                     Non-Conformities (NC)
                                     <span style={{ color: "red" }}>*</span>
-                                  </Form.Label>
+                                  </BS.Label>
                                   <Field
                                     required
                                     name="category"
@@ -1209,23 +1259,23 @@ export const Documents = ({ step, view: viewProp = false, isView = false, nav })
                                       );
                                     })}
                                   </Field>
-                                  <Form.Control.Feedback>
+                                  <BS.Control.Feedback>
                                     Looks good!
-                                  </Form.Control.Feedback>
-                                </Form.Group>
+                                  </BS.Control.Feedback>
+                                </BS.Group>
 
-                                <Form.Group
+                                <BS.Group
                                   required
                                   as={Col}
                                   md="12"
                                   controlId="text-area"
                                   style={{ marginTop: "1rem" }}
                                 >
-                                  <Form.Label>
+                                  <BS.Label>
                                     Any other reason, please specify{" "}
                                     <span style={{ color: "red" }}>*</span>
-                                  </Form.Label>
-                                  <Form.Control
+                                  </BS.Label>
+                                  <BS.Control
                                     name="assessor_comments"
                                     required
                                     as="textarea"
@@ -1248,13 +1298,13 @@ export const Documents = ({ step, view: viewProp = false, isView = false, nav })
                                         {errors.assessor_comments}
                                       </div>
                                     )}
-                                </Form.Group>
+                                </BS.Group>
                               </Row>
                             )}
                             <Button variant="primary" onClick={submitForm}>
                               Submit
                             </Button>
-                          </Form>
+                          </BS>
                         </Card.Body>
                         <Card.Footer></Card.Footer>
                       </Card>
@@ -1325,34 +1375,10 @@ export const Documents = ({ step, view: viewProp = false, isView = false, nav })
             </Col>)}
           </Row>
         </>)}
-
       </div>
-
-
-      <Navigations nav={nav} onNext={() => { handleAllSubmit() }} />
-
-      {/* { isView == false && (<div style={{
-        backgroundColor: "rgb(245, 245, 245)",
-        margin: "10px 0px 0px",
-        borderRadius: 6,
-        borderStyle: "dashed",
-        borderWidth: "thin",
-        padding: "10px",
-      }} className="d-flex justify-content-between mb-3">
-        <div className="p-2">
-          <Button variant="warning">
-            Previous
-          </Button>
-        </div>
-        <div className="p-2">
-          <Button variant="success" onClick={handleAllSubmit}>
-            Save & Next
-          </Button>
-        </div>
-
-      </div>)} */}
-
-    </>
+    {isView ==false && <Navigations nav={nav} onNext={() => { handleAllSubmit() }} /> }
+      
+    </FunctionRegistryContext.Provider>
   );
 };
 
@@ -1360,7 +1386,43 @@ export const Documents = ({ step, view: viewProp = false, isView = false, nav })
 
 
 // ID Proof of Authorized Signatory
-export const IdProofOfAuthorizedSignatory = ({ step, view: viewProp = false, registerSubmit, isView = false }) => {
+export const IdProofOfAuthorizedSignatory = ({ step, view: viewProp = false, registerSubmit, isView = false, actionInfo }) => {
+
+  // @dpkdhariwal
+  const [anyChangesMade, setAnyChangesMade] = useState(false); // true || false
+  const [editMode, setEditMode] = useState(false); // true || false
+  const [reviewStatus, setReviewStatus] = useState(C.SL.PENDING); // REVIEWED || PENDING
+  const [viewType, setViewType] = useState(C.SL.VIEW); // FORM || VIEW
+  const [initValue, setInitValue] = useState({ as_per_norms: "no", reason: "", assessor_comments: "", });
+  // End
+
+  const formikMethodsRef = useRef(null);
+
+  // Function to capture Formik methods
+  const handleRegister = (methods) => {
+    formikMethodsRef.current = methods;
+  };
+
+  // Validation Schema
+  const validationSchema = yup.object().shape({
+    as_per_norms: yup
+      .string()
+      .required("Select Whether the ID Proof is as per norms?"),
+
+    reason: yup.string().when("as_per_norms", {
+      is: "no",
+      then: () => yup.string().required("Please select a category"),
+      otherwise: () => yup.string().notRequired(),
+    }),
+
+    assessor_comments: yup.string().when(["as_per_norms", "reason"], {
+      is: (as_per_norms, reason) =>
+        as_per_norms === "no" &&
+        reason === "Any other reason, please specify",
+      then: () => yup.string().required("Please provide your comments"),
+      otherwise: () => yup.string().notRequired(),
+    }),
+  });
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -1399,11 +1461,6 @@ export const IdProofOfAuthorizedSignatory = ({ step, view: viewProp = false, reg
 
   const { Formik } = formik;
   const formRef2 = useRef();
-  const dispatch = useDispatch();
-
-  const [showXlModal, setShowXlModal] = useState(false);
-  const [selectedSize, setSelectedSize] = useState("");
-  const [initValue, setInitValue] = useState({ as_per_norms: "no", reason: "", assessor_comments: "", });
 
 
   const handleShowModal = (size) => {
@@ -1419,33 +1476,66 @@ export const IdProofOfAuthorizedSignatory = ({ step, view: viewProp = false, reg
 
 
   const [formData, setFormData] = useState({});
+  const [formVisibility, setFormVisibility] = useState(false);
   const [formSubmited, setFormSubmited] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
 
   const submitAction = async (values) => {
     console.log(values);
-    await set.set_da_status(appId, values, C.abbreviation.STAGE_I.key, get.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_AUTHORIZED_SIGNATORY);
+    await set.set_da_status(appId, values, C.abbreviation.STAGE_I.key, C.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_AUTHORIZED_SIGNATORY);
+
+    setAnyChangesMade(false);
+    setEditMode(false);
+    setReviewStatus(C.SL.REVIEWED);
+    setViewType(C.SL.VIEW);
   }
 
 
 
+
+
+
+
+  const formRef = useRef(); // create ref
+
+
+  // @dpkdhariwal
+  // Registering Action
+  const register = useFunctionRegistry();
+  useEffect(() => {
+    register(`${C.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_AUTHORIZED_SIGNATORY}`, () => {
+      return { formRef: formRef, formData: formData, states: { anyChangesMade, editMode, reviewStatus, viewType } }
+      console.log("Child A function executed!");
+    });
+  }, [formSubmited, anyChangesMade, editMode, reviewStatus, viewType]);
+  //End
+
+
+  // Loading Review Details
   const loadInfo = async () => {
-    let result = await set.get_da_status(appId, C.abbreviation.STAGE_I.key, get.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_AUTHORIZED_SIGNATORY);
-    console.log(result);
+    let result = await set.get_da_status(appId, C.abbreviation.STAGE_I.key, C.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_AUTHORIZED_SIGNATORY);
     const lastObj = result[result.length - 1];
-    console.log(lastObj);
     if (lastObj) {
       setInitValue(lastObj);
       setFormData(lastObj);
+      console.log("IT IS WORKING...");
       setFormSubmited(true);
+      setIsLoaded(true);
+
+      setReviewStatus(C.SL.REVIEWED);
+      setViewType(C.SL.VIEW);
     }
+    return lastObj;
   }
+  useEffect(() => { loadInfo(); }, [appId]);
+  //
 
-  useEffect(() => {
-
-    loadInfo();
-
-  }, [appId]);
+  // // Experiment Started Here @dpkdhariwal
+  // useEffect(() => {
+  //   registerSubmit({ submitNow: () => { formRef?.current?.submitForm(); }, initValue: initValue, formVisibility: formVisibility });
+  // }, [formRef.current, initValue, formVisibility]);
+  // //End
 
   return (
     <>
@@ -1465,7 +1555,7 @@ export const IdProofOfAuthorizedSignatory = ({ step, view: viewProp = false, reg
             cellPadding="5px"
           >
             <tbody>
-              <tr>              <th colSpan={5}>ID Proof of Authorized Signatory</th>
+              <tr><th colSpan={5}>ID Proof of Authorized Signatory</th>
               </tr>
               <tr>
                 <th style={{ border: "1px solid black" }}>Name</th>
@@ -1492,37 +1582,20 @@ export const IdProofOfAuthorizedSignatory = ({ step, view: viewProp = false, reg
             </tbody>
           </table>
         </Col>
-        {true && view != true && (<Col xl={6} lg={6} md={6} sm={6}>
+        {view != true && (<Col xl={6} lg={6} md={6} sm={6}>
           <div className="form-container">
-            {formSubmited == false ? (
+            {reviewStatus == C.SL.PENDING || editMode === true && viewType == C.SL.FORM ? (
               <Formik
+                innerRef={formRef}
                 enableReinitialize
-                validationSchema={yup.object().shape({
-                  as_per_norms: yup
-                    .string()
-                    .required("Select Whether the ID Proof of Authorized Signatory is as per norms?"),
-
-                  reason: yup.string().when("as_per_norms", {
-                    is: "no", // 🔄 change to "no" since category and comments are required when it's "no"
-                    then: () =>
-                      yup.string().required("Please select a category"),
-                    otherwise: () => yup.string().notRequired(),
-                  }),
-
-                  assessor_comments: yup.string().when("as_per_norms", {
-                    is: (as_per_norms, reason) => as_per_norms === "no" || reason === "Any other reason, please specify",
-                    then: () =>
-                      yup.string().required("Please provide your comments"),
-                    otherwise: () => yup.string().notRequired(),
-                  }),
-                })}
+                validationSchema={validationSchema}
                 validateOnChange={() => console.log("validateOnChange")}
                 onSubmit={(values) => {
-                  console.log("Form submitted with values:", values);
                   setFormData(values);
                   setFormSubmited(true);
-                  // console.log(formData);
                   submitAction(values);
+                  // console.log("Form submitted with values:", values);
+                  // alert("Form submitted ✅ Check console!");
                 }}
                 initialValues={initValue}
               >
@@ -1533,172 +1606,174 @@ export const IdProofOfAuthorizedSignatory = ({ step, view: viewProp = false, reg
                   values,
                   errors,
                   touched,
-                  validateForm
+                  validateForm,
+                  dirty
                 }) => {
-                  if (registerSubmit) {
-                    registerSubmit(submitForm, validateForm,);
-                  }
-                  return (<Card className="border border-2 border-success  card custom-card shadow-size-small shadow-success card" style={{ backgroundColor: "#eff3d6" }}>
-                    <Card.Header>
-                      <label
-                        className="main-content-label my-auto"
-                        style={{ textTransform: "none" }}
-                      >
-                        Review Form
-                      </label>
-                      <div className="ms-auto d-flex">
-                        <Button
-                          size="sm"
-                          onClick={() => handleShowModal("xl")}
-                          type="button"
-                          className="rounded-pill btn-wave btn-outline-dark"
-                          variant="btn-outline-dark"
+                  useEffect(() => { setAnyChangesMade(dirty); }, [dirty, values]);
+                  // if (registerSubmit) {
+                  //   // registerSubmit(submitForm, validateForm, formVisibility, getLatestValue);
+                  // }
+                  return (
+
+                    <Card className="border border-2 border-success  card custom-card shadow-size-small shadow-success card" style={{ backgroundColor: "#eff3d6" }}>
+                      <Card.Header>
+                        <label
+                          className="main-content-label my-auto"
+                          style={{ textTransform: "none" }}
                         >
-                          Review Instructions
-                        </Button>
-                      </div>
-                    </Card.Header>
-                    <Card.Body>
-                      <Form ref={formRef2} onSubmit={handleSubmit} validated>
-                        <Row className="mb-3">
-                          <Form.Group>
-                            <Form.Label>
-                              Whether the ID Proof of Authorized Signatory is as per norms?
-                              <span style={{ color: "red" }}>*</span>
-                            </Form.Label>
-                            <div>
-                              <Form.Check
-                                inline
-                                type="radio"
-                                label="Yes"
-                                name="as_per_norms"
-                                value="yes"
-                                onChange={handleChange}
-                                checked={values.as_per_norms === "yes"}
-                                isInvalid={
-                                  touched.as_per_norms &&
-                                  !!errors.as_per_norms
-                                }
-                              />
-                              <Form.Check
-                                inline
-                                type="radio"
-                                label="No"
-                                name="as_per_norms"
-                                value="no"
-                                onChange={handleChange}
-                                checked={values.as_per_norms === "no"}
-                                isInvalid={
-                                  touched.as_per_norms &&
-                                  !!errors.as_per_norms
-                                }
-                              />
-                            </div>
+                          Review Form
+                          <p>Any changes made? {anyChangesMade ? "Yes" : "No"}</p>
 
-                            <Form.Control.Feedback type="invalid">
-                              {errors.category}
-                            </Form.Control.Feedback>
-                          </Form.Group>
-                        </Row>
-                        {values.as_per_norms === "no" && (
+                        </label>
+                        <div className="ms-auto d-flex">
+                          <Button
+                            size="sm"
+                            onClick={() => handleShowModal("xl")}
+                            type="button"
+                            className="rounded-pill btn-wave btn-outline-dark"
+                            variant="btn-outline-dark"
+                          >
+                            Review Instructions
+                          </Button>
+                        </div>
+                      </Card.Header>
+                      <Card.Body>
+                        <BS ref={formRef2} onSubmit={handleSubmit} validated>
                           <Row className="mb-3">
-                            <Form.Group
-                              as={Col}
-                              md="12"
-                              controlId="validationCustom02"
-                            >
-                              <Form.Label>
-                                Select the Reason(s) and Raise
-                                Non-Conformities (NC)
+                            <BS.Group>
+                              <BS.Label>
+                                Whether the ID Proof of Authorized Signatory is as per norms?
                                 <span style={{ color: "red" }}>*</span>
-                              </Form.Label>
-                              <Field
-                                required
-                                name="reason"
-                                as="select"
-                                className="form-control"
-                              >
-                                <option value="">Select</option>
-                                {MaxData.map((lang, i) => {
-                                  return (
-                                    <option key={i} value={lang.value}>
-                                      {lang.label}
-                                    </option>
-                                  );
-                                })}
-                              </Field>
-                              <Form.Control.Feedback>
-                                Looks good!
-                              </Form.Control.Feedback>
-                            </Form.Group>
-                            {values.reason == "Any other reason, please specify" && (<Form.Group
-                              required
-                              as={Col}
-                              md="12"
-                              controlId="text-area"
-                              style={{ marginTop: "1rem" }}
-                            >
-                              <Form.Label>
-                                Any other reason, please specify{" "}
-                                <span style={{ color: "red" }}>*</span>
-                              </Form.Label>
-                              <Form.Control
-                                name="assessor_comments"
-                                required
-                                as="textarea"
-                                rows={3}
-                                className={`form-control ${touched.assessor_comments &&
-                                  errors.assessor_comments
-                                  ? "is-invalid"
-                                  : ""
-                                  }`}
-                                value={values.assessor_comments}
-                                onChange={handleChange}
-                                isInvalid={
-                                  touched.assessor_comments &&
-                                  !!errors.assessor_comments
-                                }
-                              />
-                              {touched.assessor_comments &&
-                                errors.assessor_comments && (
-                                  <div className="invalid-feedback">
-                                    {errors.assessor_comments}
-                                  </div>
-                                )}
-                            </Form.Group>)}
+                              </BS.Label>
+                              <div>
+                                <BS.Check
+                                  inline
+                                  type="radio"
+                                  label="Yes"
+                                  name="as_per_norms"
+                                  value="yes"
+                                  onChange={handleChange}
+                                  checked={values.as_per_norms === "yes"}
+                                  isInvalid={
+                                    touched.as_per_norms &&
+                                    !!errors.as_per_norms
+                                  }
+                                />
+                                <BS.Check
+                                  inline
+                                  type="radio"
+                                  label="No"
+                                  name="as_per_norms"
+                                  value="no"
+                                  onChange={handleChange}
+                                  checked={values.as_per_norms === "no"}
+                                  isInvalid={
+                                    touched.as_per_norms &&
+                                    !!errors.as_per_norms
+                                  }
+                                />
+                              </div>
 
+                              <BS.Control.Feedback type="invalid">
+                                {errors.category}
+                              </BS.Control.Feedback>
+                            </BS.Group>
                           </Row>
-                        )}
+                          {values.as_per_norms === "no" && (
+                            <Row className="mb-3">
+                              <BS.Group
+                                as={Col}
+                                md="12"
+                                controlId="validationCustom02"
+                              >
+                                <BS.Label>
+                                  Select the Reason(s) and Raise
+                                  Non-Conformities (NC)
+                                  <span style={{ color: "red" }}>*</span>
+                                </BS.Label>
+                                <Field
+                                  required
+                                  name="reason"
+                                  as="select"
+                                  className="form-control"
+                                  onChange={handleChange}
+                                >
+                                  <option value="">Select</option>
+                                  {MaxData.map((lang, i) => {
+                                    return (
+                                      <option key={i} value={lang.value}>
+                                        {lang.label}
+                                      </option>
+                                    );
+                                  })}
+                                </Field>
+                                <BS.Control.Feedback>
+                                  Looks good!
+                                </BS.Control.Feedback>
+                              </BS.Group>
+                              {values.reason == "Any other reason, please specify" && (
+                                <BS.Group
+                                  required
+                                  as={Col}
+                                  md="12"
+                                  controlId="text-area"
+                                  style={{ marginTop: "1rem" }}
+                                >
+                                  <BS.Label>
+                                    Any other reason, please specify{" "}
+                                    <span style={{ color: "red" }}>*</span>
+                                  </BS.Label>
+                                  <BS.Control
+                                    name="assessor_comments"
+                                    required
+                                    as="textarea"
+                                    rows={3}
+                                    className={`form-control ${touched.assessor_comments &&
+                                      errors.assessor_comments
+                                      ? "is-invalid"
+                                      : ""
+                                      }`}
+                                    value={values.assessor_comments}
+                                    onChange={handleChange}
+                                    isInvalid={
+                                      touched.assessor_comments &&
+                                      !!errors.assessor_comments
+                                    }
+                                  />
+                                  {touched.assessor_comments &&
+                                    errors.assessor_comments && (
+                                      <div className="invalid-feedback">
+                                        {errors.assessor_comments}
+                                      </div>
+                                    )}
+                                </BS.Group>)}
 
-                      </Form>
-                    </Card.Body>
-                    {/* <Card.Footer style={{ padding: "2px" }} className="d-flex justify-content-between">
+                            </Row>
+                          )}
+                          {/* 🔹 Registers methods */}
+                          <FormikRegister registerSubmit={handleRegister} />
+                        </BS>
+                      </Card.Body>
+                      {/* <Card.Footer style={{ padding: "2px" }} className="d-flex justify-content-between">
                       <Button variant="primary" onClick={submitForm}>
                         Submit
                       </Button>
                     </Card.Footer> */}
-                  </Card>)
-                }}
+                    </Card>)
+                }
+                }
               </Formik>
-            ) : formSubmited == true ? (
+            ) : reviewStatus == C.SL.REVIEWED && editMode === false ? (
               <Card
                 className="border border-2 border-success  card custom-card shadow-size-small shadow-success card"
-                style={
-                  formData.as_per_norms == "yes"
-                    ? { backgroundColor: "#d6f3e0" }
-                    : { backgroundColor: "#f3d6d6" }
-                }
-              >
+                style={formData.as_per_norms == "yes" ? { backgroundColor: "#d6f3e0" } : { backgroundColor: "#f3d6d6" }} >
                 <Card.Header>
-                  <label
-                    className="main-content-label my-auto"
-                    style={{ textTransform: "none" }}
-                  >
+                  <label className="main-content-label my-auto" style={{ textTransform: "none" }} >
                     Assessor Comments
                   </label>
-                  <div className="ms-auto  d-flex">
+                  {/* <div className="ms-auto  d-flex">
                     25th April 2025:10:20PM
-                  </div>
+                  </div> */}
                 </Card.Header>
                 <Card.Body style={{ paddingBottom: '0px', paddingTop: '4px' }} >
                   <Row className="mb-3">
@@ -1708,11 +1783,10 @@ export const IdProofOfAuthorizedSignatory = ({ step, view: viewProp = false, reg
                   </Row>
                 </Card.Body>
                 {isView == false && (<Card.Footer style={{ padding: "2px" }} className="d-flex justify-content-between">
-                  <Button variant="primary" onClick={() => { setFormSubmited(false); }}>
+                  <Button variant="primary" onClick={() => { setEditMode(true), setViewType(C.SL.FORM), setFormVisibility(true), setFormSubmited(false); }}>
                     Edit
                   </Button>
                 </Card.Footer>)}
-
               </Card>
             ) : (
               <h1>No Data</h1>
@@ -1727,6 +1801,8 @@ export const IdProofOfAuthorizedSignatory = ({ step, view: viewProp = false, reg
 
 // Registration Certificate of Applicant Organization
 export const RegistrationCertificateOfApplicantOrganization = ({ step, view: viewProp = false, registerSubmit, isView = false }) => {
+  const formRef = useRef(); // create ref
+
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const appId = queryParams.get("appId");
@@ -1782,6 +1858,7 @@ export const RegistrationCertificateOfApplicantOrganization = ({ step, view: vie
     setSelectedSize(size);
   };
 
+  const [formVisibility, setFormVisibility] = useState(false);
 
   const [formData, setFormData] = useState({});
   const [formSubmited, setFormSubmited] = useState(false);
@@ -1789,13 +1866,13 @@ export const RegistrationCertificateOfApplicantOrganization = ({ step, view: vie
 
   const submitAction = async (values) => {
     console.log(values);
-    await set.set_da_status(appId, values, C.abbreviation.STAGE_I.key, get.ASSESSMENT_STAGE_I_KEYS.REGISTRATION_CERTIFICATE_OF_APPLICANT_ORGANIZATION);
+    await set.set_da_status(appId, values, C.abbreviation.STAGE_I.key, C.ASSESSMENT_STAGE_I_KEYS.REGISTRATION_CERTIFICATE_OF_APPLICANT_ORGANIZATION);
   }
 
 
 
   const loadInfo = async () => {
-    let result = await set.get_da_status(appId, C.abbreviation.STAGE_I.key, get.ASSESSMENT_STAGE_I_KEYS.REGISTRATION_CERTIFICATE_OF_APPLICANT_ORGANIZATION);
+    let result = await set.get_da_status(appId, C.abbreviation.STAGE_I.key, C.ASSESSMENT_STAGE_I_KEYS.REGISTRATION_CERTIFICATE_OF_APPLICANT_ORGANIZATION);
     console.log(result);
     if (result) {
       const lastObj = result[result.length - 1];
@@ -1813,6 +1890,21 @@ export const RegistrationCertificateOfApplicantOrganization = ({ step, view: vie
     loadInfo();
 
   }, [appId]);
+
+  // Experiment Started Here @dpkdhariwal
+  // const formRef = useRef(); // create ref
+
+  // Experiment Started Here @dpkdhariwal
+  const register = useFunctionRegistry();
+  useEffect(() => {
+    register(`${C.ASSESSMENT_STAGE_I_KEYS.REGISTRATION_CERTIFICATE_OF_APPLICANT_ORGANIZATION}`, () => {
+      if (formRef.current) {
+        return { formRef: formRef, formData: formData, formVisibility: formVisibility, formSubmited: formSubmited }
+      }
+      console.log("Child A function executed!");
+    });
+  }, [formSubmited]);
+  //End
 
   return (
     <>
@@ -1848,6 +1940,8 @@ export const RegistrationCertificateOfApplicantOrganization = ({ step, view: vie
           <div className="form-container">
             {formSubmited == false ? (
               <Formik
+                innerRef={formRef}
+
                 enableReinitialize
                 validationSchema={yup.object().shape({
                   as_per_norms: yup
@@ -1862,7 +1956,7 @@ export const RegistrationCertificateOfApplicantOrganization = ({ step, view: vie
                   }),
 
                   assessor_comments: yup.string().when("as_per_norms", {
-                    is: "no",
+                    is: (as_per_norms, reason) => as_per_norms === "no" && reason === "Any other reason, please specify",
                     then: () =>
                       yup.string().required("Please provide your comments"),
                     otherwise: () => yup.string().notRequired(),
@@ -1889,148 +1983,150 @@ export const RegistrationCertificateOfApplicantOrganization = ({ step, view: vie
                   validateForm
                 }) => {
                   if (registerSubmit) {
-                    registerSubmit(submitForm, validateForm); // ✅ parent gets this
+                    registerSubmit(submitForm, validateForm, formVisibility);
                   }
-                  return (<Card className="border border-2 border-success  card custom-card shadow-size-small shadow-success card" style={{ backgroundColor: "#eff3d6" }}>
-                    <Card.Header>
-                      <label
-                        className="main-content-label my-auto"
-                        style={{ textTransform: "none" }}
-                      >
-                        Review Form
-                      </label>
-                      <div className="ms-auto d-flex">
-                        <Button
-                          size="sm"
-                          onClick={() => handleShowModal("xl")}
-                          type="button"
-                          className="rounded-pill btn-wave btn-outline-dark"
-                          variant="btn-outline-dark"
+                  return (
+                    <Card className="border border-2 border-success  card custom-card shadow-size-small shadow-success card" style={{ backgroundColor: "#eff3d6" }}>
+                      <Card.Header>
+                        <label
+                          className="main-content-label my-auto"
+                          style={{ textTransform: "none" }}
                         >
-                          Review Instructions
-                        </Button>
-                      </div>
-                    </Card.Header>
-                    <Card.Body>
-                      <Form ref={formRef2} onSubmit={handleSubmit} validated>
-                        <Row className="mb-3">
-                          <Form.Group>
-                            <Form.Label>
-                              Whether the Registration Certificate of the Applicant Organization is as the norms?
-                              <span style={{ color: "red" }}>*</span>
-                            </Form.Label>
-                            <div>
-                              <Form.Check
-                                inline
-                                type="radio"
-                                label="Yes"
-                                name="as_per_norms"
-                                value="yes"
-                                onChange={handleChange}
-                                checked={values.as_per_norms === "yes"}
-                                isInvalid={
-                                  touched.as_per_norms &&
-                                  !!errors.as_per_norms
-                                }
-                              />
-                              <Form.Check
-                                inline
-                                type="radio"
-                                label="No"
-                                name="as_per_norms"
-                                value="no"
-                                onChange={handleChange}
-                                checked={values.as_per_norms === "no"}
-                                isInvalid={
-                                  touched.as_per_norms &&
-                                  !!errors.as_per_norms
-                                }
-                              />
-                            </div>
-
-                            <Form.Control.Feedback type="invalid">
-                              {errors.category}
-                            </Form.Control.Feedback>
-                          </Form.Group>
-                        </Row>
-                        {values.as_per_norms === "no" && (
+                          Review Form
+                        </label>
+                        <div className="ms-auto d-flex">
+                          <Button
+                            size="sm"
+                            onClick={() => handleShowModal("xl")}
+                            type="button"
+                            className="rounded-pill btn-wave btn-outline-dark"
+                            variant="btn-outline-dark"
+                          >
+                            Review Instructions
+                          </Button>
+                        </div>
+                      </Card.Header>
+                      <Card.Body>
+                        <BS ref={formRef2} onSubmit={handleSubmit} validated>
                           <Row className="mb-3">
-                            <Form.Group
-                              as={Col}
-                              md="12"
-                              controlId="validationCustom02"
-                            >
-                              <Form.Label>
-                                Select the Reason(s) and Raise
-                                Non-Conformities (NC)
+                            <BS.Group>
+                              <BS.Label>
+                                Whether the Registration Certificate of the Applicant Organization is as the norms?
                                 <span style={{ color: "red" }}>*</span>
-                              </Form.Label>
-                              <Field
-                                required
-                                name="reason"
-                                as="select"
-                                className="form-control"
-                              >
-                                <option value="">Select</option>
-                                {MaxData.map((lang, i) => {
-                                  return (
-                                    <option key={i} value={lang.value}>
-                                      {lang.label}
-                                    </option>
-                                  );
-                                })}
-                              </Field>
-                              <Form.Control.Feedback>
-                                Looks good!
-                              </Form.Control.Feedback>
-                            </Form.Group>
-                            {values.reason == "Any other reason, please specify" && (<Form.Group
-                              required
-                              as={Col}
-                              md="12"
-                              controlId="text-area"
-                              style={{ marginTop: "1rem" }}
-                            >
-                              <Form.Label>
-                                Any other reason, please specify{" "}
-                                <span style={{ color: "red" }}>*</span>
-                              </Form.Label>
-                              <Form.Control
-                                name="assessor_comments"
-                                required
-                                as="textarea"
-                                rows={3}
-                                className={`form-control ${touched.assessor_comments &&
-                                  errors.assessor_comments
-                                  ? "is-invalid"
-                                  : ""
-                                  }`}
-                                value={values.assessor_comments}
-                                onChange={handleChange}
-                                isInvalid={
-                                  touched.assessor_comments &&
-                                  !!errors.assessor_comments
-                                }
-                              />
-                              {touched.assessor_comments &&
-                                errors.assessor_comments && (
-                                  <div className="invalid-feedback">
-                                    {errors.assessor_comments}
-                                  </div>
-                                )}
-                            </Form.Group>)}
+                              </BS.Label>
+                              <div>
+                                <BS.Check
+                                  inline
+                                  type="radio"
+                                  label="Yes"
+                                  name="as_per_norms"
+                                  value="yes"
+                                  onChange={handleChange}
+                                  checked={values.as_per_norms === "yes"}
+                                  isInvalid={
+                                    touched.as_per_norms &&
+                                    !!errors.as_per_norms
+                                  }
+                                />
+                                <BS.Check
+                                  inline
+                                  type="radio"
+                                  label="No"
+                                  name="as_per_norms"
+                                  value="no"
+                                  onChange={handleChange}
+                                  checked={values.as_per_norms === "no"}
+                                  isInvalid={
+                                    touched.as_per_norms &&
+                                    !!errors.as_per_norms
+                                  }
+                                />
+                              </div>
 
+                              <BS.Control.Feedback type="invalid">
+                                {errors.category}
+                              </BS.Control.Feedback>
+                            </BS.Group>
                           </Row>
-                        )}
+                          {values.as_per_norms === "no" && (
+                            <Row className="mb-3">
+                              <BS.Group
+                                as={Col}
+                                md="12"
+                                controlId="validationCustom02"
+                              >
+                                <BS.Label>
+                                  Select the Reason(s) and Raise
+                                  Non-Conformities (NC)
+                                  <span style={{ color: "red" }}>*</span>
+                                </BS.Label>
+                                <Field
+                                  required
+                                  name="reason"
+                                  as="select"
+                                  className="form-control"
+                                >
+                                  <option value="">Select</option>
+                                  {MaxData.map((lang, i) => {
+                                    return (
+                                      <option key={i} value={lang.value}>
+                                        {lang.label}
+                                      </option>
+                                    );
+                                  })}
+                                </Field>
+                                <BS.Control.Feedback>
+                                  Looks good!
+                                </BS.Control.Feedback>
+                              </BS.Group>
+                              {values.reason == "Any other reason, please specify" && (<BS.Group
+                                required
+                                as={Col}
+                                md="12"
+                                controlId="text-area"
+                                style={{ marginTop: "1rem" }}
+                              >
+                                <BS.Label>
+                                  Any other reason, please specify{" "}
+                                  <span style={{ color: "red" }}>*</span>
+                                </BS.Label>
+                                <BS.Control
+                                  name="assessor_comments"
+                                  required
+                                  as="textarea"
+                                  rows={3}
+                                  className={`form-control ${touched.assessor_comments &&
+                                    errors.assessor_comments
+                                    ? "is-invalid"
+                                    : ""
+                                    }`}
+                                  value={values.assessor_comments}
+                                  onChange={handleChange}
+                                  isInvalid={
+                                    touched.assessor_comments &&
+                                    !!errors.assessor_comments
+                                  }
+                                />
+                                {touched.assessor_comments &&
+                                  errors.assessor_comments && (
+                                    <div className="invalid-feedback">
+                                      {errors.assessor_comments}
+                                    </div>
+                                  )}
+                              </BS.Group>)}
 
-                      </Form>
-                    </Card.Body>
-                    {/* <Card.Footer style={{ padding: "2px" }} className="d-flex justify-content-between">
+                            </Row>
+                          )}
+
+                        </BS>
+                      </Card.Body>
+                      {/* <Card.Footer style={{ padding: "2px" }} className="d-flex justify-content-between">
                       <Button variant="primary" onClick={submitForm}>
                         Submit
                       </Button>
                     </Card.Footer> */}
-                  </Card>)
+                    </Card>
+                  )
                 }}
               </Formik>
             ) : formSubmited == true ? (
@@ -2061,7 +2157,7 @@ export const RegistrationCertificateOfApplicantOrganization = ({ step, view: vie
                   </Row>
                 </Card.Body>
                 {isView == false && (<Card.Footer style={{ padding: "2px" }} className="d-flex justify-content-between">
-                  <Button variant="primary" onClick={() => { setFormSubmited(false); }}>
+                  <Button variant="primary" onClick={() => { setFormVisibility(true), setFormSubmited(false); }}>
                     Edit
                   </Button>
                 </Card.Footer>)}
@@ -2080,6 +2176,8 @@ export const RegistrationCertificateOfApplicantOrganization = ({ step, view: vie
 
 // ID Proof of Secretary/Chairperson/President
 export const IdProofOfSecretaryChairpersonPresident = ({ step, view: viewProp = false, registerSubmit, isView = false }) => {
+  const formRef = useRef(); // create ref
+
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const appId = queryParams.get("appId");
@@ -2135,6 +2233,7 @@ export const IdProofOfSecretaryChairpersonPresident = ({ step, view: viewProp = 
     setSelectedSize(size);
   };
 
+  const [formVisibility, setFormVisibility] = useState(false);
 
   const [formData, setFormData] = useState({});
   const [formSubmited, setFormSubmited] = useState(false);
@@ -2142,13 +2241,13 @@ export const IdProofOfSecretaryChairpersonPresident = ({ step, view: viewProp = 
 
   const submitAction = async (values) => {
     console.log(values);
-    await set.set_da_status(appId, values, C.abbreviation.STAGE_I.key, get.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_SECRETARY_CHAIRPERSON_PRESIDENT);
+    await set.set_da_status(appId, values, C.abbreviation.STAGE_I.key, C.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_SECRETARY_CHAIRPERSON_PRESIDENT);
   }
 
 
 
   const loadInfo = async () => {
-    let result = await set.get_da_status(appId, C.abbreviation.STAGE_I.key, get.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_SECRETARY_CHAIRPERSON_PRESIDENT);
+    let result = await set.get_da_status(appId, C.abbreviation.STAGE_I.key, C.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_SECRETARY_CHAIRPERSON_PRESIDENT);
     console.log(result);
     if (result) {
       const lastObj = result[result.length - 1];
@@ -2166,6 +2265,18 @@ export const IdProofOfSecretaryChairpersonPresident = ({ step, view: viewProp = 
     loadInfo();
 
   }, [appId]);
+
+  // Experiment Started Here @dpkdhariwal
+  const register = useFunctionRegistry();
+  useEffect(() => {
+    register(`${C.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_SECRETARY_CHAIRPERSON_PRESIDENT}`, () => {
+      if (formRef.current) {
+        return { formRef: formRef, formData: formData, formVisibility: formVisibility, formSubmited: formSubmited }
+      }
+      console.log("Child A function executed!");
+    });
+  }, [formSubmited]);
+  //End
 
   return (
     <>
@@ -2225,6 +2336,8 @@ export const IdProofOfSecretaryChairpersonPresident = ({ step, view: viewProp = 
           <div className="form-container">
             {formSubmited == false ? (
               <Formik
+                innerRef={formRef}
+
                 enableReinitialize
                 validationSchema={yup.object().shape({
                   as_per_norms: yup
@@ -2239,7 +2352,7 @@ export const IdProofOfSecretaryChairpersonPresident = ({ step, view: viewProp = 
                   }),
 
                   assessor_comments: yup.string().when("as_per_norms", {
-                    is: "no",
+                    is: (as_per_norms, reason) => as_per_norms === "no" && reason === "Any other reason, please specify",
                     then: () =>
                       yup.string().required("Please provide your comments"),
                     otherwise: () => yup.string().notRequired(),
@@ -2266,7 +2379,7 @@ export const IdProofOfSecretaryChairpersonPresident = ({ step, view: viewProp = 
                   validateForm
                 }) => {
                   if (registerSubmit) {
-                    registerSubmit(submitForm, validateForm);
+                    registerSubmit(submitForm, validateForm, formVisibility);
                   }
 
                   return (<Card className="border border-2 border-success  card custom-card shadow-size-small shadow-success card" style={{ backgroundColor: "#eff3d6" }}>
@@ -2290,15 +2403,15 @@ export const IdProofOfSecretaryChairpersonPresident = ({ step, view: viewProp = 
                       </div>
                     </Card.Header>
                     <Card.Body>
-                      <Form ref={formRef2} onSubmit={handleSubmit} validated>
+                      <BS ref={formRef2} onSubmit={handleSubmit} validated>
                         <Row className="mb-3">
-                          <Form.Group>
-                            <Form.Label>
+                          <BS.Group>
+                            <BS.Label>
                               Whether the ID Proof of Secretary/Chairperson/President is as per norms?
                               <span style={{ color: "red" }}>*</span>
-                            </Form.Label>
+                            </BS.Label>
                             <div>
-                              <Form.Check
+                              <BS.Check
                                 inline
                                 type="radio"
                                 label="Yes"
@@ -2311,7 +2424,7 @@ export const IdProofOfSecretaryChairpersonPresident = ({ step, view: viewProp = 
                                   !!errors.as_per_norms
                                 }
                               />
-                              <Form.Check
+                              <BS.Check
                                 inline
                                 type="radio"
                                 label="No"
@@ -2326,23 +2439,23 @@ export const IdProofOfSecretaryChairpersonPresident = ({ step, view: viewProp = 
                               />
                             </div>
 
-                            <Form.Control.Feedback type="invalid">
+                            <BS.Control.Feedback type="invalid">
                               {errors.category}
-                            </Form.Control.Feedback>
-                          </Form.Group>
+                            </BS.Control.Feedback>
+                          </BS.Group>
                         </Row>
                         {values.as_per_norms === "no" && (
                           <Row className="mb-3">
-                            <Form.Group
+                            <BS.Group
                               as={Col}
                               md="12"
                               controlId="validationCustom02"
                             >
-                              <Form.Label>
+                              <BS.Label>
                                 Select the Reason(s) and Raise
                                 Non-Conformities (NC)
                                 <span style={{ color: "red" }}>*</span>
-                              </Form.Label>
+                              </BS.Label>
                               <Field
                                 required
                                 name="reason"
@@ -2358,22 +2471,22 @@ export const IdProofOfSecretaryChairpersonPresident = ({ step, view: viewProp = 
                                   );
                                 })}
                               </Field>
-                              <Form.Control.Feedback>
+                              <BS.Control.Feedback>
                                 Looks good!
-                              </Form.Control.Feedback>
-                            </Form.Group>
-                            {values.reason == "Any other reason, please specify" && (<Form.Group
+                              </BS.Control.Feedback>
+                            </BS.Group>
+                            {values.reason == "Any other reason, please specify" && (<BS.Group
                               required
                               as={Col}
                               md="12"
                               controlId="text-area"
                               style={{ marginTop: "1rem" }}
                             >
-                              <Form.Label>
+                              <BS.Label>
                                 Any other reason, please specify{" "}
                                 <span style={{ color: "red" }}>*</span>
-                              </Form.Label>
-                              <Form.Control
+                              </BS.Label>
+                              <BS.Control
                                 name="assessor_comments"
                                 required
                                 as="textarea"
@@ -2396,12 +2509,12 @@ export const IdProofOfSecretaryChairpersonPresident = ({ step, view: viewProp = 
                                     {errors.assessor_comments}
                                   </div>
                                 )}
-                            </Form.Group>)}
+                            </BS.Group>)}
 
                           </Row>
                         )}
 
-                      </Form>
+                      </BS>
                     </Card.Body>
                     {/* <Card.Footer style={{ padding: "2px" }} className="d-flex justify-content-between">
                       <Button variant="primary" onClick={submitForm}>
@@ -2439,7 +2552,7 @@ export const IdProofOfSecretaryChairpersonPresident = ({ step, view: viewProp = 
                   </Row>
                 </Card.Body>
                 {isView == false && (<Card.Footer style={{ padding: "2px" }} className="d-flex justify-content-between">
-                  <Button variant="primary" onClick={() => { setFormSubmited(false); }}>
+                  <Button variant="primary" onClick={() => { setFormVisibility(true), setFormSubmited(false); }}>
                     Edit
                   </Button>
                 </Card.Footer>)}
@@ -2459,6 +2572,8 @@ export const IdProofOfSecretaryChairpersonPresident = ({ step, view: viewProp = 
 
 // Resolution Certificate
 export const ResolutionCertificate = ({ step, view: viewProp = false, registerSubmit, isView = false }) => {
+  const formRef = useRef(); // create ref
+
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const appId = queryParams.get("appId");
@@ -2514,6 +2629,7 @@ export const ResolutionCertificate = ({ step, view: viewProp = false, registerSu
     setSelectedSize(size);
   };
 
+  const [formVisibility, setFormVisibility] = useState(false);
 
   const [formData, setFormData] = useState({});
   const [formSubmited, setFormSubmited] = useState(false);
@@ -2521,13 +2637,13 @@ export const ResolutionCertificate = ({ step, view: viewProp = false, registerSu
 
   const submitAction = async (values) => {
     console.log(values);
-    await set.set_da_status(appId, values, C.abbreviation.STAGE_I.key, get.ASSESSMENT_STAGE_I_KEYS.RESOLUTION_CERTIFICATE);
+    await set.set_da_status(appId, values, C.abbreviation.STAGE_I.key, C.ASSESSMENT_STAGE_I_KEYS.RESOLUTION_CERTIFICATE);
   }
 
 
 
   const loadInfo = async () => {
-    let result = await set.get_da_status(appId, C.abbreviation.STAGE_I.key, get.ASSESSMENT_STAGE_I_KEYS.RESOLUTION_CERTIFICATE);
+    let result = await set.get_da_status(appId, C.abbreviation.STAGE_I.key, C.ASSESSMENT_STAGE_I_KEYS.RESOLUTION_CERTIFICATE);
     console.log(result);
     if (result) {
       const lastObj = result[result.length - 1];
@@ -2545,6 +2661,18 @@ export const ResolutionCertificate = ({ step, view: viewProp = false, registerSu
     loadInfo();
 
   }, [appId]);
+
+  // Experiment Started Here @dpkdhariwal
+  const register = useFunctionRegistry();
+  useEffect(() => {
+    register(`${C.ASSESSMENT_STAGE_I_KEYS.RESOLUTION_CERTIFICATE}`, () => {
+      if (formRef.current) {
+        return { formRef: formRef, formData: formData, formVisibility: formVisibility, formSubmited: formSubmited }
+      }
+      console.log("Child A function executed!");
+    });
+  }, [formSubmited]);
+  //End
 
   return (
     <>
@@ -2604,6 +2732,7 @@ export const ResolutionCertificate = ({ step, view: viewProp = false, registerSu
           <div className="form-container">
             {formSubmited == false ? (
               <Formik
+                innerRef={formRef}
                 enableReinitialize
                 validationSchema={yup.object().shape({
                   as_per_norms: yup
@@ -2618,7 +2747,7 @@ export const ResolutionCertificate = ({ step, view: viewProp = false, registerSu
                   }),
 
                   assessor_comments: yup.string().when("as_per_norms", {
-                    is: "no",
+                    is: (as_per_norms, reason) => as_per_norms === "no" && reason === "Any other reason, please specify",
                     then: () =>
                       yup.string().required("Please provide your comments"),
                     otherwise: () => yup.string().notRequired(),
@@ -2646,7 +2775,7 @@ export const ResolutionCertificate = ({ step, view: viewProp = false, registerSu
                 }) => {
 
                   if (registerSubmit) {
-                    registerSubmit(submitForm, validateForm);
+                    registerSubmit(submitForm, validateForm, formVisibility);
                   }
                   return (<Card className="border border-2 border-success  card custom-card shadow-size-small shadow-success card" style={{ backgroundColor: "#eff3d6" }}>
                     <Card.Header>
@@ -2669,15 +2798,15 @@ export const ResolutionCertificate = ({ step, view: viewProp = false, registerSu
                       </div>
                     </Card.Header>
                     <Card.Body>
-                      <Form ref={formRef2} onSubmit={handleSubmit} validated>
+                      <BS ref={formRef2} onSubmit={handleSubmit} validated>
                         <Row className="mb-3">
-                          <Form.Group>
-                            <Form.Label>
+                          <BS.Group>
+                            <BS.Label>
                               Whether the Resolution of the institute is as per norms?
                               <span style={{ color: "red" }}>*</span>
-                            </Form.Label>
+                            </BS.Label>
                             <div>
-                              <Form.Check
+                              <BS.Check
                                 inline
                                 type="radio"
                                 label="Yes"
@@ -2690,7 +2819,7 @@ export const ResolutionCertificate = ({ step, view: viewProp = false, registerSu
                                   !!errors.as_per_norms
                                 }
                               />
-                              <Form.Check
+                              <BS.Check
                                 inline
                                 type="radio"
                                 label="No"
@@ -2705,23 +2834,23 @@ export const ResolutionCertificate = ({ step, view: viewProp = false, registerSu
                               />
                             </div>
 
-                            <Form.Control.Feedback type="invalid">
+                            <BS.Control.Feedback type="invalid">
                               {errors.category}
-                            </Form.Control.Feedback>
-                          </Form.Group>
+                            </BS.Control.Feedback>
+                          </BS.Group>
                         </Row>
                         {values.as_per_norms === "no" && (
                           <Row className="mb-3">
-                            <Form.Group
+                            <BS.Group
                               as={Col}
                               md="12"
                               controlId="validationCustom02"
                             >
-                              <Form.Label>
+                              <BS.Label>
                                 Select the Reason(s) and Raise
                                 Non-Conformities (NC)
                                 <span style={{ color: "red" }}>*</span>
-                              </Form.Label>
+                              </BS.Label>
                               <Field
                                 required
                                 name="reason"
@@ -2737,21 +2866,21 @@ export const ResolutionCertificate = ({ step, view: viewProp = false, registerSu
                                   );
                                 })}
                               </Field>
-                              <Form.Control.Feedback>
+                              <BS.Control.Feedback>
                                 Looks good!
-                              </Form.Control.Feedback>
-                            </Form.Group>
-                            {values.reason == "Any other reason, please specify" && (<Form.Group
+                              </BS.Control.Feedback>
+                            </BS.Group>
+                            {values.reason == "Any other reason, please specify" && (<BS.Group
                               required
                               as={Col}
                               md="12"
                               controlId="text-area"
                               style={{ marginTop: "1rem" }}
                             >
-                              <Form.Label>
+                              <BS.Label>
                                 Any other reason, please specify{" "}
                                 <span style={{ color: "red" }}>*</span>
-                              </Form.Label>
+                              </BS.Label>
                               <Form.Control
                                 name="assessor_comments"
                                 required
@@ -2775,12 +2904,12 @@ export const ResolutionCertificate = ({ step, view: viewProp = false, registerSu
                                     {errors.assessor_comments}
                                   </div>
                                 )}
-                            </Form.Group>)}
+                            </BS.Group>)}
 
                           </Row>
                         )}
 
-                      </Form>
+                      </BS>
                     </Card.Body>
                     {/* <Card.Footer style={{ padding: "2px" }} className="d-flex justify-content-between">
                       <Button variant="primary" onClick={submitForm}>
@@ -2819,7 +2948,7 @@ export const ResolutionCertificate = ({ step, view: viewProp = false, registerSu
                   </Row>
                 </Card.Body>
                 {isView == false && (<Card.Footer style={{ padding: "2px" }} className="d-flex justify-content-between">
-                  <Button variant="primary" onClick={() => { setFormSubmited(false); }}>
+                  <Button variant="primary" onClick={() => { setFormVisibility(true), setFormSubmited(false); }}>
                     Edit
                   </Button>
                 </Card.Footer>)}
@@ -2834,3 +2963,21 @@ export const ResolutionCertificate = ({ step, view: viewProp = false, registerSu
     </>
   );
 };
+
+
+// 🔹 Helper Component to register Formik methods outside
+function FormikRegister({ registerSubmit }) {
+  const { submitForm, validateForm, values } = useFormikContext();
+
+  React.useEffect(() => {
+    if (registerSubmit) {
+      registerSubmit({
+        submitForm,
+        validateForm,
+        getValues: () => values,
+      });
+    }
+  }, [submitForm, validateForm, values, registerSubmit]);
+
+  return null;
+}

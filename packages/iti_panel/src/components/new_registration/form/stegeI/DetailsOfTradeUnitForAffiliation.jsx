@@ -24,6 +24,9 @@ import { useLocation } from "react-router-dom";
 import { Navigations } from "../../../Assessment/components";
 import { markAsCompleteStageAssessmentFlow, setStageIAssessmentFlow } from "../../../../db/forms/stageI/set/set";
 
+import * as set from "../../../../db/forms/stageI/set/set";
+
+
 
 const DetailsOfDocumentsToBeUploaded = ({ step, setActive }) => {
   const location = useLocation();
@@ -321,6 +324,18 @@ export const Assessment_DetailsOfDocumentsToBeUploaded = ({ step, view: viewProp
     nav.next();
   }
 
+  const [info, setInfo] = useState({});
+  const [tradeList, setTradeList] = useState([]);
+  
+  const getInfo = async () => {
+    let res = await set.getDetails(appId);
+    setTradeList(res?.new_insti_trade_list || []); // fallback to []
+  };
+  useEffect(() => { getInfo() }, [appId]);
+
+  useEffect(() => {
+    console.log("Fetched info:", info);
+  }, [info]);
   return (
     <>
       <div
@@ -350,12 +365,12 @@ export const Assessment_DetailsOfDocumentsToBeUploaded = ({ step, view: viewProp
               <th style={{ border: "1px solid black" }}>Unit in Shift 2</th>
               <th style={{ border: "1px solid black" }}>Unit in Shift 3</th>
             </tr>
-            {["Electrician", "Fitter", "Welder", "COPA"].map((trade, idx) => (
+            {tradeList.map((trade, idx) => (
               <tr key={idx}>
-                <td style={{ border: "1px solid black" }}>{trade}</td>
-                <td style={{ border: "1px solid black" }}>Unit in Shift 1</td>
-                <td style={{ border: "1px solid black" }}>Unit in Shift 2</td>
-                <td style={{ border: "1px solid black" }}>Unit in Shift 3</td>
+                <td style={{ border: "1px solid black" }}>{trade.trade}</td>
+                <td style={{ border: "1px solid black" }}>{trade.us1}</td>
+                <td style={{ border: "1px solid black" }}>{trade.us2}</td>
+                <td style={{ border: "1px solid black" }}>{trade.us3}</td>
               </tr>
             ))}
           </tbody>
@@ -727,7 +742,9 @@ export const Assessment_DetailsOfDocumentsToBeUploaded = ({ step, view: viewProp
         </div>
       </div>)} */}
 
-      <Navigations nav={nav} onNext={onNext} />
+      {isView == false && <Navigations nav={nav} onNext={onNext} />}
+
+
 
 
       <Modal show={showXlModal} onHide={handleCloseModal} size="xl">
