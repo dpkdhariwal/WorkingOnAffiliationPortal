@@ -223,6 +223,18 @@ export const initDB = async () => {
         userStore.createIndex("isDraft", "isDraft", { unique: false });
       }
 
+      if (!db.objectStoreNames.contains(cons.DA_STAGE_I_VERIFICATIONS_CHECKLIST)) {
+        const userStore = db.createObjectStore(cons.DA_STAGE_I_VERIFICATIONS_CHECKLIST, { keyPath: "id", });
+        userStore.createIndex("appId", "appId", { unique: false });
+        userStore.createIndex("check", "check", { unique: false });
+        userStore.createIndex("status", "status", { unique: false });
+        userStore.createIndex("check_status", "check_status", ["check", "status"]);
+      }
+
+      if (!db.objectStoreNames.contains(cons.TBL_ASSESSMENTS_STATUS)) {
+        const userStore = db.createObjectStore(cons.TBL_ASSESSMENTS_STATUS, { keyPath: "id", });
+        userStore.createIndex("appId", "appId", { unique: false });
+      }      
     },
   });
 };
