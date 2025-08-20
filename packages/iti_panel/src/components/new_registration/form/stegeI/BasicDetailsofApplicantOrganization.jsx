@@ -29,7 +29,10 @@ import { AppStatusContext } from "../../../../services/context";
 import { ApplicantEntityMobile } from "./formComponent/ApplicantEntityMobileNumber";
 import { ApplicantAddressPincode } from "./formComponent/ApplicantEntityAddressPincode";
 import { Navigations } from "../../../Assessment/components";
+import { markAsCompleteStageAssessmentFlow, setStageIAssessmentFlow } from "../../../../db/forms/stageI/set/set";
+import * as set from "../../../../db/forms/stageI/set/set";
 
+import * as C from "../../../../constants";
 
 const BasicDetailsofApplicantOrganization = ({ setActive, refreshSteps }) => {
   const location = useLocation();
@@ -1216,32 +1219,36 @@ BasicDetailsofApplicantOrganization.propTypes = {
 };
 export default BasicDetailsofApplicantOrganization;
 
-export const Assessment_Basic_Detail = ({ appId, isView = false, nav }) => {
-
-  const [id, setId] = useState(appId);
-
-
-
-  useEffect(() => {
-    console.log(id);
-  }, [id]);
+export const Assessment_Basic_Detail = ({ isView = false, nav }) => {
 
   // console.log(nav.next());
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const appId = queryParams.get("appId");
+  const [id, setId] = useState(appId);
+  const [info, setInfo] = useState({});
 
-  
+  const onNext = async () => {
+    // Set Flow if Not exit 
+    let result = await setStageIAssessmentFlow(appId);
+    let data = await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.APPLICANT_ENTITY_DETAILS.step);
+    nav.next();
+  }
+
+  useEffect(() => { getInfo(); console.log(id); }, [id]);
+
+
+  const getInfo = async () => {
+    let info = await set.getDetails(appId);
+    setInfo(info);
+  }
+
+  useEffect(() => { console.log(info); }, [info]);
+
 
   return (
     <>
-      <Row
-        style={{
-          backgroundColor: "rgb(245, 245, 245)",
-          margin: "10px 0px 0px",
-          borderRadius: 6,
-          borderStyle: "dashed",
-          borderWidth: "thin",
-          padding: "2px",
-        }}
-      >
+      <Row style={{ backgroundColor: "rgb(245, 245, 245)", margin: "10px 0px 0px", borderRadius: 6, borderStyle: "dashed", borderWidth: "thin", padding: "2px", }} >
         <Col xl={12} lg={12} md={12} sm={12}>
 
           <table
@@ -1256,8 +1263,8 @@ export const Assessment_Basic_Detail = ({ appId, isView = false, nav }) => {
                 <td colSpan={7} style={{ border: "1px solid black" }}><b>Affiliation Category</b></td>
               </tr>
               <tr>
-                <td style={{ colSpan: 2 }}><b>Category:</b> <span>Application from Existing ITIs</span> </td>
-                <td><b>Sub Category:</b> <span>Addition of New Trades/Units</span> </td>
+                <td style={{ colSpan: 2 }}><b>Category:</b> <span>{info?.entity_details?.aff_category}</span> </td>
+                <td><b>Sub Category:</b> <span>{info?.entity_details?.aff_sub_category}</span> </td>
               </tr>
             </tbody>
           </table>
@@ -1275,8 +1282,8 @@ export const Assessment_Basic_Detail = ({ appId, isView = false, nav }) => {
                 <td colSpan={7} style={{ border: "1px solid black" }}><b>Applicant Entity Details</b></td>
               </tr>
               <tr>
-                <td style={{ colSpan: 2 }}><b>Category of Applicant Entity:</b> <span>Cat 1</span> </td>
-                <td><b>Name of Applicant Entity:</b> <span>Deepak Dhariwal</span> </td>
+                <td style={{ colSpan: 2 }}><b>Category of Applicant Entity:</b> <span>{info?.entity_details?.category}</span> </td>
+                <td><b>Name of Applicant Entity:</b> <span>{info?.entity_details?.name_of_applicant_entity}</span> </td>
               </tr>
             </tbody>
           </table>
@@ -1298,10 +1305,10 @@ export const Assessment_Basic_Detail = ({ appId, isView = false, nav }) => {
                 <th style={{ border: "1px solid black" }}>Applicant Entity Block/Tehsil</th>
               </tr>
               <tr>
-                <td style={{ border: "1px solid black" }}>value 1</td>
-                <td style={{ border: "1px solid black" }}>value 1</td>
-                <td style={{ border: "1px solid black" }}>value 1</td>
-                <td style={{ border: "1px solid black" }}>value 1</td>
+                <td style={{ border: "1px solid black" }}>{info?.entity_address?.ApplicantEntityState}</td>
+                <td style={{ border: "1px solid black" }}>{info?.entity_address?.ApplicantEntityDistrict}</td>
+                <td style={{ border: "1px solid black" }}>{info?.entity_address?.ApplicantEntityTown_City}</td>
+                <td style={{ border: "1px solid black" }}>{info?.entity_address?.ApplicantEntityBlock_Tehsil}</td>
               </tr>
 
               <tr style={{ border: "1px solid black" }}>
@@ -1311,10 +1318,10 @@ export const Assessment_Basic_Detail = ({ appId, isView = false, nav }) => {
                 <th style={{ border: "1px solid black" }}>Applicant Entity Landmark</th>
               </tr>
               <tr>
-                <td style={{ border: "1px solid black" }}>value 1</td>
-                <td style={{ border: "1px solid black" }}>value 1</td>
-                <td style={{ border: "1px solid black" }}>value 1</td>
-                <td style={{ border: "1px solid black" }}>value 1</td>
+                <td style={{ border: "1px solid black" }}>{info?.entity_address?.ApplicantEntitySector_Village}</td>
+                <td style={{ border: "1px solid black" }}>{info?.entity_address?.ApplicantEntityPincode}</td>
+                <td style={{ border: "1px solid black" }}>{info?.entity_address?.ApplicantEntityPlotNumber_KhasaraNumber_GataNumber}</td>
+                <td style={{ border: "1px solid black" }}>{info?.entity_address?.ApplicantEntityLandmark}</td>
               </tr>
 
               <tr style={{ border: "1px solid black" }}>
@@ -1322,14 +1329,14 @@ export const Assessment_Basic_Detail = ({ appId, isView = false, nav }) => {
                 <th style={{ border: "1px solid black" }} colSpan={2}>Applicant Contact Number</th>
               </tr>
               <tr>
-                <td style={{ border: "1px solid black" }} colSpan={2}>value 1</td>
-                <td style={{ border: "1px solid black" }} colSpan={2}>value 1</td>
+                <td style={{ border: "1px solid black" }} colSpan={2}>{info?.entity_details?.ApplicantEntityEmailId}</td>
+                <td style={{ border: "1px solid black" }} colSpan={2}>{info?.entity_details?.ApplicantContactNumber}</td>
               </tr>
             </tbody>
           </table>
 
-
-          <table
+          {info?.entity_details?.Is_the_applicant_running_any_other_iti === "yes" && (
+            <table
             width="98%"
             border={1}
             style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
@@ -1394,12 +1401,13 @@ export const Assessment_Basic_Detail = ({ appId, isView = false, nav }) => {
                 </td>
               </tr>
             </tbody>
-          </table>
-
+          </table>)}
         </Col>
       </Row>
 
-      <Navigations nav={nav} onNext={()=>{nav.next()}}  />
+
+      {isView == false && <Navigations nav={nav} onNext={() => { onNext() }} />}
+
     </>
   );
 };

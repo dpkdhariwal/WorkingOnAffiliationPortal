@@ -11,11 +11,11 @@ import { useLocation } from "react-router-dom";
 import { Link, useNavigate } from "react-router-dom";
 
 
-import { getAppCurrentStatus, getStage1FormFlow } from "../../../db/users";
+import { getAppCurrentStatus, getStage1FormFlow, setAppFlow } from "../../../db/users";
 import { STEPPER_STYLE, STAGE_I_APP_FORM_FLOW, FILLED, ST1FC } from "../../../constants";
 import * as C from "../../../constants";
 import * as cons from "../../../constants";
-import { ASSESSMENT_STAGE_I_FLOW, getAppFlowByStep } from "../../../db/forms/stageI/get/get";
+import { getAppFlowByStep } from "../../../db/forms/stageI/get/get";
 import { Assessment_Basic_Detail } from "../../../components/new_registration/form/stegeI/BasicDetailsofApplicantOrganization";
 import { Assessment_Proposed_Institute } from "../../../components/new_registration/form/stegeI/DetailsOfTheProposedInstitute";
 import { Name_of_the_institute } from "../../../components/new_registration/form/stegeI/view/stage_1/detail_of_proposed_institute/assessment_view/name_of_the_institute";
@@ -34,13 +34,15 @@ import {
   ResolutionCertificate
 } from "../../../components/new_registration/form/stegeI/view/stage_1/detail_of_proposed_institute/assessment_view/documents"
 import { MarkAsCompleteStageIAssessment } from "../../../components/Assessment/AssessmentI";
-import { setNewStatusOfAppByStep } from "../../../db/forms/stageI/set/set";
+import { getAssessmentStageIFlowById, getAssessmentStatus, markAsCompleteStageAssessmentFlow, setAssessmentStatus, setNewStatusOfAppByStep, setStageIAssessmentFlow } from "../../../db/forms/stageI/set/set";
 
-import { Navigations } from "../../../components/Assessment/components"
+import { Navigations, AsessementIActions } from "../../../components/Assessment/components"
 
+import SwalManager from "../../../common/SwalManager";
+import * as set from "../../../db/forms/stageI/set/set";
 
 export const StageIAssessment = () => {
-  const [activeStep, setActiveStep] = useState(4);
+  const [activeStep, setActiveStep] = useState(0);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const appId = queryParams.get("appId");
@@ -48,7 +50,9 @@ export const StageIAssessment = () => {
   const [status, setStatus] = useState({});
   const [firstIndex, setFirstIndex] = useState(0);
   const [lastIndex, setLastIndex] = useState(0);
+  const [assessmentStatus, setAssessmentStatus] = useState({});
 
+  const navigate = useNavigate();
 
 
   const goToSection = (step, index = null) => {
@@ -97,21 +101,21 @@ export const StageIAssessment = () => {
   };
 
   const setStepContent = (step, stepIndex) => {
-    console.log(step, step.step);
+    console.log(step, stepIndex);
     try {
       switch (step.step) {
         case ST1FC.APPLICANT_ENTITY_DETAILS.step:
           return <Assessment_Basic_Detail nav={object(step, stepIndex)} />;
         case ST1FC.DETAILS_OF_THE_PROPOSED_INSTITUTE.step:
-          return <DetailOfProposedInsti step={step} nav={object(step, stepIndex)}  />;
+          return <DetailOfProposedInsti step={step} nav={object(step, stepIndex)} />;
         case ST1FC.DETAILS_OF_TRADE_UNIT_FOR_AFFILIATION.step:
           return <Assessment_DetailsOfDocumentsToBeUploaded step={step} nav={object(step, stepIndex)} />;
         case ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step:
-          return <LandDocuments step={step} nav={object(step, stepIndex)} />;
+          return <LandDocuments steps={steps} step={step} nav={object(step, stepIndex)} />;
         case ST1FC.DOCUMENTS_UPLOAD.step:
           return <Documents step={step} nav={object(step, stepIndex)} />;
         case ST1FC.REVIEW_ASSESSMENT.step:
-          return <ReviewAssessment step={step} nav={object(step, stepIndex)} />;
+          return <ReviewAssessment steps={steps} step={step} nav={object(step, stepIndex)} />;
         default:
           return ''
       }
@@ -137,21 +141,56 @@ export const StageIAssessment = () => {
     // let result_1 = await getStage1FormFlow(appId);
     // console.log(result_1);
     let result = await getAppFlowByStep(appId, C.STAGE_I__ASSESSMENT);
+    console.log(result);
     setStatus(result.status);
-    let data = await ASSESSMENT_STAGE_I_FLOW.map((step) => ({ ...step, completed: step.status === C.SL.COMPLETED }));
+
+    // Assessment Status
+    let a_status = await getAssessmentStatus(appId);
+    console.log(a_status);
+    setAssessmentStatus(a_status);
+
+
+    // get Application flow by App Id
+    let app_stage_da_flow = await getAssessmentStageIFlowById(appId);
+    console.log(app_stage_da_flow);
+    setSteps(app_stage_da_flow);
+
+
+    // Statick for Testing
+    // let data = await C.ASSESSMENT_STAGE_I_FLOW.map((step) => ({ ...step, completed: step.status === C.SL.COMPLETED }));
     // console.log(data);
-    setSteps(data);
+    // setSteps(data);
     // setActiveStep(0);
 
     const firstIndex = 0;                 // Always 0 for the first element
-    const lastIndex = data.length - 1;   // Length minus 1 for the last element
+    const lastIndex = app_stage_da_flow.length - 1;   // Length minus 1 for the last element
     setFirstIndex(firstIndex);
     setLastIndex(lastIndex);
   };
 
 
-  const startDocsVerification = () => {
-    setNewStatusOfAppByStep(appId, C.STAGE_I__ASSESSMENT, C.STAGE_I__ASSESSMENT_ON_PROGRESS);
+  const startDocsVerification = async () => {
+
+    const confirmed = await SwalManager.confirmSave();
+    if (!confirmed) return;
+
+    try {
+      SwalManager.showLoading("Starting Desktop Assessment Process...");
+      await new Promise(res => setTimeout(res, 3000)); // Simulated API call
+      SwalManager.hide();
+      let reuslt = await SwalManager.success("Desktop Assessment Started Successfully");
+
+      if (reuslt.isConfirmed) {
+        await setNewStatusOfAppByStep(appId, C.STAGE_I__ASSESSMENT, C.STAGE_I__ASSESSMENT_ON_PROGRESS);
+        await setStageIAssessmentFlow(appId);
+        navigate(0); // In React Router v6
+      }
+
+    } catch (error) {
+      SwalManager.hide();
+      await SwalManager.error("Failed to save form data.");
+    }
+
   }
 
   useEffect(() => {
@@ -161,22 +200,34 @@ export const StageIAssessment = () => {
   return (
     <Fragment>
       {status === C.STAGE_I__ASSESSMENT_PENDING ? (<StartDocsVerification startDocsVerification={startDocsVerification} />) :
-        status === C.STAGE_I__ASSESSMENT_ON_PROGRESS ? (<Stepper styles={STEPPER_STYLE} steps={steps} currentStepIndex={activeStep} orientation="horizontal" labelPosition="bottom" onStepClick={handleStepClick} stepContent={setStepContent} />) :
+        status === C.STAGE_I__ASSESSMENT_ON_PROGRESS ? (<Stepper styles={STEPPER_STYLE} steps={steps} currentStepIndex={activeStep} orientation="horizontal" labelPosition="bottom" onStepClick={handleStepClick} stepContent={setStepContent} stepClassName={(i) => i === activeStep ? "bg-blue-500 text-white" : ""} />) :
           status === C.STAGE_I__ASSESSMENT_COMPLETED ? (<h2>Document Verification has Been Completed</h2>) : ''}
     </Fragment>
   );
 };
 
-export const DetailOfProposedInsti = ({ step, view: viewProp = false, isView = false, nav })=>{
-  return <><Name_of_the_institute /><AddressOfInstitute /><InstituteLocation />       <Navigations nav={nav}  />
- </>;
+export const DetailOfProposedInsti = ({ step, view: viewProp = false, isView = false, nav }) => {
+
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const appId = queryParams.get("appId");
+  const onNext = async () => {
+    let result = await setStageIAssessmentFlow(appId);
+    let data = await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_THE_PROPOSED_INSTITUTE.step);
+    nav.next();
+  }
+
+  return <><Name_of_the_institute /><AddressOfInstitute /><InstituteLocation />
+
+    {isView == false && <Navigations onNext={onNext} nav={nav} />}
+  </>;
 }
 
 
 const StartDocsVerification = ({ startDocsVerification }) => {
   const regCategory = useSelector((state) => state.reg.regCategory);
   const appCat = useSelector((state) => state.appCat);
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   console.log(appCat.selected);
 
   return (
@@ -203,32 +254,82 @@ const StartDocsVerification = ({ startDocsVerification }) => {
 };
 
 
-const ReviewAssessment = ({ step, view: viewProp = false, isView = false, nav }) => {
+const ReviewAssessment = ({ steps, step, view: viewProp = false, isView = false, nav }) => {
 
-  console.log(nav);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const appId = queryParams.get("appId");
 
-  return <>
-    <Assessment_Basic_Detail isView={true} />
-    <Name_of_the_institute isView={true} />
-    <AddressOfInstitute isView={true} />
-    <InstituteLocation isView={true} />
-    <Assessment_DetailsOfDocumentsToBeUploaded isView={true} />
+  const [info, setInfo] = useState({});
 
-    {/* Land Documents Starts here */}
-    <LandDocuments isView={true} />
-    <LandInfo isView={true} />
-    <PossessionOfLand isView={true} />
-    <LandArea isView={true} />
-    {/* Ends Here */}
+  const onLast = async () => {
 
-    {/* Documents Starts Here */}
-    <Documents isView={true} />
-    <IdProofOfAuthorizedSignatory isView={true} />
-    <RegistrationCertificateOfApplicantOrganization isView={true} />
-    <IdProofOfSecretaryChairpersonPresident isView={true} />
-    <ResolutionCertificate isView={true} />
-    {/* Ends Here */}
+    // Mark as Complete Review this Stage 
+    let data = await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.REVIEW_ASSESSMENT.step);
 
-    <Navigations nav={nav} />
-    <MarkAsCompleteStageIAssessment /></>;
+    // Mark as Compelete Assessment and Set Pending Applicant if Entities Not Verfied  
+    let result = await setAssessmentStatus(appId, C.SL.COMPLETED, C.SL.PENDING_AT_APPLICANT);
+
+    // Mark Stage Asessement as Completed and App Flow Also marks As Completed 
+    setAppFlow(appId, C.STAGE_I__ASSESSMENT);
+  }
+
+  const [docInfo, setDocInfo] = useState([]);
+  useEffect(() => {
+    if (steps) {
+      const docStep = steps.find(step => step.step === ST1FC.DOCUMENTS_UPLOAD.step);
+      setDocInfo(docStep);
+      console.log("DOCUMENTS_UPLOAD step:", docStep);
+    }
+  }, [steps]);
+
+  const [docInfo2, setDocInfo2] = useState([]);
+  useEffect(() => {
+    if (steps) {
+      const docStep2 = steps.find(step => step.step === C.ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step);
+      setDocInfo2(docStep2);
+      console.log("DOCUMENTS_UPLOAD step:", docStep2);
+    }
+  }, [steps]);
+
+
+
+  // Loading Review Details
+  const loadInfo = async () => {
+    let result = await set.getAssessmentProgressStatus(appId);
+    setInfo(result);
+  }
+
+  useEffect(() => {
+    loadInfo();
+  }, [])
+
+  useEffect(() => {
+    console.log(info);
+  }, [info])
+
+  return(
+     info?.allCompleted ? (<>
+      <Assessment_Basic_Detail isView={true} />
+      <Name_of_the_institute isView={true} />
+      <AddressOfInstitute isView={true} />
+      <InstituteLocation isView={true} />
+      <Assessment_DetailsOfDocumentsToBeUploaded isView={true} />
+
+      {/* Land Documents Starts here */}
+      <LandDocuments isView={true} step={docInfo2} />
+      <LandInfo isView={true} />
+      {/* <PossessionOfLand isView={true} step={docInfo2}  /> */}
+      {/* <LandArea isView={true} /> */}
+      {/* Ends Here */}
+
+      {/* Documents Starts Here */}
+      <Documents isView={true} step={docInfo} />
+      {/* Ends Here */}
+
+
+      <AsessementIActions appId={appId} nav={nav} onLast={onLast} />
+      <MarkAsCompleteStageIAssessment /></>) : (<h2>Assessment Not Yet Completed</h2>)
+  )
+  ;
 }
