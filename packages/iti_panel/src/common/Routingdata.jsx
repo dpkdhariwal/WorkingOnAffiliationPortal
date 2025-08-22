@@ -34,7 +34,7 @@ import { lazy } from "react";
 
 import { NewAppRegistration } from "../screens/RegNewApplication/NewAppRegistration";
 import { AddNewMemberByState } from "../screens/state/state_admin/add-new-member";
-
+import { ReviewAssessment } from "../screens/state/assessor/stage_I_assessment";
 
 export const Routedata = [
   {
@@ -173,7 +173,11 @@ export const Routedata = [
         elementName: <AddNewMemberByState />,
       },
 
-
+      {
+        id: 1,
+        path: `viewAssessment`,
+        elementName: <ReviewAssessment />,
+      },
     ],
   },
 ];

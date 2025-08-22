@@ -1235,7 +1235,7 @@ export const STEPPER_STYLE = {
 // Database Stores 
 
 
-export const DB_VERSION = 26;
+export const DB_VERSION = 35;
 export const DB_NAME = "AffliationDB";
 export const USERS = "users";
 export const USER_ROLES = "userRoles";
@@ -1281,11 +1281,6 @@ export const DA_LAND_DOCUMENTS = "DA_LAND_DOCUMENTS";
 export const DA_STAGE_I_VERIFICATIONS = "DA_STAGE_I_VERIFICATIONS";
 export const TBL_ASSESSMENTS_STATUS = "ASSESSMENT_STATUS";
 export const DA_STAGE_I_VERIFICATIONS_CHECKLIST = "DA_STAGE_I_VERIFICATIONS_CHECKLIST";
-
-
-
-
-
 
 
 
@@ -1764,6 +1759,8 @@ export const SL = {
   YES: "yes",
   NO: "no",
   PENDING_AT_APPLICANT: "PENDING_AT_APPLICANT",
+  PENDING_AT_ASSESSOR: "PENDING_AT_ASSESSOR",
+  
   REVIEWED:"REVIEWED", 
   FORM:"FORM",
   VIEW:"VIEW",
@@ -2100,3 +2097,36 @@ export const ASSESSMENT_STATUS = {
   assessment_status: SL.PENDING // COMPLETED || ON_PROGRESS || PENDING
 }
 
+
+
+
+export const MaxData = [
+    { value: "Document is not legible", label: "Document is not legible" },
+    { value: "Document is irrelevant", label: "Document is irrelevant" },
+    {
+      value: "Document lacks required information",
+      label: "Document lacks required information",
+    },
+    {
+      value:
+        "Document is not approved by the competent authority in the State/ UT",
+      label:
+        "Document is not approved by the competent authority in the State/ UT",
+    },
+    {
+      value:
+        "Address on the document does not match with the proposed land/ building address",
+      label:
+        "Address on the document does not match with the proposed land/ building address",
+    },
+    {
+      value:
+        "Document does not indicate the workshop for all trade/units, classrooms, IT Lab, Administrative area, Amenities area etc.",
+      label:
+        "Document does not indicate the workshop for all trade/units, classrooms, IT Lab, Administrative area, Amenities area etc.",
+    },
+    {
+      value: "Any other reason, please specify",
+      label: "Any other reason, please specify",
+    },
+  ];

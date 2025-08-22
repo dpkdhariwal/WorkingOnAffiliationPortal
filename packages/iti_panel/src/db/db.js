@@ -234,6 +234,7 @@ export const initDB = async () => {
       if (!db.objectStoreNames.contains(cons.TBL_ASSESSMENTS_STATUS)) {
         const userStore = db.createObjectStore(cons.TBL_ASSESSMENTS_STATUS, { keyPath: "id", });
         userStore.createIndex("appId", "appId", { unique: false });
+        userStore.createIndex("appId_stage", "appId_stage", ["appId", "stage"]);
       }      
     },
   });

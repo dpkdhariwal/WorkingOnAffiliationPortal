@@ -47,6 +47,7 @@ export const AppList = () => {
         </Card.Header>
         <Card.Body style={{ padding: 0 }}>
           <PrimeReactDT />
+
           {false && (<DataTable
             ref={table}
             data={tableData}

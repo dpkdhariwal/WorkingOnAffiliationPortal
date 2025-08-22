@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import React, { Children, useState, useEffect } from "react";
 
 import * as action from "../action/allActions";
-import { GoToStageIForm, GoToStageIAssessment, GoToNOCGenerateForm, GoToStageIIForm, GoToStageIIAssessment, GoToStageIIStaffDetailForm, GoToInspectionSlotSelection, GoToBatchCreattion } from "../action/allActions";
+import { GoToStageIAssessmentToUploadDocs, GoToStageIForm, GoToStageIAssessment, GoToNOCGenerateForm, GoToStageIIForm, GoToStageIIAssessment, GoToStageIIStaffDetailForm, GoToInspectionSlotSelection, GoToBatchCreattion } from "../action/allActions";
 
 
 import {
@@ -69,7 +69,9 @@ import {
   INSP_SHEDULED,
   INSP_PENDING
 } from "../../constants";
+import * as C from "../../constants";
 import { useSelector, useDispatch } from "react-redux";
+import { getAssessmentProgressStatus } from "../../db/forms/stageI/set/set";
 
 export const PendingStep = ({ info, variant }) => {
 
@@ -97,9 +99,6 @@ export const PendingStep = ({ info, variant }) => {
       setCardArrow("f-timeline-container-warning");
     }
   }, [variant]);
-
-
-
 
   // GET SET ACTIONS 
   const getSetActions = (info) => {
@@ -147,7 +146,22 @@ export const PendingStep = ({ info, variant }) => {
           case STAGE_I__ASSESSMENT_COMPLETED:
             return <h5>DD</h5>
           case STAGE_I__ASSESSMENT_ON_PROGRESS:
-            return authUser.userType === 'state_assessor' ? <GoToStageIAssessment info={info} /> : ''
+            switch (authUser.userType) {
+              case 'state_assessor':
+                if (info?.aStatus?.pendingAt === C.SL.PENDING_AT_ASSESSOR) {
+                  console.log(info?.aStatus?.pendingAt);
+                  return <GoToStageIAssessment info={info} />;
+                }
+                break
+              case 'applicant':
+                if (info?.aStatus?.pendingAt === C.SL.PENDING_AT_APPLICANT) {
+                  console.log(info?.aStatus?.pendingAt);
+                  return <GoToStageIAssessmentToUploadDocs info={info} />;
+                }
+                break;
+              default:
+                return 'NA';
+            }
           case STAGE_I__ASSESSMENT_PENDING:
             return authUser.userType === 'state_assessor' ? <GoToStageIAssessment info={info} /> : ''
           // return action.GoToStageIAssessment();

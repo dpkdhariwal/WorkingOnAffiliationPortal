@@ -60,8 +60,8 @@ export const set_da_status_possasion_of_land = async (appId, values) => {
   let currentState, id, toStore;
   id = Date.now() + Math.random();
   try {
-    const tx = db.transaction([C.DA_LAND_DOCUMENTS], 'readwrite');
-    const store = tx.objectStore(C.DA_LAND_DOCUMENTS);
+    const tx = db.transaction([C.DA_STAGE_I_VERIFICATIONS], 'readwrite');
+    const store = tx.objectStore(C.DA_STAGE_I_VERIFICATIONS);
     currentState = await store.index("appId_key_isDraft").get([appId, C.DA1_KEYS.LAND_DOCUMENT, 'yes']);
     console.log(values);
     toStore = currentState?.appId ? { ...currentState, ...values } : { ...values, id: id, appId: appId, key: C.DA1_KEYS.LAND_DOCUMENT, isDraft: C.SL.YES };
@@ -222,7 +222,8 @@ export const markAsCompleteStageAssessmentFlow = async (appId, step) => {
     let d1 = await store.index('appId_step').get([appId, step]);
     if (d1) {
       await store.put({ ...d1, status: C.SL.COMPLETED, completionDate: formattedDate });
-      if (d1?.nextStep) {
+      console.log(d1);
+      if (d1?.nextStep && d1?.nextStep != C.LAST) {
         let d2 = await store.index('appId_step').get([appId, d1?.nextStep]);
         await store.put({ ...d2, stepStatus: C.SL.ACTIVE });
       }
@@ -283,23 +284,72 @@ export const getAssessmentStageIFlowById = async (appId) => {
 export const getAssessmentProgressStatus = async (appId) => {
   const db = await initDB();
   try {
-    const tx = db.transaction([C.APP_ASSESSMENT_FLOW_STAGE_I], 'readonly');
+    const tx = db.transaction([C.APP_ASSESSMENT_FLOW_STAGE_I, C.DA_STAGE_I_VERIFICATIONS, C.TBL_ASSESSMENTS_STATUS], 'readonly');
     const store = tx.objectStore(C.APP_ASSESSMENT_FLOW_STAGE_I);
+    const store_1 = tx.objectStore(C.DA_STAGE_I_VERIFICATIONS);
+    const store_2 = tx.objectStore(C.TBL_ASSESSMENTS_STATUS);
+
+    // Getting the assessment status
+    let assessmentStatus = await store_2.index("appId").get(appId);
+
     let steps = await store.index('appId').getAll(appId);
-    await tx.done;
+    let vStatus = [];
 
+    // Removing the review assessment step from the steps
+    steps = steps.filter(step => step.step !== C.ST1FC.REVIEW_ASSESSMENT.step);
+
+    // check level 1 step is completed or not
+    const allCompleted = steps.every(step => step.status == C.SL.COMPLETED); // 👈 check here
+    vStatus.push(allCompleted);
+
+
+    // Checking the verification status of each step
+    steps = await Promise.all(
+      steps.map(async (step) => {
+        switch (step.step) {
+          case C.ST1FC.APPLICANT_ENTITY_DETAILS.step:
+          case C.ST1FC.DETAILS_OF_THE_PROPOSED_INSTITUTE.step:
+          case C.ST1FC.DETAILS_OF_TRADE_UNIT_FOR_AFFILIATION.step:
+          case C.ST1FC.DOCUMENTS_UPLOAD.step:
+            vStatus.push(true);
+            break;
+
+          case C.ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step: {
+            const d1 = await Promise.all([
+              store_1.index("appId_key_isDraft").getAll([appId, C.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_AUTHORIZED_SIGNATORY, "yes"]),
+              store_1.index("appId_key_isDraft").getAll([appId, C.ASSESSMENT_STAGE_I_KEYS.REGISTRATION_CERTIFICATE_OF_APPLICANT_ORGANIZATION, "yes"]),
+              store_1.index("appId_key_isDraft").getAll([appId, C.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_SECRETARY_CHAIRPERSON_PRESIDENT, "yes"]),
+              store_1.index("appId_key_isDraft").getAll([appId, C.ASSESSMENT_STAGE_I_KEYS.RESOLUTION_CERTIFICATE, "yes"])
+            ]);
+
+            console.log(d1);
+            const allAsPerNorms = d1.flat().every(item => item.as_per_norms === "yes");
+            vStatus.push(allAsPerNorms);
+            break;
+          }
+
+          default:
+            vStatus.push(true);
+            break;
+        }
+
+        console.log("Verification Status:", vStatus);
+
+        return {
+          ...step,
+          completed: step.status === C.SL.COMPLETED,
+        };
+      })
+    );
+
+
+    // Shorting the steps by stepNo
     steps.sort((a, b) => a.stepNo - b.stepNo);
-
-    // Add computed flag
-    steps = steps.map(step => ({
-      ...step,
-      completed: step.status === C.SL.COMPLETED
-    }));
-    const allCompleted = steps.every(step => step.completed); // 👈 check here
-    console.log("All completed:", allCompleted);
     return {
       steps,
-      allCompleted
+      allCompleted,
+      vStatus: vStatus.every(Boolean),
+      assessmentStatus
     };
   } catch (error) {
     console.error(error);
@@ -308,22 +358,18 @@ export const getAssessmentProgressStatus = async (appId) => {
 };
 
 
-export const getDetails = async (appId, stage=null, entity=null ) => {
+export const getDetails = async (appId, stage = null, entity = null) => {
   const db = await initDB();
   try {
-    const tx = db.transaction([C.ENTITY_DETAILS, C.ENTITY_ADDRESS, C.OTHER_ITI,C.PROPOSED_INSTI_DETAILS, C.PROPOSED_INSTI_ADDRESSES, C.NEW_INSTI_TRADE_LIST], 'readwrite');
+    const tx = db.transaction([C.ENTITY_DETAILS, C.ENTITY_ADDRESS, C.OTHER_ITI, C.PROPOSED_INSTI_DETAILS, C.PROPOSED_INSTI_ADDRESSES, C.NEW_INSTI_TRADE_LIST], 'readwrite');
     const store_1 = tx.objectStore(C.ENTITY_DETAILS);
     const store_2 = tx.objectStore(C.ENTITY_ADDRESS);
     const store_3 = tx.objectStore(C.OTHER_ITI);
     const store_4 = tx.objectStore(C.PROPOSED_INSTI_DETAILS);
     const store_5 = tx.objectStore(C.PROPOSED_INSTI_ADDRESSES);
     const store_6 = tx.objectStore(C.NEW_INSTI_TRADE_LIST);
-    
-    
-    
 
-    
-    
+
     let entity_details = await store_1.index("appId").get(appId);
     let entity_address = await store_2.index("appId").get(appId);
     let other_iti = await store_3.index("appId").getAll(appId);
@@ -333,13 +379,13 @@ export const getDetails = async (appId, stage=null, entity=null ) => {
 
 
     let new_insti_trade_list = await store_6.index("appId").getAll(appId);
-    
-    
 
-    
+
+
+
     console.log(entity_details, entity_address, other_iti, proposed_insti_details, proposed_insti_addresses, new_insti_trade_list);
     await tx.done;
-    return {entity_details, entity_address, other_iti, proposed_insti_details, proposed_insti_addresses, new_insti_trade_list};
+    return { entity_details, entity_address, other_iti, proposed_insti_details, proposed_insti_addresses, new_insti_trade_list };
   } catch (error) {
     console.error(error);
   }

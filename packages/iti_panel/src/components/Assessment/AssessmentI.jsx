@@ -242,19 +242,14 @@ const Assessment = () => {
 
   return (
     <Fragment>
-
       <Pageheader
         mainheading="Document Verification"
         parentfolder="Dashboard"
         activepage="Stage I"
       />
 
-
       <StageIAssessment />
       <br />
-      <br />
-
-
       {false && (<Card className="custom-card" style={{ marginTop: "10px" }}>
         <Card.Header>
           <div className="card-title">Assessment-I</div>
