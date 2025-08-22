@@ -35,7 +35,7 @@ export const GoToStageIAssessmentToUploadDocs = ({info}) => {
   const navigate = useNavigate(); // <-- Hook for navigation
 
   const goNow = () => {
-    navigate(`/dashboard/AssessmentI?appId=${info.appId}`); // <-- Your route here
+    navigate(`/dashboard/Upload-Documents?appId=${info.appId}`); // <-- Your route here
   };
 
   return (

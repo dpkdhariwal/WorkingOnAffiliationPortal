@@ -107,6 +107,12 @@ export const Routedata = [
         path: `AssessmentI`,
         elementName: <AssessmentI />,
       },
+
+      {
+        id: 1,
+        path: `Upload-Documents`,
+        elementName: <AssessmentI />,
+      },
       {
         id: 1,
         path: `AssessmentII`,
