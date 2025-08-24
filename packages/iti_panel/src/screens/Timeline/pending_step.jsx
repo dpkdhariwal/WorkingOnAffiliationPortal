@@ -142,10 +142,12 @@ export const PendingStep = ({ info, variant }) => {
             return <h5>DD</h5>
         }
       case STAGE_I__ASSESSMENT:
+        console.log(info.status);
         switch (info.status) {
           case STAGE_I__ASSESSMENT_COMPLETED:
             return <h5>DD</h5>
           case STAGE_I__ASSESSMENT_ON_PROGRESS:
+            console.log(authUser.userType);
             switch (authUser.userType) {
               case 'state_assessor':
                 if (info?.aStatus?.pendingAt === C.SL.PENDING_AT_ASSESSOR) {
@@ -154,20 +156,24 @@ export const PendingStep = ({ info, variant }) => {
                 }
                 break
               case 'applicant':
-                if (info?.aStatus?.pendingAt === C.SL.PENDING_AT_APPLICANT) {
-                  console.log(info?.aStatus?.pendingAt);
-                  return <GoToStageIAssessmentToUploadDocs info={info} />;
+                console.log(info?.aStatus?.pendingAt);
+                switch (info?.aStatus?.pendingAt) {
+                  case C.SL.PENDING_AT_APPLICANT:
+                  case C.SL.APPLICANT:
+                    return <GoToStageIAssessmentToUploadDocs info={info} />;
+                  default:
+                    return 'NA';
                 }
-                break;
               default:
                 return 'NA';
             }
+            break;
           case STAGE_I__ASSESSMENT_PENDING:
-            return authUser.userType === 'state_assessor' ? <GoToStageIAssessment info={info} /> : ''
-          // return action.GoToStageIAssessment();
+            return authUser.userType === 'state_assessor' ? <GoToStageIAssessment info={info} /> : '';
           default:
             return <h5>DD</h5>
         }
+        break;
       case NOC_ISSUANCE:
         switch (info.status) {
           case NOC_ISSUANCE_PENDING:

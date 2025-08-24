@@ -1,10 +1,10 @@
 import mysql from 'mysql';
 export const dbConfig = {
-    HOST: 'localhost',
-    USER: 'root',
-    PASSWORD: '',
-    DB: 'nimitask',
-    port: 4206
+    HOST: '103.14.120.145',
+    USER: 'dpkdhariwal',
+    PASSWORD: 'Devil@123',
+    DB: 'affiliation_test',
+    port: 3306
 };
 
 

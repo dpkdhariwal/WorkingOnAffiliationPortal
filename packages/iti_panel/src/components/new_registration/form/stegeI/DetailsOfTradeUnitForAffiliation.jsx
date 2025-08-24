@@ -319,14 +319,29 @@ export const Assessment_DetailsOfDocumentsToBeUploaded = ({ step, view: viewProp
 
   const onNext = async () => {
     // Set Flow if Not exit 
-    let result = await setStageIAssessmentFlow(appId);
-    let data = await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_TRADE_UNIT_FOR_AFFILIATION.step);
-    nav.next();
+
+
+    const confirmResult = await Swal.fire({ title: "Are you sure?", text: "Do you want to Proceed", icon: "question", showCancelButton: true, confirmButtonText: "Okay, Proceed", cancelButtonText: "Cancel", });
+    if (!confirmResult.isConfirmed) { console.log("User cancelled save"); return; }
+
+    const result = await Swal.fire("Saved!", "Your form data has been saved.", "success");
+    if (result.isConfirmed) {
+      try {
+        // Set Flow if not exist
+        await setStageIAssessmentFlow(appId);
+        await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_TRADE_UNIT_FOR_AFFILIATION.step);
+        nav.next();
+        // window.location.reload();
+      } catch (err) {
+        console.error("Error while saving:", err);
+      }
+    }
+
   }
 
   const [info, setInfo] = useState({});
   const [tradeList, setTradeList] = useState([]);
-  
+
   const getInfo = async () => {
     let res = await set.getDetails(appId);
     setTradeList(res?.new_insti_trade_list || []); // fallback to []

@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import fs from "fs";
 import mysql from "mysql2/promise";
 import { pKeyPath } from "../../common/common.js";
-import { masterConfig, eMsg } from "../db.js";
+import { masterConfig, eMsg, dbConfig } from "../db.js";
 const privateKey = fs.readFileSync(pKeyPath, "utf8");
 
 export const checkUser = async (req) => {
@@ -11,7 +11,8 @@ export const checkUser = async (req) => {
 
   let connection;
   try {
-    const pool = mysql.createPool(masterConfig);
+    console.log(dbConfig);
+    const pool = mysql.createPool(dbConfig);
     connection = await pool.getConnection();
 
     await connection.beginTransaction();

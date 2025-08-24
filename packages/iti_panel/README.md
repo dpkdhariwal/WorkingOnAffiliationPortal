@@ -6,3 +6,12 @@ Currently, two official plugins are available:
 
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+
+
+
+Stage I Assessment
+TABLES:
+1. ASSESSMENT_STATUS
+2. APP_ASSESSMENT_FLOW_STAGE_I
+3. DA_STAGE_I_VERIFICATIONS
+4. DA_STAGE_I_VERIFICATIONS_CHECKLIST

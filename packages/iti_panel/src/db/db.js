@@ -197,7 +197,10 @@ export const initDB = async () => {
         userStore.createIndex("userId", "userId", { unique: false });
         userStore.createIndex("appId", "appId", { unique: false });
         userStore.createIndex("step", "step", { unique: false });
-        userStore.createIndex("appId_step", ["appId", "step"]); // compound index
+        userStore.createIndex("appId_step", ["appId", "step"]);
+        userStore.createIndex("appId_for_recordType", ["appId", "for", "recordType"]); 
+        userStore.createIndex("appId_setp_for_recordType", ["appId","step","for", "recordType"]); 
+        userStore.createIndex("appId_for", ["appId", "for"]);
       }
 
       if (!db.objectStoreNames.contains(cons.DA_LAND_DOCUMENTS)) {

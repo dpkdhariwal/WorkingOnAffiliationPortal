@@ -9,7 +9,6 @@ export const pKeyPath = path.join(__dirname, '../auth/private.pem');
 export const ErrorList = {
     "User Not Found": "01",
     "User Found": "02",
-
 };
 
 

@@ -43,7 +43,12 @@ import * as set from "../../../db/forms/stageI/set/set";
 import Swal from "sweetalert2";
 
 export const StageIAssessment = () => {
-  const [activeStep, setActiveStep] = useState(0);
+
+  // AuthUser
+  const authUser = useSelector((state) => state.loginUserReducer);
+
+
+  const [activeStep, setActiveStep] = useState(3);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const appId = queryParams.get("appId");
@@ -63,6 +68,7 @@ export const StageIAssessment = () => {
 
 
   const handleStepClick = (step, index) => {
+    console.log(step, index);
     if (step.stepStatus === cons.ACTIVE || step.status === FILLED) {
       setActiveStep(index)
     }
@@ -86,6 +92,7 @@ export const StageIAssessment = () => {
     setActiveStep(--index);
     return step;
   }
+
   const next = (step, index) => {
     setActiveStep(++index);
     console.log(step, index)
@@ -128,17 +135,22 @@ export const StageIAssessment = () => {
 
 
   const getLastActiveStep = () => {
-    const firstFilledIndex = steps.findIndex(step => step.status === FILLED || step.stepStatus === cons.ACTIVE);
-    const reversedIndex = [...steps].reverse().findIndex(step => step.status === FILLED || step.stepStatus === cons.ACTIVE);
-    const lastFilledIndex = reversedIndex !== -1 ? steps.length - 1 - reversedIndex : -1;
-    console.log(lastFilledIndex);
-    // setActiveStep(lastFilledIndex);
+    console.log(steps.length);
+    if (steps.length > 0) {
+      const firstFilledIndex = steps.findIndex(step => step.status === FILLED || step.stepStatus === cons.ACTIVE);
+      const reversedIndex = [...steps].reverse().findIndex(step => step.status === FILLED || step.stepStatus === cons.ACTIVE);
+      const lastFilledIndex = reversedIndex !== -1 ? steps.length - 1 - reversedIndex : -1;
+      console.log(lastFilledIndex);
+      // setActiveStep(lastFilledIndex);
+    }
+
   }
+
+
 
   useEffect(() => { getLastActiveStep() }, [steps]);
 
   const loadData = async () => {
-
     // let result_1 = await getStage1FormFlow(appId);
     // console.log(result_1);
     let result = await getAppFlowByStep(appId, C.STAGE_I__ASSESSMENT);
@@ -151,10 +163,25 @@ export const StageIAssessment = () => {
     setAssessmentStatus(a_status);
 
 
-    // get Application flow by App Id
-    let app_stage_da_flow = await getAssessmentStageIFlowById(appId);
-    console.log(app_stage_da_flow);
-    setSteps(app_stage_da_flow);
+    // get Application flow by App Id and for
+    console.log(authUser);
+    let app_stage_da_flow;
+    switch (authUser.userType) {
+      case 'applicant':
+        app_stage_da_flow = await getAssessmentStageIFlowById(appId, C.SL.APPLICANT);
+        console.log(app_stage_da_flow);
+        setSteps(app_stage_da_flow);
+        break;
+      case 'state_assessor':
+        app_stage_da_flow = await getAssessmentStageIFlowById(appId, C.SL.ASSESSOR);
+        console.log(app_stage_da_flow);
+        setSteps(app_stage_da_flow);
+        break;
+      default:
+        throw new Error("Status Not Found");
+        break;
+    }
+
 
     const firstIndex = 0;                 // Always 0 for the first element
     const lastIndex = app_stage_da_flow.length - 1;   // Length minus 1 for the last element
@@ -177,7 +204,6 @@ export const StageIAssessment = () => {
         await setStageIAssessmentFlow(appId);
         navigate(0); // In React Router v6
       }
-
     } catch (error) {
       SwalManager.hide();
       await SwalManager.error("Failed to save form data.");
@@ -201,24 +227,38 @@ export const DetailOfProposedInsti = ({ step, view: viewProp = false, isView = f
   const queryParams = new URLSearchParams(location.search);
   const appId = queryParams.get("appId");
   const onNext = async () => {
-    let result = await setStageIAssessmentFlow(appId);
-    let data = await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_THE_PROPOSED_INSTITUTE.step);
-    nav.next();
+
+    const confirmResult = await Swal.fire({ title: "Are you sure?", text: "Do you want to Proceed", icon: "question", showCancelButton: true, confirmButtonText: "Okay, Proceed", cancelButtonText: "Cancel", });
+    if (!confirmResult.isConfirmed) { console.log("User cancelled save"); return; }
+
+    const result = await Swal.fire("Saved!", "Your form data has been saved.", "success");
+    if (result.isConfirmed) {
+      try {
+        // Set Flow if not exist
+        await setStageIAssessmentFlow(appId);
+        await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_THE_PROPOSED_INSTITUTE.step);
+        nav.next();
+        // window.location.reload();
+      } catch (err) {
+        console.error("Error while saving:", err);
+      }
+    }
   }
 
-  return <><Name_of_the_institute /><AddressOfInstitute /><InstituteLocation />
-
+  return <>
+    <Name_of_the_institute />
+    <AddressOfInstitute />
+    <InstituteLocation />
     {isView == false && <Navigations onNext={onNext} nav={nav} />}
   </>;
 }
 
 
+// const regCategory = useSelector((state) => state.reg.regCategory);
 const StartDocsVerification = ({ startDocsVerification }) => {
-  const regCategory = useSelector((state) => state.reg.regCategory);
   const appCat = useSelector((state) => state.appCat);
   const navigate = useNavigate();
   console.log(appCat.selected);
-
   return (
     <Fragment>
       <Card className="custom-card">
@@ -319,8 +359,10 @@ export const ReviewAssessment = ({ steps, step, view: viewProp = false, isView =
   const setActionButton = () => {
     console.log(info?.assessmentStatus?.assessment_status);
     try {
+      console.log(info?.assessmentStatus?.assessment_status);
       switch (info?.assessmentStatus?.assessment_status) {
         case C.SL.ON_PROGRESS:
+          console.log(info?.assessmentStatus?.pendingAt);
           switch (info?.assessmentStatus?.pendingAt) {
             case C.SL.PENDING_AT_APPLICANT:
               return '-';
@@ -337,7 +379,7 @@ export const ReviewAssessment = ({ steps, step, view: viewProp = false, isView =
                 }
               }
             default:
-              break;
+              return '-';
           }
           break;
         default:
@@ -350,6 +392,7 @@ export const ReviewAssessment = ({ steps, step, view: viewProp = false, isView =
     }
   }
   const markAsCompleteNow = async () => {
+
     const confirmResult = await Swal.fire({
       title: "Are you sure?",
       text: "Do you want to Mark as Complete Document Verification",
@@ -358,17 +401,34 @@ export const ReviewAssessment = ({ steps, step, view: viewProp = false, isView =
       confirmButtonText: "Okay, Proceed",
       cancelButtonText: "Cancel",
     });
+
     if (!confirmResult.isConfirmed) {
       console.log("User cancelled save");
       return;
     }
+
     try {
-      // setAppFlow(appId, C.STAGE_I__ASSESSMENT);
-      Swal.fire("Saved!", "Your form data has been saved.", "success");
+      // Update App Flow Status
+      await updateAppFlowStatus(appId, C.STAGE_I__ASSESSMENT, C.STAGE_I__ASSESSMENT_COMPLETED);
+
+      // Update App Assessment Status
+      await updateAssessmentStatus(appId, C.abbreviation.STAGE_I.key, C.SL.VERIFIED, C.SL.NULL);
+
+      await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.REVIEW_ASSESSMENT.step);
+
+      Swal.fire("Saved!", "Your form data has been saved.", "success").then((result) => {
+        if (result.isConfirmed) {
+          // navigate(`/dashboard/viewAssessment?appId=${appId}`);
+          navigate(`/dashboard/AppList/`);
+        }
+      }).catch(() => {
+        console.log('dfadfasf');
+      });
     } catch (error) {
       console.error(error);
       Swal.fire("Error", "Something went wrong while saving.", "error");
     }
+
   }
   const sendApplicationToApplicant = async () => {
     const confirmResult = await Swal.fire({
@@ -393,6 +453,10 @@ export const ReviewAssessment = ({ steps, step, view: viewProp = false, isView =
       await updateAssessmentStatus(appId, C.abbreviation.STAGE_I.key, C.SL.ON_PROGRESS, C.SL.PENDING_AT_APPLICANT);
 
       await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.REVIEW_ASSESSMENT.step);
+
+      await set.generateAssmentFlowForApplciant(appId);
+
+      // await set.setAsStageIAsmtasHistory(appId, C.SL.ASSESSOR);
 
       Swal.fire("Saved!", "Your form data has been saved.", "success").then((result) => {
         if (result.isConfirmed) {
@@ -433,8 +497,31 @@ export const ReviewAssessment = ({ steps, step, view: viewProp = false, isView =
 
       <AsessementIActions appId={appId} nav={nav} finishBtn={setActionButton()} />
       {/* <MarkAsCompleteStageIAssessment /> */}
-    </>) : (<h2>Assessment Not Yet Completed</h2>)
+    </>) : (<AssessmentNotice/>)
   )
+}
+
+
+export default function AssessmentNotice() {
+  return (
+    <div className="container shadow">
+      <div className="jumbotron bg-light p-5 rounded-3 shadow-sm">
+        <h1 className="display-5 fw-bold text-danger">
+          Assessment Not Yet Completed
+        </h1>
+        <p className="lead">
+          Please complete all required steps before proceeding. 
+          Your application will not move forward until the assessment is finished.
+        </p>
+        <hr className="my-4" />
+        <p>
+          If you think this is a mistake or you need assistance, 
+          please contact support.
+        </p>
+        <button className="btn btn-primary btn-lg">Go to Assessment</button>
+      </div>
+    </div>
+  );
 }
 
 

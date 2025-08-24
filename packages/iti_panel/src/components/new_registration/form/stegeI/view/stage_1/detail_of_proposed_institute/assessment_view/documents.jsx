@@ -1445,7 +1445,7 @@ export const IdProofOfAuthorizedSignatory = ({ step, view: viewProp = false, reg
   const [editMode, setEditMode] = useState(false); // true || false
   const [reviewStatus, setReviewStatus] = useState(C.SL.PENDING); // REVIEWED || PENDING
   const [viewType, setViewType] = useState(C.SL.VIEW); // FORM || VIEW
-  const [initValue, setInitValue] = useState({ as_per_norms: "no", reason: "", assessor_comments: "", });
+  const [initValue, setInitValue] = useState({ as_per_norms: "", reason: "", assessor_comments: "", });
   const [formData, setFormData] = useState({});
   const [formVisibility, setFormVisibility] = useState(false);
   const [formSubmited, setFormSubmited] = useState(false);
@@ -1823,7 +1823,7 @@ export const RegistrationCertificateOfApplicantOrganization = ({ step, view: vie
   const [view, setView] = useState(viewProp);
   const [showXlModal, setShowXlModal] = useState(false);
   const [selectedSize, setSelectedSize] = useState("");
-  const [initValue, setInitValue] = useState({ as_per_norms: "no", reason: "", assessor_comments: "", });
+  const [initValue, setInitValue] = useState({ as_per_norms: "", reason: "", assessor_comments: "", });
   const [formVisibility, setFormVisibility] = useState(false);
   const [formData, setFormData] = useState({});
   const [formSubmited, setFormSubmited] = useState(false);
@@ -2233,7 +2233,7 @@ export const IdProofOfSecretaryChairpersonPresident = ({ step, view: viewProp = 
   const [view, setView] = useState(viewProp);
   const [showXlModal, setShowXlModal] = useState(false);
   const [selectedSize, setSelectedSize] = useState("");
-  const [initValue, setInitValue] = useState({ as_per_norms: "no", reason: "", assessor_comments: "", });
+  const [initValue, setInitValue] = useState({ as_per_norms: "", reason: "", assessor_comments: "", });
   const [formVisibility, setFormVisibility] = useState(false);
   const [formData, setFormData] = useState({});
   const [formSubmited, setFormSubmited] = useState(false);
@@ -2669,7 +2669,7 @@ export const ResolutionCertificate = ({ step, view: viewProp = false, registerSu
   // use State
   const [view, setView] = useState(viewProp);
   const [showXlModal, setShowXlModal] = useState(false);
-  const [initValue, setInitValue] = useState({ as_per_norms: "no", reason: "", assessor_comments: "", });
+  const [initValue, setInitValue] = useState({ as_per_norms: "", reason: "", assessor_comments: "", });
   const [formVisibility, setFormVisibility] = useState(false);
   const [formData, setFormData] = useState({});
   const [formSubmited, setFormSubmited] = useState(false);
@@ -2832,7 +2832,7 @@ export const ResolutionCertificate = ({ step, view: viewProp = false, registerSu
                     .required("Select Whether the Resolution of the institute is as per norms?"),
 
                   reason: yup.string().when("as_per_norms", {
-                    is: "no", // 🔄 change to "no" since category and comments are required when it's "no"
+                    is: "no",
                     then: () =>
                       yup.string().required("Please select a category"),
                     otherwise: () => yup.string().notRequired(),
@@ -2845,7 +2845,7 @@ export const ResolutionCertificate = ({ step, view: viewProp = false, registerSu
                     otherwise: () => yup.string().notRequired(),
                   }),
                 })}
-                validateOnChange={() => console.log("validateOnChange")}
+                validateOnChange={true}
                 initialValues={initValue}
                 validateOnBlur={true}
                 validateOnMount={true}   // ✅ this makes validation run when form loads
@@ -2853,157 +2853,140 @@ export const ResolutionCertificate = ({ step, view: viewProp = false, registerSu
                 {({
                   handleSubmit,
                   handleChange,
-                  submitForm,
                   values,
                   errors,
                   touched,
-                  validateForm
                 }) => {
 
-                  if (registerSubmit) {
-                    registerSubmit(submitForm, validateForm, formVisibility);
-                  }
-                  return (<Card className="border border-2 border-success  card custom-card shadow-size-small shadow-success card" style={{ backgroundColor: "#eff3d6" }}>
-                    <Card.Header>
-                      <label
-                        className="main-content-label my-auto"
-                        style={{ textTransform: "none" }}
-                      >
-                        Review Form
-                      </label>
-                      <div className="ms-auto d-flex">
-                        <Button
-                          size="sm"
-                          onClick={() => handleShowModal("xl")}
-                          type="button"
-                          className="rounded-pill btn-wave btn-outline-dark"
-                          variant="btn-outline-dark"
+                  // if (registerSubmit) {
+                  //   registerSubmit(submitForm, validateForm, formVisibility);
+                  // }
+                  return (
+                    <Card className="border border-2 border-success  card custom-card shadow-size-small shadow-success card" style={{ backgroundColor: "#eff3d6" }}>
+                      <Card.Header>
+                        <label
+                          className="main-content-label my-auto"
+                          style={{ textTransform: "none" }}
                         >
-                          Review Instructions
-                        </Button>
-                      </div>
-                    </Card.Header>
-                    <Card.Body>
-                      <BS ref={formRef2} onSubmit={handleSubmit} validated>
-                        <Row className="mb-3">
-                          <BS.Group>
-                            <BS.Label>
-                              Whether the Resolution of the institute is as per norms?
-                              <span style={{ color: "red" }}>*</span>
-                            </BS.Label>
-                            <div>
-                              <BS.Check
-                                inline
-                                type="radio"
-                                label="Yes"
-                                name="as_per_norms"
-                                value="yes"
-                                onChange={handleChange}
-                                checked={values.as_per_norms === "yes"}
-                                isInvalid={
-                                  touched.as_per_norms &&
-                                  !!errors.as_per_norms
-                                }
-                              />
-                              <BS.Check
-                                inline
-                                type="radio"
-                                label="No"
-                                name="as_per_norms"
-                                value="no"
-                                onChange={handleChange}
-                                checked={values.as_per_norms === "no"}
-                                isInvalid={
-                                  touched.as_per_norms &&
-                                  !!errors.as_per_norms
-                                }
-                              />
-                            </div>
-
-                            <BS.Control.Feedback type="invalid">
-                              {errors.category}
-                            </BS.Control.Feedback>
-                          </BS.Group>
-                        </Row>
-                        {values.as_per_norms === "no" && (
+                          Review Form
+                        </label>
+                        <div className="ms-auto d-flex">
+                          <Button
+                            size="sm"
+                            onClick={() => handleShowModal("xl")}
+                            type="button"
+                            className="rounded-pill btn-wave btn-outline-dark"
+                            variant="btn-outline-dark"
+                          >
+                            Review Instructions
+                          </Button>
+                        </div>
+                      </Card.Header>
+                      <Card.Body>
+                        <BS ref={formRef2} onSubmit={handleSubmit} validated>
                           <Row className="mb-3">
-                            <BS.Group
-                              as={Col}
-                              md="12"
-                              controlId="validationCustom02"
-                            >
+                            <BS.Group>
                               <BS.Label>
-                                Select the Reason(s) and Raise
-                                Non-Conformities (NC)
+                                Whether the Resolution of the institute is as per norms?
                                 <span style={{ color: "red" }}>*</span>
                               </BS.Label>
-                              <Field
-                                required
-                                name="reason"
-                                as="select"
-                                className="form-control"
-                              >
-                                <option value="">Select</option>
-                                {MaxData.map((lang, i) => {
-                                  return (
-                                    <option key={i} value={lang.value}>
-                                      {lang.label}
-                                    </option>
-                                  );
-                                })}
-                              </Field>
-                              <BS.Control.Feedback>
-                                Looks good!
+                              <div>
+                                <BS.Check
+                                  inline
+                                  type="radio"
+                                  label="Yes"
+                                  name="as_per_norms"
+                                  value="yes"
+                                  onChange={handleChange}
+                                  checked={values.as_per_norms === "yes"}
+                                  isInvalid={
+                                    touched.as_per_norms &&
+                                    !!errors.as_per_norms
+                                  }
+                                />
+                                <BS.Check
+                                  inline
+                                  type="radio"
+                                  label="No"
+                                  name="as_per_norms"
+                                  value="no"
+                                  onChange={handleChange}
+                                  checked={values.as_per_norms === "no"}
+                                  isInvalid={
+                                    touched.as_per_norms &&
+                                    !!errors.as_per_norms
+                                  }
+                                />
+                              </div>
+
+                              <BS.Control.Feedback type="invalid">
+                                {errors.category}
                               </BS.Control.Feedback>
                             </BS.Group>
-                            {values.reason == "Any other reason, please specify" && (<BS.Group
-                              required
-                              as={Col}
-                              md="12"
-                              controlId="text-area"
-                              style={{ marginTop: "1rem" }}
-                            >
-                              <BS.Label>
-                                Any other reason, please specify{" "}
-                                <span style={{ color: "red" }}>*</span>
-                              </BS.Label>
-                              <Form.Control
-                                name="assessor_comments"
-                                required
-                                as="textarea"
-                                rows={3}
-                                className={`form-control ${touched.assessor_comments &&
-                                  errors.assessor_comments
-                                  ? "is-invalid"
-                                  : ""
-                                  }`}
-                                value={values.assessor_comments}
-                                onChange={handleChange}
-                                isInvalid={
-                                  touched.assessor_comments &&
-                                  !!errors.assessor_comments
-                                }
-                              />
-                              {touched.assessor_comments &&
-                                errors.assessor_comments && (
-                                  <div className="invalid-feedback">
-                                    {errors.assessor_comments}
-                                  </div>
-                                )}
-                            </BS.Group>)}
-
                           </Row>
-                        )}
+                          {values.as_per_norms === "no" && (
+                            <Row className="mb-3">
+                              <BS.Group
+                                as={Col}
+                                md="12"
+                                controlId="validationCustom02"
+                              >
+                                <BS.Label>
+                                  Select the Reason(s) and Raise
+                                  Non-Conformities (NC)
+                                  <span style={{ color: "red" }}>*</span>
+                                </BS.Label>
+                                <Field
+                                  required
+                                  name="reason"
+                                  as="select"
+                                  className="form-control"
+                                >
+                                  <option value="">Select</option>
+                                  {MaxData.map((lang, i) => {
+                                    return (
+                                      <option key={i} value={lang.value}>
+                                        {lang.label}
+                                      </option>
+                                    );
+                                  })}
+                                </Field>
+                                <BS.Control.Feedback>
+                                  Looks good!
+                                </BS.Control.Feedback>
+                              </BS.Group>
+                              {values.reason == "Any other reason, please specify" && (
+                                <BS.Group required as={Col} md="12" controlId="text-area" style={{ marginTop: "1rem" }} >
+                                  <BS.Label> Any other reason, please specify{" "} <span style={{ color: "red" }}>*</span> </BS.Label>
+                                  <BS.Control
+                                    name="assessor_comments"
+                                    required
+                                    as="textarea"
+                                    rows={3}
+                                    className={`form-control ${touched.assessor_comments && errors.assessor_comments ? "is-invalid" : "" }`}
+                                    value={values.assessor_comments}
+                                    onChange={handleChange}
+                                    isInvalid={ touched.assessor_comments && !!errors.assessor_comments }
+                                  />
+                                  {touched.assessor_comments &&
+                                    errors.assessor_comments && (
+                                      <div className="invalid-feedback">
+                                        {errors.assessor_comments}
+                                      </div>
+                                    )}
+                                </BS.Group>)}
 
-                      </BS>
-                    </Card.Body>
-                    {/* <Card.Footer style={{ padding: "2px" }} className="d-flex justify-content-between">
+                            </Row>
+                          )}
+
+                        </BS>
+                      </Card.Body>
+                      {/* <Card.Footer style={{ padding: "2px" }} className="d-flex justify-content-between">
                       <Button variant="primary" onClick={submitForm}>
                         Submit
                       </Button>
                     </Card.Footer> */}
-                  </Card>)
-
+                    </Card>)
                 }}
               </Formik>
             ) : reviewStatus == C.SL.REVIEWED && editMode === false ? (

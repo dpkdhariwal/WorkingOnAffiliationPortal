@@ -110,7 +110,8 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
           console.log(values)
           return (<>
             <Form noValidate onSubmit={handleSubmit}>
-              {land_info.possession_of_land == 'owned' && (<Card className="custom-card border border-primary">
+              {land_info.possession_of_land == 'owned' && (
+                <Card className="custom-card border border-primary">
                 <Card.Header>
                   <div className="card-title" style={{ textTransform: "none" }}>
                     Land Documents

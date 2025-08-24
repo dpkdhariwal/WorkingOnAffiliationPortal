@@ -46,7 +46,7 @@ export const setNewStatusOfAppByStep = async (appId, step, newStatus) => {
     const tx = db.transaction([C.APP_FLOW], 'readwrite');
     const store = tx.objectStore(C.APP_FLOW);
     currentState = await store.index("appId_step").get([appId, step]);
-    await store.put({ ...currentState, status: newStatus });
+    await store.put({ ...currentState, status: newStatus, assessment_status: C.SL.ON_PROGRESS });
     await tx.done;
   } catch (error) {
     return {}
@@ -78,8 +78,8 @@ export const get_da_status_possasion_of_land = async (appId) => {
   const db = await initDB();
   let currentState, id;
   try {
-    const tx = db.transaction([C.DA_LAND_DOCUMENTS], 'readwrite');
-    const store = tx.objectStore(C.DA_LAND_DOCUMENTS);
+    const tx = db.transaction([C.DA_STAGE_I_VERIFICATIONS], 'readwrite');
+    const store = tx.objectStore(C.DA_STAGE_I_VERIFICATIONS);
     currentState = await store.index("appId_key_isDraft").getAll([appId, C.DA1_KEYS.LAND_DOCUMENT, 'yes']);
     await tx.done;
     console.log(currentState);
@@ -97,8 +97,8 @@ export const set_da_status_land_area = async (appId, values) => {
   let currentState, id, toStore;
   id = Date.now() + Math.random();
   try {
-    const tx = db.transaction([C.DA_LAND_DOCUMENTS], 'readwrite');
-    const store = tx.objectStore(C.DA_LAND_DOCUMENTS);
+    const tx = db.transaction([C.DA_STAGE_I_VERIFICATIONS], 'readwrite');
+    const store = tx.objectStore(C.DA_STAGE_I_VERIFICATIONS);
     currentState = await store.index("appId_key_isDraft").get([appId, C.DA1_KEYS.LAND_AREA, 'yes']);
     console.log(values);
     toStore = currentState?.appId ? { ...currentState, ...values } : { ...values, id: id, appId: appId, key: C.DA1_KEYS.LAND_AREA, isDraft: C.SL.YES };
@@ -115,8 +115,8 @@ export const get_da_status_land_area = async (appId) => {
   const db = await initDB();
   let currentState, id;
   try {
-    const tx = db.transaction([C.DA_LAND_DOCUMENTS], 'readwrite');
-    const store = tx.objectStore(C.DA_LAND_DOCUMENTS);
+    const tx = db.transaction([C.DA_STAGE_I_VERIFICATIONS], 'readwrite');
+    const store = tx.objectStore(C.DA_STAGE_I_VERIFICATIONS);
     currentState = await store.index("appId_key_isDraft").getAll([appId, C.DA1_KEYS.LAND_AREA, 'yes']);
     await tx.done;
     console.log(currentState);
@@ -193,7 +193,7 @@ export const setStageIAssessmentFlow = async (appId) => {
 
     if (asmt_data.length === 0) {
 
-      await asmt_store.put({ ...C.ASSESSMENT_STATUS, assessment_id: assessment_id, id: Date.now() + Math.random(), appId: appId });
+      await asmt_store.put({ ...C.ASSESSMENT_STATUS, assessment_id: assessment_id, id: Date.now() + Math.random(), appId: appId, assessment_status: C.SL.ON_PROGRESS, pendingAt: C.SL.PENDING_AT_ASSESSOR });
 
       for (const [index, flow] of C.ASSESSMENT_STAGE_I_FLOW.entries()) {
         let id = Date.now() + Math.random();
@@ -228,6 +228,41 @@ export const markAsCompleteStageAssessmentFlow = async (appId, step) => {
         await store.put({ ...d2, stepStatus: C.SL.ACTIVE });
       }
     }
+
+    await tx.done;
+  } catch (error) {
+    console.log(error);
+    return {}
+  }
+}
+
+export const setAsStageIAsmtasHistory = async (appId, forUser) => {
+  const db = await initDB();
+  try {
+    const tx = db.transaction([C.APP_ASSESSMENT_FLOW_STAGE_I], 'readwrite');
+    const store = tx.objectStore(C.APP_ASSESSMENT_FLOW_STAGE_I);
+    // Marking as History
+    let h1 = await store.index('appId_for_recordType').getAll([appId, forUser, C.SL.HISTORY]);
+    for (const [index, flow] of h1.entries()) {
+      await store.put({ ...flow, recordType: C.SL.HISTORY });
+    }
+    await tx.done;
+  } catch (error) {
+    console.log(error);
+    return {}
+  }
+}
+export const generateAssmentFlowForApplciant = async (appId) => {
+  const db = await initDB();
+  // const formattedDate = new Date().toISOString(); // "2025-08-05T07:25:13.123Z"
+  try {
+    const tx = db.transaction([C.APP_ASSESSMENT_FLOW_STAGE_I], 'readwrite');
+    const store = tx.objectStore(C.APP_ASSESSMENT_FLOW_STAGE_I);
+    // Marking as History
+    let h1 = await store.index('appId_for_recordType').getAll([appId, C.SL.ASSESSOR, C.SL.PRESENT]);
+    for (const [index, flow] of h1.entries()) {
+      await store.put({ ...flow, completionDate: null, id: Date.now() + Math.random(), for: C.SL.APPLICANT, status: C.SL.PENDING, stepStatus: C.SL.IN_ACTIVE, recordType: C.SL.PRESENT });
+    }
     await tx.done;
   } catch (error) {
     console.log(error);
@@ -248,6 +283,7 @@ export const getAssessmentStatus = async (appId) => {
     return {}
   }
 };
+
 export const setAssessmentStatus = async (appId, status, pendingAt = null) => {
   const db = await initDB();
   try {
@@ -264,21 +300,62 @@ export const setAssessmentStatus = async (appId, status, pendingAt = null) => {
   }
 };
 
-export const getAssessmentStageIFlowById = async (appId) => {
+export const getAssessmentStageIFlowById = async (appId, userType = null) => {
   const db = await initDB();
   try {
-    const tx = db.transaction([C.APP_ASSESSMENT_FLOW_STAGE_I], 'readwrite');
+    const tx = db.transaction([C.APP_ASSESSMENT_FLOW_STAGE_I, C.TBL_ASSESSMENTS_STATUS], 'readwrite');
+
+    // Getting the assessment status
+    const store_2 = tx.objectStore(C.TBL_ASSESSMENTS_STATUS);
+    let aInfo = await store_2.index('appId').get(appId);
+
     const store = tx.objectStore(C.APP_ASSESSMENT_FLOW_STAGE_I);
-    let d1 = await store.index('appId').getAll(appId);
+    let d1;
+    d1 = await store.index('appId_for_recordType').getAll([appId, userType, C.SL.PRESENT]);
     d1.sort((a, b) => a.stepNo - b.stepNo);
+
+    d1 = await d1.map((step) => {
+      let status = false;
+      switch (step?.status) {
+        case C.SL.VERIFIED:
+          status = true;
+          break;
+        case C.SL.COMPLETED:
+          status = true;
+          break;
+        case C.SL.ON_PROGRESS:
+          switch (aInfo?.pendingAt) {
+            case C.SL.PENDING_AT_APPLICANT:
+              status = true;
+              break;
+            case C.SL.PENDING_AT_ASSESSOR:
+              status = true;
+              break;
+            case C.SL.PENDING_AT_RDSDE:
+              status = true;
+              break;
+            default:
+              status = false;
+              break;
+          }
+          break;
+        default:
+          status = false;
+          break;
+      }
+      return { ...step, completed: status };
+    });
     await tx.done;
-    d1 = await d1.map((step) => ({ ...step, completed: step.status === C.SL.COMPLETED }));
     return d1;
   } catch (error) {
     console.log(error);
     return {}
+  } finally {
+    db.close();
   }
+
 };
+
 
 
 export const getAssessmentProgressStatus = async (appId) => {
@@ -292,7 +369,7 @@ export const getAssessmentProgressStatus = async (appId) => {
     // Getting the assessment status
     let assessmentStatus = await store_2.index("appId").get(appId);
 
-    let steps = await store.index('appId').getAll(appId);
+    let steps = await store.index('appId_for').getAll([appId, C.SL.ASSESSOR]);
     let vStatus = [];
 
     // Removing the review assessment step from the steps
@@ -313,13 +390,14 @@ export const getAssessmentProgressStatus = async (appId) => {
           case C.ST1FC.DOCUMENTS_UPLOAD.step:
             vStatus.push(true);
             break;
-
           case C.ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step: {
             const d1 = await Promise.all([
               store_1.index("appId_key_isDraft").getAll([appId, C.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_AUTHORIZED_SIGNATORY, "yes"]),
               store_1.index("appId_key_isDraft").getAll([appId, C.ASSESSMENT_STAGE_I_KEYS.REGISTRATION_CERTIFICATE_OF_APPLICANT_ORGANIZATION, "yes"]),
               store_1.index("appId_key_isDraft").getAll([appId, C.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_SECRETARY_CHAIRPERSON_PRESIDENT, "yes"]),
-              store_1.index("appId_key_isDraft").getAll([appId, C.ASSESSMENT_STAGE_I_KEYS.RESOLUTION_CERTIFICATE, "yes"])
+              store_1.index("appId_key_isDraft").getAll([appId, C.ASSESSMENT_STAGE_I_KEYS.RESOLUTION_CERTIFICATE, "yes"]),
+              store_1.index("appId_key_isDraft").getAll([appId, C.ASSESSMENT_STAGE_I_KEYS.LAND_AREA, "yes"])
+
             ]);
 
             console.log(d1);

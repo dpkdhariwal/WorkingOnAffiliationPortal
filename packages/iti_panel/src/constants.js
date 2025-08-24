@@ -1,3 +1,39 @@
+// Abbreviations
+export const abbreviation = {
+  STAGE_I: { key: "STAGE_I" },
+  STAGE_II: { key: "STAGE_II" },
+}
+// Status List
+export const SL = {
+  COMPLETED: "COMPLETED",
+  ON_PROGRESS: "ON_PROGRESS",
+  ACTIVE: "ACTIVE",
+  IN_ACTIVE: "IN_ACTIVE",
+  VERIFIED: "VERIFIED",
+  NC: "NC",
+  PENDING_FOR_VERIFICATION: "PENDING_FOR_VERIFICATION",
+  PENDING: "PENDING",
+  YES: "yes",
+  NO: "no",
+  PENDING_AT_APPLICANT: "PENDING_AT_APPLICANT",
+  PENDING_AT_ASSESSOR: "PENDING_AT_ASSESSOR",
+  PENDING_AT_RDSDE: "PENDING_AT_RDSDE",
+  NULL: null,
+  REVIEWED: "REVIEWED",
+  FORM: "FORM",
+  VIEW: "VIEW",
+  ASSESSOR: "ASSESSOR",
+  APPLICANT: "APPLICANT",
+  CURRENT: "CURRENT",
+  HISTORY: "HISTORY",
+  PRESENT: "PRESENT",
+  FUTURE: "FUTURE",
+  UPCOMING: "UPCOMING",
+  LATEST: "LATEST",
+  NOW: "NOW",
+}
+
+
 // These Below Constants are used in the registration process of the ITI panel new application.
 export const SAVE_APP_CATEGORY = "SAVE_APP_CATEGORY";
 export const UPDATE_APP_CATEGORY = "UPDATE_APP_CATEGORY";
@@ -1235,7 +1271,7 @@ export const STEPPER_STYLE = {
 // Database Stores 
 
 
-export const DB_VERSION = 35;
+export const DB_VERSION = 36;
 export const DB_NAME = "AffliationDB";
 export const USERS = "users";
 export const USER_ROLES = "userRoles";
@@ -1279,11 +1315,19 @@ export const COMMON_CIVIL_INFRASTRUCTURE = "common_civil_infrastructure";
 // Desktop Assessment Table
 export const DA_LAND_DOCUMENTS = "DA_LAND_DOCUMENTS";
 export const DA_STAGE_I_VERIFICATIONS = "DA_STAGE_I_VERIFICATIONS";
+
+// Sample Assessment Obj
 export const TBL_ASSESSMENTS_STATUS = "ASSESSMENT_STATUS";
+export const SAMPLE_ASSESSMENTS_INITIAL_STATUS = {
+  id: null,
+  appId: null,
+  stage: abbreviation.STAGE_I.key, // 'STAGE_I' | 'STAGE_II'
+  assessment_id: null,
+  assessment_status: SL.ON_PROGRESS, // 'COMPLETED' | 'ON_PROGRESS' | 'VERIFIED'
+  pendingAt: SL.PENDING_AT_ASSESSOR, // 'PENDING_AT_APPLICANT' | 'PENDING_AT_ASSESSOR' | 'PENDING_AT_RDSDE'
+};
+
 export const DA_STAGE_I_VERIFICATIONS_CHECKLIST = "DA_STAGE_I_VERIFICATIONS_CHECKLIST";
-
-
-
 // Sample Users
 export const SAMPLE_USERS = [
   {
@@ -1527,6 +1571,8 @@ export const STAGE_I_APP_FORM_FLOW = [
     submitDate: null,
     updateDate: null,
     stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
+    for: SL.ASSESSOR, // APPLICANT || ASSESSOR || RDSDE
+    recordType: SL.CURRENT // CURRENT || PREVIOUS
   },
   {
     stepNo: 2,
@@ -1537,7 +1583,8 @@ export const STAGE_I_APP_FORM_FLOW = [
     submitDate: null,
     updateDate: null,
     stepStatus: IN_ACTIVE, // ACTIVE || IN_ACTIVE
-
+    for: SL.ASSESSOR,
+    recordType: SL.CURRENT
   },
   {
     stepNo: 3,
@@ -1746,25 +1793,7 @@ export const A_GENERAL_PARKING_DETAILS = { particular: AMNT.GENERAL_PARKING_DETA
 
 
 
-// Status List
-export const SL = {
-  COMPLETED: "COMPLETED",
-  ON_PROGRESS: "ON_PROGRESS",
-  ACTIVE: "ACTIVE",
-  IN_ACTIVE: "IN_ACTIVE",
-  VERIFIED: "VERIFIED",
-  NC: "NC",
-  PENDING_FOR_VERIFICATION: "PENDING_FOR_VERIFICATION",
-  PENDING: "PENDING",
-  YES: "yes",
-  NO: "no",
-  PENDING_AT_APPLICANT: "PENDING_AT_APPLICANT",
-  PENDING_AT_ASSESSOR: "PENDING_AT_ASSESSOR",
-  
-  REVIEWED:"REVIEWED", 
-  FORM:"FORM",
-  VIEW:"VIEW",
-}
+
 
 
 export const STAGE_II = {
@@ -1976,11 +2005,6 @@ export const ASSESSMENT_STAGE_II_FLOW = [
 ];
 
 
-export const abbreviation = {
-  STAGE_I: { key: "STAGE_I" },
-  STAGE_II: { key: "STAGE_II" },
-}
-
 
 
 export const ASSESSMENT_STAGE_I_KEYS = {
@@ -2004,6 +2028,8 @@ export const ASSESSMENT_STAGE_I_FLOW = [
     nextStep: ST1FC.DETAILS_OF_THE_PROPOSED_INSTITUTE.step,
     stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
     DA: false,
+    for: SL.ASSESSOR, // APPLICANT || ASSESSOR || RDSDE
+    recordType: SL.PRESENT // CURRENT || PRESENT
   },
   {
     stepNo: 2,
@@ -2013,6 +2039,8 @@ export const ASSESSMENT_STAGE_I_FLOW = [
     nextStep: ST1FC.DETAILS_OF_TRADE_UNIT_FOR_AFFILIATION.step,
     stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
     DA: false,
+    for: SL.ASSESSOR, // APPLICANT || ASSESSOR || RDSDE
+    recordType: SL.PRESENT // CURRENT || PRESENT
   },
   {
     stepNo: 3,
@@ -2022,6 +2050,8 @@ export const ASSESSMENT_STAGE_I_FLOW = [
     nextStep: ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step,
     stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
     DA: false,
+    for: SL.ASSESSOR, // APPLICANT || ASSESSOR || RDSDE
+    recordType: SL.PRESENT // CURRENT || PRESENT
   },
   {
     stepNo: 4,
@@ -2031,6 +2061,8 @@ export const ASSESSMENT_STAGE_I_FLOW = [
     nextStep: ST1FC.DOCUMENTS_UPLOAD.step,
     stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
     DA: true,
+    for: SL.ASSESSOR, // APPLICANT || ASSESSOR || RDSDE
+    recordType: SL.PRESENT, // CURRENT || PRESENT
     VerificationList: [
       {
         check: ASSESSMENT_STAGE_I_KEYS.POSSESSION_OF_LAND,
@@ -2053,6 +2085,8 @@ export const ASSESSMENT_STAGE_I_FLOW = [
     stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
     nextStep: ST1FC.REVIEW_ASSESSMENT.step,
     DA: true,
+    for: SL.ASSESSOR, // APPLICANT || ASSESSOR || RDSDE
+    recordType: SL.PRESENT, // CURRENT || PRESENT
     VerificationList: [
       {
         check: ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_AUTHORIZED_SIGNATORY,
@@ -2088,45 +2122,47 @@ export const ASSESSMENT_STAGE_I_FLOW = [
     stepLabel: ST1FC.REVIEW_ASSESSMENT.label,
     stepStatus: ACTIVE, // ACTIVE || IN_ACTIVE
     nextStep: LAST,
+    for: SL.ASSESSOR, // APPLICANT || ASSESSOR || RDSDE
+    recordType: SL.PRESENT // CURRENT || PRESENT
   },
 ];
 window.ASSESSMENT_STAGE_I_FLOW = ASSESSMENT_STAGE_I_FLOW;
 
 export const ASSESSMENT_STATUS = {
   assessment_id: null,
-  assessment_status: SL.PENDING // COMPLETED || ON_PROGRESS || PENDING
+  assessment_status: SL.ON_PROGRESS // COMPLETED || ON_PROGRESS || PENDING
 }
 
 
 
 
 export const MaxData = [
-    { value: "Document is not legible", label: "Document is not legible" },
-    { value: "Document is irrelevant", label: "Document is irrelevant" },
-    {
-      value: "Document lacks required information",
-      label: "Document lacks required information",
-    },
-    {
-      value:
-        "Document is not approved by the competent authority in the State/ UT",
-      label:
-        "Document is not approved by the competent authority in the State/ UT",
-    },
-    {
-      value:
-        "Address on the document does not match with the proposed land/ building address",
-      label:
-        "Address on the document does not match with the proposed land/ building address",
-    },
-    {
-      value:
-        "Document does not indicate the workshop for all trade/units, classrooms, IT Lab, Administrative area, Amenities area etc.",
-      label:
-        "Document does not indicate the workshop for all trade/units, classrooms, IT Lab, Administrative area, Amenities area etc.",
-    },
-    {
-      value: "Any other reason, please specify",
-      label: "Any other reason, please specify",
-    },
-  ];
+  { value: "Document is not legible", label: "Document is not legible" },
+  { value: "Document is irrelevant", label: "Document is irrelevant" },
+  {
+    value: "Document lacks required information",
+    label: "Document lacks required information",
+  },
+  {
+    value:
+      "Document is not approved by the competent authority in the State/ UT",
+    label:
+      "Document is not approved by the competent authority in the State/ UT",
+  },
+  {
+    value:
+      "Address on the document does not match with the proposed land/ building address",
+    label:
+      "Address on the document does not match with the proposed land/ building address",
+  },
+  {
+    value:
+      "Document does not indicate the workshop for all trade/units, classrooms, IT Lab, Administrative area, Amenities area etc.",
+    label:
+      "Document does not indicate the workshop for all trade/units, classrooms, IT Lab, Administrative area, Amenities area etc.",
+  },
+  {
+    value: "Any other reason, please specify",
+    label: "Any other reason, please specify",
+  },
+];
