@@ -3,6 +3,16 @@ export const abbreviation = {
   STAGE_I: { key: "STAGE_I" },
   STAGE_II: { key: "STAGE_II" },
 }
+
+// User Type
+export const UserType = {
+  APPLICANT: "APPLICANT",
+  STATE_ADMIN: "STATE_ADMIN",
+  RDSDE: "RDSDE",
+  DGT_ADMIN: "DGT_ADMIN",
+  STATE_ASSESSOR: "STATE_ASSESSOR",
+}
+
 // Status List
 export const SL = {
   COMPLETED: "COMPLETED",

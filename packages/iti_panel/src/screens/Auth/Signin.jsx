@@ -14,8 +14,10 @@ import { tryLogin } from "../../services/index";
 import { loginUser } from "../../actions/userAuth";
 import toast, { Toaster } from "react-hot-toast";
 import { setSampleUser, getSetUserRoles, getUserByCredentials } from "../../db/users";
+import { loginByAuth } from "../../services/auth/login";
 
 const Signin = () => {
+
   const navigate = useNavigate(); // initialize navigation
 
   const { Formik } = formik;
@@ -68,43 +70,18 @@ const Signin = () => {
 
   const LoginNow = async (values) => {
     const { userid, password } = values;
-    setSampleUser();
-    getSetUserRoles();
-    const user = await getUserByCredentials(userid, password);
-    if (user) {
-      dispatch({ type: "USER_SIGNED_IN_SUCCESS", payload: user });
-
-      toast.success("Logged in successfully", {
-        position: "top-right",
-      });
-
-      switch (user.userType) {
-        case "applicant":
-          if (user.total_applications == 0) {
-            navigate("/dashboard/Application/");
-          } else {
-            navigate("/dashboard/");
-          }
-          break;
-        case "rdsde":
-          navigate("/dashboard/rdsde");
-          break;
-        case 'state_admin':
-          navigate("/dashboard/state_admin");
-          break;
-        default:
-          navigate("/dashboard/");
-          break;
-      }
-    }
-    else {
-      alert("Invalid User:");
+    let result;
+    try {
+      result = await loginByAuth(userid, password);
+      console.log(result);
+    } catch (error) {
+      console.log(error);
+      toast.error(error.msg, { position: "top-right", });
     }
 
-
-    // const user = sampleUserList.find(
-    //   (u) => u.email === userid && u.password === password
-    // );
+    // setSampleUser();
+    // getSetUserRoles();
+    // const user = await getUserByCredentials(userid, password);
 
     // if (user) {
     //   dispatch({ type: "USER_SIGNED_IN_SUCCESS", payload: user });
@@ -112,7 +89,6 @@ const Signin = () => {
     //   toast.success("Logged in successfully", {
     //     position: "top-right",
     //   });
-
     //   switch (user.userType) {
     //     case "applicant":
     //       if (user.total_applications == 0) {
@@ -131,10 +107,9 @@ const Signin = () => {
     //       navigate("/dashboard/");
     //       break;
     //   }
-    // } else {
-    //   toast.error("User Not Found", {
-    //     position: "top-right",
-    //   });
+    // }
+    // else {
+    //   alert("Invalid User:");
     // }
   };
 
