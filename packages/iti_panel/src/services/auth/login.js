@@ -1,6 +1,6 @@
 import axios from 'axios';
 import DeviceDetector from 'device-detector-js';
-export const base_url = 'http://localhost:3001';
+export const base_url = 'http://localhost:3000';
 import * as cnf from "../config";
 
 export const getError = (error) => {
@@ -18,15 +18,7 @@ export const loginByAuth = async (email, password) => {
     formData.append('deviceInfo', JSON.stringify(device))
 
     return new Promise((resolve, reject) => {
-        axios.post(base_url + '/auth/login', {
-            email: email,
-            password: password
-        }).then((res) => {
-            resolve(res)
-        }).catch((error) => {
-            console.log(error)
-            reject(error)
-        })
+        axios.post(base_url + '/auth/login', { email: email, password: password }).then((res) => { resolve(res) }).catch((error) => { reject(error) });
     })
 }
 

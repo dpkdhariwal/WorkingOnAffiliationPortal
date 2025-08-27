@@ -14,6 +14,7 @@ import { tryLogin } from "../../services/index";
 import { loginUser } from "../../actions/userAuth";
 import toast, { Toaster } from "react-hot-toast";
 import { setSampleUser, getSetUserRoles, getUserByCredentials } from "../../db/users";
+import { loginByAuth } from "../../services/auth/login";
 
 const Signin = () => {
   const navigate = useNavigate(); // initialize navigation
@@ -68,19 +69,18 @@ const Signin = () => {
 
   const LoginNow = async (values) => {
     const { userid, password } = values;
-    setSampleUser();
-    getSetUserRoles();
-    const user = await getUserByCredentials(userid, password);
-    if (user) {
-      dispatch({ type: "USER_SIGNED_IN_SUCCESS", payload: user });
 
-      toast.success("Logged in successfully", {
-        position: "top-right",
-      });
 
+    let result, user;
+    try {
+      result = await loginByAuth(userid, password);
+      user = result.data;
+      // console.log(result);
+      dispatch({ type: "USER_SIGNED_IN_SUCCESS", payload: result.data });
+      toast.success("Logged in successfully", { position: "top-right", });
       switch (user.userType) {
         case "applicant":
-          if (user.total_applications == 0) {
+          if (user?.total_applications == 0) {
             navigate("/dashboard/Application/");
           } else {
             navigate("/dashboard/");
@@ -96,10 +96,58 @@ const Signin = () => {
           navigate("/dashboard/");
           break;
       }
+    } catch (error) {
+      let errorMessage = "Something went wrong";
+
+      if (typeof error === "string") {
+        errorMessage = error;
+      } else if (error?.msg) {
+        errorMessage = error.msg;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      } else if (error?.response?.data?.message) {
+        // for axios errors
+        errorMessage = error.response.data.message;
+      }
+      toast.error(errorMessage, { position: "top-right" });
     }
-    else {
-      alert("Invalid User:");
-    }
+
+
+
+    // setSampleUser();
+    // getSetUserRoles();
+    // const user = await getUserByCredentials(userid, password);
+    // if (user) {
+    //   dispatch({ type: "USER_SIGNED_IN_SUCCESS", payload: user });
+
+    //   toast.success("Logged in successfully", {
+    //     position: "top-right",
+    //   });
+
+    //   switch (user.userType) {
+    //     case "applicant":
+    //       if (user.total_applications == 0) {
+    //         navigate("/dashboard/Application/");
+    //       } else {
+    //         navigate("/dashboard/");
+    //       }
+    //       break;
+    //     case "rdsde":
+    //       navigate("/dashboard/rdsde");
+    //       break;
+    //     case 'state_admin':
+    //       navigate("/dashboard/state_admin");
+    //       break;
+    //     default:
+    //       navigate("/dashboard/");
+    //       break;
+    //   }
+    // }
+    // else {
+    //   alert("Invalid User:");
+    // }
+
+
 
 
     // const user = sampleUserList.find(
@@ -185,10 +233,12 @@ const Signin = () => {
                       .required("Enter Correct Password"),
                   })}
                   validateOnChange
-                  onSubmit={(values) => {
+                  onSubmit={async (values, { setSubmitting }) => {
                     setFormData(values);
                     setFormSubmited(true);
                     LoginNow(values);
+                    await new Promise(r => setTimeout(r, 500));
+                    setSubmitting(false);
                   }}
                   initialValues={{
                     userid: "",
@@ -203,6 +253,7 @@ const Signin = () => {
                     errors,
                     touched,
                     handleBlur,
+                    setSubmitting
                   }) => (
                     <Form noValidate onSubmit={handleSubmit}>
                       <h5 className="text-start mb-2">
@@ -251,6 +302,7 @@ const Signin = () => {
                         <button
                           type="submit"
                           className="btn btn-primary"
+                          disabled={setSubmitting}
                         >
                           Sign In
                         </button>
