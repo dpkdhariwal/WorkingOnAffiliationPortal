@@ -20,7 +20,7 @@ export const Navigations = ({ nav, onPrev, onNext, onLast }) => {
 }
 
 
-export const AsessementIActions = ({ nav, onPrev, onNext, onLast }) => {
+export const AsessementIActions = ({ nav, onPrev, onNext, onLast, finishBtn=null }) => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const appId = queryParams.get("appId");
@@ -29,6 +29,7 @@ export const AsessementIActions = ({ nav, onPrev, onNext, onLast }) => {
     // Loading Review Details
     const loadInfo = async () => {
         let result = await set.getAssessmentProgressStatus(appId);
+        console.log(result);
         setInfo(result);
     }
 
@@ -52,7 +53,9 @@ export const AsessementIActions = ({ nav, onPrev, onNext, onLast }) => {
             {info?.allCompleted ?
                 (nav?.lastIndex == nav?.currentIndex ? (
                     <div className="p-2">
-                        <Button variant="success" onClick={() => (onLast ? onLast() : nav?.finish())}  > Finish </Button>
+                        {finishBtn? (finishBtn): (<Button variant="success" onClick={() => (onLast ? onLast() : nav?.finish())}  > Finish </Button>)}
+                        
+
                     </div>) : nav?.currentIndex < nav?.lastIndex ? (<Button variant="success" onClick={() => (onNext ? onNext() : nav?.next())} > Save & Next </Button>) : '') : ''}
             {/* is all reviewed true/false */}
             {/* is all verified -> true/false  */}

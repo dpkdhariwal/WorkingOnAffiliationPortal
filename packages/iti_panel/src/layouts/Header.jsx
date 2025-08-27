@@ -18,7 +18,7 @@ import Select from "react-select";
 import Rightside from "./Rightside";
 import { MENUITEMS } from "../common/Sidemenu";
 import Switcher from "./Switcher";
-
+import { UserMenu } from "./components/userMenu";
 const Header = ({ local_varaiable, ThemeChanger }) => {
   const HeaderSearchData = [
     { value: "Business Case", label: "Business Case" },
@@ -1247,38 +1247,7 @@ const Header = ({ local_varaiable, ThemeChanger }) => {
                 </div>
               </Dropdown.Toggle>
 
-              <Dropdown.Menu className="main-header-dropdown pt-0 overflow-hidden header-profile-dropdown dropdown-menu-end">
-                <div className="header-navheading border-bottom">
-                  <h6 className="main-notification-title">Mr. Deepak</h6>
-                  <p className="main-notification-text mb-0">ITI Applicant</p>
-                </div>
-                <Dropdown.Item as={Link} to="#profile" className="d-flex">
-                  <i className="fe fe-user fs-16 align-middle me-2"></i>Profile
-                </Dropdown.Item>
-                {/* <Dropdown.Item as={Link} to="#inbox" className="d-flex">
-                  <i className="fe fe-inbox fs-16 align-middle me-2"></i>Inbox{" "}
-                  <span className="badge bg-success ms-auto">25</span>
-                </Dropdown.Item> */}
-                <Dropdown.Item
-                  as={Link}
-                  to="#activity"
-                  className=" d-flex border-block-end"
-                >
-                  <i className="fe fe-compass fs-16 align-middle me-2"></i>
-                  Activity
-                </Dropdown.Item>
-                <Dropdown.Item as={Link} to="#Settings" className="d-flex">
-                  <i className="fe fe-settings fs-16 align-middle me-2"></i>
-                  Settings
-                </Dropdown.Item>
-                <Dropdown.Item as={Link} to="#Support" className="d-flex">
-                  <i className="fe fe-headphones fs-16 align-middle me-2"></i>
-                  Support
-                </Dropdown.Item>
-                <Dropdown.Item as={Link} to="/" className="d-flex">
-                  <i className="fe fe-power fs-16 align-middle me-2"></i>Log Out
-                </Dropdown.Item>
-              </Dropdown.Menu>
+              <UserMenu/>
             </Dropdown>
             {/* <div className="header-element right-sidebar">
               <Link

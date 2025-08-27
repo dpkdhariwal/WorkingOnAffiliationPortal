@@ -62,8 +62,10 @@ import {
   ACTIVE,
   TRADEWISE_CLASSROOMS
 } from "../constants";
+
 import { initDB } from "./db";
 import * as cons from "../constants";
+import * as C from "../constants";
 
 import { Building_Detail_initialValues } from "../reducers/newAppReducer";
 import { markAsCompleteStageStep, setActiveStage1NextStep } from "./forms/stageI/set/set";
@@ -201,10 +203,80 @@ export const getProposedInstDetailsByUserId = async (appId) => {
 
 export const getAppFlowByAppId = async (appId) => {
   const db = await initDB();
-  let data = await db.getAllFromIndex(APP_FLOW, "appId", appId);
-  data.sort((a, b) => a.stepNo - b.stepNo);
-  return data;
+  let app_flow = await db.getAllFromIndex(APP_FLOW, "appId", appId);
+  let app_assessment_flow_stage_i = await db.getAllFromIndex(C.APP_ASSESSMENT_FLOW_STAGE_I, "appId", appId);
+  let tbl_assessments_status = await db.getAllFromIndex(C.TBL_ASSESSMENTS_STATUS, "appId", appId);
+
+
+
+  // process each item individually
+  app_flow = await Promise.all(
+    app_flow.map(async (item) => {
+      switch (item.step) {
+        case C.STAGE_I_FORM_FILLING:
+          console.log(item);
+          break;
+        case C.STAGE_I_FEE:
+          console.log(item);
+          break;
+        case C.STAGE_I_DOCUMENT_UPLAOD:
+          console.log(item);
+          break;
+        case C.STAGE_I_SUBMIT:
+          console.log(item);
+          break;
+        case C.STAGE_I__ASSESSMENT:
+          {
+            let aStatus = await db.getFromIndex(C.TBL_ASSESSMENTS_STATUS, "appId", appId);
+            let assessmentFlowStageI = await db.getAllFromIndex(C.APP_ASSESSMENT_FLOW_STAGE_I, "appId", appId);
+            console.log(aStatus, assessmentFlowStageI);
+            item = { ...item, aStatus, assessmentFlowStageI }
+          }
+          break;
+        case C.NOC_ISSUANCE:
+          console.log(item);
+          break;
+        case STAGE_II_FORM_FILLING:
+          console.log(item);
+          break;
+        case STAGE_II_FEE:
+          console.log(item);
+          break;
+        case C.STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS:
+          console.log(item);
+          break;
+        case C.STAGE_II_DOCUMENT_UPLAOD:
+          console.log(item);
+          break;
+        case C.STAGE_II_SUBMIT:
+          console.log(item);
+          break;
+        case C.STAGE_II__ASSESSMENT:
+          console.log(item);
+          break;
+        case C.STAFF_DETAILS:
+          console.log(item);
+          break;
+        case C.INSP_SLOT_SELECTION:
+          console.log(item);
+          break;
+        case C.INSPENCTION:
+          console.log(item);
+          break;
+        default:
+          console.log(item);
+          break;
+      }
+      return { ...item, };
+    })
+  );
+
+  // sort by stepNo before returning
+  app_flow.sort((a, b) => a.stepNo - b.stepNo);
+
+  return { app_flow, app_assessment_flow_stage_i, tbl_assessments_status };
 };
+
 
 export const getDbEntityDetails = async (appId) => {
   const db = await initDB();
@@ -243,10 +315,42 @@ export const setAppCurrentStatus = async (appId, type_of_institute) => {
       setAppFlow(appId, STAGE_I_FEE);
       break;
   }
-
-
-
 };
+
+
+export const updateAppFlowStatus = async (appId, step, status) => {
+  // Update the app flow status
+  let info;
+  const db = await initDB();
+  try {
+    const tx = db.transaction([C.APP_FLOW], 'readwrite');
+    const store = tx.objectStore(C.APP_FLOW);
+    info = await store.index('appId_step').get([appId, step]);
+    console.log(info);
+    await store.put({ ...info, status: status, stepStatus: C.SL.PENDING });
+    await tx.done;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const updateAssessmentStatus = async (appId, stage, status, pendingAt) => {
+  // Update the app flow status
+  let info;
+  const db = await initDB();
+  try {
+    const tx = db.transaction([C.TBL_ASSESSMENTS_STATUS], 'readwrite');
+    const store = tx.objectStore(C.TBL_ASSESSMENTS_STATUS);
+    info = await store.index('[appId+stage]').get([appId, stage]);
+    await store.put({ ...info, assessment_status: status, pendingAt: pendingAt });
+    await tx.done;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+
+
 
 export const setAppFlow = async (appId, step, type_of_institute = null) => {
   // Update the app flow status

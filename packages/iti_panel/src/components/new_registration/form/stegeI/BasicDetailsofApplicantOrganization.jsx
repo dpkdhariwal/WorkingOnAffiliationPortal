@@ -1229,11 +1229,25 @@ export const Assessment_Basic_Detail = ({ isView = false, nav }) => {
   const [info, setInfo] = useState({});
 
   const onNext = async () => {
-    // Set Flow if Not exit 
-    let result = await setStageIAssessmentFlow(appId);
-    let data = await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.APPLICANT_ENTITY_DETAILS.step);
-    nav.next();
-  }
+    const confirmResult = await Swal.fire({ title: "Are you sure?", text: "Do you want to Proceed", icon: "question", showCancelButton: true, confirmButtonText: "Okay, Proceed", cancelButtonText: "Cancel", });
+    if (!confirmResult.isConfirmed) { console.log("User cancelled save"); return; }
+
+    const result = await Swal.fire("Saved!", "Your form data has been saved.", "success");
+
+    if (result.isConfirmed) {
+      try {
+        // Set Flow if not exist
+        await setStageIAssessmentFlow(appId);
+        // Mark as Complete this Step
+        await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.APPLICANT_ENTITY_DETAILS.step);
+        nav.next();
+        // window.location.reload();
+      } catch (err) {
+        console.error("Error while saving:", err);
+      }
+    }
+  };
+
 
   useEffect(() => { getInfo(); console.log(id); }, [id]);
 
@@ -1250,7 +1264,6 @@ export const Assessment_Basic_Detail = ({ isView = false, nav }) => {
     <>
       <Row style={{ backgroundColor: "rgb(245, 245, 245)", margin: "10px 0px 0px", borderRadius: 6, borderStyle: "dashed", borderWidth: "thin", padding: "2px", }} >
         <Col xl={12} lg={12} md={12} sm={12}>
-
           <table
             width="98%"
             border={1}
@@ -1337,71 +1350,71 @@ export const Assessment_Basic_Detail = ({ isView = false, nav }) => {
 
           {info?.entity_details?.Is_the_applicant_running_any_other_iti === "yes" && (
             <table
-            width="98%"
-            border={1}
-            style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
-            align="center"
-            cellPadding="5px"
-          >
-            <tbody>
-              <tr>
-                <td colSpan={7} style={{ border: "1px solid black" }}><b>Running Other ITI Information</b></td>
-              </tr>
-              <tr style={{ border: "1px solid black" }}>
-                <td>
-                  <table
-                    width="98%"
-                    border={1}
-                    style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
-                    align="center"
-                    cellPadding="5px"
-                  >
-                    <tbody>
-                      <tr>
-                        <td width={'1%'} rowSpan={8} style={{ border: "1px solid black" }}><b>1</b></td>
-                      </tr>
-                      <tr>
-                        <td colSpan={7} style={{ border: "1px solid black" }}><b>Running ITI Info</b></td>
-                      </tr>
+              width="98%"
+              border={1}
+              style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
+              align="center"
+              cellPadding="5px"
+            >
+              <tbody>
+                <tr>
+                  <td colSpan={7} style={{ border: "1px solid black" }}><b>Running Other ITI Information</b></td>
+                </tr>
+                <tr style={{ border: "1px solid black" }}>
+                  <td>
+                    <table
+                      width="98%"
+                      border={1}
+                      style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
+                      align="center"
+                      cellPadding="5px"
+                    >
+                      <tbody>
+                        <tr>
+                          <td width={'1%'} rowSpan={8} style={{ border: "1px solid black" }}><b>1</b></td>
+                        </tr>
+                        <tr>
+                          <td colSpan={7} style={{ border: "1px solid black" }}><b>Running ITI Info</b></td>
+                        </tr>
 
-                      <tr style={{ border: "1px solid black" }}>
-                        <th style={{ border: "1px solid black" }}>ITI Name</th>
-                        <th style={{ border: "1px solid black" }}>MIS Code</th>
-                        <th style={{ border: "1px solid black" }}>State</th>
-                        <th style={{ border: "1px solid black" }}>District</th>
-                      </tr>
-                      <tr>
-                        <td style={{ border: "1px solid black" }}>value 1</td>
-                        <td style={{ border: "1px solid black" }}>value 1</td>
-                        <td style={{ border: "1px solid black" }}>value 1</td>
-                        <td style={{ border: "1px solid black" }}>value 1</td>
-                      </tr>
+                        <tr style={{ border: "1px solid black" }}>
+                          <th style={{ border: "1px solid black" }}>ITI Name</th>
+                          <th style={{ border: "1px solid black" }}>MIS Code</th>
+                          <th style={{ border: "1px solid black" }}>State</th>
+                          <th style={{ border: "1px solid black" }}>District</th>
+                        </tr>
+                        <tr>
+                          <td style={{ border: "1px solid black" }}>value 1</td>
+                          <td style={{ border: "1px solid black" }}>value 1</td>
+                          <td style={{ border: "1px solid black" }}>value 1</td>
+                          <td style={{ border: "1px solid black" }}>value 1</td>
+                        </tr>
 
-                      <tr style={{ border: "1px solid black" }}>
-                        <th style={{ border: "1px solid black" }}>Town/City</th>
-                        <th style={{ border: "1px solid black" }}>Block/Tehsil</th>
-                        <th style={{ border: "1px solid black" }}>Pincode</th>
-                        <th style={{ border: "1px solid black" }}>Plot Number/Khasara Number</th>
-                      </tr>
-                      <tr>
-                        <td style={{ border: "1px solid black" }}>value 1</td>
-                        <td style={{ border: "1px solid black" }}>value 1</td>
-                        <td style={{ border: "1px solid black" }}>value 1</td>
-                        <td style={{ border: "1px solid black" }}>value 1</td>
-                      </tr>
+                        <tr style={{ border: "1px solid black" }}>
+                          <th style={{ border: "1px solid black" }}>Town/City</th>
+                          <th style={{ border: "1px solid black" }}>Block/Tehsil</th>
+                          <th style={{ border: "1px solid black" }}>Pincode</th>
+                          <th style={{ border: "1px solid black" }}>Plot Number/Khasara Number</th>
+                        </tr>
+                        <tr>
+                          <td style={{ border: "1px solid black" }}>value 1</td>
+                          <td style={{ border: "1px solid black" }}>value 1</td>
+                          <td style={{ border: "1px solid black" }}>value 1</td>
+                          <td style={{ border: "1px solid black" }}>value 1</td>
+                        </tr>
 
-                      <tr style={{ border: "1px solid black" }}>
-                        <th style={{ border: "1px solid black" }} colSpan={2}>Landmark</th>
-                      </tr>
-                      <tr>
-                        <td style={{ border: "1px solid black" }} colSpan={2}>value 1</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </td>
-              </tr>
-            </tbody>
-          </table>)}
+                        <tr style={{ border: "1px solid black" }}>
+                          <th style={{ border: "1px solid black" }} colSpan={2}>Landmark</th>
+                        </tr>
+                        <tr>
+                          <td style={{ border: "1px solid black" }} colSpan={2}>value 1</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+              </tbody>
+            </table>)}
         </Col>
       </Row>
 

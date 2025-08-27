@@ -36,20 +36,25 @@ import {
   STAGE_I__ASSESSMENT_ON_PROGRESS,
   STAGE_I__ASSESSMENT_COMPLETED
 } from "../constants";
+import * as C from "../constants";
 
 import { ActionONStateOneAssessmentPending } from "../screens/Timeline/actions/assessor/actions_stage_i_assessment";
+import { getAssessmentProgressStatus } from "../db/forms/stageI/set/set";
 
 const getSetStep = (info, i) => {
   switch (info.stepStatus) {
     case 'inactive':
       return <AffTimeLineItem variant="inative" key={i}><InactiveStep info={info} /></AffTimeLineItem>
     case 'pending':
+    case C.SL.PENDING:
       return <AffTimeLineItem variant="pending" key={i}><PendingStep info={info} /></AffTimeLineItem>
     case 'on-progress':
-      return <AffTimeLineItem variant="inProgress" key={i}><PendingStep  info={info} variant="inProgress"  /></AffTimeLineItem>
+      return <AffTimeLineItem variant="inProgress" key={i}><PendingStep info={info} variant="inProgress" /></AffTimeLineItem>
     case 'completed':
-      return <AffTimeLineItem variant="completed" key={i}><CompletedStep info={info} variant="completed"  /></AffTimeLineItem>
+    case C.SL.COMPLETED:
+      return <AffTimeLineItem variant="completed" key={i}><CompletedStep info={info} variant="completed" /></AffTimeLineItem>
     default:
+      console.log(info.stepStatus);
       return <h5>Something Went Wrong</h5>;
   }
 }
@@ -97,18 +102,33 @@ export const TimeLine = ({ rowData }) => {
   const { row } = useContext(TimeLineContext);
   const authUser = useSelector((state) => state.loginUserReducer);
   const [AppFlow, setAppFlow] = useState([]);
+  const [appInfo, setAppInfo] = useState({});
+
 
   useEffect(() => {
     let result = getAppFlowByAppId(row.appId);
     result.then((data) => {
-      setAppFlow(data);
+      console.log(data.app_flow);
+      setAppFlow(data.app_flow);
       console.log(data)
     })
+
+    appStatus();
 
     console.log(authUser);
   }, [])
 
   console.log(AppFlow);
+
+  const appStatus = async () => {
+    const result = await getAssessmentProgressStatus(row?.appId);
+    setAppInfo(result);
+    console.log(result);
+  }
+  useEffect(() => {
+    console.log(appInfo);
+  }, [appInfo])
+
   return (
     <Fragment>
       <AffTimeLine>

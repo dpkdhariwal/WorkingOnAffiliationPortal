@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import React, { Children, useState, useEffect } from "react";
 
 import * as action from "../action/allActions";
-import { GoToStageIForm, GoToStageIAssessment, GoToNOCGenerateForm, GoToStageIIForm, GoToStageIIAssessment, GoToStageIIStaffDetailForm, GoToInspectionSlotSelection, GoToBatchCreattion } from "../action/allActions";
+import { GoToStageIAssessmentToUploadDocs, GoToStageIForm, GoToStageIAssessment, GoToNOCGenerateForm, GoToStageIIForm, GoToStageIIAssessment, GoToStageIIStaffDetailForm, GoToInspectionSlotSelection, GoToBatchCreattion } from "../action/allActions";
 
 
 import {
@@ -69,7 +69,9 @@ import {
   INSP_SHEDULED,
   INSP_PENDING
 } from "../../constants";
+import * as C from "../../constants";
 import { useSelector, useDispatch } from "react-redux";
+import { getAssessmentProgressStatus } from "../../db/forms/stageI/set/set";
 
 export const PendingStep = ({ info, variant }) => {
 
@@ -97,9 +99,6 @@ export const PendingStep = ({ info, variant }) => {
       setCardArrow("f-timeline-container-warning");
     }
   }, [variant]);
-
-
-
 
   // GET SET ACTIONS 
   const getSetActions = (info) => {
@@ -143,17 +142,38 @@ export const PendingStep = ({ info, variant }) => {
             return <h5>DD</h5>
         }
       case STAGE_I__ASSESSMENT:
+        console.log(info.status);
         switch (info.status) {
           case STAGE_I__ASSESSMENT_COMPLETED:
             return <h5>DD</h5>
           case STAGE_I__ASSESSMENT_ON_PROGRESS:
-            return authUser.userType === 'state_assessor' ? <GoToStageIAssessment info={info} /> : ''
+            console.log(authUser.userType);
+            switch (authUser.userType) {
+              case 'state_assessor':
+                if (info?.aStatus?.pendingAt === C.SL.PENDING_AT_ASSESSOR) {
+                  console.log(info?.aStatus?.pendingAt);
+                  return <GoToStageIAssessment info={info} />;
+                }
+                break
+              case 'applicant':
+                console.log(info?.aStatus?.pendingAt);
+                switch (info?.aStatus?.pendingAt) {
+                  case C.SL.PENDING_AT_APPLICANT:
+                  case C.SL.APPLICANT:
+                    return <GoToStageIAssessmentToUploadDocs info={info} />;
+                  default:
+                    return 'NA';
+                }
+              default:
+                return 'NA';
+            }
+            break;
           case STAGE_I__ASSESSMENT_PENDING:
-            return authUser.userType === 'state_assessor' ? <GoToStageIAssessment info={info} /> : ''
-          // return action.GoToStageIAssessment();
+            return authUser.userType === 'state_assessor' ? <GoToStageIAssessment info={info} /> : '';
           default:
             return <h5>DD</h5>
         }
+        break;
       case NOC_ISSUANCE:
         switch (info.status) {
           case NOC_ISSUANCE_PENDING:

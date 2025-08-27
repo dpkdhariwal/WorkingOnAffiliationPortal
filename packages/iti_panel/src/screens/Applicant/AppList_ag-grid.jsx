@@ -25,14 +25,9 @@ export const PrimeReactDT = () => {
 
   const user = useSelector((state) => state.loginUserReducer);
   // const AppList = getAppsByUserId(user.id);
+  useEffect(() => { console.log(AppList); })
 
   useEffect(() => {
-    console.log(AppList);
-  })
-
-  useEffect(() => {
-
-
     switch (user.userType) {
       case 'state_assessor':
         getAppListByStateAssessor(user).then((data) => {
