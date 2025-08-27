@@ -18,20 +18,15 @@ export const GetSetAppAction = ({ row }) => {
 
   console.log(row);
 
+  
+
   return (
     <>
       <TimeLineContext.Provider value={{ row }} >
         <Button variant="success" onClick={() => setModalShow(true)}>
           Enter
         </Button>
-        <Modal
-          show={modalShow}
-          onHide={() => setModalShow(false)}
-          size="md"
-          aria-labelledby="contained-modal-title-vcenter"
-          centered
-        >
-
+        <Modal show={modalShow} onHide={() => setModalShow(false)} size="md" aria-labelledby="contained-modal-title-vcenter" centered >
           <Modal.Header closeButton>
             <Modal.Title id="contained-modal-title-vcenter" as="h6">
               {row?.appId ?? "No App ID"} : {row?.proposedInstDetails?.pro_insti_details?.name_of_applicant_institute || "Not Filled"}

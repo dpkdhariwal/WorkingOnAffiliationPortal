@@ -31,6 +31,20 @@ export const GoToStageIAssessment = ({info}) => {
   );
 };
 
+export const GoToStageIAssessmentToUploadDocs = ({info}) => {
+  const navigate = useNavigate(); // <-- Hook for navigation
+
+  const goNow = () => {
+    navigate(`/dashboard/Upload-Documents?appId=${info.appId}`); // <-- Your route here
+  };
+
+  return (
+    <Button onClick={goNow} size="sm"  variant='warning-gradient' className="rounded-pill btn-wave">
+      Upload Documents
+    </Button>
+  );
+};
+
 export const GoToNOCGenerateForm = ({info}) => {
   const navigate = useNavigate(); // <-- Hook for navigation
 

@@ -46,7 +46,7 @@ export const setNewStatusOfAppByStep = async (appId, step, newStatus) => {
     const tx = db.transaction([C.APP_FLOW], 'readwrite');
     const store = tx.objectStore(C.APP_FLOW);
     currentState = await store.index("appId_step").get([appId, step]);
-    await store.put({ ...currentState, status: newStatus });
+    await store.put({ ...currentState, status: newStatus, assessment_status: C.SL.ON_PROGRESS });
     await tx.done;
   } catch (error) {
     return {}
@@ -60,8 +60,8 @@ export const set_da_status_possasion_of_land = async (appId, values) => {
   let currentState, id, toStore;
   id = Date.now() + Math.random();
   try {
-    const tx = db.transaction([C.DA_LAND_DOCUMENTS], 'readwrite');
-    const store = tx.objectStore(C.DA_LAND_DOCUMENTS);
+    const tx = db.transaction([C.DA_STAGE_I_VERIFICATIONS], 'readwrite');
+    const store = tx.objectStore(C.DA_STAGE_I_VERIFICATIONS);
     currentState = await store.index("appId_key_isDraft").get([appId, C.DA1_KEYS.LAND_DOCUMENT, 'yes']);
     console.log(values);
     toStore = currentState?.appId ? { ...currentState, ...values } : { ...values, id: id, appId: appId, key: C.DA1_KEYS.LAND_DOCUMENT, isDraft: C.SL.YES };
@@ -78,8 +78,8 @@ export const get_da_status_possasion_of_land = async (appId) => {
   const db = await initDB();
   let currentState, id;
   try {
-    const tx = db.transaction([C.DA_LAND_DOCUMENTS], 'readwrite');
-    const store = tx.objectStore(C.DA_LAND_DOCUMENTS);
+    const tx = db.transaction([C.DA_STAGE_I_VERIFICATIONS], 'readwrite');
+    const store = tx.objectStore(C.DA_STAGE_I_VERIFICATIONS);
     currentState = await store.index("appId_key_isDraft").getAll([appId, C.DA1_KEYS.LAND_DOCUMENT, 'yes']);
     await tx.done;
     console.log(currentState);
@@ -97,8 +97,8 @@ export const set_da_status_land_area = async (appId, values) => {
   let currentState, id, toStore;
   id = Date.now() + Math.random();
   try {
-    const tx = db.transaction([C.DA_LAND_DOCUMENTS], 'readwrite');
-    const store = tx.objectStore(C.DA_LAND_DOCUMENTS);
+    const tx = db.transaction([C.DA_STAGE_I_VERIFICATIONS], 'readwrite');
+    const store = tx.objectStore(C.DA_STAGE_I_VERIFICATIONS);
     currentState = await store.index("appId_key_isDraft").get([appId, C.DA1_KEYS.LAND_AREA, 'yes']);
     console.log(values);
     toStore = currentState?.appId ? { ...currentState, ...values } : { ...values, id: id, appId: appId, key: C.DA1_KEYS.LAND_AREA, isDraft: C.SL.YES };
@@ -115,8 +115,8 @@ export const get_da_status_land_area = async (appId) => {
   const db = await initDB();
   let currentState, id;
   try {
-    const tx = db.transaction([C.DA_LAND_DOCUMENTS], 'readwrite');
-    const store = tx.objectStore(C.DA_LAND_DOCUMENTS);
+    const tx = db.transaction([C.DA_STAGE_I_VERIFICATIONS], 'readwrite');
+    const store = tx.objectStore(C.DA_STAGE_I_VERIFICATIONS);
     currentState = await store.index("appId_key_isDraft").getAll([appId, C.DA1_KEYS.LAND_AREA, 'yes']);
     await tx.done;
     console.log(currentState);
@@ -193,7 +193,7 @@ export const setStageIAssessmentFlow = async (appId) => {
 
     if (asmt_data.length === 0) {
 
-      await asmt_store.put({ ...C.ASSESSMENT_STATUS, assessment_id: assessment_id, id: Date.now() + Math.random(), appId: appId });
+      await asmt_store.put({ ...C.ASSESSMENT_STATUS, assessment_id: assessment_id, id: Date.now() + Math.random(), appId: appId, assessment_status: C.SL.ON_PROGRESS, pendingAt: C.SL.PENDING_AT_ASSESSOR });
 
       for (const [index, flow] of C.ASSESSMENT_STAGE_I_FLOW.entries()) {
         let id = Date.now() + Math.random();
@@ -222,10 +222,46 @@ export const markAsCompleteStageAssessmentFlow = async (appId, step) => {
     let d1 = await store.index('appId_step').get([appId, step]);
     if (d1) {
       await store.put({ ...d1, status: C.SL.COMPLETED, completionDate: formattedDate });
-      if (d1?.nextStep) {
+      console.log(d1);
+      if (d1?.nextStep && d1?.nextStep != C.LAST) {
         let d2 = await store.index('appId_step').get([appId, d1?.nextStep]);
         await store.put({ ...d2, stepStatus: C.SL.ACTIVE });
       }
+    }
+
+    await tx.done;
+  } catch (error) {
+    console.log(error);
+    return {}
+  }
+}
+
+export const setAsStageIAsmtasHistory = async (appId, forUser) => {
+  const db = await initDB();
+  try {
+    const tx = db.transaction([C.APP_ASSESSMENT_FLOW_STAGE_I], 'readwrite');
+    const store = tx.objectStore(C.APP_ASSESSMENT_FLOW_STAGE_I);
+    // Marking as History
+    let h1 = await store.index('appId_for_recordType').getAll([appId, forUser, C.SL.HISTORY]);
+    for (const [index, flow] of h1.entries()) {
+      await store.put({ ...flow, recordType: C.SL.HISTORY });
+    }
+    await tx.done;
+  } catch (error) {
+    console.log(error);
+    return {}
+  }
+}
+export const generateAssmentFlowForApplciant = async (appId) => {
+  const db = await initDB();
+  // const formattedDate = new Date().toISOString(); // "2025-08-05T07:25:13.123Z"
+  try {
+    const tx = db.transaction([C.APP_ASSESSMENT_FLOW_STAGE_I], 'readwrite');
+    const store = tx.objectStore(C.APP_ASSESSMENT_FLOW_STAGE_I);
+    // Marking as History
+    let h1 = await store.index('appId_for_recordType').getAll([appId, C.SL.ASSESSOR, C.SL.PRESENT]);
+    for (const [index, flow] of h1.entries()) {
+      await store.put({ ...flow, completionDate: null, id: Date.now() + Math.random(), for: C.SL.APPLICANT, status: C.SL.PENDING, stepStatus: C.SL.IN_ACTIVE, recordType: C.SL.PRESENT });
     }
     await tx.done;
   } catch (error) {
@@ -247,6 +283,7 @@ export const getAssessmentStatus = async (appId) => {
     return {}
   }
 };
+
 export const setAssessmentStatus = async (appId, status, pendingAt = null) => {
   const db = await initDB();
   try {
@@ -263,43 +300,134 @@ export const setAssessmentStatus = async (appId, status, pendingAt = null) => {
   }
 };
 
-export const getAssessmentStageIFlowById = async (appId) => {
+export const getAssessmentStageIFlowById = async (appId, userType = null) => {
   const db = await initDB();
   try {
-    const tx = db.transaction([C.APP_ASSESSMENT_FLOW_STAGE_I], 'readwrite');
+    const tx = db.transaction([C.APP_ASSESSMENT_FLOW_STAGE_I, C.TBL_ASSESSMENTS_STATUS], 'readwrite');
+
+    // Getting the assessment status
+    const store_2 = tx.objectStore(C.TBL_ASSESSMENTS_STATUS);
+    let aInfo = await store_2.index('appId').get(appId);
+
     const store = tx.objectStore(C.APP_ASSESSMENT_FLOW_STAGE_I);
-    let d1 = await store.index('appId').getAll(appId);
+    let d1;
+    d1 = await store.index('appId_for_recordType').getAll([appId, userType, C.SL.PRESENT]);
     d1.sort((a, b) => a.stepNo - b.stepNo);
+
+    d1 = await d1.map((step) => {
+      let status = false;
+      switch (step?.status) {
+        case C.SL.VERIFIED:
+          status = true;
+          break;
+        case C.SL.COMPLETED:
+          status = true;
+          break;
+        case C.SL.ON_PROGRESS:
+          switch (aInfo?.pendingAt) {
+            case C.SL.PENDING_AT_APPLICANT:
+              status = true;
+              break;
+            case C.SL.PENDING_AT_ASSESSOR:
+              status = true;
+              break;
+            case C.SL.PENDING_AT_RDSDE:
+              status = true;
+              break;
+            default:
+              status = false;
+              break;
+          }
+          break;
+        default:
+          status = false;
+          break;
+      }
+      return { ...step, completed: status };
+    });
     await tx.done;
-    d1 = await d1.map((step) => ({ ...step, completed: step.status === C.SL.COMPLETED }));
     return d1;
   } catch (error) {
     console.log(error);
     return {}
+  } finally {
+    db.close();
   }
+
 };
+
 
 
 export const getAssessmentProgressStatus = async (appId) => {
   const db = await initDB();
   try {
-    const tx = db.transaction([C.APP_ASSESSMENT_FLOW_STAGE_I], 'readonly');
+    const tx = db.transaction([C.APP_ASSESSMENT_FLOW_STAGE_I, C.DA_STAGE_I_VERIFICATIONS, C.TBL_ASSESSMENTS_STATUS], 'readonly');
     const store = tx.objectStore(C.APP_ASSESSMENT_FLOW_STAGE_I);
-    let steps = await store.index('appId').getAll(appId);
-    await tx.done;
+    const store_1 = tx.objectStore(C.DA_STAGE_I_VERIFICATIONS);
+    const store_2 = tx.objectStore(C.TBL_ASSESSMENTS_STATUS);
 
+    // Getting the assessment status
+    let assessmentStatus = await store_2.index("appId").get(appId);
+
+    let steps = await store.index('appId_for').getAll([appId, C.SL.ASSESSOR]);
+    let vStatus = [];
+
+    // Removing the review assessment step from the steps
+    steps = steps.filter(step => step.step !== C.ST1FC.REVIEW_ASSESSMENT.step);
+
+    // check level 1 step is completed or not
+    const allCompleted = steps.every(step => step.status == C.SL.COMPLETED); // 👈 check here
+    vStatus.push(allCompleted);
+
+
+    // Checking the verification status of each step
+    steps = await Promise.all(
+      steps.map(async (step) => {
+        switch (step.step) {
+          case C.ST1FC.APPLICANT_ENTITY_DETAILS.step:
+          case C.ST1FC.DETAILS_OF_THE_PROPOSED_INSTITUTE.step:
+          case C.ST1FC.DETAILS_OF_TRADE_UNIT_FOR_AFFILIATION.step:
+          case C.ST1FC.DOCUMENTS_UPLOAD.step:
+            vStatus.push(true);
+            break;
+          case C.ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step: {
+            const d1 = await Promise.all([
+              store_1.index("appId_key_isDraft").getAll([appId, C.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_AUTHORIZED_SIGNATORY, "yes"]),
+              store_1.index("appId_key_isDraft").getAll([appId, C.ASSESSMENT_STAGE_I_KEYS.REGISTRATION_CERTIFICATE_OF_APPLICANT_ORGANIZATION, "yes"]),
+              store_1.index("appId_key_isDraft").getAll([appId, C.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_SECRETARY_CHAIRPERSON_PRESIDENT, "yes"]),
+              store_1.index("appId_key_isDraft").getAll([appId, C.ASSESSMENT_STAGE_I_KEYS.RESOLUTION_CERTIFICATE, "yes"]),
+              store_1.index("appId_key_isDraft").getAll([appId, C.ASSESSMENT_STAGE_I_KEYS.LAND_AREA, "yes"])
+
+            ]);
+
+            console.log(d1);
+            const allAsPerNorms = d1.flat().every(item => item.as_per_norms === "yes");
+            vStatus.push(allAsPerNorms);
+            break;
+          }
+
+          default:
+            vStatus.push(true);
+            break;
+        }
+
+        console.log("Verification Status:", vStatus);
+
+        return {
+          ...step,
+          completed: step.status === C.SL.COMPLETED,
+        };
+      })
+    );
+
+
+    // Shorting the steps by stepNo
     steps.sort((a, b) => a.stepNo - b.stepNo);
-
-    // Add computed flag
-    steps = steps.map(step => ({
-      ...step,
-      completed: step.status === C.SL.COMPLETED
-    }));
-    const allCompleted = steps.every(step => step.completed); // 👈 check here
-    console.log("All completed:", allCompleted);
     return {
       steps,
-      allCompleted
+      allCompleted,
+      vStatus: vStatus.every(Boolean),
+      assessmentStatus
     };
   } catch (error) {
     console.error(error);
@@ -308,22 +436,18 @@ export const getAssessmentProgressStatus = async (appId) => {
 };
 
 
-export const getDetails = async (appId, stage=null, entity=null ) => {
+export const getDetails = async (appId, stage = null, entity = null) => {
   const db = await initDB();
   try {
-    const tx = db.transaction([C.ENTITY_DETAILS, C.ENTITY_ADDRESS, C.OTHER_ITI,C.PROPOSED_INSTI_DETAILS, C.PROPOSED_INSTI_ADDRESSES, C.NEW_INSTI_TRADE_LIST], 'readwrite');
+    const tx = db.transaction([C.ENTITY_DETAILS, C.ENTITY_ADDRESS, C.OTHER_ITI, C.PROPOSED_INSTI_DETAILS, C.PROPOSED_INSTI_ADDRESSES, C.NEW_INSTI_TRADE_LIST], 'readwrite');
     const store_1 = tx.objectStore(C.ENTITY_DETAILS);
     const store_2 = tx.objectStore(C.ENTITY_ADDRESS);
     const store_3 = tx.objectStore(C.OTHER_ITI);
     const store_4 = tx.objectStore(C.PROPOSED_INSTI_DETAILS);
     const store_5 = tx.objectStore(C.PROPOSED_INSTI_ADDRESSES);
     const store_6 = tx.objectStore(C.NEW_INSTI_TRADE_LIST);
-    
-    
-    
 
-    
-    
+
     let entity_details = await store_1.index("appId").get(appId);
     let entity_address = await store_2.index("appId").get(appId);
     let other_iti = await store_3.index("appId").getAll(appId);
@@ -333,13 +457,13 @@ export const getDetails = async (appId, stage=null, entity=null ) => {
 
 
     let new_insti_trade_list = await store_6.index("appId").getAll(appId);
-    
-    
 
-    
+
+
+
     console.log(entity_details, entity_address, other_iti, proposed_insti_details, proposed_insti_addresses, new_insti_trade_list);
     await tx.done;
-    return {entity_details, entity_address, other_iti, proposed_insti_details, proposed_insti_addresses, new_insti_trade_list};
+    return { entity_details, entity_address, other_iti, proposed_insti_details, proposed_insti_addresses, new_insti_trade_list };
   } catch (error) {
     console.error(error);
   }
