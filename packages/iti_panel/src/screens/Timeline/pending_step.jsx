@@ -142,7 +142,7 @@ export const PendingStep = ({ info, variant }) => {
             return <h5>DD</h5>
         }
       case STAGE_I__ASSESSMENT:
-        console.log(info.status);
+        console.log(info.status, authUser);
         switch (info.status) {
           case STAGE_I__ASSESSMENT_COMPLETED:
             return <h5>DD</h5>

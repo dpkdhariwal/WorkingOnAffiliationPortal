@@ -416,6 +416,9 @@ export const ReviewAssessment = ({ steps, step, view: viewProp = false, isView =
 
       await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.REVIEW_ASSESSMENT.step);
 
+      setAppFlow(appId, C.STAGE_I__ASSESSMENT);
+
+
       Swal.fire("Saved!", "Your form data has been saved.", "success").then((result) => {
         if (result.isConfirmed) {
           // navigate(`/dashboard/viewAssessment?appId=${appId}`);
@@ -497,7 +500,7 @@ export const ReviewAssessment = ({ steps, step, view: viewProp = false, isView =
 
       <AsessementIActions appId={appId} nav={nav} finishBtn={setActionButton()} />
       {/* <MarkAsCompleteStageIAssessment /> */}
-    </>) : (<AssessmentNotice/>)
+    </>) : (<AssessmentNotice />)
   )
 }
 
@@ -510,12 +513,12 @@ export default function AssessmentNotice() {
           Assessment Not Yet Completed
         </h1>
         <p className="lead">
-          Please complete all required steps before proceeding. 
+          Please complete all required steps before proceeding.
           Your application will not move forward until the assessment is finished.
         </p>
         <hr className="my-4" />
         <p>
-          If you think this is a mistake or you need assistance, 
+          If you think this is a mistake or you need assistance,
           please contact support.
         </p>
         <button className="btn btn-primary btn-lg">Go to Assessment</button>

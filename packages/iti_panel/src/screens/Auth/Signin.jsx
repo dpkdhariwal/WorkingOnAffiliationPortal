@@ -15,6 +15,7 @@ import { loginUser } from "../../actions/userAuth";
 import toast, { Toaster } from "react-hot-toast";
 import { setSampleUser, getSetUserRoles, getUserByCredentials } from "../../db/users";
 import { loginByAuth } from "../../services/auth/login";
+import SwalManager from "../../common/SwalManager";
 
 const Signin = () => {
 
@@ -72,12 +73,16 @@ const Signin = () => {
     const { userid, password } = values;
     let result;
     try {
+      SwalManager.showLoading("Saving...");
       result = await loginByAuth(userid, password);
       console.log(result);
     } catch (error) {
       console.log(error);
       toast.error(error.msg, { position: "top-right", });
+    } finally {
+      SwalManager.hide();
     }
+
 
     setSampleUser();
     getSetUserRoles();

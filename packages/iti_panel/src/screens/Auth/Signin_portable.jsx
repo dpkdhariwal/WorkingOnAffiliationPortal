@@ -15,6 +15,7 @@ import { loginUser } from "../../actions/userAuth";
 import toast, { Toaster } from "react-hot-toast";
 import { setSampleUser, getSetUserRoles, getUserByCredentials } from "../../db/users";
 import { loginByAuth } from "../../services/auth/login";
+import SwalManager from "../../common/SwalManager";
 
 const Signin = () => {
   const navigate = useNavigate(); // initialize navigation
@@ -73,11 +74,16 @@ const Signin = () => {
 
     let result, user;
     try {
+      SwalManager.showLoading("Authenticating...");
       result = await loginByAuth(userid, password);
+      console.log(result.data.info.userType);
       user = result.data;
       // console.log(result);
-      dispatch({ type: "USER_SIGNED_IN_SUCCESS", payload: result.data });
+      dispatch({ type: "USER_SIGNED_IN_SUCCESS", payload: { ...result.data, userType: result.data.info.userType } });
       toast.success("Logged in successfully", { position: "top-right", });
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      //    const confirmed = await SwalManager.success("Logged In");
+      // if (!confirmed) return;
       switch (user.userType) {
         case "applicant":
           if (user?.total_applications == 0) {
@@ -110,8 +116,9 @@ const Signin = () => {
         errorMessage = error.response.data.message;
       }
       toast.error(errorMessage, { position: "top-right" });
+    } finally {
+      SwalManager.hide();
     }
-
 
 
     // setSampleUser();
@@ -236,8 +243,6 @@ const Signin = () => {
 
                   onSubmit={async (values, { setSubmitting }) => {
                     try {
-                      // Simulate login request
-                      await new Promise((resolve) => setTimeout(resolve, 2000));
                       setFormData(values);
                       setFormSubmited(true);
                       await LoginNow(values);

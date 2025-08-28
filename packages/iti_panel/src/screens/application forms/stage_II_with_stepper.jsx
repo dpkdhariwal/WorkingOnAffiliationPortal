@@ -39,23 +39,9 @@ export const FormStageII = () => {
   const [activeStep, setActiveStep] = useState(0);
   const [steps, setSteps] = useState(data);
 
-  
-  // useEffect(() => {
-  //   const data = STAGE_II_APP_FORM_FLOW.map((step) => ({ ...step, completed: step.status === FILLED }));
-  //   const firstFilledIndex = STAGE_II_APP_FORM_FLOW.findIndex(step => step.status === FILLED);
-  //   const currentStep = firstFilledIndex !== -1 ? firstFilledIndex : 0;
-  //   console.log(data);
-  //   setSteps(data);
-  //   setActiveStep(currentStep);
-  // }, []);
+  useEffect(() => { console.log(steps) }, [steps]);
+  useEffect(() => { loadData(); }, []);
 
-  useEffect(() => {
-    console.log(steps)
-  }, [steps]);
-
-  useEffect(() => {
-    loadData();
-  }, []);
 
   const getLastActiveStep = (data) => {
     // Get the index of the first FILLED step
@@ -69,7 +55,7 @@ export const FormStageII = () => {
     // Debug/log
     console.log("First FILLED index:", firstFilledIndex);
     console.log("Last FILLED index:", lastFilledIndex);
-    setActiveStep(lastFilledIndex);
+    setActiveStep(currentStep);
   }
 
   const loadData = async () => {
