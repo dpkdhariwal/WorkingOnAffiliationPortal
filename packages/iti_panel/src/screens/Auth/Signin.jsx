@@ -15,6 +15,7 @@ import { loginUser } from "../../actions/userAuth";
 import toast, { Toaster } from "react-hot-toast";
 import { setSampleUser, getSetUserRoles, getUserByCredentials } from "../../db/users";
 import { loginByAuth } from "../../services/auth/login";
+import SwalManager from "../../common/SwalManager";
 
 const Signin = () => {
 
@@ -72,15 +73,19 @@ const Signin = () => {
     const { userid, password } = values;
     let result;
     try {
+      SwalManager.showLoading("Saving...");
       result = await loginByAuth(userid, password);
       console.log(result);
     } catch (error) {
       console.log(error);
       toast.error(error.msg, { position: "top-right", });
+    } finally {
+      SwalManager.hide();
     }
 
-    // setSampleUser();
-    // getSetUserRoles();
+
+    setSampleUser();
+    getSetUserRoles();
     // const user = await getUserByCredentials(userid, password);
 
     // if (user) {
@@ -192,10 +197,19 @@ const Signin = () => {
                               .required("Enter Correct Password"),
                           })}
                           validateOnChange
-                          onSubmit={(values) => {
-                            setFormData(values);
-                            setFormSubmited(true);
-                            LoginNow(values);
+                          onSubmit={async (values, { setSubmitting }) => {
+                            try {
+                              // Simulate login request
+                              await new Promise((resolve) => setTimeout(resolve, 2000));
+                              setFormData(values);
+                              setFormSubmited(true);
+                              await LoginNow(values);
+                              console.log("Logged in:", values);
+                            } catch (err) {
+                              console.error(err);
+                            } finally {
+                              setSubmitting(false); // Re-enable after request finished
+                            }
                           }}
                           initialValues={{
                             userid: "",
@@ -210,6 +224,7 @@ const Signin = () => {
                             errors,
                             touched,
                             handleBlur,
+                            isSubmitting
                           }) => (
                             <Form noValidate onSubmit={handleSubmit}>
                               <h5 className="text-start mb-2">
@@ -230,6 +245,8 @@ const Signin = () => {
                                   onChange={handleChange}
                                   onBlur={handleBlur}
                                   isInvalid={touched.userid && !!errors.userid}
+                                  disabled={isSubmitting}
+
                                 />
                                 <Form.Control.Feedback type="invalid">
                                   {errors.userid}
@@ -248,6 +265,7 @@ const Signin = () => {
                                   isInvalid={
                                     touched.password && !!errors.password
                                   }
+                                  disabled={isSubmitting}
                                 />
                                 <Form.Control.Feedback type="invalid">
                                   {errors.password}
@@ -258,6 +276,8 @@ const Signin = () => {
                                 <button
                                   type="submit"
                                   className="btn btn-primary"
+                                  disabled={isSubmitting}
+
                                 >
                                   Sign In
                                 </button>

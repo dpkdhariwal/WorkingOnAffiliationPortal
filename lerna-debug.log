@@ -1,0 +1,23 @@
+0 silly argv {
+0 silly argv   _: [ 'run' ],
+0 silly argv   lernaVersion: '8.2.2',
+0 silly argv   '$0': 'node_modules\\lerna\\dist\\cli.js',
+0 silly argv   script: 'dev'
+0 silly argv }
+1 notice cli v8.2.2
+2 verbose packageConfigs Resolving packages based on package.json "workspaces" configuration.
+3 verbose rootPath E:\All Work\DGT\Affiliation\Lerna
+4 error MultipleProjectsWithSameNameError: The following projects are defined in multiple locations:
+4 error   - server:
+4 error     - packages/backend
+4 error     - packages/server
+4 error
+4 error   To fix this, set a unique name for each project in a project.json inside the project's root. If the project does not currently have a project.json, you can create one that contains only a name.
+4 error       at validateAndNormalizeProjectRootMap (E:\All Work\DGT\Affiliation\Lerna\node_modules\nx\src\project-graph\utils\project-configuration-utils.js:467:15)
+4 error       at mergeCreateNodesResults (E:\All Work\DGT\Affiliation\Lerna\node_modules\nx\src\project-graph\utils\project-configuration-utils.js:353:9)
+4 error       at E:\All Work\DGT\Affiliation\Lerna\node_modules\nx\src\project-graph\utils\project-configuration-utils.js:297:85
+4 error       at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+4 error       at async buildProjectGraphAndSourceMapsWithoutDaemon (E:\All Work\DGT\Affiliation\Lerna\node_modules\nx\src\project-graph\project-graph.js:87:31)
+4 error       at async createProjectGraphAndSourceMapsAsync (E:\All Work\DGT\Affiliation\Lerna\node_modules\nx\src\project-graph\project-graph.js:271:25)
+4 error       at async createProjectGraphAsync (E:\All Work\DGT\Affiliation\Lerna\node_modules\nx\src\project-graph\project-graph.js:219:39)
+4 error       at async detectProjects (E:\All Work\DGT\Affiliation\Lerna\node_modules\lerna\dist\index.js:3003:25)

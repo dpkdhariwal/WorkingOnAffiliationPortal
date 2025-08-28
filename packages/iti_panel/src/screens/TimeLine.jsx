@@ -42,6 +42,7 @@ import { ActionONStateOneAssessmentPending } from "../screens/Timeline/actions/a
 import { getAssessmentProgressStatus } from "../db/forms/stageI/set/set";
 
 const getSetStep = (info, i) => {
+  console.log(info);
   switch (info.stepStatus) {
     case 'inactive':
       return <AffTimeLineItem variant="inative" key={i}><InactiveStep info={info} /></AffTimeLineItem>

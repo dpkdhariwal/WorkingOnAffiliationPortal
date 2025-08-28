@@ -1280,7 +1280,6 @@ export const STEPPER_STYLE = {
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 // Database Stores 
 
-
 export const DB_VERSION = 36;
 export const DB_NAME = "AffliationDB";
 export const USERS = "users";
@@ -1328,6 +1327,10 @@ export const DA_STAGE_I_VERIFICATIONS = "DA_STAGE_I_VERIFICATIONS";
 
 // Sample Assessment Obj
 export const TBL_ASSESSMENTS_STATUS = "ASSESSMENT_STATUS";
+
+
+
+
 export const SAMPLE_ASSESSMENTS_INITIAL_STATUS = {
   id: null,
   appId: null,
@@ -1652,12 +1655,9 @@ export const DA1_KEYS = {
 }
 
 
-
-
-
-
 // Workshop
 // Workshop
+
 const WORKSHOP_1 = "WORKSHOP_1";
 const WORKSHOP_2 = "WORKSHOP_2";
 const WORKSHOP_3 = "WORKSHOP_3";

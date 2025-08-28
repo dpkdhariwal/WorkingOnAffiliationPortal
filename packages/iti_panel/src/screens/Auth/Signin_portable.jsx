@@ -14,6 +14,8 @@ import { tryLogin } from "../../services/index";
 import { loginUser } from "../../actions/userAuth";
 import toast, { Toaster } from "react-hot-toast";
 import { setSampleUser, getSetUserRoles, getUserByCredentials } from "../../db/users";
+import { loginByAuth } from "../../services/auth/login";
+import SwalManager from "../../common/SwalManager";
 
 const Signin = () => {
   const navigate = useNavigate(); // initialize navigation
@@ -68,19 +70,23 @@ const Signin = () => {
 
   const LoginNow = async (values) => {
     const { userid, password } = values;
-    setSampleUser();
-    getSetUserRoles();
-    const user = await getUserByCredentials(userid, password);
-    if (user) {
-      dispatch({ type: "USER_SIGNED_IN_SUCCESS", payload: user });
 
-      toast.success("Logged in successfully", {
-        position: "top-right",
-      });
 
+    let result, user;
+    try {
+      SwalManager.showLoading("Authenticating...");
+      result = await loginByAuth(userid, password);
+      console.log(result.data.info.userType);
+      user = result.data;
+      // console.log(result);
+      dispatch({ type: "USER_SIGNED_IN_SUCCESS", payload: { ...result.data, userType: result.data.info.userType } });
+      toast.success("Logged in successfully", { position: "top-right", });
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      //    const confirmed = await SwalManager.success("Logged In");
+      // if (!confirmed) return;
       switch (user.userType) {
         case "applicant":
-          if (user.total_applications == 0) {
+          if (user?.total_applications == 0) {
             navigate("/dashboard/Application/");
           } else {
             navigate("/dashboard/");
@@ -96,10 +102,59 @@ const Signin = () => {
           navigate("/dashboard/");
           break;
       }
+    } catch (error) {
+      let errorMessage = "Something went wrong";
+
+      if (typeof error === "string") {
+        errorMessage = error;
+      } else if (error?.msg) {
+        errorMessage = error.msg;
+      } else if (error?.message) {
+        errorMessage = error.message;
+      } else if (error?.response?.data?.message) {
+        // for axios errors
+        errorMessage = error.response.data.message;
+      }
+      toast.error(errorMessage, { position: "top-right" });
+    } finally {
+      SwalManager.hide();
     }
-    else {
-      alert("Invalid User:");
-    }
+
+
+    // setSampleUser();
+    // getSetUserRoles();
+    // const user = await getUserByCredentials(userid, password);
+    // if (user) {
+    //   dispatch({ type: "USER_SIGNED_IN_SUCCESS", payload: user });
+
+    //   toast.success("Logged in successfully", {
+    //     position: "top-right",
+    //   });
+
+    //   switch (user.userType) {
+    //     case "applicant":
+    //       if (user.total_applications == 0) {
+    //         navigate("/dashboard/Application/");
+    //       } else {
+    //         navigate("/dashboard/");
+    //       }
+    //       break;
+    //     case "rdsde":
+    //       navigate("/dashboard/rdsde");
+    //       break;
+    //     case 'state_admin':
+    //       navigate("/dashboard/state_admin");
+    //       break;
+    //     default:
+    //       navigate("/dashboard/");
+    //       break;
+    //   }
+    // }
+    // else {
+    //   alert("Invalid User:");
+    // }
+
+
 
 
     // const user = sampleUserList.find(
@@ -185,10 +240,18 @@ const Signin = () => {
                       .required("Enter Correct Password"),
                   })}
                   validateOnChange
-                  onSubmit={(values) => {
-                    setFormData(values);
-                    setFormSubmited(true);
-                    LoginNow(values);
+
+                  onSubmit={async (values, { setSubmitting }) => {
+                    try {
+                      setFormData(values);
+                      setFormSubmited(true);
+                      await LoginNow(values);
+                      console.log("Logged in:", values);
+                    } catch (err) {
+                      console.error(err);
+                    } finally {
+                      setSubmitting(false); // Re-enable after request finished
+                    }
                   }}
                   initialValues={{
                     userid: "",
@@ -203,6 +266,7 @@ const Signin = () => {
                     errors,
                     touched,
                     handleBlur,
+                    isSubmitting
                   }) => (
                     <Form noValidate onSubmit={handleSubmit}>
                       <h5 className="text-start mb-2">
@@ -223,6 +287,8 @@ const Signin = () => {
                           onChange={handleChange}
                           onBlur={handleBlur}
                           isInvalid={touched.userid && !!errors.userid}
+                          disabled={isSubmitting}
+
                         />
                         <Form.Control.Feedback type="invalid">
                           {errors.userid}
@@ -241,6 +307,8 @@ const Signin = () => {
                           isInvalid={
                             touched.password && !!errors.password
                           }
+                          disabled={isSubmitting}
+
                         />
                         <Form.Control.Feedback type="invalid">
                           {errors.password}
@@ -251,6 +319,7 @@ const Signin = () => {
                         <button
                           type="submit"
                           className="btn btn-primary"
+                          disabled={isSubmitting}
                         >
                           Sign In
                         </button>
