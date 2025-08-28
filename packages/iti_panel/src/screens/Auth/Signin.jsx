@@ -79,8 +79,8 @@ const Signin = () => {
       toast.error(error.msg, { position: "top-right", });
     }
 
-    // setSampleUser();
-    // getSetUserRoles();
+    setSampleUser();
+    getSetUserRoles();
     // const user = await getUserByCredentials(userid, password);
 
     // if (user) {

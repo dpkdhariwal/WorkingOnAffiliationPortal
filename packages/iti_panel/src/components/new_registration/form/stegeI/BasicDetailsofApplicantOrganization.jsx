@@ -33,6 +33,7 @@ import { markAsCompleteStageAssessmentFlow, setStageIAssessmentFlow } from "../.
 import * as set from "../../../../db/forms/stageI/set/set";
 
 import * as C from "../../../../constants";
+import * as ap from "../../../../services/applicant/index";
 
 const BasicDetailsofApplicantOrganization = ({ setActive, refreshSteps }) => {
   const location = useLocation();
@@ -89,6 +90,9 @@ const BasicDetailsofApplicantOrganization = ({ setActive, refreshSteps }) => {
   // useEffect(() => { console.log("stageI1_info", stageI1_info); }, []);
 
   const submit = async (values) => {
+
+    let result;
+
     const confirmResult = await Swal.fire({
       title: "Are you sure?",
       text: "Do you want to save the form data?",
@@ -104,7 +108,11 @@ const BasicDetailsofApplicantOrganization = ({ setActive, refreshSteps }) => {
     }
 
     try {
+
       console.log(values, authUser, appId);
+      // ap.setEntityDetails(values, authUser, appId).then((resp) => {
+      //   console.log(resp);
+      // });
       const result = await setEntityDetails(values, authUser, appId);
       result === true ? refreshSteps() : '';
       Swal.fire("Saved!", "Your form data has been saved.", "success");
