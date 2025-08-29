@@ -40,6 +40,8 @@ import { CIC } from "../../../../../constants";
 
 export const MultipurposeHall = ({ steps, goPrevious, goNext }) => {
 
+    console.log(steps);
+
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const appId = queryParams.get("appId");
