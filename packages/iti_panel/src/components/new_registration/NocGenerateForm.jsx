@@ -22,7 +22,7 @@ import { useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
 
 import { setAppFlow } from "../../db/users";
-import { NOC_ISSUANCE } from "../../constants";
+import { NOC_ISSUANCE } from "affserver";
 
 
 

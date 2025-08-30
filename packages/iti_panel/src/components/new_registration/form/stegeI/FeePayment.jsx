@@ -9,7 +9,7 @@ import Swal from "sweetalert2";
 import { ViewApplication } from "./Modal/view_application";
 import { Form as BootstrapForm } from 'react-bootstrap';
 
-import { UPDATE_SET_FEE_STATUS } from "../../../../constants"
+import { UPDATE_SET_FEE_STATUS } from "affserver"
 import { useContext } from "react";
 import { AppStatusContext } from "../../../../services/context";
 import { useLocation } from "react-router-dom";
@@ -17,7 +17,7 @@ import { setAppCurrentStatus } from "../../../../db/users";
 import { getStageIFeeInfo } from "../../../../db/forms/stageI/get/get";
 import { markAsCompleteStageStep, setActiveStage1NextStep } from "../../../../db/forms/stageI/set/set";
 import { getAppFlowInfoByStep } from "../../../../db/forms/app/app";
-import * as C from "../../../../constants"
+import * as C from "affserver"
 const FeePayment = ({ step, setActive }) => {
 
   const { Formik } = formik;

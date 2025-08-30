@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
 import { Form as BootstrapForm, Modal } from "react-bootstrap";
 
-import { languages, ADD_MORE_LAND_DOCUMENT, SET_STAGE_I__DOCUMENT_STATUS, STAGE_I_DOCUMENT_UPLAOD } from "../../../../constants";
+import { languages, ADD_MORE_LAND_DOCUMENT, SET_STAGE_I__DOCUMENT_STATUS, STAGE_I_DOCUMENT_UPLAOD } from "affserver";
 import { land_documents_yupObject } from "../../../../reducers/document_upload";
 import { useContext } from "react";
 import { AppStatusContext } from "../../../../services/context";
@@ -15,7 +15,7 @@ import { setAppFlow } from "../../../../db/users";
 import { useLocation } from "react-router-dom";
 import { markAsCompleteStageStep } from "../../../../db/forms/stageI/set/set";
 
-import * as C from "../../../../constants";
+import * as C from "affserver";
 
 const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
   const dispatch = useDispatch();

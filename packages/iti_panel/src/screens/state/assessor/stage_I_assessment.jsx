@@ -12,9 +12,9 @@ import { Link, useNavigate } from "react-router-dom";
 
 
 import { getAppCurrentStatus, getStage1FormFlow, setAppFlow, updateAppFlowStatus, updateAssessmentStatus } from "../../../db/users";
-import { STEPPER_STYLE, STAGE_I_APP_FORM_FLOW, FILLED, ST1FC } from "../../../constants";
-import * as C from "../../../constants";
-import * as cons from "../../../constants";
+import { STEPPER_STYLE, STAGE_I_APP_FORM_FLOW, FILLED, ST1FC } from "affserver";
+import * as C from "affserver";
+import * as cons from "affserver";
 import { getAppFlowByStep } from "../../../db/forms/stageI/get/get";
 import { Assessment_Basic_Detail } from "../../../components/new_registration/form/stegeI/BasicDetailsofApplicantOrganization";
 import { Assessment_Proposed_Institute } from "../../../components/new_registration/form/stegeI/DetailsOfTheProposedInstitute";

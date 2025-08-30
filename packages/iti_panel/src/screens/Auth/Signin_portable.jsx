@@ -78,8 +78,9 @@ const Signin = () => {
       result = await loginByAuth(userid, password);
       console.log(result.data.info.userType);
       user = result.data;
+      // return;
       // console.log(result);
-      dispatch({ type: "USER_SIGNED_IN_SUCCESS", payload: { ...result.data, userType: result.data.info.userType } });
+      dispatch({ type: "USER_SIGNED_IN_SUCCESS", payload: { ...result.data, userType: result.data.info.userType, role:result.data.info.role } });
       toast.success("Logged in successfully", { position: "top-right", });
       await new Promise((resolve) => setTimeout(resolve, 1000));
       //    const confirmed = await SwalManager.success("Logged In");

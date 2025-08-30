@@ -15,7 +15,7 @@ import * as set from "../../../../../../../../db/forms/stageI/set/set";
 
 import { get_da_status_possasion_of_land, set_da_status_possasion_of_land } from "../../../../../../../../db/forms/stageI/set/set";
 import { Navigations } from "../../../../../../../Assessment/components";
-import * as C from "../../../../../../../../constants";
+import * as C from "affserver";
 import SwalManager from "../../../../../../../../common/SwalManager";
 
 

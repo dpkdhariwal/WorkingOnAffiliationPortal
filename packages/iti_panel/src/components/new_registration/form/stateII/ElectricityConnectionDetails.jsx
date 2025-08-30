@@ -19,8 +19,8 @@ import Swal from "sweetalert2";
 import ReqSign from "../comp/requiredSign";
 
 import { Electricity_Connection_yup_object as elec_conn_yup } from "../../../../reducers/newAppReducer";
-import { UPDATE_ELECTRICTY_CONNECTION_DETAILS } from "../../../../constants";
-import { STAGE_II__FEE_PAID, STAGE_II__FEE_EXEMPTED } from "../../../../constants";
+import { UPDATE_ELECTRICTY_CONNECTION_DETAILS } from "affserver";
+import { STAGE_II__FEE_PAID, STAGE_II__FEE_EXEMPTED } from "affserver";
 
 
 const ElectricityConnectionDetails = ({ setActive }) => {

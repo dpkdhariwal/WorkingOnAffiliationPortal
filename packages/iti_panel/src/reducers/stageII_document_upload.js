@@ -2,7 +2,7 @@ import {
   geo_tagged_photo_of_machinery_tools_equipments as docs1,
   gst_invoices_for_major_machinery_purchase_and_payment_proof as docs2,
   UPDATE_STAGE_II_DOCUMENT_UPLOAD,
-} from "../constants";
+} from "affserver";
 import * as Yup from "yup";
 
 export const initialValues = {

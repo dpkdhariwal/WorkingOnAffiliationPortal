@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
-import { UPDATE_LAND_INFO } from "../../../../constants";
+import { UPDATE_LAND_INFO } from "affserver";
 
 import { land_info_yupObject } from "../../../../reducers/newAppReducer";
 

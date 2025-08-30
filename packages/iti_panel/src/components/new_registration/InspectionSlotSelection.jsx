@@ -4,7 +4,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 import { setAppFlow } from "../../db/users";
-import { INSP_SLOT_SELECTION } from "../../constants";
+import { INSP_SLOT_SELECTION } from "affserver";
 import { useLocation } from "react-router-dom";
 
 export const InspectionSlotSelection = () => {

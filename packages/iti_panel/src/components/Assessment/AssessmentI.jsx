@@ -59,7 +59,7 @@ import { StageIAssessment } from "../../screens/state/assessor/stage_I_assessmen
 
 
 import { setAppFlow } from "../../db/users";
-import { STAGE_I__ASSESSMENT } from "../../constants";
+import { STAGE_I__ASSESSMENT } from "affserver";
 
 const Assessment = () => {
   const BuildingDetail = [

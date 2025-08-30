@@ -19,6 +19,7 @@ import { Provider } from "react-redux";
 import Store from "./common/redux/Store.jsx";
 
 import { SignInPage } from 'layout';
+import * as C from 'affserver';
 
 
 ReactDOM.createRoot(document.getElementById("root")).render(

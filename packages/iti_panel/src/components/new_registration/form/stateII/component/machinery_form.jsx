@@ -32,11 +32,11 @@ import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
 import Stepper from "@keyvaluesystems/react-stepper";
 
-import { STEPPER_STYLE } from "../../../../../constants";
+import { STEPPER_STYLE } from "affserver";
 
 import { ItLabMte } from "../../stateII/ItLabMte"
 import { useLocation } from "react-router-dom";
-import { STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS } from "../../../../../constants";
+import { STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS } from "affserver";
 import { setAppFlow } from "../../../../../db/users";
 const schema = yup.object().shape({
   land_documents: yup.array().of(

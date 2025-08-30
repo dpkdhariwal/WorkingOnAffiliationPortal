@@ -1,6 +1,6 @@
 
 import { initDB } from "../../../db/db";
-import * as C from "../../../constants";
+import * as C from "affserver";
 import * as C2 from "../../../db/appList";
 // All Gets
 export const getAppFlowInfoByStep = async (appId, step) => {

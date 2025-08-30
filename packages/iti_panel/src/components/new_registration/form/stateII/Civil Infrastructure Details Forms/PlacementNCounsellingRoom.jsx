@@ -17,7 +17,7 @@ import Swal from "sweetalert2";
 import { validationSchema } from "../../../../../reducers/tradeWiseWorkshopReducer";
 
 import { useSelector, useDispatch } from "react-redux";
-import { it_library_to_be_filled, UPDATE_LIBRARY_DETAILS } from "../../../../../constants";
+import { it_library_to_be_filled, UPDATE_LIBRARY_DETAILS } from "affserver";
 
 import { Form, Modal } from "react-bootstrap";
 
@@ -29,8 +29,8 @@ import React from "react";
 import { Fragment, useEffect, useState, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import * as dbUser from "../../../../../db/users";
-import * as cons from "../../../../../constants";
-import { CIC } from "../../../../../constants";
+import * as cons from "affserver";
+import { CIC } from "affserver";
 
 export const PlacementNCounsellingRoom = ({ steps, goPrevious, goNext }) => {
 

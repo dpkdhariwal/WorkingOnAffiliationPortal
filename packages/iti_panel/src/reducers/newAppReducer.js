@@ -30,7 +30,7 @@ import {
   UPDATE_ELECTRICTY_CONNECTION_DETAILS,
   STAGE_II__FEE_PENDING,
   STAGE_II__SUBMIT_PENDING,
-} from "../constants";
+} from "affserver";
 
 import {
   STAGE_II__FEE_EXEMPTED,
@@ -40,7 +40,7 @@ import {
   STAGE_II__FILLED,
   STAGE_II__FEE_PAID,
   UPDATE_STAGE_II_SET_FEE_STATUS,
-} from "../constants";
+} from "affserver";
 
 import * as yup from "yup";
 

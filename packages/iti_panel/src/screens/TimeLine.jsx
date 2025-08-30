@@ -4,7 +4,7 @@ import { AffTimeLine, AffTimeLineItem } from "../customLib/TimeLine";
 
 import { useSelector, useDispatch } from "react-redux";
 
-// import { AppFlow } from "../constants";
+// import { AppFlow } from "affserver";
 import { Card, } from "react-bootstrap";
 import { InactiveStep } from "./Timeline/inactive_step";
 import { CompletedStep } from "./Timeline/completed_step";
@@ -21,7 +21,7 @@ import {
   STAGE_I_DOCUMENT_UPLAOD,
   STAGE_I_SUBMIT,
   STAGE_I__ASSESSMENT
-} from "../constants";
+} from "affserver";
 import {
   STAGE_I__NOT_FILLED,
   STAGE_I__FEE_PENDING,
@@ -35,8 +35,8 @@ import {
   STAGE_I__SUBMITED,
   STAGE_I__ASSESSMENT_ON_PROGRESS,
   STAGE_I__ASSESSMENT_COMPLETED
-} from "../constants";
-import * as C from "../constants";
+} from "affserver";
+import * as C from "affserver";
 
 import { ActionONStateOneAssessmentPending } from "../screens/Timeline/actions/assessor/actions_stage_i_assessment";
 import { getAssessmentProgressStatus } from "../db/forms/stageI/set/set";

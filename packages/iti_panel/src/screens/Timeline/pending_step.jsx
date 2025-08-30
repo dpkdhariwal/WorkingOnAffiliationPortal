@@ -68,8 +68,8 @@ import {
   INSPENCTION,
   INSP_SHEDULED,
   INSP_PENDING
-} from "../../constants";
-import * as C from "../../constants";
+} from "affserver";
+import * as C from "affserver";
 import { useSelector, useDispatch } from "react-redux";
 import { getAssessmentProgressStatus } from "../../db/forms/stageI/set/set";
 

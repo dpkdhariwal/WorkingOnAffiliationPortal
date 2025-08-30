@@ -20,9 +20,9 @@ import { TimeLine } from "../../components/TimeLine/TimeLine";
 import * as yup from "yup";
 import { Formik, Field, FieldArray } from "formik";
 
-import { SAVE_APP_CATEGORY } from "../../constants";
+import { SAVE_APP_CATEGORY } from "affserver";
+import { AffiliationCategory } from "affserver";
 import { addNewApp } from "../../db/appList";
-import { AffiliationCategory } from "../../constants";
 const Start = () => {
   const regCategory = useSelector((state) => state.reg.regCategory);
   const appCat = useSelector((state) => state.appCat);

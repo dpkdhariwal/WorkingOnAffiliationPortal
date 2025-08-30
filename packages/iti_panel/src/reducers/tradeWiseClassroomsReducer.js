@@ -1,4 +1,4 @@
-import { classrooms_info_to_be_filled, UPDATE_TRADEWISE_CLASSROOMS_DETAILS } from "../constants";
+import { classrooms_info_to_be_filled, UPDATE_TRADEWISE_CLASSROOMS_DETAILS } from "affserver";
 import * as Yup from "yup";
 
 

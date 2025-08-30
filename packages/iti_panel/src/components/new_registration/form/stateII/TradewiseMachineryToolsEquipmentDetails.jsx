@@ -25,7 +25,7 @@ import ReqSign from "../comp/requiredSign";
 import MTE from "./component/machinery_form";
 import {setAppFlow} from "../../../../db/users";
 import { useLocation } from "react-router-dom";
-import {STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS} from "../../../../constants";
+import {STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS} from "affserver";
 
 const schema = yup.object().shape({
   land_documents: yup.array().of(

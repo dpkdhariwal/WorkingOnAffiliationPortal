@@ -8,7 +8,7 @@ import {
   ADD_MORE_TRADE,
   UPDATE_LAND_INFO,
   UPDATE_TRADE_UNIT,
-} from "../constants";
+} from "affserver";
 import * as yup from "yup";
 
 // Applicable For Assessment

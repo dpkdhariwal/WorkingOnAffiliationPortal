@@ -20,11 +20,11 @@ import { LandDocuments } from "./form/stegeI/view/stage_1/detail_of_proposed_ins
 
 import { Documents } from "./form/stegeI/view/stage_1/detail_of_proposed_institute/assessment_view/documents"
 
-import { STAGE_I__FEE_PAID, STAGE_I__FEE_EXEMPTED, STAGE_I__SUBMIT_PENDING, STAGE_I__FEE_PENDING, STAGE_I__SUBMITED, STAGE_I__DOCUMENT_PENDING, ACTIVE } from "../../constants";
+import { STAGE_I__FEE_PAID, STAGE_I__FEE_EXEMPTED, STAGE_I__SUBMIT_PENDING, STAGE_I__FEE_PENDING, STAGE_I__SUBMITED, STAGE_I__DOCUMENT_PENDING, ACTIVE } from "affserver";
 
 import { AppStatusContext } from "../../services/context";
 import { getAppCurrentStatus, getStage1FormFlow } from "../../db/users";
-import { STEPPER_STYLE, STAGE_I_APP_FORM_FLOW, FILLED, ST1FC } from "../../constants";
+import { STEPPER_STYLE, STAGE_I_APP_FORM_FLOW, FILLED, ST1FC } from "affserver";
 
 export const StageIForm = () => {
   const [activeStep, setActiveStep] = useState(0);
@@ -66,7 +66,6 @@ export const StageIForm = () => {
     } catch (error) {
       console.log(error);
     }
-
   }
 
   useEffect(() => {

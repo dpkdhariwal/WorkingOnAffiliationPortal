@@ -19,7 +19,7 @@ import ReqSign from "./form/comp/requiredSign"; // Make sure this component exis
 // import {, OverlayTrigger, Popover, Row, Tooltip } from 'react-bootstrap';
 import { v4 as uuidv4 } from "uuid";
 
-import {STAFF_DETAILS} from "../../constants";
+import {STAFF_DETAILS} from "affserver";
 
 import { useContext } from "react";
 import * as formik from "formik";

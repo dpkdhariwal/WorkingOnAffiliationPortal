@@ -10,7 +10,7 @@ import { ChatMessage } from "../../../Assessment/ReviewTrail";
 import { Formik, Field, FieldArray } from "formik";
 
 import { dpi_initialValues, dpi_yupObject } from "../../../../reducers/newAppReducer";
-import { UPDATE_PURPOSED_INSTI_INFO } from "../../../../constants";
+import { UPDATE_PURPOSED_INSTI_INFO } from "affserver";
 
 import { setProposedInstDetails } from "../../../../db/appList";
 import { useLocation } from "react-router-dom";

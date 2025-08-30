@@ -8,14 +8,14 @@ import * as formik from "formik";
 import * as yup from "yup";
 import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
-import { entityCategories } from "../../../../constants";
+import { entityCategories } from "affserver";
 // import Exclamation from "../comp/PrimeReact/PrimeReact";
 import { yupObject, initialValues } from "../../../../reducers/newAppReducer";
 import PropTypes from "prop-types";
 import Select from "react-select";
-import { IndianStates, getDistrictsByState } from "../../../../constants";
+import { IndianStates, getDistrictsByState } from "affserver";
 import { ChatMessage } from "../../../Assessment/ReviewTrail";
-import { UPDATE_ENTITY_DETAILS, AffiliationCategory, STAGE_I__FEE_PAID, STAGE_I__FEE_EXEMPTED } from "../../../../constants";
+import { UPDATE_ENTITY_DETAILS, AffiliationCategory, STAGE_I__FEE_PAID, STAGE_I__FEE_EXEMPTED } from "affserver";
 
 import { Assessment_Basic_Detail as ABD } from "../../../../components/new_registration/form/stegeI/BasicDetailsofApplicantOrganization";
 
@@ -32,7 +32,7 @@ import { Navigations } from "../../../Assessment/components";
 import { markAsCompleteStageAssessmentFlow, setStageIAssessmentFlow } from "../../../../db/forms/stageI/set/set";
 import * as set from "../../../../db/forms/stageI/set/set";
 
-import * as C from "../../../../constants";
+import * as C from "affserver";
 import * as ap from "../../../../services/applicant/index";
 
 const BasicDetailsofApplicantOrganization = ({ setActive, refreshSteps }) => {
@@ -93,29 +93,21 @@ const BasicDetailsofApplicantOrganization = ({ setActive, refreshSteps }) => {
 
     let result;
 
-    const confirmResult = await Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to save the form data?",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonText: "Yes, save it!",
-      cancelButtonText: "Cancel",
-    });
+    const confirmResult = await Swal.fire({ title: "Are you sure?", text: "Do you want to save the form data?", icon: "question", showCancelButton: true, confirmButtonText: "Yes, save it!", cancelButtonText: "Cancel", });
 
-    if (!confirmResult.isConfirmed) {
-      console.log("User cancelled save");
-      return;
-    }
+    if (!confirmResult.isConfirmed) { console.log("User cancelled save"); return; }
 
     try {
-
       console.log(values, authUser, appId);
-      // ap.setEntityDetails(values, authUser, appId).then((resp) => {
-      //   console.log(resp);
-      // });
-      const result = await setEntityDetails(values, authUser, appId);
-      result === true ? refreshSteps() : '';
-      Swal.fire("Saved!", "Your form data has been saved.", "success");
+      ap.setEntityDetails(values, authUser, appId).then((resp) => {
+        console.log(resp);
+      }).catch((error) => {
+        console.log(error);
+        Swal.fire("Error", "Something went wrong while saving.", "error");
+      });
+      // const result = await setEntityDetails(values, authUser, appId);
+      // result === true ? refreshSteps() : '';
+      // Swal.fire("Saved!", "Your form data has been saved.", "success");
     } catch (error) {
       console.error(error);
       Swal.fire("Error", "Something went wrong while saving.", "error");

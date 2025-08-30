@@ -61,11 +61,11 @@ import {
   FILLED,
   ACTIVE,
   TRADEWISE_CLASSROOMS
-} from "../constants";
+} from "affserver";
 
 import { initDB } from "./db";
-import * as cons from "../constants";
-import * as C from "../constants";
+import * as cons from "affserver";
+import * as C from "affserver";
 
 import { Building_Detail_initialValues } from "../reducers/newAppReducer";
 import { markAsCompleteStageStep, setActiveStage1NextStep } from "./forms/stageI/set/set";

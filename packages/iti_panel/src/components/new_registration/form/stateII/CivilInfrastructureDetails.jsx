@@ -28,7 +28,7 @@ import { AdministrativeArea } from "../stateII/Civil Infrastructure Details Form
 import {
   STAGE_II__FEE_PAID, STAGE_II__FEE_EXEMPTED, IN_ACTIVE, CIC, NOT_FILLED, FILLED,
   ACTIVE
-} from "../../../../constants";
+} from "affserver";
 
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";

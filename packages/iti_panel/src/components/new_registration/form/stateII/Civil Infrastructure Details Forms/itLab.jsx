@@ -20,12 +20,12 @@ import { validationSchema } from "../../../../../reducers/tradeWiseWorkshopReduc
 import { useLocation } from "react-router-dom";
 
 import { useSelector, useDispatch } from "react-redux";
-import { it_lab_info_to_be_filled, UPDATE_IT_LAB_DETAILS } from "../../../../../constants";
+import { it_lab_info_to_be_filled, UPDATE_IT_LAB_DETAILS } from "affserver";
 import { Fragment, useEffect, useState, useRef } from "react";
-import * as cons from "../../../../../constants";
+import * as cons from "affserver";
 import * as dbUser from "../../../../../db/users";
 
-import { CIC } from "../../../../../constants";
+import { CIC } from "affserver";
 
 export const ITLab = ({ steps, goPrevious, goNext }) => {
     const location = useLocation();

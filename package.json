@@ -6,7 +6,7 @@
   ],
   "scripts": {
     "dev": "npx lerna run dev",
-    "server": "npx lerna run start --scope=server",
+    "server": "npx lerna run start --scope=affserver",
     "frontend": "npx lerna run dev --scope=affiliation_portal"
   },
   "dependencies": {

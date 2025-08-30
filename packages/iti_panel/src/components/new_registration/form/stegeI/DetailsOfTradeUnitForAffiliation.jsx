@@ -13,11 +13,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
 
-import { ADD_MORE_TRADE } from "../../../../constants";
+import { ADD_MORE_TRADE } from "affserver";
 
 import { trade_unit_reducer_yupObject } from "../../../../reducers/newAppReducer";
-import { ctsTrades, UPDATE_TRADE_UNIT } from "../../../../constants";
-import * as C from "../../../../constants";
+import { ctsTrades, UPDATE_TRADE_UNIT } from "affserver";
+import * as C from "affserver";
 
 import { setInstTradeDetails } from "../../../../db/appList";
 import { useLocation } from "react-router-dom";
