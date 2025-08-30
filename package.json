@@ -6,7 +6,8 @@
   ],
   "scripts": {
     "dev": "npx lerna run dev",
-    "start": "npx lerna run start --scope=server"
+    "server": "npx lerna run start --scope=server",
+    "frontend": "npx lerna run dev --scope=affiliation_portal"
   },
   "dependencies": {
     "animate.css": "^4.1.1",
