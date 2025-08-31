@@ -84,6 +84,7 @@ npm install multer --workspace=packages/backend
 npm install cookie-parser --workspace=packages/backend
 
 
+npm install dayjs --workspace=packages/backend
 
 npm install knex -g
 
@@ -92,4 +93,5 @@ npm install knex -g
 
 npm install "file:../packages/ui_layouts_collaborate"
 npm install "packages/backend"
+
 

@@ -101,13 +101,15 @@ const BasicDetailsofApplicantOrganization = ({ setActive, refreshSteps }) => {
       console.log(values, authUser, appId);
       ap.setEntityDetails(values, authUser, appId).then((resp) => {
         console.log(resp);
+        result === true ? refreshSteps() : '';
+        Swal.fire("Saved!", "Your form data has been saved.", "success");
       }).catch((error) => {
         console.log(error);
         Swal.fire("Error", "Something went wrong while saving.", "error");
       });
-      // const result = await setEntityDetails(values, authUser, appId);
-      // result === true ? refreshSteps() : '';
-      // Swal.fire("Saved!", "Your form data has been saved.", "success");
+      const result = await setEntityDetails(values, authUser, appId);
+      result === true ? refreshSteps() : '';
+      Swal.fire("Saved!", "Your form data has been saved.", "success");
     } catch (error) {
       console.error(error);
       Swal.fire("Error", "Something went wrong while saving.", "error");

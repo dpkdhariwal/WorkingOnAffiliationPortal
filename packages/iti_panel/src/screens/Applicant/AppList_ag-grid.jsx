@@ -45,10 +45,10 @@ export const PrimeReactDT = () => {
         break;
 
       default:
-        getAppListByUserId(user.id).then((data) => {
-          data.sort((a, b) => a.stepNo - b.stepNo);
-          setProducts(data);
-          console.log(data);
+        getAppListByUserId(user.id).then((resp) => {
+          console.log(resp.data);
+          // data.sort((a, b) => a.stepNo - b.stepNo);
+          setProducts(resp.data);
         });
         break;
     }

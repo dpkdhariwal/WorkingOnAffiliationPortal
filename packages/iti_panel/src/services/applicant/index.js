@@ -29,4 +29,20 @@ export const setEntityDetails = async (values, authUser, appId) => {
   // });
 };
 
+export const api_getAppListByUserId = async (userId) => {
+  console.log(userId);
+  const formData = new FormData();
+  formData.append("userId", userId);
+
+  return new Promise((resolve, reject) => {
+    api.post("/applicant/getAppListByUserId", formData).then((res) => { resolve(res) }).catch((error) => { reject(error) });
+  })
+
+  // return new Promise((resolve, reject) => {
+  //   axios .post(base_url + "/applicant/Cookies", formData, {
+  //     withCredentials: true, // ✅ send cookies
+  //   }) .then((res) => resolve(res)) .catch((error) => reject(error));
+  // });
+};
+
 
