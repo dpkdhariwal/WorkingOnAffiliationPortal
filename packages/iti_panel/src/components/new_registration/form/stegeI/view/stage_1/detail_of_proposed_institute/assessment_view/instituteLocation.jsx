@@ -10,6 +10,7 @@ import { Formik, Field, FieldArray } from "formik";
 import { useLocation } from "react-router-dom";
 
 import * as set from "../../../../../../../../db/forms/stageI/set/set";
+import * as gen from "../../../../../../../../services/general";
 
 
 export const InstituteLocation = () => {
@@ -67,19 +68,22 @@ export const InstituteLocation = () => {
   const [formSubmited, setFormSubmited] = useState(false);
 
 
-   // console.log(nav.next());
-    const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-    const appId = queryParams.get("appId");
-    
-    const [info, setInfo] = useState({});
-    const getInfo = async () => {
-      let info = await set.getDetails(appId);
-      setInfo(info);
-    }
-    useEffect(() => { getInfo() }, []);
-  
-    useEffect(() => { console.log(info); }, [info]);
+  // console.log(nav.next());
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const appId = queryParams.get("appId");
+
+  const [info, setInfo] = useState({});
+  const getInfo = async () => {
+    // let info = await set.getDetails(appId);
+    // setInfo(info);
+
+    let resp = await gen.getDetails(appId);
+    setInfo(resp.data);
+  }
+  useEffect(() => { getInfo() }, []);
+
+  useEffect(() => { console.log(info); }, [info]);
 
   return (
     <>
@@ -126,7 +130,7 @@ export const InstituteLocation = () => {
               <td style={{ border: "1px solid black" }}>Supporting Government Notification/Order/Circular</td>
               <td style={{ border: "1px solid black" }}><Button>View</Button></td>
             </tr>)}
-            
+
           </tbody>
         </table>
 
@@ -142,7 +146,7 @@ export const InstituteLocation = () => {
               <th style={{ border: "1px solid black" }}>Falls Under Border District</th>
               <td style={{ border: "1px solid black" }}>{info?.proposed_insti_details?.is_falls_under_border_district}</td>
             </tr>
-             {info?.proposed_insti_details?.is_falls_under_border_district == "yes" && (<tr>
+            {info?.proposed_insti_details?.is_falls_under_border_district == "yes" && (<tr>
               <td style={{ border: "1px solid black" }}>Supporting Government Notification/Order/Circular</td>
               <td style={{ border: "1px solid black" }}><Button>View</Button></td>
             </tr>)}

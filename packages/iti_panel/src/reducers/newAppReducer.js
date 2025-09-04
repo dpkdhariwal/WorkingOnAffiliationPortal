@@ -636,6 +636,27 @@ export const ProposedInstituteInfo = (state = dpi_initialValues, action) => {
   }
 };
 
+export const intiValues_pi_yupObject = {
+  name_of_applicant_institute: "",
+  type_of_institute: "",
+  cmp_post_state: "",
+  cmp_post_district: "",
+  cmp_post_city: "",
+  cmp_post_block_or_tehsil: "",
+  cmp_post_sector_village: "",
+  cmp_post_pincode: "",
+  cmp_post_plot_number_khasara_number: "",
+  cmp_post_landmark: "",
+  institute_location: "",
+  is_falls_under_hill_area_hill: "",
+  Falls_Under_Hill_Area_Hill__Supporting_Doc: 'null',
+  is_falls_under_border_district:"",
+  Falls_Under_Border_District__Supporting_Doc: 'null',
+  under_msti_category: "",
+  Whether_the_institute_is_exclusive_for_women_trainees: "",
+  latitude: "",
+  Longitude: "",
+};
 export const dpi_yupObject = {
   name_of_applicant_institute: yup
     .string()

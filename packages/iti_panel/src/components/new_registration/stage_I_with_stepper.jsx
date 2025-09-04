@@ -25,6 +25,7 @@ import { STAGE_I__FEE_PAID, STAGE_I__FEE_EXEMPTED, STAGE_I__SUBMIT_PENDING, STAG
 import { AppStatusContext } from "../../services/context";
 import { getAppCurrentStatus, getStage1FormFlow } from "../../db/users";
 import { STEPPER_STYLE, STAGE_I_APP_FORM_FLOW, FILLED, ST1FC } from "affserver";
+import * as ap from "../../services/applicant/index";
 
 export const StageIForm = () => {
   const [activeStep, setActiveStep] = useState(0);
@@ -40,6 +41,7 @@ export const StageIForm = () => {
 
 
   const handleStepClick = (step, index) => {
+    console.log(step, index);
     if (step.stepStatus === ACTIVE || step.status === FILLED) { setActiveStep(index) }
   };
 
@@ -83,8 +85,9 @@ export const StageIForm = () => {
   useEffect(() => { getLastActiveStep() }, [steps])
 
   const loadData = async () => {
-    var data = await getStage1FormFlow(appId);
-
+    // var data = await getStage1FormFlow(appId); 
+    var data = await ap.getStage1FormFlow(appId)
+    data = data.data;
     if (data.length === 0) {
       data = STAGE_I_APP_FORM_FLOW.map((step) => ({ ...step, completed: step.status === FILLED }));
       setSteps(data);

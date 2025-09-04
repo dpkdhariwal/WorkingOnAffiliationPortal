@@ -1,4 +1,4 @@
-import React, { createContext, useRef, useContext, Fragment, useState, useEffect } from "react";
+import React, { createContext, useRef, useContext, Fragment, useState, useEffect, startTransition } from "react";
 import { Row, Col, Card, Form as BS, InputGroup, Button, Modal } from "react-bootstrap";
 import * as formik from "formik";
 import * as yup from "yup";
@@ -15,6 +15,7 @@ import { Navigations } from "../../../../../../../Assessment/components"
 
 // import { Form, Field, ErrorMessage, useFormikContext } from "formik";
 import SwalManager from "../../../../../../../../common/SwalManager";
+import * as st from "../../../../../../../../services/state/index"
 
 export const FunctionRegistryContext = createContext(null);
 export const useFunctionRegistry = () => useContext(FunctionRegistryContext);
@@ -161,19 +162,9 @@ export const Documents = ({ step, view: viewProp = false, isView = false, nav })
   const register2 = (index, obj) => {
     registry.current[index] = obj;
   };
-
-  // const callAction = (name, ...args) => {
-  //   console.log(registry);
-  //   if (registry.current[name]) {
-  //     return registry.current[name](...args);
-  //   } else {
-  //     console.warn(`No function registered for ${name}`);
-  //   }
-  // };
-
-
-
   // Experiment Ends here @dpkdhariwal
+
+  console.log(step.VerificationList);
   return (
     <FunctionRegistryContext.Provider value={register2}>
       <div style={{ backgroundColor: "rgb(245, 245, 245)", margin: "10px 0px 0px", borderRadius: 6, borderStyle: "dashed", borderWidth: "thin", padding: "10px", }}>
@@ -184,7 +175,7 @@ export const Documents = ({ step, view: viewProp = false, isView = false, nav })
             submitHandlersRef.current[index] = { submit, validate, formVisibility, formSubmited, getLatestValue }
           };
 
-          switch (item.check) {
+          switch (item.checkName) {
             case C.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_AUTHORIZED_SIGNATORY:
               return <IdProofOfAuthorizedSignatory isView={isView} key={index} registerSubmit={register} test={testFn} />
             case C.ASSESSMENT_STAGE_I_KEYS.REGISTRATION_CERTIFICATE_OF_APPLICANT_ORGANIZATION:
@@ -1468,8 +1459,15 @@ export const IdProofOfAuthorizedSignatory = ({ step, view: viewProp = false, reg
 
   // Loading Review Details
   const loadInfo = async () => {
-    let result = await set.get_da_status(appId, C.abbreviation.STAGE_I.key, C.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_AUTHORIZED_SIGNATORY);
-    let assessment_status = await set.getAssessmentProgressStatus(appId);
+    let result, assessment_status;
+    // let result = await set.get_da_status(appId, C.abbreviation.STAGE_I.key, C.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_AUTHORIZED_SIGNATORY);
+    let resp1 = await st.get_da_status(appId, C.abbreviation.STAGE_I.key, C.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_AUTHORIZED_SIGNATORY);
+    console.log(resp1);
+    result = resp1.data;
+
+    // let assessment_status = await set.getAssessmentProgressStatus(appId);
+    let resp2 = await st.getAssessmentProgressStatus(appId);
+    assessment_status = resp2.data;
     setAStatus(assessment_status);
     const lastObj = result[result.length - 1];
     if (lastObj) {
@@ -1490,7 +1488,9 @@ export const IdProofOfAuthorizedSignatory = ({ step, view: viewProp = false, reg
   useEffect(() => { formFunction(); }, [formRef]);
   const form = async () => {
     if (formRef.current.isValid) {
-      await set.set_da_status(appId, formRef.current.values, C.abbreviation.STAGE_I.key, C.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_AUTHORIZED_SIGNATORY);
+      // await set.set_da_status(appId, formRef.current.values, C.abbreviation.STAGE_I.key, C.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_AUTHORIZED_SIGNATORY);
+      // await set.set_da_status(appId, formRef.current.values, C.abbreviation.STAGE_I.key, C.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_AUTHORIZED_SIGNATORY);
+      await st.set_da_status(appId, formRef.current.values, C.abbreviation.STAGE_I.key, C.ASSESSMENT_STAGE_I_KEYS.ID_PROOF_OF_AUTHORIZED_SIGNATORY);
       setAnyChangesMade(false);
       setEditMode(false);
       setReviewStatus(C.SL.REVIEWED);
@@ -2963,10 +2963,10 @@ export const ResolutionCertificate = ({ step, view: viewProp = false, registerSu
                                     required
                                     as="textarea"
                                     rows={3}
-                                    className={`form-control ${touched.assessor_comments && errors.assessor_comments ? "is-invalid" : "" }`}
+                                    className={`form-control ${touched.assessor_comments && errors.assessor_comments ? "is-invalid" : ""}`}
                                     value={values.assessor_comments}
                                     onChange={handleChange}
-                                    isInvalid={ touched.assessor_comments && !!errors.assessor_comments }
+                                    isInvalid={touched.assessor_comments && !!errors.assessor_comments}
                                   />
                                   {touched.assessor_comments &&
                                     errors.assessor_comments && (

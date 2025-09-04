@@ -9,7 +9,7 @@ import Swal from "sweetalert2";
 import { ChatMessage } from "../../../Assessment/ReviewTrail";
 import { Formik, Field, FieldArray } from "formik";
 
-import { dpi_initialValues, dpi_yupObject } from "../../../../reducers/newAppReducer";
+import { dpi_initialValues, dpi_yupObject, intiValues_pi_yupObject } from "../../../../reducers/newAppReducer";
 import { UPDATE_PURPOSED_INSTI_INFO } from "affserver";
 
 import { setProposedInstDetails } from "../../../../db/appList";
@@ -19,6 +19,7 @@ import { getProposedInstDetailsByUserId } from "../../../../db/users";
 import { useContext } from "react";
 import { AppStatusContext } from "../../../../services/context";
 
+import * as ap from "../../../../services/applicant/index";
 
 const DetailsOfTheProposedInstitute = ({ step, setActive, refreshSteps }) => {
   const authUser = useSelector((state) => state.loginUserReducer);
@@ -29,6 +30,7 @@ const DetailsOfTheProposedInstitute = ({ step, setActive, refreshSteps }) => {
   const { appStatus } = useContext(AppStatusContext);
 
   const [isHidden, setisHidden] = useState([true]);
+  const [initValues, setInitValues] = useState({});
 
   const { Formik } = formik;
   const formRef2 = useRef();
@@ -77,8 +79,10 @@ const DetailsOfTheProposedInstitute = ({ step, setActive, refreshSteps }) => {
     }
 
     try {
-      let result = setProposedInstDetails(step, values, appId, authUser);
-      result === true ? refreshSteps() : '';
+      // let result = setProposedInstDetails(step, values, appId, authUser);
+      await ap.setProposedInstDetails(step, values, appId);
+
+      refreshSteps();
       Swal.fire("Saved!", "Your form data has been saved.", "success");
     } catch (error) {
       console.error(error);
@@ -91,23 +95,32 @@ const DetailsOfTheProposedInstitute = ({ step, setActive, refreshSteps }) => {
 
 
   const loadData = async () => {
-    const data = await getProposedInstDetailsByUserId(appId);
+    // const data = await getProposedInstDetailsByUserId(appId);
+    const result = await ap.getProposedInstDetailsAutoFill(appId);
+    const data = result.data;
+
     const combinedData = { ...data.pro_insti_address[0], ...data.pro_insti_details };
     let newData = { ...dpi_initialValues, ...combinedData };
     console.log(newData, data.pro_insti_address[0], data.pro_insti_details, dpi_initialValues);
 
     console.log(newData);
 
-    formikRef.current.setValues(newData); // update entire form
+    let newV = { ...intiValues_pi_yupObject, ...newData };
+
+    console.log(newV);
+
+    formikRef.current.setValues(newV); // update entire form
   };
   useEffect(() => {
     loadData();
   }, []);
 
 
+
   return (
     <Fragment>
       <Formik
+        enableReinitialize
         innerRef={formikRef}
         validationSchema={yup.object().shape(dpi_yupObject)}
         validateOnChange={true}
@@ -115,7 +128,7 @@ const DetailsOfTheProposedInstitute = ({ step, setActive, refreshSteps }) => {
           console.log("Form submitted with values:", values);
           submit(values);
         }}
-        initialValues={{}}
+        initialValues={intiValues_pi_yupObject}
       >
         {({ handleSubmit, handleChange, values, errors, touched, setFieldValue }) => {
 

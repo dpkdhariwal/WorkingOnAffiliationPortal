@@ -69,7 +69,7 @@ import * as C from "affserver";
 
 import { Building_Detail_initialValues } from "../reducers/newAppReducer";
 import { markAsCompleteStageStep, setActiveStage1NextStep } from "./forms/stageI/set/set";
-import { api_getAppListByUserId } from "../services/applicant";
+import { api_getAppListByStateUser, api_getAppListByUserId } from "../services/applicant";
 
 
 export const addNewUser = async (app) => {
@@ -141,24 +141,28 @@ export const getAppListByUserId = async (userId) => {
   // return enrichedApps; // Now includes full entity details, not Promises
 };
 
-export const getAppListByStateAssessor = async (AuthUser) => {
-  const db = await initDB();
-  let result = await db.getAll(PROPOSED_INSTI_DETAILS);
+export const getAppListByStateAssessor = async (userId) => {
 
-  const enrichedApps = await Promise.all(
-    result.map(async (app) => {
-      const entityDetails = await getEntityDetailsByUserId(app.appId); // <-- await here!
-      const proposedInstDetails = await getProposedInstDetailsByUserId(
-        app.appId
-      );
-      return {
-        ...app,
-        entityDetails,
-        proposedInstDetails,
-      };
-    })
-  );
-  return enrichedApps; // Now includes full entity details, not Promises
+  return await api_getAppListByStateUser(userId);// Now includes full entity details, not Promises
+
+
+  // const db = await initDB();
+  // let result = await db.getAll(PROPOSED_INSTI_DETAILS);
+
+  // const enrichedApps = await Promise.all(
+  //   result.map(async (app) => {
+  //     const entityDetails = await getEntityDetailsByUserId(app.appId); // <-- await here!
+  //     const proposedInstDetails = await getProposedInstDetailsByUserId(
+  //       app.appId
+  //     );
+  //     return {
+  //       ...app,
+  //       entityDetails,
+  //       proposedInstDetails,
+  //     };
+  //   })
+  // );
+  // return enrichedApps; // Now includes full entity details, not Promises
 };
 
 export const getAppListByRdsde = async (AuthUser) => {

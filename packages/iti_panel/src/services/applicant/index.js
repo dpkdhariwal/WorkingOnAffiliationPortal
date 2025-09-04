@@ -14,19 +14,9 @@ export const setEntityDetails = async (values, authUser, appId) => {
   const formData = new FormData();
   formData.append("data", JSON.stringify(values));
   formData.append("appId", appId);
-
-  // or per request
-  // await axios.post("http://localhost:3000/applicant/Cookies", formData, { withCredentials: true });
-
   return new Promise((resolve, reject) => {
     api.post("/applicant/setEntityDetails", formData).then((res) => { resolve(res) }).catch((error) => { reject(error) });
   })
-
-  // return new Promise((resolve, reject) => {
-  //   axios .post(base_url + "/applicant/Cookies", formData, {
-  //     withCredentials: true, // ✅ send cookies
-  //   }) .then((res) => resolve(res)) .catch((error) => reject(error));
-  // });
 };
 
 export const api_getAppListByUserId = async (userId) => {
@@ -37,12 +27,109 @@ export const api_getAppListByUserId = async (userId) => {
   return new Promise((resolve, reject) => {
     api.post("/applicant/getAppListByUserId", formData).then((res) => { resolve(res) }).catch((error) => { reject(error) });
   })
+}
+export const api_getAppListByStateUser = async (userId) => {
+  console.log(userId);
+  const formData = new FormData();
+  formData.append("userId", userId);
 
-  // return new Promise((resolve, reject) => {
-  //   axios .post(base_url + "/applicant/Cookies", formData, {
-  //     withCredentials: true, // ✅ send cookies
-  //   }) .then((res) => resolve(res)) .catch((error) => reject(error));
-  // });
+  return new Promise((resolve, reject) => {
+    api.post("/state/getAppListByStateUser", formData).then((res) => { resolve(res) }).catch((error) => { reject(error) });
+  })
+}
+
+export const ap_getDbEntityDetails = async (appId) => {
+  const formData = new FormData();
+  formData.append("appId", appId);
+  return new Promise((resolve, reject) => {
+    api.post("/applicant/getDbEntityDetails", formData).then((res) => { resolve(res) }).catch((error) => { reject(error) });
+  })
+}
+
+
+export const setProposedInstDetails = async (step, values, appId) => {
+  const formData = new FormData();
+  formData.append("step", JSON.stringify(step));
+  formData.append("data", JSON.stringify(values));
+  formData.append("appId", appId);
+  return new Promise((resolve, reject) => {
+    api.post("/applicant/setProposedInstDetails", formData).then((res) => { resolve(res) }).catch((error) => { reject(error) });
+  })
+};
+export const getProposedInstDetailsAutoFill = async (appId) => {
+  const formData = new FormData();
+  formData.append("appId", appId);
+  return new Promise((resolve, reject) => {
+    api.post("/applicant/getProposedInstDetailsForAutoFill", formData).then((res) => { resolve(res) }).catch((error) => { reject(error) });
+  })
 };
 
+
+export const getStage1FormFlow = async (appId) => {
+  const formData = new FormData();
+  formData.append("appId", appId);
+  return new Promise((resolve, reject) => {
+    api.post("/applicant/getStage1FormFlow", formData).then((res) => { resolve(res) }).catch((error) => { reject(error) });
+  })
+};
+
+
+export const setInstTradeDetails = async (values, appId, step) => {
+  const formData = new FormData();
+  formData.append("step", JSON.stringify(step));
+  formData.append("data", JSON.stringify(values));
+  formData.append("appId", appId);
+  return new Promise((resolve, reject) => {
+    api.post("/applicant/setInstTradeDetails", formData).then((res) => { resolve(res) }).catch((error) => { reject(error) });
+  })
+};
+
+export const getInstTradeDetails = async (appId) => {
+  const formData = new FormData();
+  formData.append("appId", appId);
+  return new Promise((resolve, reject) => {
+    api.post("/applicant/getInstTradeDetails", formData).then((res) => { resolve(res) }).catch((error) => { reject(error) });
+  })
+};
+
+
+export const setInstLandDetails = async (values, appId, step) => {
+  const formData = new FormData();
+  formData.append("step", JSON.stringify(step));
+  formData.append("data", JSON.stringify(values));
+  formData.append("appId", appId);
+  return new Promise((resolve, reject) => {
+    api.post("/applicant/setInstLandDetails", formData).then((res) => { resolve(res) }).catch((error) => { reject(error) });
+  })
+};
+
+
+export const getFeeInfo = async (appId) => {
+  const formData = new FormData();
+  formData.append("appId", appId);
+  return new Promise((resolve, reject) => {
+    api.post("/applicant/getFeeInfo", formData).then((res) => { resolve(res) }).catch((error) => { reject(error) });
+  })
+};
+
+
+export const setAsExemptedStageI = async (values, step, appId) => {
+  const formData = new FormData();
+  formData.append("step", JSON.stringify(step));
+  formData.append("data", JSON.stringify(values));
+  formData.append("appId", appId);
+  return new Promise((resolve, reject) => {
+    api.post("/applicant/setAsExemptedStageI", formData).then((res) => { resolve(res) }).catch((error) => { reject(error) });
+  })
+};
+
+export const setUploadDocumentStageI = async (values, step, appId) => {
+  const formData = new FormData();
+  formData.append("step", JSON.stringify(step));
+  formData.append("data", JSON.stringify(values));
+  formData.append("appId", appId);
+  return new Promise((resolve, reject) => {
+    api.post("/applicant/setUploadDocumentStageI", formData).then((res) => { resolve(res) }).catch((error) => { reject(error) });
+  })
+};
 

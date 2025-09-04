@@ -24,16 +24,19 @@ export const PrimeReactDT = () => {
   const [appList, seAppList] = useState([]);
 
   const user = useSelector((state) => state.loginUserReducer);
+  console.log(user);
   // const AppList = getAppsByUserId(user.id);
   useEffect(() => { console.log(AppList); })
 
   useEffect(() => {
     switch (user.userType) {
       case 'state_assessor':
-        getAppListByStateAssessor(user).then((data) => {
-          data.sort((a, b) => a.stepNo - b.stepNo);
-          setProducts(data);
-          console.log(data);
+        getAppListByStateAssessor(user.id).then((resp) => {
+          console.log(resp.data);
+          setProducts(resp.data);
+          // data.sort((a, b) => a.stepNo - b.stepNo);
+          // setProducts(data);
+          // console.log(data);
         });
         break;
 

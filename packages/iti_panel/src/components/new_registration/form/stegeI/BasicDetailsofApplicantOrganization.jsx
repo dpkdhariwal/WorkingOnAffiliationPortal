@@ -34,6 +34,8 @@ import * as set from "../../../../db/forms/stageI/set/set";
 
 import * as C from "affserver";
 import * as ap from "../../../../services/applicant/index";
+import * as gen from "../../../../services/general/index";
+import * as st from "../../../../services/state/index";
 
 const BasicDetailsofApplicantOrganization = ({ setActive, refreshSteps }) => {
   const location = useLocation();
@@ -63,7 +65,11 @@ const BasicDetailsofApplicantOrganization = ({ setActive, refreshSteps }) => {
   const [basicDetail, setBasicDetail] = useState([]);
 
   const loadData = async () => {
-    const data = await getDbEntityDetails(appId);
+    let data;
+    // data = await getDbEntityDetails(appId);
+    data = await ap.ap_getDbEntityDetails(appId);
+    data = data.data;
+
     const combinedData = { ...data.entityAddress[0], ...data.entityDetail[0], ...data.otherIti[0] };
     console.log(combinedData);
     let newData;
@@ -1232,22 +1238,28 @@ export const Assessment_Basic_Detail = ({ isView = false, nav }) => {
 
   const onNext = async () => {
     const confirmResult = await Swal.fire({ title: "Are you sure?", text: "Do you want to Proceed", icon: "question", showCancelButton: true, confirmButtonText: "Okay, Proceed", cancelButtonText: "Cancel", });
-    if (!confirmResult.isConfirmed) { console.log("User cancelled save"); return; }
+    if (confirmResult.isConfirmed) {
 
-    const result = await Swal.fire("Saved!", "Your form data has been saved.", "success");
-
-    if (result.isConfirmed) {
       try {
         // Set Flow if not exist
-        await setStageIAssessmentFlow(appId);
+        // await setStageIAssessmentFlow(appId);
         // Mark as Complete this Step
-        await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.APPLICANT_ENTITY_DETAILS.step);
-        nav.next();
+        // await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.APPLICANT_ENTITY_DETAILS.step);
+        ////////////////////////////// API WRITTTEN BELOW
+        await st.markAsCompleteStageAssessmentFlow(appId, C.ST1FC.APPLICANT_ENTITY_DETAILS.step);
+        const result = await Swal.fire("Saved!", "Your form data has been saved.", "success");
+        if (result.isConfirmed) {
+          nav.next();
+        }
         // window.location.reload();
       } catch (err) {
         console.error("Error while saving:", err);
       }
+      return;
+
     }
+
+
   };
 
 
@@ -1255,8 +1267,9 @@ export const Assessment_Basic_Detail = ({ isView = false, nav }) => {
 
 
   const getInfo = async () => {
-    let info = await set.getDetails(appId);
-    setInfo(info);
+    // let info = await set.getDetails(appId);
+    let resp = await gen.getDetails(appId);
+    setInfo(resp.data);
   }
 
   useEffect(() => { console.log(info); }, [info]);

@@ -25,18 +25,20 @@ import { Navigations } from "../../../Assessment/components";
 import { markAsCompleteStageAssessmentFlow, setStageIAssessmentFlow } from "../../../../db/forms/stageI/set/set";
 
 import * as set from "../../../../db/forms/stageI/set/set";
+import * as ap from "../../../../services/applicant/index";
 
 
+import * as gen from "../../../../services/general/index";
+import * as st from "../../../../services/state/index";
 
-const DetailsOfDocumentsToBeUploaded = ({ step, setActive }) => {
+
+const DetailsOfDocumentsToBeUploaded = ({ step, setActive, refreshSteps }) => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const appId = queryParams.get("appId");
   const authUser = useSelector((state) => state.loginUserReducer);
 
-
   console.log(step);
-
 
   const reg = useSelector((state) => state.reg);
 
@@ -55,7 +57,7 @@ const DetailsOfDocumentsToBeUploaded = ({ step, setActive }) => {
         // User confirmed – now show loading or save directly
         Swal.fire({
           title: "Saving...",
-          didOpen: () => {
+          didOpen: async () => {
 
             Swal.showLoading();
             // dispatch({ type: UPDATE_TRADE_UNIT, payload: values });
@@ -64,20 +66,11 @@ const DetailsOfDocumentsToBeUploaded = ({ step, setActive }) => {
             // setActive(reg.steps[3]);
 
 
-            let result = setInstTradeDetails(values, appId, step, authUser);
-            console.log(result);
+            // let result = setInstTradeDetails(values, appId, step, authUser);
+            await ap.setInstTradeDetails(values, appId, step);
+            refreshSteps();
+            Swal.fire("Saved!", "Your form data has been saved.", "success");
             Swal.close();
-
-
-
-            // Swal.showLoading();
-            // // simulate async save (remove setTimeout if dispatch is sync)
-            // setTimeout(() => {
-            //   dispatch({ type: UPDATE_TRADE_UNIT, payload: values });
-            //   Swal.close(); // close loading alert
-
-
-            // }, 1000); // optional delay
           },
         });
       } else {
@@ -88,6 +81,16 @@ const DetailsOfDocumentsToBeUploaded = ({ step, setActive }) => {
 
   const formikRef = useRef();
   const trade_unit_values = useSelector((state) => state.trade_unit_reducer);
+
+
+  const loadData = async () => {
+    // const data = await getProposedInstDetailsByUserId(appId);
+    const result = await ap.getInstTradeDetails(appId);
+  };
+  useEffect(() => {
+    loadData();
+  }, []);
+
 
   return (
     <Fragment>
@@ -329,7 +332,9 @@ export const Assessment_DetailsOfDocumentsToBeUploaded = ({ step, view: viewProp
       try {
         // Set Flow if not exist
         await setStageIAssessmentFlow(appId);
-        await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_TRADE_UNIT_FOR_AFFILIATION.step);
+        // await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_TRADE_UNIT_FOR_AFFILIATION.step);
+        await st.markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_TRADE_UNIT_FOR_AFFILIATION.step);
+
         nav.next();
         // window.location.reload();
       } catch (err) {
@@ -343,8 +348,11 @@ export const Assessment_DetailsOfDocumentsToBeUploaded = ({ step, view: viewProp
   const [tradeList, setTradeList] = useState([]);
 
   const getInfo = async () => {
-    let res = await set.getDetails(appId);
-    setTradeList(res?.new_insti_trade_list || []); // fallback to []
+    // let res = await set.getDetails(appId);
+    // setTradeList(res?.new_insti_trade_list || []); // fallback to []
+
+    let resp = await gen.getDetails(appId);
+    setTradeList(resp.data?.new_insti_trade_list || []); // fallback to []
   };
   useEffect(() => { getInfo() }, [appId]);
 
