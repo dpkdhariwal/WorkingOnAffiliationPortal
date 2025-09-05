@@ -37,6 +37,8 @@ export const PrimeReactDT = () => {
           // data.sort((a, b) => a.stepNo - b.stepNo);
           // setProducts(data);
           // console.log(data);
+        }).catch((error) => {
+          console.log(error);
         });
         break;
 

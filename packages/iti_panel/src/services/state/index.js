@@ -81,3 +81,16 @@ export const set_da_status = async (appId, values, stage, keyName) => {
     api.post("/state/set_da_status", formData).then((res) => { resolve(res) }).catch((error) => { reject(error) });
   })
 };
+
+
+
+export const updateAssessmentStatus = async (appId, stage, status, pendingAt) => {
+  const formData = new FormData();
+  formData.append("appId", appId);
+  formData.append("stage", stage);
+  formData.append("status", status);
+  formData.append("pendingAt", pendingAt);
+  return new Promise((resolve, reject) => {
+    api.post("/state/updateAssessmentStatus", formData).then((res) => { resolve(res) }).catch((error) => { reject(error) });
+  })
+};
