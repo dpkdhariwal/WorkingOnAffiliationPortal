@@ -248,7 +248,7 @@ export const DetailOfProposedInsti = ({ step, view: viewProp = false, isView = f
         // Set Flow if not exist
         await setStageIAssessmentFlow(appId);
         // await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_THE_PROPOSED_INSTITUTE.step);
-         await st.markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_THE_PROPOSED_INSTITUTE.step);
+        await st.markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_THE_PROPOSED_INSTITUTE.step);
         nav.next();
         // window.location.reload();
       } catch (err) {
@@ -347,7 +347,11 @@ export const ReviewAssessment = ({ steps, step, view: viewProp = false, isView =
 
   // Loading Review Details
   const loadInfo = async () => {
-    let result = await set.getAssessmentProgressStatus(appId);
+    let result, resp;
+    // let result = await set.getAssessmentProgressStatus(appId);
+    resp = await st.getAssessmentProgressStatus(appId);
+    result = resp.data;
+    // console.error(result);
     const { allCompleted, steps, vStatus } = result;
     console.log(result);
     setAllCompleted(allCompleted);
