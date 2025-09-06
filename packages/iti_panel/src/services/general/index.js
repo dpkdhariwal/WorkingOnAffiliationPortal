@@ -59,6 +59,14 @@ export const getDetails = async (appId) => {
 };
 
 
+export const getAppFlowByAppId = async (appId) => {
+  const formData = new FormData();
+  formData.append("appId", appId);
+  return new Promise((resolve, reject) => {
+    api.post("/general/getAppFlowByAppId", formData).then((res) => { resolve(res) }).catch((error) => { reject(error) });
+  })
+};
+
 
 
 

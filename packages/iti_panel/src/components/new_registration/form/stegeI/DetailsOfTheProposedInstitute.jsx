@@ -82,7 +82,7 @@ const DetailsOfTheProposedInstitute = ({ step, setActive, refreshSteps }) => {
       // let result = setProposedInstDetails(step, values, appId, authUser);
       await ap.setProposedInstDetails(step, values, appId);
 
-      refreshSteps();
+      // refreshSteps();
       Swal.fire("Saved!", "Your form data has been saved.", "success");
     } catch (error) {
       console.error(error);

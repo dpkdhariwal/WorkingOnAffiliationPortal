@@ -150,6 +150,7 @@ export const PendingStep = ({ info, variant }) => {
             console.log(authUser.userType);
             switch (authUser.userType) {
               case 'state_assessor':
+                console.log(info);
                 if (info?.aStatus?.pendingAt === C.SL.PENDING_AT_ASSESSOR) {
                   console.log(info?.aStatus?.pendingAt);
                   return <GoToStageIAssessment info={info} />;

@@ -353,7 +353,7 @@ export const ReviewAssessment = ({ steps, step, view: viewProp = false, isView =
     result = resp.data;
     // console.error(result);
     const { allCompleted, steps, vStatus } = result;
-    console.log(result);
+    console.log(allCompleted, steps, vStatus);
     setAllCompleted(allCompleted);
     setStepList(steps);
     setVStatus(vStatus);

@@ -94,3 +94,14 @@ export const updateAssessmentStatus = async (appId, stage, status, pendingAt) =>
     api.post("/state/updateAssessmentStatus", formData).then((res) => { resolve(res) }).catch((error) => { reject(error) });
   })
 };
+
+export const set_da_status_land_area = async (appId, values) => {
+  const formData = new FormData();
+  formData.append("appId", appId);
+  formData.append("data", JSON.stringify(values));
+  return new Promise((resolve, reject) => {
+    api.post("/state/set_da_status_land_area", formData).then((res) => { resolve(res) }).catch((error) => { reject(error) });
+  })
+};
+
+

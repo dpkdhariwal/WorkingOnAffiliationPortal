@@ -106,11 +106,10 @@ export const LandDocuments = ({ steps, step, view: viewProp = false, isView = fa
         }
       }
 
-      // ✅ Check if all values are true
       if (list.every(Boolean)) {
-        await st.markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step);
-        // await set.markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step);
-        nav.next();
+        // await st.markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step);
+        // // await set.markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step);
+        // nav.next();
       }
       else {
         await SwalManager.error("Please Fill the Forms");
@@ -275,14 +274,9 @@ export const PossessionOfLand = ({ step, view: viewProp = false, isView = false 
     }
   }
 
-  useEffect(() => {
-    loadInfo();
-  }, [appId]);
+  useEffect(() => { loadInfo(); }, [appId]);
 
-
-  useEffect(() => {
-    console.log(aStatus);
-  }, [aStatus]);
+  useEffect(() => { console.log(aStatus); }, [aStatus]);
 
 
 
@@ -294,7 +288,7 @@ export const PossessionOfLand = ({ step, view: viewProp = false, isView = false 
 
 
   const formFunction = () => {
-    register(`${C.ASSESSMENT_STAGE_I_KEYS.POSSESSION_OF_LAND}`, () => { return { submitNow } });
+    // register(`${C.ASSESSMENT_STAGE_I_KEYS.POSSESSION_OF_LAND}`, () => { return { submitNow } }); 
   }
 
 
@@ -1437,8 +1431,15 @@ export const LandArea = ({ step, view: viewProp = false, isView = false }) => {
 
 
   const loadInfo = async () => {
-    let result = await set.get_da_status_land_area(appId);
-    let assessment_status = await set.getAssessmentProgressStatus(appId);
+    let result, assessment_status, resp;
+    // let result = await set.get_da_status_land_area(appId);
+    
+    resp = await st.get_da_status_land_area(appId);
+    result = resp.data;
+
+    // let assessment_status = await set.getAssessmentProgressStatus(appId);
+    resp = await st.getAssessmentProgressStatus(appId);
+    assessment_status = resp.data;
     setAStatus(assessment_status);
 
     const lastObj = result[result.length - 1];
@@ -1471,12 +1472,18 @@ export const LandArea = ({ step, view: viewProp = false, isView = false }) => {
 
   const form = async () => {
     if (formRef.current.isValid) {
-      await set.set_da_status_land_area(appId, formRef.current.values);
-      setAnyChangesMade(false);
-      setEditMode(false);
-      setReviewStatus(C.SL.REVIEWED);
-      setViewType(C.SL.VIEW);
-      return true;
+      // await set.set_da_status_land_area(appId, formRef.current.values);
+      try {
+        await st.set_da_status(appId, formRef.current.values, C.abbreviation.STAGE_I.key, C.DA1_KEYS.LAND_AREA);
+
+        setAnyChangesMade(false);
+        setEditMode(false);
+        setReviewStatus(C.SL.REVIEWED);
+        setViewType(C.SL.VIEW);
+        return true;
+      } catch (error) {
+        console.error(error);
+      }
     }
     else {
       return false;
