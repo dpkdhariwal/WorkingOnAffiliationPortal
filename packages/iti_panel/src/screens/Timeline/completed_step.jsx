@@ -1,7 +1,7 @@
 import { Card, Badge } from "react-bootstrap";
 import PropTypes from "prop-types";
 import React, { Children, useState, useEffect } from "react";
-
+import { useTranslation } from 'react-i18next';
 
 export const CompletedStep = ({ info, variant }) => {
 
@@ -10,6 +10,7 @@ export const CompletedStep = ({ info, variant }) => {
   const [cardArrow, setCardArrow] = useState('f-timeline-container-warning');
   const [text, setText] = useState('Not Completed Yet');
 
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (variant === "completed") {
@@ -24,15 +25,16 @@ export const CompletedStep = ({ info, variant }) => {
     }
   }, [variant]);
 
-  useEffect(()=>{
-    console.log(info.stepMsg);
-  },[])
+  useEffect(() => {
+    console.log(info);
+  }, [])
 
   return (
     <Card className={`${cardArrow} border border-2 ${cardBorder}  card custom-card shadow-size-small ${cardShadow}`} style={{ position: "relative" }}>
       <Card.Header style={{ padding: "0px" }}>{info.stepTitle}</Card.Header>
       <Card.Body style={{ padding: "0px" }}>
-        {info?.stepMsg}
+        {t(`AppFlow.${info.step}.completed.${'COMMON'}`)}
+        {/* {info?.stepMsg} */}
       </Card.Body>
       <Card.Footer style={{ padding: "2px" }} className="d-flex justify-content-end btn-rounded" >
         <i><span>22-07-2025</span></i>

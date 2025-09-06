@@ -23,6 +23,9 @@ import * as C from 'affserver';
 
 import NewSignIn from './screens/Auth/SignNew/SignIn';
 
+// 👇 Import i18n once, it will hook into react-i18next
+import "./i18n.js";
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Fragment>
     <Provider store={Store}>

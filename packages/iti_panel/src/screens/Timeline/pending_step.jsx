@@ -4,6 +4,7 @@ import React, { Children, useState, useEffect } from "react";
 
 import * as action from "../action/allActions";
 import { GoToStageIAssessmentToUploadDocs, GoToStageIForm, GoToStageIAssessment, GoToNOCGenerateForm, GoToStageIIForm, GoToStageIIAssessment, GoToStageIIStaffDetailForm, GoToInspectionSlotSelection, GoToBatchCreattion } from "../action/allActions";
+import { useTranslation } from 'react-i18next';
 
 
 import {
@@ -81,6 +82,7 @@ export const PendingStep = ({ info, variant }) => {
   const [text, setText] = useState('Not Completed Yet');
 
   const authUser = useSelector((state) => state.loginUserReducer);
+  const { t } = useTranslation();
 
 
   useEffect(() => {
@@ -298,7 +300,7 @@ export const PendingStep = ({ info, variant }) => {
       <Card.Body style={{ padding: "5px" }}>
         <div className="card-title">{info.stepTitle}</div>
         <h6 className="card-title fw-semibold mb-2">
-          {info.stepMsg}
+          {t(`AppFlow.${info.step}.pending.${'COMMON'}`)}
         </h6>
       </Card.Body>
       <Card.Footer style={{ padding: "2px" }} className="d-flex justify-content-end btn-rounded" >

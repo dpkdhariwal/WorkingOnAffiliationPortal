@@ -1,0 +1,531 @@
+{
+    "AppFlow": {
+        "STAGE_I_FORM_FILLING": {
+            "inactive": {
+                "COMMON": "Stage I Form Filling is Currently In-active",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "pending": {
+                "COMMON": "Stage I Form Filling is Currently Pending",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "completed": {
+                "COMMON": "Stage I Form Filling is Currently Completed",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "on-progress": {
+                "COMMON": "Stage I Form Filling is Currently On-Progress",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            }
+        },
+        "STAGE_I_FEE": {
+            "inactive": {
+                "COMMON": "Fee Step Currently In-active",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "pending": {
+                "COMMON": "Fee Step Currently Pending",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "completed": {
+                "COMMON": "Fee Step Currently Completed",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "on-progress": {
+                "COMMON": "Fee Step Currently On-Progress",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            }
+        },
+        "STAGE_I_DOCUMENT_UPLAOD": {
+            "inactive": {
+                "COMMON": "Stage I Document Upload Currently In-active",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "pending": {
+                "COMMON": "Stage I Document Upload Currently Pending",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "completed": {
+                "COMMON": "Stage I Document Upload Currently Completed",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "on-progress": {
+                "COMMON": "Stage I Document Upload Currently On-Progress",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            }
+        },
+        "STAGE_I_SUBMIT": {
+            "inactive": {
+                "COMMON": "Stage I Submit Currently In-active",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "pending": {
+                "COMMON": "Stage I Submit Currently Pending",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "completed": {
+                "COMMON": "Stage I Submit Currently Completed",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "on-progress": {
+                "COMMON": "Stage I Submit Currently On-Progress",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            }
+        },
+        "STAGE_I__ASSESSMENT": {
+            "inactive": {
+                "COMMON": "Stage I Assessment Currently In-active",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "pending": {
+                "COMMON": "Stage I Assessment Currently Pending",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "completed": {
+                "COMMON": "Stage I Assessment Currently Completed",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "on-progress": {
+                "COMMON": "Stage I Assessment Currently On-Progress",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            }
+        },
+        "NOC_ISSUANCE": {
+            "inactive": {
+                "COMMON": "NOC Issuence Currently In-active",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "pending": {
+                "COMMON": "NOC Issuence Currently Pending",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "completed": {
+                "COMMON": "NOC Issuence Currently Completed",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "on-progress": {
+                "COMMON": "NOC Issuence Currently On-Progress",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            }
+        },
+        "STAGE_II_FORM_FILLING": {
+            "inactive": {
+                "COMMON": "Stage II Form Filling is Currently In-active",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "pending": {
+                "COMMON": "Stage II Form Filling is Currently Pending",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "completed": {
+                "COMMON": "Stage II Form Filling is Currently Completed",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "on-progress": {
+                "COMMON": "Stage II Form Filling is Currently On-Progress",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            }
+        },
+        "STAGE_II_FEE": {
+            "inactive": {
+                "COMMON": "Stage II Fee Step Currently In-active",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "pending": {
+                "COMMON": "Stage II Fee Step Currently Pending",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "completed": {
+                "COMMON": "Stage II Fee Step Currently Completed",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "on-progress": {
+                "COMMON": "Stage II Fee Step Currently On-Progress",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            }
+        },
+        "STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS": {
+            "inactive": {
+                "COMMON": "Fill Machinery Tool, Equipment Step Currently In-active",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "pending": {
+                "COMMON": "Fill Machinery Tool, Equipment Step Currently Pending",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "completed": {
+                "COMMON": "Fill Machinery Tool, Equipment Step Currently Completed",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "on-progress": {
+                "COMMON": "Fill Machinery Tool, Equipment Step Currently On-Progress",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            }
+        },
+        "STAGE_II_DOCUMENT_UPLAOD": {
+            "inactive": {
+                "COMMON": "Stage II Document Upload Step Currently In-active",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "pending": {
+                "COMMON": "Stage II Document Upload Step Currently Pending",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "completed": {
+                "COMMON": "Stage II Document Upload Step Currently Completed",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "on-progress": {
+                "COMMON": "Stage II Document Upload Step Currently On-Progress",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            }
+        },
+        "STAGE_II_SUBMIT": {
+            "inactive": {
+                "COMMON": "Stage II Submit Step Currently In-active",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "pending": {
+                "COMMON": "Stage II Submit Step Currently Pending",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "completed": {
+                "COMMON": "Stage II Submit Step Currently Completed",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "on-progress": {
+                "COMMON": "Stage II Submit Step Currently On-Progress",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            }
+        },
+        "STAGE_II__ASSESSMENT": {
+            "inactive": {
+                "COMMON": "Stage II Assessment Currently In-active",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "pending": {
+                "COMMON": "Stage II Assessment Currently In-active",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "completed": {
+                "COMMON": "Stage II Assessment Currently In-active",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "on-progress": {
+                "COMMON": "Stage II Assessment Currently In-active",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            }
+        },
+        "STAFF_DETAILS": {
+            "inactive": {
+                "COMMON": "Fill Staff Details Currently In-active",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "pending": {
+                "COMMON": "Fill Staff Details Currently Pending",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "completed": {
+                "COMMON": "Fill Staff Details Currently Completed",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "on-progress": {
+                "COMMON": "Fill Staff Details Currently On-Progress",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            }
+        },
+        "INSP_SLOT_SELECTION": {
+            "inactive": {
+                "COMMON": "Inspection Slot Selection Currently In-active",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "pending": {
+                "COMMON": "Inspection Slot Selection Currently Pending",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "completed": {
+                "COMMON": "Inspection Slot Selection Currently Completed",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "on-progress": {
+                "COMMON": "Inspection Slot Selection Currently On-Progress",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            }
+        },
+        "INSPENCTION": {
+            "inactive": {
+                "COMMON": "Inspection Currently In-active",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "pending": {
+                "COMMON": "Inspection Currently Pending",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "completed": {
+                "COMMON": "Inspection Currently Completed",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            },
+            "on-progress": {
+                "COMMON": "Inspection Currently On-Progress",
+                "APPLICANT": "",
+                "DGT_ADMIN": "",
+                "RDSDE": "",
+                "STATE_ADMIN": "",
+                "STATE_ASSESSO": ""
+            }
+        }
+    },
+    "StageIForm": {},
+    "StageIIForm": {},
+    "AssessmentI": {},
+    "AssessmentII": {},
+    "timeline": {
+        "joined": "{{user}} joined the group",
+        "you_joined": "You joined the group",
+        "uploaded": "{{user}} uploaded {{file}}",
+        "you_uploaded": "You uploaded {{file}}",
+        "files_uploaded_one": "{{user}} uploaded {{count}} file",
+        "files_uploaded_other": "{{user}} uploaded {{count}} files",
+        "you_files_uploaded_one": "You uploaded {{count}} file",
+        "you_files_uploaded_other": "You uploaded {{count}} files",
+        "commented_one": "{{user}} left {{count}} comment",
+        "commented_other": "{{user}} left {{count}} comments",
+        "default": "{{user}} did something"
+    }
+}

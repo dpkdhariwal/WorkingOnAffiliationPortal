@@ -76,6 +76,8 @@ END
 npx lerna run dev --scope=affiliation_portal
 npx lerna run build --scope=affiliation_portal
 
+npm install i18next react-i18next i18next-browser-languagedetector --scope=affiliation_portal
+
 
 npx lerna run dev --scope=layout
 npx lerna run server --scope=server
