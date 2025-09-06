@@ -63,6 +63,14 @@ git submodule add https://github.com/dpkdhariwal/ui_layouts_collaborate.git pack
 git submodule add https://github.com/dpkdhariwal/affiliation-server.git packages/backend
 
 
+# To Remove Sub Module from Mono repo
+STEP-1:
+git submodule deinit -f packages/backend
+STEP-2:
+git rm -f packages/backend 
+END
+
+
 
 
 npx lerna run dev --scope=affiliation_portal
