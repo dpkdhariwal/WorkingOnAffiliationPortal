@@ -51,50 +51,17 @@ const DetailsOfDocumentsToBeUploaded = ({ step, setActive, refreshSteps }) => {
       // let result = await setAppFlow(appId, STAGE_I_DOCUMENT_UPLAOD);
       // markAsCompleteStageStep(authUser, appId, C.ST1FC.DOCUMENTS_UPLOAD.step);
       // console.log(result);
-
       // let result = setInstTradeDetails(values, appId, step, authUser);
+
       await ap.setUploadDocumentStageI(values, step, appId);
       refreshSteps();
       Swal.fire("Saved!", "Your form data has been saved.", "success");
       Swal.close();
-
-      // dispatch({ type: SET_STAGE_I__DOCUMENT_STATUS, payload: values });
-      // dispatch({ type: "set_filled_step", payload: { step: 5 }, });
-      // dispatch({ type: "reg_set_active_step", payload: { step: 5 } });
-      // setActive(reg.steps[5]);
-
-      // let result = setProposedInstDetails(step, values, appId, authUser);
-      // result === true ? refreshSteps() : '';
-      // Swal.fire("Saved!", "Your form data has been saved.", "success");
+      
     } catch (error) {
       console.error(error);
       Swal.fire("Error", "Something went wrong while saving.", "error");
     }
-
-
-    // Swal.fire({
-    //   title: "Are you sure?",
-    //   text: "Do you want to save the form data?",
-    //   icon: "question",
-    //   showCancelButton: true,
-    //   confirmButtonText: "Yes, save it!",
-    //   cancelButtonText: "Cancel",
-    // }).then((result) => {
-    //   if (result.isConfirmed) {
-    //     // User confirmed – now show loading or save directly
-    //     Swal.fire({
-    //       title: "Saving...",
-    //       didOpen: () => {
-    //         Swal.showLoading();
-
-
-
-    //       },
-    //     });
-    //   } else {
-    //     console.log("User cancelled save");
-    //   }
-    // });
   };
 
   const submitNow = () => {

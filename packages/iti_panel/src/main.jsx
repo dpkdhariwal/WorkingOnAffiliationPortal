@@ -21,6 +21,7 @@ import Store from "./common/redux/Store.jsx";
 import { SignInPage } from 'layout';
 import * as C from 'affserver';
 
+import NewSignIn from './screens/Auth/SignNew/SignIn';
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Fragment>
@@ -42,10 +43,14 @@ ReactDOM.createRoot(document.getElementById("root")).render(
                 element={<Forgetpassword />}
               ></Route>
 
-              <Route
+              {/* <Route
                 path={`${import.meta.env.BASE_URL}`}
                 element={<SignInPage login={<SigninPortable />} />}
-              ></Route>
+              ></Route> */}
+
+               <Route  path={`${import.meta.env.BASE_URL}`} element={<NewSignIn />} />
+
+
               {/* <Route index element={<Signin />} /> */}
               {Routedata.map((idx) => (
                 <Route key={idx.id} path={idx.path} element={<App />}>
