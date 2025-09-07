@@ -3,7 +3,7 @@ import DeviceDetector from 'device-detector-js';
 export const base_url = 'http://localhost:3000';
 import * as cnf from "../config";
 export const api = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: "http://localhost:3000/api",
   withCredentials: true  // ✅ important for cookies
 });
 

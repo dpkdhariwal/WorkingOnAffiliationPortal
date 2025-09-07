@@ -529,8 +529,9 @@
         "default": "{{user}} did something"
     },
     "NOC_FORM":{
+        "titleBar":"OTP Confirmation Generation of NOC ",
         "title": "Are you sure you want to generate NOC?",
-        "content": "You are about to generate the No Objection Certificate (NOC) for this application. Once issued, the NOC will be recorded in the system and cannot be modified. Do you want to continue?"
+        "msg": "You are about to generate the No Objection Certificate (NOC) for this application. Once issued, the NOC will be recorded in the system and cannot be modified. Do you want to continue?"
     }
 
 }

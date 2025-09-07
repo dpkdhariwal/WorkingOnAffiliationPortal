@@ -113,3 +113,12 @@ export const set_da_status_land_area = async (appId, values) => {
 };
 
 
+export const generateNoc = async (appId) => {
+  const formData = new FormData();
+  formData.append("appId", appId);
+  return new Promise((resolve, reject) => {
+    api.post("/state/generateNoc", formData).then((res) => { resolve(res) }).catch((error) => { reject(error) });
+  })
+};
+
+
