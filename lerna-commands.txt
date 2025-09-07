@@ -98,6 +98,9 @@ npm install dayjs --workspace=packages/backend
 
 npm install knex -g
 
+npm install --save-dev cross-env --workspace=packages/backend
+
+
 
 
 
