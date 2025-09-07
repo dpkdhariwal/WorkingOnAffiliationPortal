@@ -51,7 +51,7 @@ export const StageIAssessment = () => {
   const authUser = useSelector((state) => state.loginUserReducer);
 
 
-  const [activeStep, setActiveStep] = useState(3);
+  const [activeStep, setActiveStep] = useState(0);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const appId = queryParams.get("appId");
@@ -210,7 +210,7 @@ export const StageIAssessment = () => {
 
       if (reuslt.isConfirmed) {
         // await setNewStatusOfAppByStep(appId, C.STAGE_I__ASSESSMENT, C.STAGE_I__ASSESSMENT_ON_PROGRESS);
-        await gen.setNewStatusOfAppByStep(appId, C.STAGE_I__ASSESSMENT, C.STAGE_I__ASSESSMENT_ON_PROGRESS);
+        // await gen.setNewStatusOfAppByStep(appId, C.STAGE_I__ASSESSMENT, C.STAGE_I__ASSESSMENT_ON_PROGRESS);
         await gen.setStageIAssessmentFlow(appId);
         // await setStageIAssessmentFlow(appId);
         navigate(0); // In React Router v6
@@ -424,19 +424,19 @@ export const ReviewAssessment = ({ steps, step, view: viewProp = false, isView =
     }
 
     try {
-      // Update App Flow Status
-      // await updateAppFlowStatus(appId, C.STAGE_I__ASSESSMENT, C.STAGE_I__ASSESSMENT_COMPLETED);
-      await gen.setNewStatusOfAppByStep(appId, C.STAGE_I__ASSESSMENT, C.STAGE_I__ASSESSMENT_COMPLETED) /
-        // Update App Assessment Status
-        // await updateAssessmentStatus(appId, C.abbreviation.STAGE_I.key, C.SL.VERIFIED, C.SL.NULL);
-      await st.updateAssessmentStatus(appId, C.abbreviation.STAGE_I.key, C.SL.VERIFIED, C.SL.NULL);
+      // // Update App Flow Status
+      // // await updateAppFlowStatus(appId, C.STAGE_I__ASSESSMENT, C.STAGE_I__ASSESSMENT_COMPLETED);
+      // await gen.setNewStatusOfAppByStep(appId, C.STAGE_I__ASSESSMENT, C.STAGE_I__ASSESSMENT_COMPLETED) /
+      //   // Update App Assessment Status
+      //   // await updateAssessmentStatus(appId, C.abbreviation.STAGE_I.key, C.SL.VERIFIED, C.SL.NULL);
+      // await st.updateAssessmentStatus(appId, C.abbreviation.STAGE_I.key, C.SL.VERIFIED, C.SL.NULL);
 
+      // // await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.REVIEW_ASSESSMENT.step);
+      // await st.markAsCompleteStageAssessmentFlow(appId, C.ST1FC.REVIEW_ASSESSMENT.step)
 
-      // await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.REVIEW_ASSESSMENT.step);
-      await st.markAsCompleteStageAssessmentFlow(appId, C.ST1FC.REVIEW_ASSESSMENT.step)
+      // // setAppFlow(appId, C.STAGE_I__ASSESSMENT);
 
-      // setAppFlow(appId, C.STAGE_I__ASSESSMENT);
-
+      await st.markAsCompleteAssessment(appId);
 
       Swal.fire("Saved!", "Your form data has been saved.", "success").then((result) => {
         if (result.isConfirmed) {

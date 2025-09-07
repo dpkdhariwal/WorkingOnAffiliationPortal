@@ -107,9 +107,9 @@ export const LandDocuments = ({ steps, step, view: viewProp = false, isView = fa
       }
 
       if (list.every(Boolean)) {
-        // await st.markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step);
-        // // await set.markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step);
-        // nav.next();
+        await st.markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step);
+        // await set.markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step);
+        nav.next();
       }
       else {
         await SwalManager.error("Please Fill the Forms");

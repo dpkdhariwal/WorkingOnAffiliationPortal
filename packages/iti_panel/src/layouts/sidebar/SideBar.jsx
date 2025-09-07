@@ -10,45 +10,58 @@ import Store from "../../common/redux/Store";
 import { ThemeChanger } from "../../common/redux/Action";
 import { useSelector, useDispatch } from "react-redux";
 
+// Import Menus
+import MENU1 from "../../common/MENU/applicant";
+import MENU2 from "../../common/MENU/state_assessor";
+import MENU3 from "../../common/MENU/state_admin";
+import MENU4 from "../../common/MENU/rdsde";
+
+
+
 const history = [];
 const SideBar = ({ local_varaiable, ThemeChanger }) => {
   const userInfo = useSelector((state) => state.loginUserReducer);
+  console.log(userInfo, userInfo.userType);
   const FILTEREDMENU = () => {
-    let result = MENUITEMS.filter((menu) => {
-      const userRoles = userInfo.role;
-      const allowedRoles = menu.allowTo;
-      // console.log(menu);
-      const hasMatch = userRoles.some((role) => {
-        switch (userInfo.userType) {
-          case "applicant":
-            return allowedRoles.includes(role) || allowedRoles.includes("all")
-            // if (userInfo.total_applications > 0) {
-            //   return (
-            //     allowedRoles.includes(role) || allowedRoles.includes("all")
-            //   );
-            // } else {
-            //   menu.active = true;
-            //   return menu.menuGroup === "new_registration";
-              
-            // }
-          case "dgt":
-          case "state_admin":
-          case "state_assessor":
-          case "rdsde":
-            return allowedRoles.includes(role) || allowedRoles.includes("all");
-          default:
-            return false;
-        }
-      });
-
-      if (hasMatch) {
-        return true;
-      } else {
+    switch (userInfo.userType) {
+      case "applicant":
+        return MENU1;
+      case "dgt":
         return false;
-      }
-    });
-    console.log(result);
-    return result;
+      case "state_admin":
+        return MENU3;
+      case "state_assessor":
+        return MENU2;
+      case "rdsde":
+        return MENU4;
+      default:
+        return false;
+    }
+    // let result = MENUITEMS.filter((menu) => {
+    //   const userRoles = userInfo.role;
+    //   const allowedRoles = menu.allowTo;
+    //   const hasMatch = userRoles.some((role) => {
+    //     console.log(role, userInfo.userType)
+    //     switch (userInfo.userType) {
+    //       case "applicant":
+    //         return allowedRoles.includes(role)
+    //       case "dgt":
+    //       case "state_admin":
+    //       case "state_assessor":
+    //       case "rdsde":
+    //         return allowedRoles.includes(role);
+    //       default:
+    //         return false;
+    //     }
+    //   });
+    //   if (hasMatch) {
+    //     return true;
+    //   } else {
+    //     return false;
+    //   }
+
+    // });
+    // return result;
   };
 
   const [menuitems, setMenuitems] = useState(FILTEREDMENU);

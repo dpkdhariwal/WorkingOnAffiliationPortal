@@ -8,6 +8,14 @@ export const getError = (error) => {
   return new Error(message)
 }
 
+export const markAsCompleteAssessment = async (appId) => {
+  console.log(appId);
+  const formData = new FormData();
+  formData.append("appId", appId);
+  return new Promise((resolve, reject) => {
+    api.post("/state/markAsCompleteAssessment", formData).then((res) => { resolve(res) }).catch((error) => { reject(error) });
+  })
+};
 
 export const markAsCompleteStageAssessmentFlow = async (appId, step) => {
   console.log(appId, step);

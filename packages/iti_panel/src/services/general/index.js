@@ -7,6 +7,15 @@ export const getError = (error) => {
 }
 
 
+
+export const getTradeUnitsInfo = async (appId) => {
+  const formData = new FormData();
+  formData.append("appId", appId);
+  return new Promise((resolve, reject) => {
+    api.post("/general/getTradeUnitsInfo", formData).then((res) => { resolve(res) }).catch((error) => { reject(error) });
+  })
+};
+
 export const getAppFlowStepInfoByStep = async (appId, step) => {
   const formData = new FormData();
   formData.append("step", step);
