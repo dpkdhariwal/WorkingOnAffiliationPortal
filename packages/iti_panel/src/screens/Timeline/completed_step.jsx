@@ -223,9 +223,9 @@ export const CompletedStep = ({ info, variant }) => {
 
   return (
     <Card className={`${cardArrow} border border-2 ${cardBorder}  card custom-card shadow-size-small ${cardShadow}`} style={{ position: "relative" }}>
-      <Card.Header style={{ padding: "0px" }}>{info.stepTitle}</Card.Header>
+      <Card.Header style={{ padding: "0px" }}>{t(`AppFlow.${info.step}.title`)}</Card.Header>
       <Card.Body style={{ padding: "0px" }}>
-        {t(`AppFlow.${info.step}.completed.${'COMMON'}`)}
+        {t(`AppFlow.${info.step}.status.completed.${'COMMON'}`)}
         {/* {info?.stepMsg} */}
       </Card.Body>
       <Card.Footer style={{ padding: "2px" }} className=" d-flex justify-content-between btn-rounded" >

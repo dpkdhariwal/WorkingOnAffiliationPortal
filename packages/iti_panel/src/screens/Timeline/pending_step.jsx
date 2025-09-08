@@ -298,9 +298,9 @@ export const PendingStep = ({ info, variant }) => {
       style={{ position: "relative", padding: '1px' }}
     >
       <Card.Body style={{ padding: "5px" }}>
-        <div className="card-title">{info.stepTitle}</div>
+        <div className="card-title">{t(`AppFlow.${info.step}.title`)}</div>
         <h6 className="card-title fw-semibold mb-2">
-          {t(`AppFlow.${info.step}.${variant=="inProgress"? "on-progress" : 'pending'}.${'COMMON'}`)}
+          {t(`AppFlow.${info.step}.status.${variant=="inProgress"? "on-progress" : 'pending'}.${'COMMON'}`)}
         </h6>
       </Card.Body>
       <Card.Footer style={{ padding: "2px" }} className="d-flex justify-content-end btn-rounded" >

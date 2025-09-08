@@ -3,8 +3,8 @@ import DeviceDetector from 'device-detector-js';
 export const base_url = 'http://localhost:3000';
 import * as cnf from "../config";
 export const api = axios.create({
-//   baseURL: "http://localhost:3000/api",
-  baseURL: "https://affiliation.dgt.gov.in/api",
+  baseURL: "http://localhost:3000/api",
+//   baseURL: "https://affiliation.dgt.gov.in/api",
   withCredentials: true 
 });
 

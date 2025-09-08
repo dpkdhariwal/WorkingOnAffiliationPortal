@@ -33,7 +33,7 @@ export const InactiveStep = ({ info, variant }) => {
     >
       <Card.Body style={{ padding: "5px" }}>
         {/* <div>{info.stepTitle}</div> */}
-        <div>{t(`AppFlow.${info.step}.inactive.${'COMMON'}`)}</div>
+        <div>{t(`AppFlow.${info.step}.status.inactive.${'COMMON'}`)}</div>
       </Card.Body>
     </Card>
   );
