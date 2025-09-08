@@ -18,11 +18,11 @@ import Swal from "sweetalert2";
 import { validationSchema } from "../../../../../reducers/tradeWiseWorkshopReducer";
 
 import { useSelector, useDispatch } from "react-redux";
-import { work_shop_info_to_be_filled, UPDATE_TRADEWISE_WORKSHOP_DETAILS, work_shop_list, tradeList, TRADEWISE_WORKSHOP, CIC } from "../../../../../constants";
+import { work_shop_info_to_be_filled, UPDATE_TRADEWISE_WORKSHOP_DETAILS, work_shop_list, tradeList, TRADEWISE_WORKSHOP, CIC } from "affserver";
 import { setTradewiseWorkShop, setCheckListTradewiseWorkShop, getTradewiseWorkShop } from "../../../../../db/users";
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
-import { WorkshopName } from "../../../../../constants";
+import { WorkshopName } from "affserver";
 
 export const TradeWiseWorkshops = ({ steps, goNext }) => {
 

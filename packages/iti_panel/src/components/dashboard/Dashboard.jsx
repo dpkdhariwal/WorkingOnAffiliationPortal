@@ -3,7 +3,7 @@ import Pageheader from '../../layouts/Pageheader';
 import { Card, Col, Row, Button, Form, Dropdown, Table, Pagination } from 'react-bootstrap';
 import ALLImages from '../../common/Imagedata';
 import { useSelector, useDispatch } from "react-redux";
-  const currentType = localStorage.getItem("userType");
+const currentType = localStorage.getItem("userType");
 
 const Dashboard = () => {
 
@@ -64,11 +64,10 @@ const Dashboard = () => {
 
   return (
     <Fragment>
-      <Pageheader mainheading='Welcome To Dashboard' parentfolder='Home' activepage='Project Dashboard' />
-      {currentType}
-      {/* <!--Row--> */}
-      <Row className="row-sm">
-        <Col sm={12} lg={12} xl={8}>
+      <Pageheader mainheading='Welcome To Dashboard' parentfolder='Home' activepage='Dashboard' />
+      {false && (
+        <Row className="row-sm">
+        <Col sm={12} lg={12} xl={12}>
           <Row className="row-sm">
             <Col sm={12} md={6} lg={6} xl={4}>
               <Card className="custom-card">
@@ -152,7 +151,7 @@ const Dashboard = () => {
                 </Card.Body>
               </Card>
             </Col>
-            <Col sm={12} md={12} lg={12} xl={4}>
+            <Col sm={12} md={6} lg={6} xl={4}>
               <Card className="card custom-card">
                 <Card.Body>
                   <div className="card-item">
@@ -193,307 +192,9 @@ const Dashboard = () => {
               </Card>
             </Col>
           </Row>
-          <Row className="row-sm">
-            <Col lg={12}>
-              <Card className="custom-card mg-b-20">
-                <Card.Body>
-                  <Card.Header className="border-bottom-0 pt-0 ps-0 pe-0 pb-2 d-flex">
-                    <div>
-                      <label className="main-content-label mb-2">Tasks</label>
-                      <p className="mb-0 fs-12 mb-3 text-muted">
-                        A task is accomplished by a set deadline, and must
-                        contribute toward work-related objectives.
-                      </p>
-                    </div>
-                    <div className="ms-auto d-flex flex-wrap gap-2">
-                      <div className="contact-search3 me-3">
-                        <Button variant="" type="button" className="border-0"><i className="fe fe-search fw-semibold text-muted" aria-hidden="true"></i></Button>
-                        <Form.Control type="text" className="h-6" id="typehead1" placeholder="Search here..." autoComplete="off" />
-                      </div>
-                      <Dropdown className="ms-auto d-flex">
-                        <Dropdown.Toggle variant="default" className="btn btn-wave waves-effect waves-light btn-primary d-inline-flex align-items-center border-0">
-                          <i className="ri-equalizer-line me-1"></i>Sort by
-                        </Dropdown.Toggle>
-                        <Dropdown.Menu style={{ margin: "0px" }}>
-                          <Dropdown.Item>Task</Dropdown.Item>
-                          <Dropdown.Item>Team</Dropdown.Item>
-                          <Dropdown.Item>Status</Dropdown.Item>
-                          <Dropdown.Divider />
-                          <Dropdown.Item>
-                            <i className="fa fa-cog me-2"></i> Settings
-                          </Dropdown.Item>
-                        </Dropdown.Menu>
-                      </Dropdown>
-                    </div>
-
-                  </Card.Header>
-                  <div className="table-responsive tasks">
-                    <Table className="card-table table-vcenter text-nowrap mb-0 border dashboard-table"  >
-                      <thead>
-                        <tr>
-                          <th className="wd-lg-10p">Task</th>
-                          <th className="wd-lg-20p text-center">Team</th>
-                          <th className="wd-lg-20p text-center">Open task</th>
-                          <th className="wd-lg-20p">Prority</th>
-                          <th className="wd-lg-20p">Status</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {TASKS.map((items, index) => (
-                          <tr key={index} data-index={index}>
-                            <td className="fw-medium">
-                              <div className="d-flex">
-                                <Form.Check className="me-4 rounded" defaultChecked={items.checked} type="radio" label="" />
-                                <span className="mt-1">{items.Task}</span>
-                              </div>
-                            </td>
-                            <td className="text-nowrap">
-                              <div className="avatar-list-stacked my-auto float-end">
-                                <div className="avatar avatar-rounded avatar-sm">
-                                  <img
-                                    alt="avatar"
-                                    className="rounded-circle"
-                                    src={items.TeamMember1}
-                                  />
-                                </div>
-                                <div className="avatar avatar-rounded avatar-sm">
-                                  <img
-                                    alt="avatar"
-                                    className="rounded-circle"
-                                    src={items.TeamMember2}
-                                  />
-                                </div>
-                                <div className="avatar avatar-rounded avatar-sm">
-                                  <img
-                                    alt="avatar"
-                                    className="rounded-circle"
-                                    src={items.TeamMember3}
-                                  />
-                                </div>
-                                <div className="avatar avatar-rounded avatar-sm">
-                                  <img
-                                    alt="avatar"
-                                    className="rounded-circle"
-                                    src={items.TeamMember4}
-                                  />
-                                </div>
-                              </div>
-                            </td>
-                            <td className="text-center">
-                              37<i className=""></i>
-                            </td>
-                            <td className={`text-${items.Profittext}`}>
-                              {items.TaskProfit}
-                            </td>
-                            <td>
-                              <span
-                                className={`badge rounded-pill bg-${items.Statustext}-transparent`}
-                              >
-                                {items.Status}
-                              </span>
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </Table>
-                  </div>
-                  <div className="float-end mt-3">
-                    <nav className="pagination-style-3">
-                      <Pagination className="mb-0 flex-wrap">
-                        <Pagination.Item disabled>Prev</Pagination.Item>
-                        <Pagination.Item active>{1}</Pagination.Item>
-                        <Pagination.Item>{2}</Pagination.Item>
-                        <Pagination.Ellipsis />
-                        <Pagination.Item>{16}</Pagination.Item>
-                        <Pagination.Item>Next</Pagination.Item>
-                      </Pagination></nav>
-                  </div>
-                </Card.Body>
-              </Card>
-            </Col>
-          </Row>
-        </Col>
-        <Col sm={12} lg={12} xl={4} className=" mt-xl-3">
-          <Card className=" custom-card">
-            <Card.Header className="border-bottom-0 pb-0 d-flex ps-3 ms-1">
-              <div>
-                <label className="main-content-label mb-2 pt-2">
-                  On goiong projects
-                </label>
-                <span className="d-block fs-12 mb-2 text-muted">
-                  Projects where development work is on completion
-                </span>
-              </div>
-            </Card.Header>
-            <Card.Body className="pt-2 mt-0">
-              <div className="list-card">
-                <div className="d-flex">
-                  <div className="avatar-list-stacked d-flex align-items-center">
-                    <div className="avatar avatar-rounded avatar-xs">
-                      <img
-                        alt="avatar"
-                        className="rounded-circle"
-                        src={ALLImages("face1")}
-                      />
-                    </div>
-                    <div className="avatar avatar-rounded avatar-xs">
-                      <img
-                        alt="avatar"
-                        className="rounded-circle"
-                        src={ALLImages("face2")}
-                      />
-                    </div>
-                    <div className="avatar avatar-rounded avatar-xs">
-                      <img
-                        alt="avatar"
-                        className="rounded-circle"
-                        src={ALLImages("face3")}
-                      />
-                    </div>
-                    <div className="avatar avatar-rounded avatar-xs">
-                      <img
-                        alt="avatar"
-                        className="rounded-circle"
-                        src={ALLImages("face4")}
-                      />
-                    </div>
-                    <div className="ms-4">Design team</div>
-                  </div>
-                  <div className="ms-auto float-end">
-                    <Dropdown className="GOIONGPROJECTS">
-                      <Dropdown.Toggle as='a' variant="default" className="no-caret option-dots"> <i className="fe fe-more-horizontal"></i> </Dropdown.Toggle>
-                      <Dropdown.Menu className=" dropdown-menu-end" style={{ margin: "0px" }} >
-                        <Dropdown.Item>Today</Dropdown.Item>
-                        <Dropdown.Item>Last Week</Dropdown.Item>
-                        <Dropdown.Item>Last Month</Dropdown.Item>
-                        <Dropdown.Item>Last Year</Dropdown.Item>
-                      </Dropdown.Menu>
-                    </Dropdown>
-                  </div>
-                </div>
-                <div className="card-item mt-2">
-                  <div className="card-item-icon bg-transparent card-icon">
-                  </div>
-                  <div className="card-item-body">
-                    <div className="card-item-stat">
-                      <small className="fs-10 text-primary fw-semibold">
-                        25 August 2020
-                      </small>
-                      <h6 className=" mt-2">Mobile app design</h6>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="list-card mb-0">
-                <div className="d-flex">
-                  <div className="avatar-list-stacked d-flex align-items-center">
-                    <div className="avatar avatar-rounded avatar-xs">
-                      <img
-                        alt="avatar"
-                        className="rounded-circle"
-                        src={ALLImages("face5")}
-                      />
-                    </div>
-                    <div className="avatar avatar-rounded avatar-xs">
-                      <img
-                        alt="avatar"
-                        className="rounded-circle"
-                        src={ALLImages("face6")}
-                      />
-                    </div>
-                    <div className="avatar avatar-rounded avatar-xs">
-                      <img
-                        alt="avatar"
-                        className="rounded-circle"
-                        src={ALLImages("face7")}
-                      />
-                    </div>
-                    <div className="avatar avatar-rounded avatar-xs">
-                      <img
-                        alt="avatar"
-                        className="rounded-circle"
-                        src={ALLImages("face6")}
-                      />
-                    </div>
-                    <div className="ms-4">Design team</div>
-                  </div>
-                  <div className="ms-auto float-end">
-                    <Dropdown className="Designteam">
-                      <Dropdown.Toggle as='a' variant="" className="no-caret option-dots"><i className="fe fe-more-horizontal"></i></Dropdown.Toggle>
-                      <Dropdown.Menu className=" dropdown-menu-end" style={{ margin: "0px" }}>
-                        <Dropdown.Item>Today</Dropdown.Item>
-                        <Dropdown.Item>Last Week</Dropdown.Item>
-                        <Dropdown.Item>Last Month</Dropdown.Item>
-                        <Dropdown.Item>Last Year</Dropdown.Item>
-                      </Dropdown.Menu>
-                    </Dropdown>
-                  </div>
-                </div>
-                <div className="card-item mt-2">
-                  <div className="card-item-icon bg-transparent card-icon">
-                  </div>
-                  <div className="card-item-body">
-                    <div className="card-item-stat">
-                      <small className="fs-10 text-primary fw-semibold">
-                        12 JUNE 2020
-                      </small>
-                      <h6 className=" mt-2">Website Redesign</h6>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Card.Body>
-          </Card>
-          <Card className="custom-card">
-            <Card.Body>
-              <div className="d-flex">
-                <label className="main-content-label my-auto">
-                  Website Design
-                </label>
-                <div className="ms-auto  d-flex">
-                  <div className="me-3 d-flex text-muted fs-13">Running</div>
-                </div>
-              </div>
-              <div className="mt-2">
-                <div>
-                  <span className="fs-15 text-muted">
-                    Task completed : 7/10
-                  </span>
-                </div>
-                <div className="container">
-                </div>
-              </div>
-              <Row className="row">
-                <Col className="col">
-                  <div className="mt-4">
-                    <div className="d-flex mb-2">
-                      <h5 className="fs-15 my-auto text-muted fw-normal">
-                        Client :
-                      </h5>
-                      <h5 className="fs-15 my-auto ms-3">John Deo</h5>
-                    </div>
-                    <div className="d-flex mb-0">
-                      <h5 className="fs-13 my-auto text-muted fw-normal">
-                        Deadline :
-                      </h5>
-                      <h5 className="fs-13 my-auto text-muted ms-2">
-                        25 Dec 2020
-                      </h5>
-                    </div>
-                  </div>
-                </Col>
-                <Col className=" col-auto">
-                  <div className="mt-3">
-                    <div>
-                      <img alt="logo" className="ht-50" src={ALLImages('png29')} />
-                    </div>
-                  </div>
-                </Col>
-              </Row>
-            </Card.Body>
-          </Card>
         </Col>
       </Row>
+      )}
     </Fragment>
   )
 }

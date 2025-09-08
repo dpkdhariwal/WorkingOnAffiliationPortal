@@ -4,6 +4,7 @@ import React, { Children, useState, useEffect } from "react";
 
 import * as action from "../action/allActions";
 import { GoToStageIAssessmentToUploadDocs, GoToStageIForm, GoToStageIAssessment, GoToNOCGenerateForm, GoToStageIIForm, GoToStageIIAssessment, GoToStageIIStaffDetailForm, GoToInspectionSlotSelection, GoToBatchCreattion } from "../action/allActions";
+import { useTranslation } from 'react-i18next';
 
 
 import {
@@ -68,8 +69,8 @@ import {
   INSPENCTION,
   INSP_SHEDULED,
   INSP_PENDING
-} from "../../constants";
-import * as C from "../../constants";
+} from "affserver";
+import * as C from "affserver";
 import { useSelector, useDispatch } from "react-redux";
 import { getAssessmentProgressStatus } from "../../db/forms/stageI/set/set";
 
@@ -81,6 +82,7 @@ export const PendingStep = ({ info, variant }) => {
   const [text, setText] = useState('Not Completed Yet');
 
   const authUser = useSelector((state) => state.loginUserReducer);
+  const { t } = useTranslation();
 
 
   useEffect(() => {
@@ -150,6 +152,7 @@ export const PendingStep = ({ info, variant }) => {
             console.log(authUser.userType);
             switch (authUser.userType) {
               case 'state_assessor':
+                console.log(info);
                 if (info?.aStatus?.pendingAt === C.SL.PENDING_AT_ASSESSOR) {
                   console.log(info?.aStatus?.pendingAt);
                   return <GoToStageIAssessment info={info} />;
@@ -295,9 +298,9 @@ export const PendingStep = ({ info, variant }) => {
       style={{ position: "relative", padding: '1px' }}
     >
       <Card.Body style={{ padding: "5px" }}>
-        <div className="card-title">{info.stepTitle}</div>
+        <div className="card-title">{t(`AppFlow.${info.step}.title`)}</div>
         <h6 className="card-title fw-semibold mb-2">
-          {info.stepMsg}
+          {t(`AppFlow.${info.step}.status.${variant=="inProgress"? "on-progress" : 'pending'}.${'COMMON'}`)}
         </h6>
       </Card.Body>
       <Card.Footer style={{ padding: "2px" }} className="d-flex justify-content-end btn-rounded" >

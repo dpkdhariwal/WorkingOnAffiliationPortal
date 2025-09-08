@@ -14,7 +14,7 @@ import * as Yup from "yup";
 import "react-circular-progressbar/dist/styles.css";
 import ReqSign from "../../comp/requiredSign"; // Make sure this component exists and is exported correctly
 
-import { classrooms_info_to_be_filled, UPDATE_TRADEWISE_CLASSROOMS_DETAILS, CIC } from "../../../../../constants";
+import { classrooms_info_to_be_filled, UPDATE_TRADEWISE_CLASSROOMS_DETAILS, CIC } from "affserver";
 import Swal from "sweetalert2";
 import { useSelector, useDispatch } from "react-redux";
 import { validationSchema } from "../../../../../reducers/tradeWiseClassroomsReducer";

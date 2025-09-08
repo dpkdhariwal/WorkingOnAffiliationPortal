@@ -11,18 +11,21 @@ import { useLocation } from "react-router-dom";
 
 import * as set from "../../../../../../../../db/forms/stageI/set/set";
 
-
+import * as gen from "../../../../../../../../services/general";
 
 export const AddressOfInstitute = () => {
 
- // console.log(nav.next());
+  // console.log(nav.next());
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const appId = queryParams.get("appId");
   const [info, setInfo] = useState({});
   const getInfo = async () => {
-    let info = await set.getDetails(appId);
-    setInfo(info);
+    // let info = await set.getDetails(appId);
+    // setInfo(info);
+
+    let resp = await gen.getDetails(appId);
+    setInfo(resp.data);
   }
   useEffect(() => { getInfo() }, []);
 

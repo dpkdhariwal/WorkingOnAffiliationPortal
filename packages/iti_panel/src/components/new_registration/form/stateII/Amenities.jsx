@@ -13,7 +13,7 @@ import Geotagged from "../../../geotagged";
 import ReactDOM from "react-dom/client";
 
 import { building_detail_yup_object } from "../../../../reducers/newAppReducer";
-import { UPDATE_BUILDING_DETAILS, STAGE_II__FEE_PAID, STAGE_II__FEE_EXEMPTED } from "../../../../constants";
+import { UPDATE_BUILDING_DETAILS, STAGE_II__FEE_PAID, STAGE_II__FEE_EXEMPTED } from "affserver";
 
 import { Form as BootstrapForm } from "react-bootstrap";
 

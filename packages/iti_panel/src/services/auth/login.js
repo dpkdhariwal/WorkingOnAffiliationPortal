@@ -2,6 +2,11 @@ import axios from 'axios';
 import DeviceDetector from 'device-detector-js';
 export const base_url = 'http://localhost:3000';
 import * as cnf from "../config";
+export const api = axios.create({
+  baseURL: "http://localhost:3000/api",
+//   baseURL: "https://affiliation.dgt.gov.in/api",
+  withCredentials: true 
+});
 
 export const getError = (error) => {
     const message = error.message || 'Failed'
@@ -18,7 +23,8 @@ export const loginByAuth = async (email, password) => {
     formData.append('deviceInfo', JSON.stringify(device))
 
     return new Promise((resolve, reject) => {
-        axios.post(base_url + '/auth/login', { email: email, password: password }).then((res) => { resolve(res) }).catch((error) => { reject(error) });
+        api.post("/auth/login", formData).then((res) => { resolve(res) }).catch((error) => { reject(error) });
+        // axios.post(base_url + '/auth/login', { email: email, password: password }).then((res) => { resolve(res) }).catch((error) => { reject(error) });
     })
 }
 

@@ -14,7 +14,7 @@ import {
   DOCUMENT_UPLOADS, CIVIL_INFRASTRUCTURE_DETAIL,
   IN_ACTIVE,
   ACTIVE
-} from "../../constants";
+} from "affserver";
 
 import BuildingPlan from "../../components/new_registration/form/stateII/BuildingPlan";
 import CivilInfrastructureDetails from "../../components/new_registration/form/stateII/CivilInfrastructureDetails";

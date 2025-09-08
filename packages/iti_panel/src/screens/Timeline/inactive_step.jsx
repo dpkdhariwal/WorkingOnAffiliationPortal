@@ -1,6 +1,7 @@
 import { Card } from "react-bootstrap";
 import PropTypes from "prop-types";
 import React, { Children, useState, useEffect } from "react";
+import { useTranslation } from 'react-i18next';
 
 
 export const InactiveStep = ({ info, variant }) => {
@@ -10,6 +11,7 @@ export const InactiveStep = ({ info, variant }) => {
   const [cardArrow, setCardArrow] = useState('f-timeline-container-warning');
   const [text, setText] = useState('Not Completed Yet');
   
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (variant === "completed") {
@@ -30,7 +32,8 @@ export const InactiveStep = ({ info, variant }) => {
       style={{ position: "relative", opacity:"50%" }}
     >
       <Card.Body style={{ padding: "5px" }}>
-        <div>{info.stepTitle}</div>
+        {/* <div>{info.stepTitle}</div> */}
+        <div>{t(`AppFlow.${info.step}.status.inactive.${'COMMON'}`)}</div>
       </Card.Body>
     </Card>
   );

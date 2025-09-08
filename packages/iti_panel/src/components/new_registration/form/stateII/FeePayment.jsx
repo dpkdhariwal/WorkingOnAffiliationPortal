@@ -9,8 +9,8 @@ import Swal from "sweetalert2";
 import { ViewApplication } from "./Modal/view_application";
 import { Form as BootstrapForm } from 'react-bootstrap';
 
-import { UPDATE_STAGE_II_SET_FEE_STATUS } from "../../../../constants";
-import { STAGE_II__FEE_PAID, STAGE_II__FEE_EXEMPTED, STAGE_II_FEE } from "../../../../constants";
+import { UPDATE_STAGE_II_SET_FEE_STATUS } from "affserver";
+import { STAGE_II__FEE_PAID, STAGE_II__FEE_EXEMPTED, STAGE_II_FEE } from "affserver";
 import { useLocation } from "react-router-dom";
 
 import { getStepStatus, getProposedInstDetailsByUserId, setAppFlow } from "../../../../db/users";

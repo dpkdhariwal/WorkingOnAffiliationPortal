@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
 import { Form as BootstrapForm, Modal } from "react-bootstrap";
 
-import { languages, ADD_MORE_LAND_DOCUMENT, SET_STAGE_I__DOCUMENT_STATUS, STAGE_I_DOCUMENT_UPLAOD } from "../../../../constants";
+import { languages, ADD_MORE_LAND_DOCUMENT, SET_STAGE_I__DOCUMENT_STATUS, STAGE_I_DOCUMENT_UPLAOD } from "affserver";
 import { land_documents_yupObject } from "../../../../reducers/document_upload";
 import { useContext } from "react";
 import { AppStatusContext } from "../../../../services/context";
@@ -15,9 +15,9 @@ import { setAppFlow } from "../../../../db/users";
 import { useLocation } from "react-router-dom";
 import { markAsCompleteStageStep } from "../../../../db/forms/stageI/set/set";
 
-import * as C from "../../../../constants";
-
-const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
+import * as C from "affserver";
+import * as ap from "../../../../services/applicant/index";
+const DetailsOfDocumentsToBeUploaded = ({ step, setActive, refreshSteps }) => {
   const dispatch = useDispatch();
   const formikRef = useRef();
   const land_info = useSelector((state) => state.land_info_reducer);
@@ -27,7 +27,7 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const appId = queryParams.get("appId");
-    const authUser = useSelector((state) => state.loginUserReducer);
+  const authUser = useSelector((state) => state.loginUserReducer);
 
   const submit = async (values) => {
 
@@ -47,47 +47,21 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
     }
 
     try {
-      let result = await setAppFlow(appId, STAGE_I_DOCUMENT_UPLAOD);
-      markAsCompleteStageStep(authUser, appId, C.ST1FC.DOCUMENTS_UPLOAD.step);
-      console.log(result);
 
-      // dispatch({ type: SET_STAGE_I__DOCUMENT_STATUS, payload: values });
-      // dispatch({ type: "set_filled_step", payload: { step: 5 }, });
-      // dispatch({ type: "reg_set_active_step", payload: { step: 5 } });
-      // setActive(reg.steps[5]);
+      // let result = await setAppFlow(appId, STAGE_I_DOCUMENT_UPLAOD);
+      // markAsCompleteStageStep(authUser, appId, C.ST1FC.DOCUMENTS_UPLOAD.step);
+      // console.log(result);
+      // let result = setInstTradeDetails(values, appId, step, authUser);
 
-      // let result = setProposedInstDetails(step, values, appId, authUser);
-      // result === true ? refreshSteps() : '';
+      await ap.setUploadDocumentStageI(values, step, appId);
+      refreshSteps();
       Swal.fire("Saved!", "Your form data has been saved.", "success");
+      Swal.close();
+      
     } catch (error) {
       console.error(error);
       Swal.fire("Error", "Something went wrong while saving.", "error");
     }
-
-
-    // Swal.fire({
-    //   title: "Are you sure?",
-    //   text: "Do you want to save the form data?",
-    //   icon: "question",
-    //   showCancelButton: true,
-    //   confirmButtonText: "Yes, save it!",
-    //   cancelButtonText: "Cancel",
-    // }).then((result) => {
-    //   if (result.isConfirmed) {
-    //     // User confirmed – now show loading or save directly
-    //     Swal.fire({
-    //       title: "Saving...",
-    //       didOpen: () => {
-    //         Swal.showLoading();
-
-
-
-    //       },
-    //     });
-    //   } else {
-    //     console.log("User cancelled save");
-    //   }
-    // });
   };
 
   const submitNow = () => {
@@ -112,123 +86,123 @@ const DetailsOfDocumentsToBeUploaded = ({ setActive }) => {
             <Form noValidate onSubmit={handleSubmit}>
               {land_info.possession_of_land == 'owned' && (
                 <Card className="custom-card border border-primary">
-                <Card.Header>
-                  <div className="card-title" style={{ textTransform: "none" }}>
-                    Land Documents
-                  </div>
-                </Card.Header>
-                <Card.Body>
+                  <Card.Header>
+                    <div className="card-title" style={{ textTransform: "none" }}>
+                      Land Documents
+                    </div>
+                  </Card.Header>
+                  <Card.Body>
 
-                  <FieldArray name="land_documents">
-                    <Card className="mb-3">
-                      <Card.Body>
-                        {values.land_documents_title.map((doc, index) => (
-                          <Row key={index} style={{ marginTop: "1rem" }}>
-                            <Col md={3}>
-                              <BootstrapForm.Group>
-                                <BootstrapForm.Label>
-                                  Document Title <span style={{ color: "red" }}>*</span>
-                                </BootstrapForm.Label>
-                                <Field
-                                  placeholder="Enter Title"
-                                  name={`land_documents_title[${index}]`}
-                                  as={Form.Control}
-                                  onChange={handleChange}
-                                  isInvalid={
-                                    touched.land_documents_title?.[index] &&
-                                    !!errors.land_documents_title?.[index]
-                                  }
-                                />
-                                <BootstrapForm.Control.Feedback type="invalid">
-                                  {errors.land_documents_title?.[index]}
-                                </BootstrapForm.Control.Feedback>
-                              </BootstrapForm.Group>
-                            </Col>
+                    <FieldArray name="land_documents">
+                      <Card className="mb-3">
+                        <Card.Body>
+                          {values.land_documents_title.map((doc, index) => (
+                            <Row key={index} style={{ marginTop: "1rem" }}>
+                              <Col md={3}>
+                                <BootstrapForm.Group>
+                                  <BootstrapForm.Label>
+                                    Document Title <span style={{ color: "red" }}>*</span>
+                                  </BootstrapForm.Label>
+                                  <Field
+                                    placeholder="Enter Title"
+                                    name={`land_documents_title[${index}]`}
+                                    as={Form.Control}
+                                    onChange={handleChange}
+                                    isInvalid={
+                                      touched.land_documents_title?.[index] &&
+                                      !!errors.land_documents_title?.[index]
+                                    }
+                                  />
+                                  <BootstrapForm.Control.Feedback type="invalid">
+                                    {errors.land_documents_title?.[index]}
+                                  </BootstrapForm.Control.Feedback>
+                                </BootstrapForm.Group>
+                              </Col>
 
-                            <Col md={3}>
-                              <BootstrapForm.Group>
-                                <Form.Label>
-                                  Document Language
-                                  <span style={{ color: "red" }}>*</span>
-                                </Form.Label>
-                                <BootstrapForm.Select
-                                  size="lg"
-                                  name={`land_documents_language[${index}]`}
-                                  value={values.land_documents_language[index]}
-                                  onChange={handleChange}
-                                  isInvalid={
-                                    touched.land_documents_language?.[index] &&
-                                    !!errors.land_documents_language?.[index]
-                                  }
-                                >
-                                  <option value="">Select Language</option>
-                                  {languages.map((lang, i) => (
-                                    <option key={i} value={lang}>
-                                      {lang}
-                                    </option>
-                                  ))}
-                                </BootstrapForm.Select>
-                                <BootstrapForm.Control.Feedback type="invalid">
-                                  {errors.land_documents_language?.[index]}
-                                </BootstrapForm.Control.Feedback>
-                              </BootstrapForm.Group>
-                            </Col>
+                              <Col md={3}>
+                                <BootstrapForm.Group>
+                                  <Form.Label>
+                                    Document Language
+                                    <span style={{ color: "red" }}>*</span>
+                                  </Form.Label>
+                                  <BootstrapForm.Select
+                                    size="lg"
+                                    name={`land_documents_language[${index}]`}
+                                    value={values.land_documents_language[index]}
+                                    onChange={handleChange}
+                                    isInvalid={
+                                      touched.land_documents_language?.[index] &&
+                                      !!errors.land_documents_language?.[index]
+                                    }
+                                  >
+                                    <option value="">Select Language</option>
+                                    {languages.map((lang, i) => (
+                                      <option key={i} value={lang}>
+                                        {lang}
+                                      </option>
+                                    ))}
+                                  </BootstrapForm.Select>
+                                  <BootstrapForm.Control.Feedback type="invalid">
+                                    {errors.land_documents_language?.[index]}
+                                  </BootstrapForm.Control.Feedback>
+                                </BootstrapForm.Group>
+                              </Col>
 
-                            <Col md={3}>
-                              <Form.Group>
-                                <Form.Label>
-                                  Upload Original Document of Land
-                                  <span style={{ color: "red" }}>*</span>
-                                </Form.Label>
-                                <Form.Control
-                                  type="file"
-                                  name={`land_original_documents[${index}]`}
-                                  onChange={handleChange}
-                                  isInvalid={
-                                    touched.land_original_documents?.[index]?.file &&
-                                    !!errors.land_original_documents?.[index]?.file
-                                  }
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                  {errors.land_original_documents?.[index]?.file}
-                                </Form.Control.Feedback>
-                              </Form.Group>
-                            </Col>
+                              <Col md={3}>
+                                <Form.Group>
+                                  <Form.Label>
+                                    Upload Original Document of Land
+                                    <span style={{ color: "red" }}>*</span>
+                                  </Form.Label>
+                                  <Form.Control
+                                    type="file"
+                                    name={`land_original_documents[${index}]`}
+                                    onChange={handleChange}
+                                    isInvalid={
+                                      touched.land_original_documents?.[index]?.file &&
+                                      !!errors.land_original_documents?.[index]?.file
+                                    }
+                                  />
+                                  <Form.Control.Feedback type="invalid">
+                                    {errors.land_original_documents?.[index]?.file}
+                                  </Form.Control.Feedback>
+                                </Form.Group>
+                              </Col>
 
-                            <Col md={3}>
-                              <Form.Group>
-                                <Form.Label>
-                                  Upload Hindi/English Notarised Copy of
-                                  Document{" "}
-                                  <span style={{ color: "red" }}>*</span>
-                                </Form.Label>
-                                <Form.Control
-                                  type="file"
-                                  onChange={(event) => {
-                                    setFieldValue(
-                                      `land_documents[${index}].file`,
-                                      event.currentTarget.files[0]
-                                    );
-                                  }}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                  dfsff
-                                </Form.Control.Feedback>
-                              </Form.Group>
-                            </Col>
-                          </Row>
-                        ))}
-                      </Card.Body>
+                              <Col md={3}>
+                                <Form.Group>
+                                  <Form.Label>
+                                    Upload Hindi/English Notarised Copy of
+                                    Document{" "}
+                                    <span style={{ color: "red" }}>*</span>
+                                  </Form.Label>
+                                  <Form.Control
+                                    type="file"
+                                    onChange={(event) => {
+                                      setFieldValue(
+                                        `land_documents[${index}].file`,
+                                        event.currentTarget.files[0]
+                                      );
+                                    }}
+                                  />
+                                  <Form.Control.Feedback type="invalid">
+                                    dfsff
+                                  </Form.Control.Feedback>
+                                </Form.Group>
+                              </Col>
+                            </Row>
+                          ))}
+                        </Card.Body>
 
-                      <Card.Footer className="text-end">
-                        <Button className="mb-3" onClick={() => dispatch({ type: ADD_MORE_LAND_DOCUMENT })}>
-                          Add More
-                        </Button>
-                      </Card.Footer>
-                    </Card>
-                  </FieldArray>
-                </Card.Body>
-              </Card>)}
+                        <Card.Footer className="text-end">
+                          <Button className="mb-3" onClick={() => dispatch({ type: ADD_MORE_LAND_DOCUMENT })}>
+                            Add More
+                          </Button>
+                        </Card.Footer>
+                      </Card>
+                    </FieldArray>
+                  </Card.Body>
+                </Card>)}
 
               {false && land_info.possession_of_land == 'leased' && (
                 <Card className="custom-card border border-primary">

@@ -24,35 +24,58 @@ export const PrimeReactDT = () => {
   const [appList, seAppList] = useState([]);
 
   const user = useSelector((state) => state.loginUserReducer);
+  console.log(user);
   // const AppList = getAppsByUserId(user.id);
   useEffect(() => { console.log(AppList); })
 
-  useEffect(() => {
-    switch (user.userType) {
-      case 'state_assessor':
-        getAppListByStateAssessor(user).then((data) => {
-          data.sort((a, b) => a.stepNo - b.stepNo);
-          setProducts(data);
-          console.log(data);
-        });
-        break;
 
-      case 'rdsde':
-        getAppListByRdsde(user).then((data) => {
-          data.sort((a, b) => a.stepNo - b.stepNo);
-          setProducts(data);
-        });
-        break;
 
-      default:
-        getAppListByUserId(user.id).then((data) => {
-          data.sort((a, b) => a.stepNo - b.stepNo);
-          setProducts(data);
-          console.log(data);
-        });
-        break;
+  const loadData = async () => {
+    console.log("Called loadData");
+
+
+    try {
+      let resp = await getAppListByUserId(user.id);
+      setProducts(resp.data);
+    } catch (error) {
+      console.log(error);
     }
 
+    // switch (user.userType) {
+    //   case 'state_assessor':
+    //     getAppListByStateAssessor(user.id).then((resp) => {
+    //       console.log(resp.data);
+    //       setProducts(resp.data);
+    //       // data.sort((a, b) => a.stepNo - b.stepNo);
+    //       // setProducts(data);
+    //       // console.log(data);
+    //     }).catch((error) => {
+    //       console.log(error);
+    //     });
+    //     break;
+
+    //   case 'rdsde':
+    //     getAppListByRdsde(user).then((data) => {
+    //       data.sort((a, b) => a.stepNo - b.stepNo);
+    //       setProducts(data);
+    //     });
+    //     break;
+
+    //   default:
+    //     getAppListByUserId(user.id).then((resp) => {
+    //       console.log(resp.data);
+    //       // data.sort((a, b) => a.stepNo - b.stepNo);
+    //       setProducts(resp.data);
+    //     });
+    //     break;
+    // }
+  }
+
+
+  useEffect(() => {
+    // alert(user.userType);
+
+    loadData();
     // ProductService.getProductsMini().then(data => setProducts(data));
   }, []);
 

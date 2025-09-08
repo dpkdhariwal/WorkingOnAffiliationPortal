@@ -12,9 +12,9 @@ import { Link, useNavigate } from "react-router-dom";
 
 
 import { getAppCurrentStatus, getStage1FormFlow, setAppFlow, updateAppFlowStatus, updateAssessmentStatus } from "../../../db/users";
-import { STEPPER_STYLE, STAGE_I_APP_FORM_FLOW, FILLED, ST1FC } from "../../../constants";
-import * as C from "../../../constants";
-import * as cons from "../../../constants";
+import { STEPPER_STYLE, STAGE_I_APP_FORM_FLOW, FILLED, ST1FC } from "affserver";
+import * as C from "affserver";
+import * as cons from "affserver";
 import { getAppFlowByStep } from "../../../db/forms/stageI/get/get";
 import { Assessment_Basic_Detail } from "../../../components/new_registration/form/stegeI/BasicDetailsofApplicantOrganization";
 import { Assessment_Proposed_Institute } from "../../../components/new_registration/form/stegeI/DetailsOfTheProposedInstitute";
@@ -42,13 +42,16 @@ import SwalManager from "../../../common/SwalManager";
 import * as set from "../../../db/forms/stageI/set/set";
 import Swal from "sweetalert2";
 
+import * as gen from "../../../services/general";
+import * as st from "../../../services/state/index";
+
 export const StageIAssessment = () => {
 
   // AuthUser
   const authUser = useSelector((state) => state.loginUserReducer);
 
 
-  const [activeStep, setActiveStep] = useState(3);
+  const [activeStep, setActiveStep] = useState(0);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const appId = queryParams.get("appId");
@@ -153,14 +156,16 @@ export const StageIAssessment = () => {
   const loadData = async () => {
     // let result_1 = await getStage1FormFlow(appId);
     // console.log(result_1);
-    let result = await getAppFlowByStep(appId, C.STAGE_I__ASSESSMENT);
-    console.log(result);
-    setStatus(result.status);
+    // let result = await getAppFlowByStep(appId, C.STAGE_I__ASSESSMENT);
+    let result = await gen.getAppFlowStepInfoByStep(appId, C.STAGE_I__ASSESSMENT);
+
+    console.log(result.data.status);
+    setStatus(result.data.status);
 
     // Assessment Status
-    let a_status = await getAssessmentStatus(appId);
-    console.log(a_status);
-    setAssessmentStatus(a_status);
+    // let a_status = await getAssessmentStatus(appId);
+    let resp = await gen.getAssessmentStatus(appId);
+    setAssessmentStatus(resp.data);
 
 
     // get Application flow by App Id and for
@@ -168,18 +173,22 @@ export const StageIAssessment = () => {
     let app_stage_da_flow;
     switch (authUser.userType) {
       case 'applicant':
-        app_stage_da_flow = await getAssessmentStageIFlowById(appId, C.SL.APPLICANT);
-        console.log(app_stage_da_flow);
+        // app_stage_da_flow = await getAssessmentStageIFlowById(appId, C.SL.APPLICANT);
+        // console.log(app_stage_da_flow);
+        // setSteps(app_stage_da_flow);
+        app_stage_da_flow = await gen.getAssessmentStageIFlowById(appId);
+        app_stage_da_flow = app_stage_da_flow.data;
         setSteps(app_stage_da_flow);
         break;
       case 'state_assessor':
-        app_stage_da_flow = await getAssessmentStageIFlowById(appId, C.SL.ASSESSOR);
-        console.log(app_stage_da_flow);
+        // app_stage_da_flow = await getAssessmentStageIFlowById(appId, C.SL.ASSESSOR);
+        // setSteps(app_stage_da_flow);
+        app_stage_da_flow = await gen.getAssessmentStageIFlowById(appId);
+        app_stage_da_flow = app_stage_da_flow.data;
         setSteps(app_stage_da_flow);
         break;
       default:
         throw new Error("Status Not Found");
-        break;
     }
 
 
@@ -200,8 +209,10 @@ export const StageIAssessment = () => {
       let reuslt = await SwalManager.success("Desktop Assessment Started Successfully");
 
       if (reuslt.isConfirmed) {
-        await setNewStatusOfAppByStep(appId, C.STAGE_I__ASSESSMENT, C.STAGE_I__ASSESSMENT_ON_PROGRESS);
-        await setStageIAssessmentFlow(appId);
+        // await setNewStatusOfAppByStep(appId, C.STAGE_I__ASSESSMENT, C.STAGE_I__ASSESSMENT_ON_PROGRESS);
+        // await gen.setNewStatusOfAppByStep(appId, C.STAGE_I__ASSESSMENT, C.STAGE_I__ASSESSMENT_ON_PROGRESS);
+        await gen.setStageIAssessmentFlow(appId);
+        // await setStageIAssessmentFlow(appId);
         navigate(0); // In React Router v6
       }
     } catch (error) {
@@ -216,7 +227,7 @@ export const StageIAssessment = () => {
     <Fragment>
       {status === C.STAGE_I__ASSESSMENT_PENDING ? (<StartDocsVerification startDocsVerification={startDocsVerification} />) :
         status === C.STAGE_I__ASSESSMENT_ON_PROGRESS ? (<Stepper styles={STEPPER_STYLE} steps={steps} currentStepIndex={activeStep} orientation="horizontal" labelPosition="bottom" onStepClick={handleStepClick} stepContent={setStepContent} stepClassName={(i) => i === activeStep ? "bg-blue-500 text-white" : ""} />) :
-          status === C.STAGE_I__ASSESSMENT_COMPLETED ? (<h2>Document Verification has Been Completed</h2>) : ''}
+          status === C.STAGE_I__ASSESSMENT_COMPLETED ? (<h2>Document Verification has Been Completed</h2>) : <h2>Wrong Status</h2>}
     </Fragment>
   );
 };
@@ -236,7 +247,8 @@ export const DetailOfProposedInsti = ({ step, view: viewProp = false, isView = f
       try {
         // Set Flow if not exist
         await setStageIAssessmentFlow(appId);
-        await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_THE_PROPOSED_INSTITUTE.step);
+        // await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_THE_PROPOSED_INSTITUTE.step);
+        await st.markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_THE_PROPOSED_INSTITUTE.step);
         nav.next();
         // window.location.reload();
       } catch (err) {
@@ -335,9 +347,13 @@ export const ReviewAssessment = ({ steps, step, view: viewProp = false, isView =
 
   // Loading Review Details
   const loadInfo = async () => {
-    let result = await set.getAssessmentProgressStatus(appId);
+    let result, resp;
+    // let result = await set.getAssessmentProgressStatus(appId);
+    resp = await st.getAssessmentProgressStatus(appId);
+    result = resp.data;
+    // console.error(result);
     const { allCompleted, steps, vStatus } = result;
-    console.log(result);
+    console.log(allCompleted, steps, vStatus);
     setAllCompleted(allCompleted);
     setStepList(steps);
     setVStatus(vStatus);
@@ -408,16 +424,19 @@ export const ReviewAssessment = ({ steps, step, view: viewProp = false, isView =
     }
 
     try {
-      // Update App Flow Status
-      await updateAppFlowStatus(appId, C.STAGE_I__ASSESSMENT, C.STAGE_I__ASSESSMENT_COMPLETED);
+      // // Update App Flow Status
+      // // await updateAppFlowStatus(appId, C.STAGE_I__ASSESSMENT, C.STAGE_I__ASSESSMENT_COMPLETED);
+      // await gen.setNewStatusOfAppByStep(appId, C.STAGE_I__ASSESSMENT, C.STAGE_I__ASSESSMENT_COMPLETED) /
+      //   // Update App Assessment Status
+      //   // await updateAssessmentStatus(appId, C.abbreviation.STAGE_I.key, C.SL.VERIFIED, C.SL.NULL);
+      // await st.updateAssessmentStatus(appId, C.abbreviation.STAGE_I.key, C.SL.VERIFIED, C.SL.NULL);
 
-      // Update App Assessment Status
-      await updateAssessmentStatus(appId, C.abbreviation.STAGE_I.key, C.SL.VERIFIED, C.SL.NULL);
+      // // await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.REVIEW_ASSESSMENT.step);
+      // await st.markAsCompleteStageAssessmentFlow(appId, C.ST1FC.REVIEW_ASSESSMENT.step)
 
-      await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.REVIEW_ASSESSMENT.step);
+      // // setAppFlow(appId, C.STAGE_I__ASSESSMENT);
 
-      setAppFlow(appId, C.STAGE_I__ASSESSMENT);
-
+      await st.markAsCompleteAssessment(appId);
 
       Swal.fire("Saved!", "Your form data has been saved.", "success").then((result) => {
         if (result.isConfirmed) {

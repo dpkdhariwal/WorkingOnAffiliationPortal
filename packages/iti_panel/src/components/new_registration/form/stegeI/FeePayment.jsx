@@ -9,7 +9,7 @@ import Swal from "sweetalert2";
 import { ViewApplication } from "./Modal/view_application";
 import { Form as BootstrapForm } from 'react-bootstrap';
 
-import { UPDATE_SET_FEE_STATUS } from "../../../../constants"
+import { UPDATE_SET_FEE_STATUS } from "affserver"
 import { useContext } from "react";
 import { AppStatusContext } from "../../../../services/context";
 import { useLocation } from "react-router-dom";
@@ -17,7 +17,8 @@ import { setAppCurrentStatus } from "../../../../db/users";
 import { getStageIFeeInfo } from "../../../../db/forms/stageI/get/get";
 import { markAsCompleteStageStep, setActiveStage1NextStep } from "../../../../db/forms/stageI/set/set";
 import { getAppFlowInfoByStep } from "../../../../db/forms/app/app";
-import * as C from "../../../../constants"
+import * as C from "affserver"
+import * as ap from "../../../../services/applicant/index";
 const FeePayment = ({ step, setActive }) => {
 
   const { Formik } = formik;
@@ -41,15 +42,19 @@ const FeePayment = ({ step, setActive }) => {
 
 
   const getAppStatusByKey = async () => {
-    let result = await getAppFlowInfoByStep(appId, C.STAGE_I_FEE);
-    setFeeInfo(result);
+    // let result = await getAppFlowInfoByStep(appId, C.STAGE_I_FEE);
+    let result = await ap.getFeeInfo(appId);
+    console.log(result.data.stageI);
+    setFeeInfo(result.data.stageI);
     // setPropInstiInfo(result);
   }
 
   const getStepInfo = async () => {
     console.log(appId);
-    let result = await getStageIFeeInfo(appId);
-    setPropInstiInfo(result);
+    // let result = await getStageIFeeInfo(appId);
+    let result = await ap.getProposedInstDetailsAutoFill(appId);
+    console.log(result.data.pro_insti_details);
+    setPropInstiInfo(result.data.pro_insti_details);
   }
 
 
@@ -79,10 +84,12 @@ const FeePayment = ({ step, setActive }) => {
           didOpen: () => {
             Swal.showLoading();
 
+            ap.setAsExemptedStageI(values, step, appId);
+            throw new Error("Stopped");
+            
             setAppCurrentStatus(appId, propInstiInfo.type_of_institute).then((data) => {
               console.log(data);
               markAsComplete();
-
             })
 
             // let newState = dispatch({ type: UPDATE_SET_FEE_STATUS, payload: PropInstiInfo });
@@ -177,7 +184,7 @@ const FeePayment = ({ step, setActive }) => {
                 </label>
               </div>
 
-              {propInstiInfo.type_of_institute === "Government" ? (<Card
+              {propInstiInfo?.type_of_institute === "Government" ? (<Card
                 className="custom-card border border-primary"
                 style={{ marginTop: "1rem" }}
               >
@@ -226,7 +233,7 @@ const FeePayment = ({ step, setActive }) => {
                     </ol>
                   </p>
                 </Card.Body>
-              </Card>) : propInstiInfo.type_of_institute === "Private" ? (<Card
+              </Card>) : propInstiInfo?.type_of_institute === "Private" ? (<Card
                 className="custom-card border border-primary"
                 style={{ marginTop: "1rem" }}
               >
@@ -285,12 +292,12 @@ const FeePayment = ({ step, setActive }) => {
               </Card>) : ''}
             </Card.Body>
             <Card.Footer className="d-flex justify-content-end">
-              {propInstiInfo.type_of_institute === "Government" ? (
+              {propInstiInfo?.type_of_institute === "Government" ? (
                 <Button size="lg" variant="facebook" onClick={() => formikRef.current?.submitForm()}
                 >
                   Save & Next
                 </Button>
-              ) : propInstiInfo.type_of_institute === "Private" ? (
+              ) : propInstiInfo?.type_of_institute === "Private" ? (
                 <Button size="lg" variant="instagram" onClick={() => formikRef.current?.submitForm()} >
                   Pay
                 </Button>

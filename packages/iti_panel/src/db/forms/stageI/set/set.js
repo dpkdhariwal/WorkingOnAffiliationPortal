@@ -1,6 +1,6 @@
 
 import { initDB } from "../../../db";
-import * as C from "../../../../constants";
+import * as C from "affserver";
 
 
 import * as get from "../get/get";
@@ -135,7 +135,6 @@ export const set_da_status = async (appId, values, stage, key) => {
 
   switch (stage) {
     case C.abbreviation.STAGE_I.key:
-      console.log(appId, values, stage, key);
       try {
         const tx = db.transaction([C.DA_STAGE_I_VERIFICATIONS], 'readwrite');
         const store = tx.objectStore(C.DA_STAGE_I_VERIFICATIONS);
@@ -457,8 +456,6 @@ export const getDetails = async (appId, stage = null, entity = null) => {
 
 
     let new_insti_trade_list = await store_6.index("appId").getAll(appId);
-
-
 
 
     console.log(entity_details, entity_address, other_iti, proposed_insti_details, proposed_insti_addresses, new_insti_trade_list);

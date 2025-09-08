@@ -63,10 +63,20 @@ git submodule add https://github.com/dpkdhariwal/ui_layouts_collaborate.git pack
 git submodule add https://github.com/dpkdhariwal/affiliation-server.git packages/backend
 
 
+# To Remove Sub Module from Mono repo
+STEP-1:
+git submodule deinit -f packages/backend
+STEP-2:
+git rm -f packages/backend 
+END
+
+
 
 
 npx lerna run dev --scope=affiliation_portal
 npx lerna run build --scope=affiliation_portal
+
+npm install i18next react-i18next i18next-browser-languagedetector --scope=affiliation_portal
 
 
 npx lerna run dev --scope=layout
@@ -80,10 +90,21 @@ npm install mysql2 --workspace=packages/server
 npm install date-fns --workspace=packages/ui_layouts_collaborate
 
 
+npm install multer --workspace=packages/backend
+npm install cookie-parser --workspace=packages/backend
+
+
+npm install dayjs --workspace=packages/backend
 
 npm install knex -g
+
+npm install --save-dev cross-env --workspace=packages/backend
+
 
 
 
 
 npm install "file:../packages/ui_layouts_collaborate"
+npm install "packages/backend"
+
+

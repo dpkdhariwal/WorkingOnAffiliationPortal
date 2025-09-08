@@ -2,7 +2,7 @@ import { Row, Col, Card, Form, InputGroup, Button, Modal } from "react-bootstrap
 import * as set from "../../db/forms/stageI/set/set";
 import { useLocation } from "react-router-dom";
 import React, { createContext, useRef, useContext, Fragment, useState, useEffect } from "react";
-
+import * as st from "../../services/state/index";
 export const Navigations = ({ nav, onPrev, onNext, onLast }) => {
     console.log(onPrev);
     return (<>
@@ -20,7 +20,7 @@ export const Navigations = ({ nav, onPrev, onNext, onLast }) => {
 }
 
 
-export const AsessementIActions = ({ nav, onPrev, onNext, onLast, finishBtn=null }) => {
+export const AsessementIActions = ({ nav, onPrev, onNext, onLast, finishBtn = null }) => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const appId = queryParams.get("appId");
@@ -28,7 +28,13 @@ export const AsessementIActions = ({ nav, onPrev, onNext, onLast, finishBtn=null
 
     // Loading Review Details
     const loadInfo = async () => {
-        let result = await set.getAssessmentProgressStatus(appId);
+        let resp, result;
+        // result = await set.getAssessmentProgressStatus(appId);
+        resp = await st.getAssessmentProgressStatus(appId);
+
+        result = resp.data;
+        console.log(result);
+
         console.log(result);
         setInfo(result);
     }
@@ -53,8 +59,8 @@ export const AsessementIActions = ({ nav, onPrev, onNext, onLast, finishBtn=null
             {info?.allCompleted ?
                 (nav?.lastIndex == nav?.currentIndex ? (
                     <div className="p-2">
-                        {finishBtn? (finishBtn): (<Button variant="success" onClick={() => (onLast ? onLast() : nav?.finish())}  > Finish </Button>)}
-                        
+                        {finishBtn ? (finishBtn) : (<Button variant="success" onClick={() => (onLast ? onLast() : nav?.finish())}  > Finish </Button>)}
+
 
                     </div>) : nav?.currentIndex < nav?.lastIndex ? (<Button variant="success" onClick={() => (onNext ? onNext() : nav?.next())} > Save & Next </Button>) : '') : ''}
             {/* is all reviewed true/false */}

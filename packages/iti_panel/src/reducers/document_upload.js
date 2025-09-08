@@ -3,7 +3,7 @@ import {
   ADD_MORE_LAND_DOCUMENT,
   UPDATE_LEASE_DEED_DOCUMENT_INFO,
 ADD_MORE_LEASE_DOCUMENT
-} from "../constants";
+} from "affserver";
 import * as yup from "yup";
 
 // @dpkdhariwal

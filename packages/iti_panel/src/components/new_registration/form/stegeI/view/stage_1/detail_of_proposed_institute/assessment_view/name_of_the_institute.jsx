@@ -10,13 +10,13 @@ import { Formik, Field, FieldArray } from "formik";
 import { useLocation } from "react-router-dom";
 
 import * as set from "../../../../../../../../db/forms/stageI/set/set";
-
+import * as gen from "../../../../../../../../services/general";
 export const Name_of_the_institute = () => {
   // console.log(nav.next());
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const appId = queryParams.get("appId");
- 
+
   const MaxData = [
     { value: "Document is not legible", label: "Document is not legible" },
     { value: "Document is irrelevant", label: "Document is irrelevant" },
@@ -72,10 +72,14 @@ export const Name_of_the_institute = () => {
 
   const [info, setInfo] = useState({});
   const getInfo = async () => {
-    let info = await set.getDetails(appId);
-    setInfo(info);
+    // let info = await set.getDetails(appId);
+    // setInfo(info);
+
+    let resp = await gen.getDetails(appId);
+    setInfo(resp.data);
+
   }
-    useEffect(() => { getInfo() }, []);
+  useEffect(() => { getInfo() }, []);
 
   useEffect(() => { console.log(info); }, [info]);
   return (

@@ -25,8 +25,8 @@ import {
   TRADEWISE_WORKSHOP,
   TRADEWISE_CLASSROOMS,
   COMMON_CIVIL_INFRASTRUCTURE
-} from "../constants";
-import * as cons from "../constants";
+} from "affserver";
+import * as cons from "affserver";
 
 export const initDB = async () => {
   return await openDB(DB_NAME, DB_VERSION, {

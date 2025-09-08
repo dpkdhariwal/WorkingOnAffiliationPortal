@@ -6,19 +6,20 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import Swal from "sweetalert2";
-import { UPDATE_LAND_INFO } from "../../../../constants";
+import { UPDATE_LAND_INFO } from "affserver";
 
 import { land_info_yupObject } from "../../../../reducers/newAppReducer";
 
 
 import { setInstLandDetails } from "../../../../db/appList";
 import { useLocation } from "react-router-dom";
+import * as ap from "../../../../services/applicant/index";
 
-const DetailsOfTheLandToBeUsedForTheITI = ({ step, setActive }) => {
+const DetailsOfTheLandToBeUsedForTheITI = ({ step, setActive, refreshSteps }) => {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const appId = queryParams.get("appId");
-    const authUser = useSelector((state) => state.loginUserReducer);
+  const authUser = useSelector((state) => state.loginUserReducer);
 
   const { Formik } = formik;
   const formRef2 = useRef();
@@ -48,8 +49,9 @@ const DetailsOfTheLandToBeUsedForTheITI = ({ step, setActive }) => {
             // dispatch({ type: "set_filled_step", payload: { step: 3 }, });
             // dispatch({ type: "reg_set_active_step", payload: { step: 4 } });
             // setActive(reg.steps[4]);
-            let result = setInstLandDetails(values, appId, step, authUser);
-            console.log(result);
+            // let result = setInstLandDetails(values, appId, step, authUser);
+            let result = ap.setInstLandDetails(values, appId, step);
+            refreshSteps();
             Swal.close();
           },
         });

@@ -27,10 +27,10 @@ import Stepper from "@keyvaluesystems/react-stepper";
 import MTE from "./component/machinery_form";
 import ReqSign from "../comp/requiredSign";
 
-import { STAGE_II__FEE_PAID, STAGE_II__FEE_EXEMPTED } from "../../../../constants";
+import { STAGE_II__FEE_PAID, STAGE_II__FEE_EXEMPTED } from "affserver";
 import { useLocation } from "react-router-dom";
 
-import { STAGE_II_DOCUMENT_UPLAOD } from "../../../../constants";
+import { STAGE_II_DOCUMENT_UPLAOD } from "affserver";
 
 import { setAppFlow } from "../../../../db/users";
 
@@ -62,7 +62,7 @@ import {
   geo_tagged_photo_of_machinery_tools_equipments as docs1,
   gst_invoices_for_major_machinery_purchase_and_payment_proof as docs2,
   UPDATE_STAGE_II_DOCUMENT_UPLOAD,
-} from "../../../../constants";
+} from "affserver";
 
 const DocumentUploads = () => {
   const dispatch = useDispatch();

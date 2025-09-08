@@ -1,7 +1,7 @@
 
 import { initDB } from "../../../db";
-import * as C from "../../../../constants";
-import { SL, STAGE_II } from "../../../../constants";
+import * as C from "affserver";
+import { SL, STAGE_II } from "affserver";
 
 
 

@@ -1,4 +1,4 @@
-import { work_shop_info_to_be_filled, UPDATE_TRADEWISE_WORKSHOP_DETAILS, work_shop_list } from "../constants";
+import { work_shop_info_to_be_filled, UPDATE_TRADEWISE_WORKSHOP_DETAILS, work_shop_list } from "affserver";
 import * as Yup from "yup";
 
 export const initialValues = {

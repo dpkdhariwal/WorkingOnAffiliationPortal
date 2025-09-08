@@ -4,7 +4,7 @@ import { AffTimeLine, AffTimeLineItem } from "../customLib/TimeLine";
 
 import { useSelector, useDispatch } from "react-redux";
 
-// import { AppFlow } from "../constants";
+// import { AppFlow } from "affserver";
 import { Card, } from "react-bootstrap";
 import { InactiveStep } from "./Timeline/inactive_step";
 import { CompletedStep } from "./Timeline/completed_step";
@@ -14,14 +14,15 @@ import { PendingStep } from "./Timeline/pending_step";
 import { useContext } from "react";
 import { TimeLineContext } from "../services/context"; // adjust path
 import { getAppFlowByAppId } from "../db/users";
-
+import * as st from "../services/state/index";
+import * as gen from "../services/general/index";
 import {
   STAGE_I_FORM_FILLING,
   STAGE_I_FEE,
   STAGE_I_DOCUMENT_UPLAOD,
   STAGE_I_SUBMIT,
   STAGE_I__ASSESSMENT
-} from "../constants";
+} from "affserver";
 import {
   STAGE_I__NOT_FILLED,
   STAGE_I__FEE_PENDING,
@@ -35,8 +36,8 @@ import {
   STAGE_I__SUBMITED,
   STAGE_I__ASSESSMENT_ON_PROGRESS,
   STAGE_I__ASSESSMENT_COMPLETED
-} from "../constants";
-import * as C from "../constants";
+} from "affserver";
+import * as C from "affserver";
 
 import { ActionONStateOneAssessmentPending } from "../screens/Timeline/actions/assessor/actions_stage_i_assessment";
 import { getAssessmentProgressStatus } from "../db/forms/stageI/set/set";
@@ -105,15 +106,28 @@ export const TimeLine = ({ rowData }) => {
   const [AppFlow, setAppFlow] = useState([]);
   const [appInfo, setAppInfo] = useState({});
 
-
-  useEffect(() => {
-    let result = getAppFlowByAppId(row.appId);
-    result.then((data) => {
-      console.log(data.app_flow);
+  const load = async () => {
+    let resp, data;
+    try {
+      // resp = await getAppFlowByAppId(row.appId);
+      resp = await gen.getAppFlowByAppId(row.appId);
+      
+      data = resp.data;
       setAppFlow(data.app_flow);
       console.log(data)
-    })
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
+  useEffect(() => {
+    // let result = getAppFlowByAppId(row.appId);
+    // result.then((data) => {
+    //   console.log(data.app_flow);
+    //   setAppFlow(data.app_flow);
+    //   console.log(data)
+    // })
+    load();
     appStatus();
 
     console.log(authUser);
@@ -122,9 +136,12 @@ export const TimeLine = ({ rowData }) => {
   console.log(AppFlow);
 
   const appStatus = async () => {
-    const result = await getAssessmentProgressStatus(row?.appId);
-    setAppInfo(result);
+    let result, resp;
+    // const result = await getAssessmentProgressStatus(row?.appId);
+    resp = await st.getAssessmentProgressStatus(row?.appId);
+    result = resp.data;
     console.log(result);
+    setAppInfo(result);
   }
   useEffect(() => {
     console.log(appInfo);

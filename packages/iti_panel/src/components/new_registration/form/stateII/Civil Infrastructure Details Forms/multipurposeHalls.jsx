@@ -18,7 +18,7 @@ import Swal from "sweetalert2";
 import { validationSchema } from "../../../../../reducers/tradeWiseWorkshopReducer";
 
 import { useSelector, useDispatch } from "react-redux";
-import { multipurposehall_info_to_be_filled, UPDATE_MULTIPURPOSEHALL_DETAILS } from "../../../../../constants";
+import { multipurposehall_info_to_be_filled, UPDATE_MULTIPURPOSEHALL_DETAILS } from "affserver";
 
 
 import { Fragment, useEffect, useState, useRef } from "react";
@@ -35,8 +35,8 @@ import ReactDOM from "react-dom/client";
 import { setCheckListTradewiseClassrooms, getTradewiseClassRooms, setTradewiseClassRooms, setMultipurposeHall, setCommonCivilInfra } from "../../../../../db/users";
 import { useLocation } from "react-router-dom";
 import * as dbUser from "../../../../../db/users";
-import * as cons from "../../../../../constants";
-import { CIC } from "../../../../../constants";
+import * as cons from "affserver";
+import { CIC } from "affserver";
 
 export const MultipurposeHall = ({ steps, goPrevious, goNext }) => {
 

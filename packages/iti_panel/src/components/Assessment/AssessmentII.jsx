@@ -29,7 +29,7 @@ import AssessmentCivilInfraStruction from "./stage-II/AssessmentCivilInfraStruct
 import {Assessment_Amenities} from "../new_registration/form/stateII/Amenities";
 import {Assessment_SignageBoards} from "../new_registration/form/stateII/SignageBoards";
 
-import {STAGE_II__ASSESSMENT} from "../../constants";
+import {STAGE_II__ASSESSMENT} from "affserver";
 import {setAppFlow} from "../../db/users";
 
 
