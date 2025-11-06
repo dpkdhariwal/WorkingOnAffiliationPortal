@@ -1,6 +1,6 @@
-[submodule "packages/ui_layouts_collaborate"]
-	path = packages/ui_layouts_collaborate
-	url = https://github.com/dpkdhariwal/ui_layouts_collaborate.git
-[submodule "packages/backend"]
-	path = packages/backend
-	url = https://github.com/dpkdhariwal/affiliation-server.git
+[submodule "packages/affiliation"]
+	path = packages/affiliation
+	url = https://github.com/itcelldgtmsde/affiliation.git
+[submodule "packages/affiliationWebBackend"]
+	path = packages/affiliationWebBackend
+	url = https://github.com/itcelldgtmsde/affiliationWebBackend.git
