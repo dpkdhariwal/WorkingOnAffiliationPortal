@@ -187,9 +187,6 @@ SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.
 
 
 
-
-
-
 mysql -u root -p affiliationdb < "C:\Users\dpkdh\Downloads\affiliationdb_10_9_2025.sql"
 
 # deinit - command
@@ -197,6 +194,7 @@ git submodule deinit -f packages/apiserver
 git submodule deinit -f packages/backend
 git submodule deinit -f packages/iti_panel
 
+git submodule deinit -f packages/ui_layouts_collaborate
 
 # remove from .git
 
