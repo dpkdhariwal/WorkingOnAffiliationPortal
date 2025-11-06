@@ -38,7 +38,10 @@ npm install ag-grid-react --workspace=packages/iti_panel
 
 npm i --workspace=packages/ui_layouts_collaborate
 
-npm i react-bootstrap-icons --workspace=packages/ui_layouts_collaborate
+npm i react-bootstrap-icons --workspace=packages/affiliation
+
+npm i react-datepicker --workspace=packages/affiliation
+
 
 npm install react-form-wizard-component --workspace=packages/iti_panel
 
@@ -139,6 +142,8 @@ npx lerna run server --scope=server
 # SERVER DEPENDENCIES
 npm install knex -g --workspace=packages/server
 npm install mysql2 --workspace=packages/server
+
+npm install date-fns --workspace=packages/ui_layouts_collaborate
 
 npm install date-fns --workspace=packages/ui_layouts_collaborate
 
