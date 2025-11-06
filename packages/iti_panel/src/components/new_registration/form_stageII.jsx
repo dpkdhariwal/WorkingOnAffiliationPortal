@@ -34,62 +34,7 @@ const New_registration = () => {
         parentfolder="Dashboard"
         activepage="Stage-II Application Form"
       />
-
       <FormStageII/>
-
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      <br/>
-      
-
-      {false && (<><Stepper>
-        {reg.stepsII.map((item, index) => {
-          console.log(item); // Valid logging outside JSX
-          return (
-            <div
-              key={index}
-              onClick={() => goToSection(item, index)}
-              style={{ cursor: "pointer" }}
-            >
-              <Step
-                label={item.label || "Step " + (index + 1)}
-                active={item.active === true || index < activeStep.step}
-                completed={item.filled}
-                className={item.filled === true ? "stepper_completed" : ''}
-                index={index}
-              />
-            </div>
-          );
-        })}
-      </Stepper>
-      <Card className="custom-card">
-        <Card.Body>
-          {activeStep.label === "Building Detail" ? (
-            <BuildingPlan setActive={goToSection} />
-          ) : activeStep.label === "Civil Infrastructure Detail" ? (
-            <CivilInfrastructureDetails setActive={goToSection} stepInfo={activeStep} />
-          ) : activeStep.label === "Amenities Area" ? (
-            <Amenities setActive={goToSection} stepInfo={activeStep} />
-          ): activeStep.label === "Signage Boards" ? (
-            <SignageBoards setActive={goToSection} stepInfo={activeStep} />
-          ) : activeStep.label === "Electricity Connection Details" ? (
-            <ElectricityConnectionDetails stepInfo={activeStep} setActive={goToSection} />
-          )
-            : activeStep.label === "Tradewise Machinery/Tools/Equipment Details" ? (
-              <TradewiseMachineryToolsEquipmentDetails stepInfo={activeStep} />
-            ) : activeStep.label === "Document Uploads" ? (
-              <DocumentUploads stepInfo={activeStep} />
-            ) : activeStep.label === "Fee Payment For StageII" ? (
-              <FeePayment stepInfo={activeStep} setActive={goToSection}  />
-            ) : (
-              <p>Something Went Wrong</p>
-            )}
-        </Card.Body>
-      </Card></>)}
     </Fragment>
   );
 };

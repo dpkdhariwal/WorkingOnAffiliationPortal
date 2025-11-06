@@ -10,6 +10,7 @@ import DetailsOfDocumentsToBeUploaded from "../../../components/new_registration
 import { useLocation } from "react-router-dom";
 import { Link, useNavigate } from "react-router-dom";
 
+import { useContext } from "react";
 
 import { getAppCurrentStatus, getStage1FormFlow, setAppFlow, updateAppFlowStatus, updateAssessmentStatus } from "../../../db/users";
 import { STEPPER_STYLE, STAGE_I_APP_FORM_FLOW, FILLED, ST1FC } from "affserver";
@@ -23,7 +24,7 @@ import { AddressOfInstitute } from "../../../components/new_registration/form/st
 import { InstituteLocation } from "../../../components/new_registration/form/stegeI/view/stage_1/detail_of_proposed_institute/assessment_view/instituteLocation";
 import { Assessment_DetailsOfDocumentsToBeUploaded } from "../../../components/new_registration/form/stegeI/DetailsOfTradeUnitForAffiliation";
 import {
-  LandDocuments, LandInfo,
+  LandInfo,
   PossessionOfLand,
   LandArea
 } from "../../../components/new_registration/form/stegeI/view/stage_1/detail_of_proposed_institute/assessment_view/land_documents"
@@ -45,6 +46,15 @@ import Swal from "sweetalert2";
 import * as gen from "../../../services/general";
 import * as st from "../../../services/state/index";
 
+import { ContextMap } from "../../../components/formik/contexts/index";
+
+import { LandDocuments } from "@/screens/state/assessor/AssessmentI/LandDocuments/LandDocuments";
+import { OtherDocuments } from "@/screens/state/assessor/AssessmentI/OtherDocuments/OtherDocuments";
+import { ReviewAssessment } from "@/screens/state/assessor/AssessmentI/ReviewAssessment/ReviewAssessment";
+
+
+
+
 export const StageIAssessment = () => {
 
   // AuthUser
@@ -64,10 +74,10 @@ export const StageIAssessment = () => {
   const navigate = useNavigate();
 
 
-  const goToSection = (step, index = null) => {
-    console.log(step, index);
-    // setActiveStep(step);
-  };
+  // const goToSection = (step, index = null) => {
+  //   console.log(step, index);
+  //   // setActiveStep(step);
+  // };
 
 
   const handleStepClick = (step, index) => {
@@ -96,9 +106,23 @@ export const StageIAssessment = () => {
     return step;
   }
 
-  const next = (step, index) => {
-    setActiveStep(++index);
-    console.log(step, index)
+  // const next = (step, index) => {
+  //   setActiveStep(++index);
+  //   console.log(step, index)
+  // }
+  const next = async (step, index) => {
+    const updated = steps.map((obj) => {
+      if (obj.step === step.step) {
+        obj = { ...obj, completed: obj.step === step.step, status: step.step === C.FILLED }
+      }
+      else if (step.step == obj.nextStep) {
+        obj = { ...obj, stepStatus: C.ACTIVE }
+      }
+      return obj;
+    });
+
+    await setSteps(updated);
+    await setActiveStep(++index);
   }
 
   const finish = (step, index) => {
@@ -106,10 +130,10 @@ export const StageIAssessment = () => {
   }
 
 
-  const SetUpNavigationButton = (step, index) => {
-    console.log(step, index);
-    // return <Navigations firstIndex={firstIndex} lastIndex={lastIndex} currentIndex={index} step={step} previous={() => { return previous(step, index) }} next={() => { next(step, index) }} finish={() => { finish(step, index) }} />
-  };
+  // const SetUpNavigationButton = (step, index) => {
+  //   console.log(step, index);
+  //   // return <Navigations firstIndex={firstIndex} lastIndex={lastIndex} currentIndex={index} step={step} previous={() => { return previous(step, index) }} next={() => { next(step, index) }} finish={() => { finish(step, index) }} />
+  // };
 
   const setStepContent = (step, stepIndex) => {
     console.log(step, stepIndex);
@@ -124,7 +148,8 @@ export const StageIAssessment = () => {
         case ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step:
           return <LandDocuments steps={steps} step={step} nav={object(step, stepIndex)} />;
         case ST1FC.DOCUMENTS_UPLOAD.step:
-          return <Documents step={step} nav={object(step, stepIndex)} />;
+          //return <Documents step={step} nav={object(step, stepIndex)} />;
+          return <OtherDocuments step={step} nav={object(step, stepIndex)} />;
         case ST1FC.REVIEW_ASSESSMENT.step:
           return <ReviewAssessment steps={steps} step={step} nav={object(step, stepIndex)} />;
         default:
@@ -167,15 +192,13 @@ export const StageIAssessment = () => {
     let resp = await gen.getAssessmentStatus(appId);
     setAssessmentStatus(resp.data);
 
+    console.log(assessmentStatus);
 
     // get Application flow by App Id and for
     console.log(authUser);
     let app_stage_da_flow;
     switch (authUser.userType) {
       case 'applicant':
-        // app_stage_da_flow = await getAssessmentStageIFlowById(appId, C.SL.APPLICANT);
-        // console.log(app_stage_da_flow);
-        // setSteps(app_stage_da_flow);
         app_stage_da_flow = await gen.getAssessmentStageIFlowById(appId);
         app_stage_da_flow = app_stage_da_flow.data;
         setSteps(app_stage_da_flow);
@@ -226,7 +249,10 @@ export const StageIAssessment = () => {
   return (
     <Fragment>
       {status === C.STAGE_I__ASSESSMENT_PENDING ? (<StartDocsVerification startDocsVerification={startDocsVerification} />) :
-        status === C.STAGE_I__ASSESSMENT_ON_PROGRESS ? (<Stepper styles={STEPPER_STYLE} steps={steps} currentStepIndex={activeStep} orientation="horizontal" labelPosition="bottom" onStepClick={handleStepClick} stepContent={setStepContent} stepClassName={(i) => i === activeStep ? "bg-blue-500 text-white" : ""} />) :
+        status === C.STAGE_I__ASSESSMENT_ON_PROGRESS ? (
+          <ContextMap.stageIAsmtDetails.Provider value={{ assessmentInfo: assessmentStatus }} >
+            <Stepper styles={STEPPER_STYLE} steps={steps} currentStepIndex={activeStep} orientation="horizontal" labelPosition="bottom" onStepClick={handleStepClick} stepContent={setStepContent} stepClassName={(i) => i === activeStep ? "bg-blue-500 text-white" : ""} />
+          </ContextMap.stageIAsmtDetails.Provider>) :
           status === C.STAGE_I__ASSESSMENT_COMPLETED ? (<h2>Document Verification has Been Completed</h2>) : <h2>Wrong Status</h2>}
     </Fragment>
   );
@@ -237,6 +263,16 @@ export const DetailOfProposedInsti = ({ step, view: viewProp = false, isView = f
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const appId = queryParams.get("appId");
+
+  const Context = ContextMap['stageIAsmtDetails'] || ContextMap.default;
+  const { assessmentInfo } = useContext(Context);
+
+  console.log(assessmentInfo);
+
+  const [pinstInfo, setPinstInfo] = useState({});
+
+
+
   const onNext = async () => {
 
     const confirmResult = await Swal.fire({ title: "Are you sure?", text: "Do you want to Proceed", icon: "question", showCancelButton: true, confirmButtonText: "Okay, Proceed", cancelButtonText: "Cancel", });
@@ -245,10 +281,7 @@ export const DetailOfProposedInsti = ({ step, view: viewProp = false, isView = f
     const result = await Swal.fire("Saved!", "Your form data has been saved.", "success");
     if (result.isConfirmed) {
       try {
-        // Set Flow if not exist
-        await setStageIAssessmentFlow(appId);
-        // await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_THE_PROPOSED_INSTITUTE.step);
-        await st.markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_THE_PROPOSED_INSTITUTE.step);
+        await st.markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_THE_PROPOSED_INSTITUTE.step, assessmentInfo.assessment_id, nav.step.slno);
         nav.next();
         // window.location.reload();
       } catch (err) {
@@ -257,10 +290,39 @@ export const DetailOfProposedInsti = ({ step, view: viewProp = false, isView = f
     }
   }
 
+  useEffect(() => {
+    console.log(pinstInfo);
+  }, [pinstInfo]);
+
+  useEffect(() => {
+    getInfo();
+    console.log(appId);
+  }, [appId]);
+
+  const getInfo = async () => {
+    try {
+      Swal.fire({
+        title: "Loading...",
+        text: "Please wait while we fetch the data.",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+      let resp2 = await gen.getProposedInstDetails(appId);
+      setPinstInfo(resp2.data);
+      Swal.close();
+    } catch (error) {
+      Swal.close();
+      console.error("Error fetching entity details:", error);
+      Swal.fire("Error", "Failed to fetch data.", "error");
+    }
+  };
+
   return <>
-    <Name_of_the_institute />
-    <AddressOfInstitute />
-    <InstituteLocation />
+    <Name_of_the_institute pinstInfo={pinstInfo} />
+    <AddressOfInstitute pinstInfo={pinstInfo} />
+    <InstituteLocation pinstInfo={pinstInfo} />
     {isView == false && <Navigations onNext={onNext} nav={nav} />}
   </>;
 }
@@ -295,233 +357,287 @@ const StartDocsVerification = ({ startDocsVerification }) => {
 };
 
 
-export const ReviewAssessment = ({ steps, step, view: viewProp = false, isView = false, nav }) => {
+// export const ReviewAssessment = ({ steps, step, view: viewProp = false, isView = false, nav }) => {
 
 
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const appId = queryParams.get("appId");
+//   const location = useLocation();
+//   const queryParams = new URLSearchParams(location.search);
+//   const appId = queryParams.get("appId");
 
-  console.log(appId);
+//   console.log(appId);
 
-  // useState
-  const [info, setInfo] = useState({});
-  const [allCompleted, setAllCompleted] = useState(false);
-  const [stepList, setStepList] = useState([]);
-  const [vStatus, setVStatus] = useState(false);
+//   // useState
+//   const [info, setInfo] = useState({});
+//   const [allCompleted, setAllCompleted] = useState(false);
+//   const [stepList, setStepList] = useState([]);
+//   const [vStatus, setVStatus] = useState(false);
 
-  // Navigation
-  const navigate = useNavigate();
+//   const [daProgressStatusForApplicant, setDaProgressStatusForApplicant] = useState({});
 
+//   useEffect(() => {
+//     console.log(daProgressStatusForApplicant);
+//   }, [daProgressStatusForApplicant])
 
-  const onLast = async () => {
-
-    // Mark as Complete Review this Stage 
-    await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.REVIEW_ASSESSMENT.step);
-
-    // // Mark as Compelete Assessment and Set Pending Applicant if Entities Not Verfied  
-    // await setAssessmentStatus(appId, C.SL.COMPLETED, C.SL.PENDING_AT_APPLICANT);
-
-    // // Mark Stage Asessement as Completed and App Flow Also marks As Completed 
-    // setAppFlow(appId, C.STAGE_I__ASSESSMENT);
-  }
-
-  const [docInfo, setDocInfo] = useState([]);
-  useEffect(() => {
-    if (steps) {
-      const docStep = steps.find(step => step.step === ST1FC.DOCUMENTS_UPLOAD.step);
-      setDocInfo(docStep);
-      console.log("DOCUMENTS_UPLOAD step:", docStep);
-    }
-  }, [steps]);
-
-  const [docInfo2, setDocInfo2] = useState([]);
-  useEffect(() => {
-    if (steps) {
-      const docStep2 = steps.find(step => step.step === C.ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step);
-      setDocInfo2(docStep2);
-      console.log("DOCUMENTS_UPLOAD step:", docStep2);
-    }
-  }, [steps]);
+//   // Navigation
+//   const navigate = useNavigate();
 
 
-  // Loading Review Details
-  const loadInfo = async () => {
-    let result, resp;
-    // let result = await set.getAssessmentProgressStatus(appId);
-    resp = await st.getAssessmentProgressStatus(appId);
-    result = resp.data;
-    // console.error(result);
-    const { allCompleted, steps, vStatus } = result;
-    console.log(allCompleted, steps, vStatus);
-    setAllCompleted(allCompleted);
-    setStepList(steps);
-    setVStatus(vStatus);
-    setInfo(result);
-    console.log(allCompleted, steps, vStatus);
-  }
+//   const onLast = async () => {
 
-  useEffect(() => {
-    loadInfo();
-    setActionButton();
-  }, [])
+//     // Mark as Complete Review this Stage 
+//     await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.REVIEW_ASSESSMENT.step);
 
-  useEffect(() => {
-    console.log(info);
-  }, [info]);
+//     // // Mark as Compelete Assessment and Set Pending Applicant if Entities Not Verfied  
+//     // await setAssessmentStatus(appId, C.SL.COMPLETED, C.SL.PENDING_AT_APPLICANT);
 
+//     // // Mark Stage Asessement as Completed and App Flow Also marks As Completed 
+//     // setAppFlow(appId, C.STAGE_I__ASSESSMENT);
+//   }
 
+//   const [docInfo, setDocInfo] = useState([]);
+//   useEffect(() => {
+//     if (steps) {
+//       const docStep = steps.find(step => step.step === ST1FC.DOCUMENTS_UPLOAD.step);
+//       setDocInfo(docStep);
+//       console.log("DOCUMENTS_UPLOAD step:", docStep);
+//     }
+//   }, [steps]);
 
-  const setActionButton = () => {
-    console.log(info?.assessmentStatus?.assessment_status);
-    try {
-      console.log(info?.assessmentStatus?.assessment_status);
-      switch (info?.assessmentStatus?.assessment_status) {
-        case C.SL.ON_PROGRESS:
-          console.log(info?.assessmentStatus?.pendingAt);
-          switch (info?.assessmentStatus?.pendingAt) {
-            case C.SL.PENDING_AT_APPLICANT:
-              return '-';
-            case C.SL.PENDING_AT_ASSESSOR:
-              {
-                let allDone = [allCompleted, vStatus].every(Boolean);
-                switch (allDone) {
-                  case true:
-                    return <Button size="lg" variant="success" onClick={() => { markAsCompleteNow() }}>Mark as Completed Desktop Assessment</Button>;
-                  case false:
-                    return <Button size="lg" variant="danger" onClick={() => { sendApplicationToApplicant() }}  >Send Application to Applicant for Uploading Documents</Button>;
-                  default:
-                    return 'Something Went Wrong';
-                }
-              }
-            default:
-              return '-';
-          }
-          break;
-        default:
-          return "NA";
-      }
+//   const [docInfo2, setDocInfo2] = useState([]);
+//   useEffect(() => {
+//     if (steps) {
+//       const docStep2 = steps.find(step => step.step === C.ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step);
+//       setDocInfo2(docStep2);
+//       console.log("DOCUMENTS_UPLOAD step:", docStep2);
+//     }
+//   }, [steps]);
 
 
-    } catch (error) {
-      console.log(error);
-    }
-  }
-  const markAsCompleteNow = async () => {
+//   // Load for Applicant 
+//   const loadInfoApplicant = async () => {
+//     try {
+//       let resp = await st.getAssessmentProgressStatusApplicant(appId);
+//       setDaProgressStatusForApplicant(resp.data);
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   }
 
-    const confirmResult = await Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to Mark as Complete Document Verification",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonText: "Okay, Proceed",
-      cancelButtonText: "Cancel",
-    });
+//   // Loading Review Details
+//   const loadInfo = async () => {
+//     let result, resp;
+//     // let result = await set.getAssessmentProgressStatus(appId);
+//     resp = await st.getAssessmentProgressStatus(appId);
 
-    if (!confirmResult.isConfirmed) {
-      console.log("User cancelled save");
-      return;
-    }
+//     result = resp.data;
+//     // console.error(result);
+//     const { allCompleted, steps, vStatus } = result;
+//     console.log(allCompleted, steps, vStatus);
+//     setAllCompleted(allCompleted);
+//     setStepList(steps);
+//     setVStatus(vStatus);
+//     setInfo(result);
+//     console.log(allCompleted, steps, vStatus);
+//   }
 
-    try {
-      // // Update App Flow Status
-      // // await updateAppFlowStatus(appId, C.STAGE_I__ASSESSMENT, C.STAGE_I__ASSESSMENT_COMPLETED);
-      // await gen.setNewStatusOfAppByStep(appId, C.STAGE_I__ASSESSMENT, C.STAGE_I__ASSESSMENT_COMPLETED) /
-      //   // Update App Assessment Status
-      //   // await updateAssessmentStatus(appId, C.abbreviation.STAGE_I.key, C.SL.VERIFIED, C.SL.NULL);
-      // await st.updateAssessmentStatus(appId, C.abbreviation.STAGE_I.key, C.SL.VERIFIED, C.SL.NULL);
+//   useEffect(() => {
+//     loadInfo();
+//     loadInfoApplicant();
+//     setActionButton();
+//   }, [])
 
-      // // await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.REVIEW_ASSESSMENT.step);
-      // await st.markAsCompleteStageAssessmentFlow(appId, C.ST1FC.REVIEW_ASSESSMENT.step)
-
-      // // setAppFlow(appId, C.STAGE_I__ASSESSMENT);
-
-      await st.markAsCompleteAssessment(appId);
-
-      Swal.fire("Saved!", "Your form data has been saved.", "success").then((result) => {
-        if (result.isConfirmed) {
-          // navigate(`/dashboard/viewAssessment?appId=${appId}`);
-          navigate(`/dashboard/AppList/`);
-        }
-      }).catch(() => {
-        console.log('dfadfasf');
-      });
-    } catch (error) {
-      console.error(error);
-      Swal.fire("Error", "Something went wrong while saving.", "error");
-    }
-
-  }
-  const sendApplicationToApplicant = async () => {
-    const confirmResult = await Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to Send Application to Applicant for Uploading Documents",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonText: "Okay, Proceed",
-      cancelButtonText: "Cancel",
-    });
-
-    if (!confirmResult.isConfirmed) {
-      console.log("User cancelled save");
-      return;
-    }
-
-    try {
-      // Update App Flow Status
-      await updateAppFlowStatus(appId, C.STAGE_I__ASSESSMENT, C.STAGE_I__ASSESSMENT_ON_PROGRESS);
-
-      // Update App Assessment Status
-      await updateAssessmentStatus(appId, C.abbreviation.STAGE_I.key, C.SL.ON_PROGRESS, C.SL.PENDING_AT_APPLICANT);
-
-      await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.REVIEW_ASSESSMENT.step);
-
-      await set.generateAssmentFlowForApplciant(appId);
-
-      // await set.setAsStageIAsmtasHistory(appId, C.SL.ASSESSOR);
-
-      Swal.fire("Saved!", "Your form data has been saved.", "success").then((result) => {
-        if (result.isConfirmed) {
-          // navigate(`/dashboard/viewAssessment?appId=${appId}`);
-          navigate(`/dashboard/AppList/`);
-        }
-      }).catch(() => {
-        console.log('dfadfasf');
-      });
-    } catch (error) {
-      console.error(error);
-      Swal.fire("Error", "Something went wrong while saving.", "error");
-    }
-  }
+//   useEffect(() => {
+//     console.log(info);
+//   }, [info]);
 
 
-  console.log(info);
 
-  return (
-    info?.allCompleted ? (<>
-      <Assessment_Basic_Detail isView={true} />
-      <Name_of_the_institute isView={true} />
-      <AddressOfInstitute isView={true} />
-      <InstituteLocation isView={true} />
-      <Assessment_DetailsOfDocumentsToBeUploaded isView={true} />
+//   const setActionButton = () => {
+//     console.log(info?.assessmentStatus?.assessment_status);
+//     try {
+//       console.log(info?.assessmentStatus?.assessment_status);
+//       switch (info?.assessmentStatus?.assessment_status) {
+//         case C.SL.ON_PROGRESS:
+//           console.log(info?.assessmentStatus?.pendingAt);
+//           switch (info?.assessmentStatus?.pendingAt) {
+//             case C.SL.PENDING_AT_APPLICANT:
+//               {
+//                 let allDone = [allCompleted, vStatus].every(Boolean);
+//                 switch (allDone) {
+//                   case true:
+//                     return <Button size="lg" variant="danger" onClick={() => { sendApplicationToAssessor() }}  >Send Application to State for Review</Button>;
+//                   default:
+//                     return 'Something Went Wrong';
+//                 }
+//               }
+//             case C.SL.PENDING_AT_ASSESSOR:
+//               {
+//                 let allDone = [allCompleted, vStatus].every(Boolean);
+//                 switch (allDone) {
+//                   case true:
+//                     return <Button size="lg" variant="success" onClick={() => { markAsCompleteNow() }}>Mark as Completed Desktop Assessment</Button>;
+//                   case false:
+//                     return <Button size="lg" variant="danger" onClick={() => { sendApplicationToApplicant() }}  >Send Application to Applicant for Uploading Documents</Button>;
+//                   default:
+//                     return 'Something Went Wrong';
+//                 }
+//               }
+//             default:
+//               return '-';
+//           }
+//           break;
+//         default:
+//           return "NA";
+//       }
 
-      {/* Land Documents Starts here */}
-      <LandDocuments isView={true} step={docInfo2} />
-      <LandInfo isView={true} />
 
-      {/* <PossessionOfLand isView={true} step={docInfo2}  /> */}
-      {/* <LandArea isView={true} /> */}
-      {/* Ends Here */}
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   }
+//   const markAsCompleteNow = async () => {
 
-      {/* Documents Starts Here */}
-      <Documents isView={true} step={docInfo} />
-      {/* Ends Here */}
+//     const confirmResult = await Swal.fire({
+//       title: "Are you sure?",
+//       text: "Do you want to Mark as Complete Document Verification",
+//       icon: "question",
+//       showCancelButton: true,
+//       confirmButtonText: "Okay, Proceed",
+//       cancelButtonText: "Cancel",
+//     });
 
-      <AsessementIActions appId={appId} nav={nav} finishBtn={setActionButton()} />
-      {/* <MarkAsCompleteStageIAssessment /> */}
-    </>) : (<AssessmentNotice />)
-  )
-}
+//     if (!confirmResult.isConfirmed) {
+//       console.log("User cancelled save");
+//       return;
+//     }
+
+//     try {
+//       // // Update App Flow Status
+//       // // await updateAppFlowStatus(appId, C.STAGE_I__ASSESSMENT, C.STAGE_I__ASSESSMENT_COMPLETED);
+//       // await gen.setNewStatusOfAppByStep(appId, C.STAGE_I__ASSESSMENT, C.STAGE_I__ASSESSMENT_COMPLETED) /
+//       //   // Update App Assessment Status
+//       //   // await updateAssessmentStatus(appId, C.abbreviation.STAGE_I.key, C.SL.VERIFIED, C.SL.NULL);
+//       // await st.updateAssessmentStatus(appId, C.abbreviation.STAGE_I.key, C.SL.VERIFIED, C.SL.NULL);
+
+//       // // await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.REVIEW_ASSESSMENT.step);
+//       // await st.markAsCompleteStageAssessmentFlow(appId, C.ST1FC.REVIEW_ASSESSMENT.step)
+
+//       // // setAppFlow(appId, C.STAGE_I__ASSESSMENT);
+
+//       await st.markAsCompleteAssessment(appId);
+
+//       Swal.fire("Saved!", "Your form data has been saved.", "success").then((result) => {
+//         if (result.isConfirmed) {
+//           // navigate(`/dashboard/viewAssessment?appId=${appId}`);
+//           navigate(`/dashboard/AppList/`);
+//         }
+//       }).catch(() => {
+//         console.log('dfadfasf');
+//       });
+//     } catch (error) {
+//       console.error(error);
+//       Swal.fire("Error", "Something went wrong while saving.", "error");
+//     }
+
+//   }
+//   const sendApplicationToApplicant = async () => {
+//     const confirmResult = await Swal.fire({
+//       title: "Are you sure?",
+//       text: "Do you want to Send Application to Applicant for Uploading Documents",
+//       icon: "question",
+//       showCancelButton: true,
+//       confirmButtonText: "Okay, Proceed",
+//       cancelButtonText: "Cancel",
+//     });
+
+//     if (!confirmResult.isConfirmed) {
+//       console.log("User cancelled save");
+//       return;
+//     }
+
+//     try {
+//       await st.setSendApplicationToApplicant(appId, info.assessmentStatus.assessment_id);
+
+//       Swal.fire("Saved!", "Your form data has been saved.", "success").then((result) => {
+//         if (result.isConfirmed) {
+//           // navigate(`/dashboard/viewAssessment?appId=${appId}`);
+//           navigate(`/dashboard/AppList/`);
+//         }
+//       }).catch(() => {
+//         console.log('dfadfasf');
+//       });
+
+//     } catch (error) {
+//       console.error(error);
+//       Swal.fire("Error", "Something went wrong while saving.", "error");
+//     }
+//   }
+
+
+//   const sendApplicationToAssessor = async () => {
+//     const confirmResult = await Swal.fire({
+//       title: "Are you sure?",
+//       text: "Do you want to Send Application to Applicant for Uploading Documents",
+//       icon: "question",
+//       showCancelButton: true,
+//       confirmButtonText: "Okay, Proceed",
+//       cancelButtonText: "Cancel",
+//     });
+
+//     if (!confirmResult.isConfirmed) {
+//       console.log("User cancelled save");
+//       return;
+//     }
+
+//     try {
+//       await st.setSendApplicationToApplicant(appId, info.assessmentStatus.assessment_id);
+
+//       Swal.fire("Saved!", "Your form data has been saved.", "success").then((result) => {
+//         if (result.isConfirmed) {
+//           // navigate(`/dashboard/viewAssessment?appId=${appId}`);
+//           navigate(`/dashboard/AppList/`);
+//         }
+//       }).catch(() => {
+//         console.log('dfadfasf');
+//       });
+
+//     } catch (error) {
+//       console.error(error);
+//       Swal.fire("Error", "Something went wrong while saving.", "error");
+//     }
+//   }
+
+
+//   console.log(info);
+
+//   return (
+//     info?.allCompleted ? (<>
+//       <Assessment_Basic_Detail isView={true} />
+//       <Name_of_the_institute isView={true} />
+//       <AddressOfInstitute isView={true} />
+//       <InstituteLocation isView={true} />
+//       <Assessment_DetailsOfDocumentsToBeUploaded isView={true} />
+
+//       {/* Land Documents Starts here */}
+//       <LandDocuments isView={true} step={docInfo2} />
+//       <LandInfo isView={true} />
+
+//       {/* <PossessionOfLand isView={true} step={docInfo2}  /> */}
+//       {/* <LandArea isView={true} /> */}
+//       {/* Ends Here */}
+
+//       {/* Documents Starts Here */}
+//       <Documents isView={true} step={docInfo} />
+//       {/* Ends Here */}
+
+//       <AsessementIActions appId={appId} nav={nav} finishBtn={setActionButton()} />
+//       {/* <MarkAsCompleteStageIAssessment /> */}
+//     </>) : (<AssessmentNotice />)
+
+
+
+//   )
+// }
 
 
 export default function AssessmentNotice() {
@@ -547,3 +663,284 @@ export default function AssessmentNotice() {
 }
 
 
+// export const ReviewAssessment = ({ steps, step, view: viewProp = false, isView = false, nav }) => {
+
+
+//   const location = useLocation();
+//   const queryParams = new URLSearchParams(location.search);
+//   const appId = queryParams.get("appId");
+
+//   console.log(appId);
+
+//   // useState
+//   const [info, setInfo] = useState({});
+//   const [allCompleted, setAllCompleted] = useState(false);
+//   const [stepList, setStepList] = useState([]);
+//   const [vStatus, setVStatus] = useState(false);
+
+//   const [daProgressStatusForApplicant, setDaProgressStatusForApplicant] = useState({});
+
+//   useEffect(() => {
+//     console.log(daProgressStatusForApplicant);
+//   }, [daProgressStatusForApplicant])
+
+//   // Navigation
+//   const navigate = useNavigate();
+
+
+//   const onLast = async () => {
+
+//     // Mark as Complete Review this Stage 
+//     await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.REVIEW_ASSESSMENT.step);
+
+//     // // Mark as Compelete Assessment and Set Pending Applicant if Entities Not Verfied  
+//     // await setAssessmentStatus(appId, C.SL.COMPLETED, C.SL.PENDING_AT_APPLICANT);
+
+//     // // Mark Stage Asessement as Completed and App Flow Also marks As Completed 
+//     // setAppFlow(appId, C.STAGE_I__ASSESSMENT);
+//   }
+
+//   const [docInfo, setDocInfo] = useState([]);
+//   useEffect(() => {
+//     if (steps) {
+//       const docStep = steps.find(step => step.step === ST1FC.DOCUMENTS_UPLOAD.step);
+//       setDocInfo(docStep);
+//       console.log("DOCUMENTS_UPLOAD step:", docStep);
+//     }
+//   }, [steps]);
+
+//   const [docInfo2, setDocInfo2] = useState([]);
+//   useEffect(() => {
+//     if (steps) {
+//       const docStep2 = steps.find(step => step.step === C.ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step);
+//       setDocInfo2(docStep2);
+//       console.log("DOCUMENTS_UPLOAD step:", docStep2);
+//     }
+//   }, [steps]);
+
+
+//   // Load for Applicant 
+//   const loadInfoApplicant = async () => {
+//     try {
+//       let resp = await st.getAssessmentProgressStatusApplicant(appId);
+//       setDaProgressStatusForApplicant(resp.data);
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   }
+
+//   // Loading Review Details
+//   const loadInfo = async () => {
+//     let result, resp;
+//     // let result = await set.getAssessmentProgressStatus(appId);
+//     resp = await st.getAssessmentProgressStatus(appId);
+
+//     result = resp.data;
+//     // console.error(result);
+//     const { allCompleted, steps, vStatus } = result;
+//     console.log(allCompleted, steps, vStatus);
+//     setAllCompleted(allCompleted);
+//     setStepList(steps);
+//     setVStatus(vStatus);
+//     setInfo(result);
+//     console.log(allCompleted, steps, vStatus);
+//   }
+
+//   useEffect(() => {
+//     loadInfo();
+//     loadInfoApplicant();
+//     setActionButton();
+//   }, [])
+
+//   useEffect(() => {
+//     console.log(info);
+//   }, [info]);
+
+
+
+//   const setActionButton = () => {
+//     console.log(info?.assessmentStatus?.assessment_status);
+//     try {
+//       console.log(info?.assessmentStatus?.assessment_status);
+//       switch (info?.assessmentStatus?.assessment_status) {
+//         case C.SL.ON_PROGRESS:
+//           console.log(info?.assessmentStatus?.pendingAt);
+//           switch (info?.assessmentStatus?.pendingAt) {
+//             case C.SL.PENDING_AT_APPLICANT:
+//               {
+//                 let allDone = [allCompleted, vStatus].every(Boolean);
+//                 switch (allDone) {
+//                   case true:
+//                     return <Button size="lg" variant="danger" onClick={() => { sendApplicationToAssessor() }}  >Send Application to State for Review</Button>;
+//                   default:
+//                     return 'Something Went Wrong';
+//                 }
+//               }
+//             case C.SL.PENDING_AT_ASSESSOR:
+//               {
+//                 let allDone = [allCompleted, vStatus].every(Boolean);
+//                 switch (allDone) {
+//                   case true:
+//                     return <Button size="lg" variant="success" onClick={() => { markAsCompleteNow() }}>Mark as Completed Desktop Assessment</Button>;
+//                   case false:
+//                     return <Button size="lg" variant="danger" onClick={() => { sendApplicationToApplicant() }}  >Send Application to Applicant for Uploading Documents</Button>;
+//                   default:
+//                     return 'Something Went Wrong';
+//                 }
+//               }
+//             default:
+//               return '-';
+//           }
+//           break;
+//         default:
+//           return "NA";
+//       }
+
+
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   }
+//   const markAsCompleteNow = async () => {
+
+//     const confirmResult = await Swal.fire({
+//       title: "Are you sure?",
+//       text: "Do you want to Mark as Complete Document Verification",
+//       icon: "question",
+//       showCancelButton: true,
+//       confirmButtonText: "Okay, Proceed",
+//       cancelButtonText: "Cancel",
+//     });
+
+//     if (!confirmResult.isConfirmed) {
+//       console.log("User cancelled save");
+//       return;
+//     }
+
+//     try {
+//       // // Update App Flow Status
+//       // // await updateAppFlowStatus(appId, C.STAGE_I__ASSESSMENT, C.STAGE_I__ASSESSMENT_COMPLETED);
+//       // await gen.setNewStatusOfAppByStep(appId, C.STAGE_I__ASSESSMENT, C.STAGE_I__ASSESSMENT_COMPLETED) /
+//       //   // Update App Assessment Status
+//       //   // await updateAssessmentStatus(appId, C.abbreviation.STAGE_I.key, C.SL.VERIFIED, C.SL.NULL);
+//       // await st.updateAssessmentStatus(appId, C.abbreviation.STAGE_I.key, C.SL.VERIFIED, C.SL.NULL);
+
+//       // // await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.REVIEW_ASSESSMENT.step);
+//       // await st.markAsCompleteStageAssessmentFlow(appId, C.ST1FC.REVIEW_ASSESSMENT.step)
+
+//       // // setAppFlow(appId, C.STAGE_I__ASSESSMENT);
+
+//       await st.markAsCompleteAssessment(appId);
+
+//       Swal.fire("Saved!", "Your form data has been saved.", "success").then((result) => {
+//         if (result.isConfirmed) {
+//           // navigate(`/dashboard/viewAssessment?appId=${appId}`);
+//           navigate(`/dashboard/AppList/`);
+//         }
+//       }).catch(() => {
+//         console.log('dfadfasf');
+//       });
+//     } catch (error) {
+//       console.error(error);
+//       Swal.fire("Error", "Something went wrong while saving.", "error");
+//     }
+
+//   }
+//   const sendApplicationToApplicant = async () => {
+//     const confirmResult = await Swal.fire({
+//       title: "Are you sure?",
+//       text: "Do you want to Send Application to Applicant for Uploading Documents",
+//       icon: "question",
+//       showCancelButton: true,
+//       confirmButtonText: "Okay, Proceed",
+//       cancelButtonText: "Cancel",
+//     });
+
+//     if (!confirmResult.isConfirmed) {
+//       console.log("User cancelled save");
+//       return;
+//     }
+
+//     try {
+//       await st.setSendApplicationToApplicant(appId, info.assessmentStatus.assessment_id);
+
+//       Swal.fire("Saved!", "Your form data has been saved.", "success").then((result) => {
+//         if (result.isConfirmed) {
+//           // navigate(`/dashboard/viewAssessment?appId=${appId}`);
+//           navigate(`/dashboard/AppList/`);
+//         }
+//       }).catch(() => {
+//         console.log('dfadfasf');
+//       });
+
+//     } catch (error) {
+//       console.error(error);
+//       Swal.fire("Error", "Something went wrong while saving.", "error");
+//     }
+//   }
+
+
+//   const sendApplicationToAssessor = async () => {
+//     const confirmResult = await Swal.fire({
+//       title: "Are you sure?",
+//       text: "Do you want to Send Application to Applicant for Uploading Documents",
+//       icon: "question",
+//       showCancelButton: true,
+//       confirmButtonText: "Okay, Proceed",
+//       cancelButtonText: "Cancel",
+//     });
+
+//     if (!confirmResult.isConfirmed) {
+//       console.log("User cancelled save");
+//       return;
+//     }
+
+//     try {
+//       await st.setSendApplicationToApplicant(appId, info.assessmentStatus.assessment_id);
+
+//       Swal.fire("Saved!", "Your form data has been saved.", "success").then((result) => {
+//         if (result.isConfirmed) {
+//           // navigate(`/dashboard/viewAssessment?appId=${appId}`);
+//           navigate(`/dashboard/AppList/`);
+//         }
+//       }).catch(() => {
+//         console.log('dfadfasf');
+//       });
+
+//     } catch (error) {
+//       console.error(error);
+//       Swal.fire("Error", "Something went wrong while saving.", "error");
+//     }
+//   }
+
+
+//   console.log(info);
+
+//   return (
+//     info?.allCompleted ? (<>
+//       <Assessment_Basic_Detail isView={true} />
+//       <Name_of_the_institute isView={true} />
+//       <AddressOfInstitute isView={true} />
+//       <InstituteLocation isView={true} />
+//       <Assessment_DetailsOfDocumentsToBeUploaded isView={true} />
+
+//       {/* Land Documents Starts here */}
+//       <LandDocuments isView={true} step={docInfo2} />
+//       <LandInfo isView={true} />
+
+//       {/* <PossessionOfLand isView={true} step={docInfo2}  /> */}
+//       {/* <LandArea isView={true} /> */}
+//       {/* Ends Here */}
+
+//       {/* Documents Starts Here */}
+//       <Documents isView={true} step={docInfo} />
+//       {/* Ends Here */}
+
+//       <AsessementIActions appId={appId} nav={nav} finishBtn={setActionButton()} />
+//       {/* <MarkAsCompleteStageIAssessment /> */}
+//     </>) : (<AssessmentNotice />)
+
+
+
+//   )
+// }

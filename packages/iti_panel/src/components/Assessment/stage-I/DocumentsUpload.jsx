@@ -1061,8 +1061,8 @@ export const Assessment_stage_I_DetailsOfDocumentsToBeUploaded = () => {
         "Document does not indicate the workshop for all trade/units, classrooms, IT Lab, Administrative area, Amenities area etc.",
     },
     {
-      value: "Any other reason, please specify",
-      label: "Any other reason, please specify",
+      value: "other",
+      label: "other",
     },
   ];
 
@@ -1370,7 +1370,7 @@ export const Assessment_stage_I_DetailsOfDocumentsToBeUploaded = () => {
                       )}
 
                       {formData.category ==
-                        "Any other reason, please specify" && (
+                        "other" && (
                           <Col md={12}>
                             <b>Reason:</b> <p>{formData.assessor_comments}</p>
                           </Col>

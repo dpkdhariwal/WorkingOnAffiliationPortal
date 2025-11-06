@@ -28,16 +28,12 @@ export const validationSchema = Yup.object({
       `${item.tradeId}_workshop_${index}`,
       Yup.mixed()
         .required("Select Geo Taged File")
-        // .test("fileSize", "File too large", (value) =>
-        //   value ? value.size <= 1024 * 1024 * 5 : false
-        // )
-        .test("fileType", "Unsupported format", (value) =>
-          value
-            ? ["image/jpeg", "image/png", "application/pdf"].includes(
-                value.type
-              )
-            : false
-        ),
+        .test("fileSize", "Invali FIles", (value) => {
+          // ✅ Skip validation if it's a string (already uploaded path)
+          if (typeof value === "string") return true;
+          // ✅ Validate if it's a File object
+          return value ? value.size <= 2 * 1024 * 1024 : true; // 2MB
+        }),
     ])
   ),
 });

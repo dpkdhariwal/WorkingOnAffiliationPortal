@@ -4,3 +4,5 @@ export const headers = {
     ulang: 'english'
     // "My-Custom-Header": "foobar"
 };
+export const API_URL = import.meta.env.VITE_API_URL;
+export const VITE_VIEW_FILE_URL = import.meta.env.VITE_VIEW_FILE_URL;

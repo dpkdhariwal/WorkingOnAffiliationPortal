@@ -14,6 +14,9 @@ npm install react-hot-toast --workspace=packages/iti_panel
 
 npm install redux-persist --workspace=packages/iti_panel
 
+npm install vite-tsconfig-paths --save-dev --workspace=packages/iti_panel
+
+
 npm install @mui/icons-material @mui/material @emotion/styled @emotion/react --workspace=packages/iti_panel
 
 
@@ -41,8 +44,13 @@ npm install react-form-wizard-component --workspace=packages/iti_panel
 
 npm install device-detector-js --workspace=packages/iti_panel
 
+npm i dayjs --workspace=packages/iti_panel
 
+npm i reactjs-otp-input --workspace=packages/iti_panel
 npm install idb --workspace=packages/iti_panel
+
+
+npm i zustand --workspace=packages/iti_panel
 
 
 npm i redux-devtools-extension
@@ -52,8 +60,31 @@ npm install --workspace=packages/server
 
 
 npm install lowdb --workspace=packages/server
+npm install lodash.get --workspace=packages/backend
+
+npm install html-pdf --workspace=packages/backend
+
+npm install bcryptjs  --workspace=packages/backend
 
 
+npm install nodemailer --workspace=packages/backend
+
+npm install serve-index yup --workspace=packages/backend
+npm i yup
+
+npm install jspdf canvas --workspace=packages/backend
+
+npm install jspdf jspdf-autotable --workspace=packages/backend
+
+npm install pizzip --workspace=packages/backend
+
+npm install docxtemplater pizzip docxtemplater-image-module-free --workspace=packages/backend
+
+npm install nanoid --workspace=packages/backend
+
+
+npm install handlebars --workspace=packages/backend
+npm uninstall puppeteer --workspace=packages/apiserver
 
 
 git submodule add https://github.com/your-org/package-a.git packages/package-a
@@ -62,6 +93,26 @@ git submodule add https://github.com/your-org/package-b.git packages/package-b
 git submodule add https://github.com/dpkdhariwal/ui_layouts_collaborate.git packages/ui_layouts_collaborate
 git submodule add https://github.com/dpkdhariwal/affiliation-server.git packages/backend
 
+git submodule add https://github.com/dpkdhariwal/affiliation-api-server.git packages/apiserver
+
+#START---------------------------
+# To Removing Sub Module 
+# 1. Deinitialize the submodule
+git submodule deinit -f packages/apiserver
+
+# 2. Remove the submodule entry from the Git config
+git rm -f packages/apiserver
+
+# 3. Delete the leftover submodule files from .git/modules
+rm -rf .git/modules/packages/apiserver
+
+🗂️ Optional Cleanup
+# 4. Verify submodule entries removed
+grep -i apiserver .gitmodules
+
+git commit -m "Removed submodule packages/apiserver"
+
+END--------------------------------
 
 # To Remove Sub Module from Mono repo
 STEP-1:
@@ -75,6 +126,8 @@ END
 
 npx lerna run dev --scope=affiliation_portal
 npx lerna run build --scope=affiliation_portal
+
+
 
 npm install i18next react-i18next i18next-browser-languagedetector --scope=affiliation_portal
 
@@ -93,18 +146,68 @@ npm install date-fns --workspace=packages/ui_layouts_collaborate
 npm install multer --workspace=packages/backend
 npm install cookie-parser --workspace=packages/backend
 
+npm install puppeteer --workspace=packages/backend
 
 npm install dayjs --workspace=packages/backend
+
+npm install crypto --workspace=packages/backend
+
+npm install uuid --workspace=packages/backend
+
+npm install qrcode --workspace=packages/backend
+
+npm i express-basic-auth --workspace=packages/backend
 
 npm install knex -g
 
 npm install --save-dev cross-env --workspace=packages/backend
 
+npm install busboy --workspace=packages/backend
 
-
+npm i zustand
 
 
 npm install "file:../packages/ui_layouts_collaborate"
 npm install "packages/backend"
+
+
+
+
+
+This is a classic cascading select inside Formik’s FieldArray.
+
+
+
+# MySQL Command
+mysql -u root -p affliationdb < C:\Users\dpkdh\Downloads\state_district_village.sql
+
+SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE DATA_TYPE = 'datetime' ORDER BY TABLE_SCHEMA, TABLE_NAME;
+
+
+
+
+
+
+
+
+mysql -u root -p affiliationdb < "C:\Users\dpkdh\Downloads\affiliationdb_10_9_2025.sql"
+
+# deinit - command
+git submodule deinit -f packages/apiserver
+git submodule deinit -f packages/backend
+git submodule deinit -f packages/iti_panel
+
+
+# remove from .git
+
+# Manage Github Sub modules
+rm -rf .git/modules/packages/apiserver
+rm -rf packages/apiserver
+
+rm -rf .git/modules/packages/backend
+rm -rf packages/backend
+
+rm -rf .git/modules/packages/iti_panel
+rm -rf packages/iti_panel
 
 

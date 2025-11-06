@@ -1,26 +1,24 @@
 import { Row, Col, Card, Form, InputGroup, Button } from "react-bootstrap";
-
 import { Fragment, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-
 import Pageheader from "../../layouts/Pageheader";
-import { Stepper, Step } from "react-form-stepper";
+// import { Stepper, Step } from "react-form-stepper";
 
-import CategoryOfApplicantOrganization from "./form/stegeI/CategoryOfApplicantOrganization";
-import BasicDetailsofApplicantOrganization from "./form/stegeI/BasicDetailsofApplicantOrganization";
-import DetailsOfTheProposedInstitute from "./form/stegeI/DetailsOfTheProposedInstitute";
-import DetailsOfTheLandToBeUsedForTheITI from "./form/stegeI/DetailsOfTheLandToBeUsedForTheITI";
-import DetailsOfDocumentsToBeUploaded from "./form/stegeI/DetailsOfDocumentsToBeUploaded";
-import PreviewOfApplication from "./form/stegeI/PreviewOfApplication";
-import DetailsOfTradeUnitForAffiliation from "./form/stegeI/DetailsOfTradeUnitForAffiliation";
-import FeePayment from "./form/stegeI/FeePayment";
+// import CategoryOfApplicantOrganization from "./form/stegeI/CategoryOfApplicantOrganization";
+// import BasicDetailsofApplicantOrganization from "./form/stegeI/BasicDetailsofApplicantOrganization";
+// import DetailsOfTheProposedInstitute from "./form/stegeI/DetailsOfTheProposedInstitute";
+// import DetailsOfTheLandToBeUsedForTheITI from "./form/stegeI/DetailsOfTheLandToBeUsedForTheITI";
+// import DetailsOfDocumentsToBeUploaded from "./form/stegeI/DetailsOfDocumentsToBeUploaded";
+// import PreviewOfApplication from "./form/stegeI/PreviewOfApplication";
+// import DetailsOfTradeUnitForAffiliation from "./form/stegeI/DetailsOfTradeUnitForAffiliation";
+// import FeePayment from "./form/stegeI/FeePayment";
 import { useLocation } from "react-router-dom";
-import { Link, useNavigate } from "react-router-dom";
-import { LandDocuments } from "../new_registration/form/stegeI/view/stage_1/detail_of_proposed_institute/assessment_view/land_documents"
+// import { Link, useNavigate } from "react-router-dom";
+// import { LandDocuments } from "../new_registration/form/stegeI/view/stage_1/detail_of_proposed_institute/assessment_view/land_documents"
 
-import { Documents } from "../new_registration/form/stegeI/view/stage_1/detail_of_proposed_institute/assessment_view/documents"
+// import { Documents } from "../new_registration/form/stegeI/view/stage_1/detail_of_proposed_institute/assessment_view/documents"
 
-import { STAGE_I__FEE_PAID, STAGE_I__FEE_EXEMPTED, STAGE_I__SUBMIT_PENDING, STAGE_I__FEE_PENDING, STAGE_I__SUBMITED, STAGE_I__DOCUMENT_PENDING } from "affserver";
+// import { STAGE_I__FEE_PAID, STAGE_I__FEE_EXEMPTED, STAGE_I__SUBMIT_PENDING, STAGE_I__FEE_PENDING, STAGE_I__SUBMITED, STAGE_I__DOCUMENT_PENDING } from "affserver";
 
 import { AppStatusContext } from "../../services/context";
 import { getAppCurrentStatus } from "../../db/users";
@@ -57,7 +55,6 @@ export const StageIExemtedInfo = () => {
 
   return (
     <>
-
       <div>
         <Card className="custom-card border border-primary">
           {/* <Card.Header>

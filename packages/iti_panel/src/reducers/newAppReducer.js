@@ -32,6 +32,8 @@ import {
   STAGE_II__SUBMIT_PENDING,
 } from "affserver";
 
+
+
 import {
   STAGE_II__FEE_EXEMPTED,
   STAGE_II__DOCUMENT_PENDING,
@@ -43,6 +45,9 @@ import {
 } from "affserver";
 
 import * as yup from "yup";
+
+import { st1form } from "affserver";
+import * as C from "affserver";
 
 // Application Info
 export const AppliInfoInitialValues = {
@@ -71,8 +76,8 @@ export const AppliInfo = (state = AppliInfoInitialValues, action) => {
                 item.step === STAGE_I_FEE
                   ? { ...item, status: STAGE_I__FEE_EXEMPTED }
                   : item.step === STAGE_I_FORM_FILLING
-                  ? { ...item, status: STAGE_I__FILLED }
-                  : item
+                    ? { ...item, status: STAGE_I__FILLED }
+                    : item
               ),
             },
           });
@@ -87,8 +92,8 @@ export const AppliInfo = (state = AppliInfoInitialValues, action) => {
                 item.step === STAGE_I_FEE
                   ? { ...item, status: STAGE_I__FEE_PAID }
                   : item.step === STAGE_I_FORM_FILLING
-                  ? { ...item, status: STAGE_I__FILLED }
-                  : item
+                    ? { ...item, status: STAGE_I__FILLED }
+                    : item
               ),
             },
           });
@@ -107,8 +112,8 @@ export const AppliInfo = (state = AppliInfoInitialValues, action) => {
             item.step === STAGE_I_DOCUMENT_UPLAOD
               ? { ...item, status: STAGE_I__DOCUMENT_UPLOADED }
               : item.step === STAGE_I_SUBMIT
-              ? { ...item, status: STAGE_I__SUBMITED }
-              : item
+                ? { ...item, status: STAGE_I__SUBMITED }
+                : item
           ),
         },
       });
@@ -126,8 +131,8 @@ export const AppliInfo = (state = AppliInfoInitialValues, action) => {
                 item.step === STAGE_II_FEE
                   ? { ...item, status: STAGE_II__FEE_EXEMPTED }
                   : item.step === STAGE_II_FORM_FILLING
-                  ? { ...item, status: STAGE_II__FILLED }
-                  : item
+                    ? { ...item, status: STAGE_II__FILLED }
+                    : item
               ),
             },
           });
@@ -142,8 +147,8 @@ export const AppliInfo = (state = AppliInfoInitialValues, action) => {
                 item.step === STAGE_II_FEE
                   ? { ...item, status: STAGE_II__FEE_PAID }
                   : item.step === STAGE_II_FORM_FILLING
-                  ? { ...item, status: STAGE_II__FILLED }
-                  : item
+                    ? { ...item, status: STAGE_II__FILLED }
+                    : item
               ),
             },
           });
@@ -179,7 +184,6 @@ let ApplicantEntityDetails = {
   ApplicantEntityDistrict: null,
   ApplicantEntityTown_City: null,
   ApplicantEntityBlock_Tehsil: null,
-  ApplicantEntitySector_Village: null,
   ApplicantEntityPincode: null,
   ApplicantEntityPlotNumber_KhasaraNumber_GataNumber: null,
   ApplicantEntityLandmark: null,
@@ -200,47 +204,53 @@ let ApplicantEntityDetails = {
   run_PlotNumber_KhasaraNumber: [],
   run_Landmark: [],
 };
-export const initialValues = {
-  aff_category: "",
-  aff_sub_category: "",
+// export const initialValues = {
+//   aff_category: "",
+//   aff_sub_category: "",
 
-  category: "",
-  name_of_applicant_entity: "",
+//   category: "",
+//   name_of_applicant_entity: "",
 
-  state_of_other_iti: "",
-  // CategoryOfApplicantEntity: "",
-  // NameOfApplicantEntity: "",
-  ApplicantEntityState: "",
-  ApplicantEntityDistrict: "",
-  ApplicantEntityTown_City: "",
-  ApplicantEntityBlock_Tehsil: "",
-  ApplicantEntitySector_Village: "",
-  ApplicantEntityPincode: "",
-  ApplicantEntityPlotNumber_KhasaraNumber_GataNumber: "",
-  ApplicantEntityLandmark: "",
-  ApplicantEntityEmailId: "",
-  isApplicantEntityEmailIdVerified: false,
+//   state_of_other_iti: "",
+//   // CategoryOfApplicantEntity: "",
+//   // NameOfApplicantEntity: "",
 
-  ApplicantContactNumber: "",
-  isApplicantEntityMobileNumberVerified: false,
-  
 
-  Is_the_applicant_running_any_other_iti: "",
+//   // State Initial Values
+//   ApplicantEntityState: "",
+//   ApplicantEntityDistrict: "",
+//   ApplicantEntitySubDistrict: "",
+//   ApplicantEntityVillage: "",
+//   ApplicantEntityPincode: "",
+//   ApplicantEntityPlotNumber_KhasaraNumber_GataNumber: "",
+//   ApplicantEntityLandmark: "",
+//   ApplicantEntityTown_City: "",
+//   //End
 
-  run_ITIName: "",
-  run_MISCode: "",
-  run_State: "",
-  run_District: "",
-  run_TownCity: "",
-  run_BlockTehsil: "",
-  run_Pincode: "",
-  run_PlotNumber_KhasaraNumber: "",
-  run_Landmark: "",
-};
-export const EntityDetails = (state = initialValues, action) => {
+//   ApplicantEntityEmailId: "",
+//   isApplicantEntityEmailIdVerified: false,
+//   ApplicantContactNumber: "",
+//   isApplicantEntityMobileNumberVerified: false,
+
+
+//   Is_the_applicant_running_any_other_iti: "",
+//   runningITIs: [{
+//     run_ITIName: "",
+//     run_AffiliationNo: "",
+//     run_MISCode: "",
+//     run_State: "",
+//     run_District: "",
+//     run_TownCity: "",
+//     run_BlockTehsil: "",
+//     run_Pincode: "",
+//     run_PlotNumber_KhasaraNumber: "",
+//     run_Landmark: "",
+//   }], // default one document
+
+// };
+export const EntityDetails = (state = st1form.initialValues, action) => {
   let { type, payload } = action;
   console.log("EntityDetails Reducer", action);
-
   switch (type) {
     case UPDATE_ENTITY_DETAILS:
       state = { ...state, ...payload };
@@ -249,6 +259,71 @@ export const EntityDetails = (state = initialValues, action) => {
       return state;
   }
 };
+
+// Debounce helper
+function debouncePromise(fn, delay) {
+  let timer;
+  return (...args) =>
+    new Promise((resolve) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => resolve(fn(...args)), delay);
+    });
+}
+
+// Fake API call
+const checkEmailExists = async (email) => {
+  console.log("API hit for:", email);
+  await new Promise((r) => setTimeout(r, 500));
+  return email === "test@example.com"; // already exists
+};
+
+// Debounced version
+const debouncedCheckEmail = debouncePromise(checkEmailExists, 600);
+
+const auth_sign_valshema = yup.object({
+  name_of_authorized_signatory: yup.string()
+    .required("Name of authorized signatory is required"),
+
+  email_id_of_authorized_signatory: yup
+    .string()
+    .email("Invalid email address")
+    .required("Email is required")
+    .test(
+      "email-verified",
+      "Email must be verified",
+      function (value) {
+        // `this.parent` gives access to other fields
+        return value && this.parent.is_verified_email_id_of_authorized_signatory;
+      }
+    ),
+
+  is_verified_email_id_of_authorized_signatory: yup.string().oneOf([C.SL.VERIFIED], "Please verify your email before submitting").default(C.SL.NOT_VERIFIED),
+
+  mobile_number_of_authorized_signatory: yup.string()
+    .matches(/^[0-9]{10}$/, "Enter a valid 10-digit mobile number")
+    .required("Mobile number is required").test(
+      "mobile-verified",
+      "Mobile must be verified",
+      function (value) {
+        // `this.parent` gives access to other fields
+        return value && this.parent.is_verified_mobile_number_of_authorized_signatory;
+      }
+    ),
+  is_verified_mobile_number_of_authorized_signatory: yup.string().oneOf([C.SL.VERIFIED], "Please verify your Mobile before submitting").default(C.SL.NOT_VERIFIED),
+
+  id_proof_of_authorized_signatory: yup.string()
+    .required("Select ID proof type"),
+  id_proof_number_of_authorized_signatory: yup.string()
+    .required("Enter ID proof number"),
+  // id_proof_docs_of_authorized_signatory: yup.mixed()
+  //   .required("Upload ID proof document")
+  //   .test("fileSize", "Invali FIles", (value) => {
+  //     // ✅ Skip validation if it's a string (already uploaded path)
+  //     if (typeof value === "string") return true;
+  //     // ✅ Validate if it's a File object
+  //     return value ? value.size <= 2 * 1024 * 1024 : true; // 2MB
+  //   }),
+});
 export const yupObject = {
   aff_category: yup.string().required("Select Affiliation Category"),
   aff_sub_category: yup.string().when("aff_category", {
@@ -262,47 +337,76 @@ export const yupObject = {
     .string()
     .required("Please enter name of applicant entity")
     .matches(/^[a-zA-Z ]+$/, "Only alphabets are allowed"),
+
+
+  // State Validation
   ApplicantEntityState: yup.string().required("Please select state"),
   ApplicantEntityDistrict: yup.string().required("Please select district"),
   ApplicantEntityTown_City: yup.string().required("Please enter town/city"),
-  ApplicantEntityBlock_Tehsil: yup
+  ApplicantEntityAddressBlock: yup
     .string()
-    .required("Please enter Block/Tehsil"),
-  ApplicantEntitySector_Village: yup
+    .nullable()
+    .notRequired()
+    .test(
+      "non-empty-valid",
+      "Invalid value",
+      function (value) {
+        // If empty/null → it's valid (don't show error, no green border)
+        if (!value) return true;
+
+        // If user typed something → validate it (you can add conditions here)
+        return value.trim().length > 0;
+      }
+    ),
+  // ApplicantEntityBlock_Tehsil: yup
+  //   .string()
+  //   .required("Please enter Block/Tehsil"),
+  ApplicantEntityVillage: yup
     .string()
-    .required("Please enter Sector/Village"),
+    .required("Please select Village"),
   ApplicantEntityPincode: yup
-  .string()
-  .required("Please enter 6 Digit Pincode number")
-  .matches(/^\d{6}$/, "Please enter a valid 6-digit pincode"),
+    .string()
+    .required("Please enter 6 Digit Pincode number")
+    .matches(/^\d{6}$/, "Please enter a valid 6-digit pincode"),
 
   ApplicantEntityPlotNumber_KhasaraNumber_GataNumber: yup
     .string()
     .required("Please enter Plot Number/Khasara Number/Gata Number"),
   ApplicantEntityLandmark: yup.string().required("Please enter Landmark"),
+  // ApplicantEntitySector_Village: yup .string() .required("Please enter Sector/Village"),
 
-  ApplicantEntityEmailId: yup
-    .string()
-    .required("Please enter email")
-    .email("Please enter a valid email")
-    .test(
-      "is-otp-verified",
-      "Please verify your email with OTP",
-      function (value) {
-        const { isApplicantEntityEmailIdVerified } = this.parent; // ✅ Access from Formik values
-        console.log(
-          "isApplicantEntityEmailIdVerified =",
-          isApplicantEntityEmailIdVerified,
-          value
-        );
-        return isApplicantEntityEmailIdVerified === true;
-      }
-    ),
 
-  ApplicantContactNumber: yup
-  .string()
-  .required("Please enter contact number")
-  .matches(/^[6-9]\d{9}$/, "Please enter a valid 10-digit mobile number"),
+
+  // ApplicantEntityEmailId: yup
+  //   .string()
+  //   .email("Invalid email address")
+  //   .required("Email is required")
+  //   .test(
+  //     "email-verified",
+  //     "Email must be verified",
+  //     function (value) {
+  //       // `this.parent` gives access to other fields
+  //       return value && this.parent.isApplicantEntityEmailIdVerified;
+  //     }
+  //   ),
+
+  // isApplicantEntityEmailIdVerified: yup.boolean().oneOf([true], "Please verify your email before submitting").default(false),
+
+
+  // ApplicantContactNumber: yup
+  //   .string()
+  //   .required("Please enter contact number")
+  //   .matches(/^[6-9]\d{9}$/, "Please enter a valid 10-digit mobile number").test(
+  //     "Mobile-verified",
+  //     "Mobile must be verified",
+  //     function (value) {
+  //       // `this.parent` gives access to other fields
+  //       return value && this.parent.isApplicantEntityMobileNumberVerified;
+  //     }
+  //   ),
+
+  // isApplicantEntityMobileNumberVerified: yup.boolean().oneOf([true], "Please verify your mobile number before submitting").default(false),
+
 
   // Is_the_applicant_running_any_other_iti: yup
   //   .string()
@@ -323,62 +427,46 @@ export const yupObject = {
     otherwise: () => yup.string().notRequired(),
   }),
 
-  run_ITIName: yup.string().when("Is_the_applicant_running_any_other_iti", {
-    is: "yes",
-    then: () => yup.string().required("Please enter ITI Name"),
-    otherwise: () => yup.string().notRequired(),
-  }),
-
-  run_MISCode: yup.string().when("Is_the_applicant_running_any_other_iti", {
-    is: "yes",
-    then: () => yup.string().required("Please enter MIS Code"),
-    otherwise: () => yup.string().notRequired(),
-  }),
-
-  run_State: yup.string().when("Is_the_applicant_running_any_other_iti", {
-    is: "yes",
-    then: () => yup.string().required("Please enter State"),
-    otherwise: () => yup.string().notRequired(),
-  }),
-
-  run_District: yup.string().when("Is_the_applicant_running_any_other_iti", {
-    is: "yes",
-    then: () => yup.string().required("Please enter District"),
-    otherwise: () => yup.string().notRequired(),
-  }),
-
-  run_TownCity: yup.string().when("Is_the_applicant_running_any_other_iti", {
-    is: "yes",
-    then: () => yup.string().required("Please enter Town/City"),
-    otherwise: () => yup.string().notRequired(),
-  }),
-
-  run_BlockTehsil: yup.string().when("Is_the_applicant_running_any_other_iti", {
-    is: "yes",
-    then: () => yup.string().required("Please enter Block/Tehsil"),
-    otherwise: () => yup.string().notRequired(),
-  }),
-
-  run_Pincode: yup.string().when("Is_the_applicant_running_any_other_iti", {
-    is: "yes",
-    then: () => yup.string().required("Please enter Pincode"),
-    otherwise: () => yup.string().notRequired(),
-  }),
-
-  run_PlotNumber_KhasaraNumber: yup
-    .string()
-    .when("Is_the_applicant_running_any_other_iti", {
-      is: "yes",
-      then: () =>
-        yup.string().required("Please enter Plot Number/Khasara Number"),
-      otherwise: () => yup.string().notRequired(),
+  runningITIs: yup.array().of(
+    yup.object({
+      // run_AffiliationNo: yup.string().required("Enter Running Affiliation Number"),
+      run_ITIName: yup.string().required("Enter Running ITI Name"),
+      run_MISCode: yup.string().required("Enter MIS Code"),
+      // run_State: yup.string().required("Select State"),
+      // run_District: yup.string().required("Select District"),
+      // run_SubDistrict: yup.string().required("Select District"),
+      // run_Village: yup.string().required("Select District"),
+      // run_TownCity: yup.string().required("Select Town City"),
+      // run_Pincode: yup.string().required("Enter Pincode"),
+      // run_PlotNumber_KhasaraNumber: yup.string().required("Enter Plot Number OR Khasra Number"),
+      // run_Landmark: yup.string().required("Enter Landmark"),
+    })
+  )
+    .nullable()   // 👈 allow null
+    .when('Is_the_applicant_running_any_other_iti', {
+      is: (val) => val === "yes", // explicitly check for "yes"
+      then: (schema) => schema.min(1, "At least one ITI is required"),
+      otherwise: (schema) => schema.strip(), // 👈 remove field completely if not needed
     }),
 
-  run_Landmark: yup.string().when("Is_the_applicant_running_any_other_iti", {
-    is: "yes",
-    then: () => yup.string().required("Please enter Landmark"),
-    otherwise: () => yup.string().notRequired(),
-  }),
+
+  // auth_sign: yup
+  //   .mixed()
+  //   .when("category", {
+  //     is: (val) =>
+  //       [
+  //         "Society / Trust",
+  //         "Private Limited Company",
+  //         "Public Limited Company",
+  //         "Public Sector Undertaking",
+  //       ].includes(val),
+  //     then: () => auth_sign_valshema.required(),
+  //     otherwise: () => yup.object().notRequired(),
+  //   }),
+
+  auth_sign: auth_sign_valshema.required(),
+
+
 };
 export const ApplicantEntityDetailsReducer = (
   state = ApplicantEntityDetails,
@@ -636,27 +724,29 @@ export const ProposedInstituteInfo = (state = dpi_initialValues, action) => {
   }
 };
 
-export const intiValues_pi_yupObject = {
-  name_of_applicant_institute: "",
-  type_of_institute: "",
-  cmp_post_state: "",
-  cmp_post_district: "",
-  cmp_post_city: "",
-  cmp_post_block_or_tehsil: "",
-  cmp_post_sector_village: "",
-  cmp_post_pincode: "",
-  cmp_post_plot_number_khasara_number: "",
-  cmp_post_landmark: "",
-  institute_location: "",
-  is_falls_under_hill_area_hill: "",
-  Falls_Under_Hill_Area_Hill__Supporting_Doc: 'null',
-  is_falls_under_border_district:"",
-  Falls_Under_Border_District__Supporting_Doc: 'null',
-  under_msti_category: "",
-  Whether_the_institute_is_exclusive_for_women_trainees: "",
-  latitude: "",
-  Longitude: "",
-};
+// export const intiValues_pi_yupObject = {
+//   name_of_applicant_institute: "",
+//   type_of_institute: "",
+
+//   cmp_post_state: "",
+//   cmp_post_district: "",
+//   cmp_post_sub_district: "",
+//   comp_town_city: "",
+//   cmp_post_village: "",
+//   cmp_post_pincode: "",
+//   cmp_post_plot_number_khasara_number: "",
+//   cmp_post_landmark: "",
+
+//   institute_location: "",
+//   is_falls_under_hill_area_hill: "",
+//   Falls_Under_Hill_Area_Hill__Supporting_Doc: 'null',
+//   is_falls_under_border_district: "",
+//   Falls_Under_Border_District__Supporting_Doc: 'null',
+//   under_msti_category: "",
+//   Whether_the_institute_is_exclusive_for_women_trainees: "",
+//   latitude: "",
+//   Longitude: "",
+// };
 export const dpi_yupObject = {
   name_of_applicant_institute: yup
     .string()
@@ -664,9 +754,9 @@ export const dpi_yupObject = {
   type_of_institute: yup.string().required("Type of Institute is required"),
   cmp_post_state: yup.string().required("State is required"),
   cmp_post_district: yup.string().required("District is required"),
-  cmp_post_city: yup.string().required("Town/City is required"),
-  cmp_post_block_or_tehsil: yup.string().required("Block/Tehsil is required"),
-  cmp_post_sector_village: yup.string().required("Sector/Village is required"),
+  cmp_post_sub_district: yup.string().required("Sub District required"),
+  comp_town_city: yup.string().required("Town/City is required"),
+  cmp_post_village: yup.string().required("Village is required"),
   cmp_post_pincode: yup.string().required("Pincode is required"),
   cmp_post_plot_number_khasara_number: yup
     .string()
@@ -709,8 +799,25 @@ export const dpi_yupObject = {
       "Please select Whether Applying Under Mini Skill Training Institute (MSTI) Category?"
     ),
 
-  latitude: yup.string().required("Please Enter Insittute Latitute"),
-  Longitude: yup.string().required("Please Enter Insittute Longitute"),
+  latitude: yup.string().required("Please Enter Insittute Latitute").matches(
+    /^-?\d+(\.\d+)?$/,
+    "Please enter a valid longitude (e.g., 77.5946 or -122.4194)"
+  )
+    .test(
+      "is-valid-range",
+      "Longitude must be between -180 and 180 degrees",
+      (value) => value === undefined || value === "" || (parseFloat(value) >= -180 && parseFloat(value) <= 180)
+    ),
+  Longitude: yup.string().required("Please enter Institute Longitude")
+    .matches(
+      /^-?\d+(\.\d+)?$/,
+      "Please enter a valid longitude (e.g., 77.5946 or -122.4194)"
+    )
+    .test(
+      "is-valid-range",
+      "Longitude must be between -180 and 180 degrees",
+      (value) => value === undefined || value === "" || (parseFloat(value) >= -180 && parseFloat(value) <= 180)
+    ),
 };
 
 // Details of Trade(s)/Unit(s) for Affiliation
@@ -813,6 +920,7 @@ export const land_info_yupObject = {
     then: () => yup.string().required("land owner name is required"),
     otherwise: () => yup.string().notRequired(),
   }),
+
   land_registration_number: yup.string().when("possession_of_land", {
     is: "owned",
     then: () => yup.string().required("land registration number is required"),
@@ -843,9 +951,34 @@ export const land_info_yupObject = {
     otherwise: () => yup.string().notRequired(),
   }),
 
+  // date_of_expiry: yup.string().when("possession_of_land", {
+  //   is: "leased",
+  //   then: () => yup.string().required("Date of expiry is required"),
+  //   otherwise: () => yup.string().notRequired(),
+  // }),
+
   date_of_expiry: yup.string().when("possession_of_land", {
     is: "leased",
-    then: () => yup.string().required("Date of expiry is required"),
+    then: () =>
+      yup
+        .string()
+        .required("Date of expiry is required")
+        .test(
+          "expiry-greater-than-6-years",
+          "Date of expiry must be at least 6 years after the date of commencement",
+          function (value) {
+            const { date_of_commencement } = this.parent;
+            if (!date_of_commencement || !value) return true; // Skip if either is missing
+            const start = new Date(date_of_commencement);
+            const end = new Date(value);
+
+            // Calculate 6 years after commencement
+            const sixYearsLater = new Date(start);
+            sixYearsLater.setFullYear(start.getFullYear() + 6);
+
+            return end >= sixYearsLater;
+          }
+        ),
     otherwise: () => yup.string().notRequired(),
   }),
 };
@@ -855,13 +988,13 @@ export const Building_Detail_initialValues = {
   language_for_building_plan: "",
   document_of_building_plan: "",
   notarised_document_of_building_plan: "",
-  
+
   language_for_building_completion_certificate: "",
   building_completion_certificate: "",
   notarised_document_of_bcc: "",
   name_of_bcc_issued_authority: "",
   date_of_bcc_issued: "",
-  
+
   front_view_photo_of_building: "",
   side_view_photo_of_building: "",
   entrance_gate_photo_of_plot_with_signage_board: "",

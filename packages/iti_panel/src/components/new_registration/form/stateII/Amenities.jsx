@@ -1,6 +1,6 @@
-import { Fragment, useEffect, useState, useRef } from "react";
+import { Fragment, useEffect, useState, useRef, createContext } from "react";
 import { Row, Col, Card, Form, Button, Table, Modal, Form as BForm, } from "react-bootstrap";
-import { Formik, Field, FieldArray } from "formik";
+import { Formik, Field, FieldArray, ErrorMessage } from "formik";
 import * as yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -16,16 +16,30 @@ import { building_detail_yup_object } from "../../../../reducers/newAppReducer";
 import { UPDATE_BUILDING_DETAILS, STAGE_II__FEE_PAID, STAGE_II__FEE_EXEMPTED } from "affserver";
 
 import { Form as BootstrapForm } from "react-bootstrap";
+import { Navigations } from "@/components/Assessment/components";
 
+import * as C from "affserver";
+import { viewFile } from "@/helpers";
+import * as ap from "@/services/applicant";
+import { useLocation } from "react-router-dom";
 
+import { FileField2 } from "@/components/formik/Inputs/FileField2";
+export const FormContext = createContext();
+export const Amenities = ({ isView = false, nav }) => {
 
-export const Amenities = ({ setActive }) => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const appId = queryParams.get("appId");
+
   const stage = useSelector((state) => state.reg.stepsII);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const formikRef = useRef();
   const reg = useSelector((state) => state.reg);
   const stepInfo = reg.stepsII[0];
+
+  const [initialValues, setInitialValues] = useState(C.st2.Amenities.initialValue);
+
 
   useEffect(() => {
     console.log(stage);
@@ -93,11 +107,162 @@ export const Amenities = ({ setActive }) => {
 
   const AppliInfo = useSelector((state) => state.AppliInfo);
 
+
+  const onNext = async () => {
+    console.log("Called Next");
+    const { values, errors } = formikRef.current;
+    console.log(formikRef.current);
+
+    // Submit the form to trigger validation
+    await formikRef.current.submitForm();
+
+    // Check form validity
+    const { isValid } = formikRef.current;
+    console.log(errors, isValid);
+
+    if (!isValid) {
+      // If form is not valid, show an error message
+      Swal.fire("Error", "Please fill out all required fields correctly.", "error");
+      return; // Stop further execution
+    }
+
+    // Ask the user for confirmation before saving
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to save the form data?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes, save it!",
+      cancelButtonText: "Cancel",
+    });
+    
+    if (result.isConfirmed) {
+      // Save data asynchronously
+      await ap.saveAmenities(values, appId);
+      nav.next();
+    } else {
+      console.log("User cancelled save");
+    }
+  };
+
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const resp = await ap.getAmenities(appId);
+        const data = resp.data;
+        setInitialValues(data);  // update initial values
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    loadData();
+  }, [appId]);
+
+
   return (
     <Fragment>
       {AppliInfo.stage_II_fee_status === STAGE_II__FEE_PAID || AppliInfo.stage_II_fee_status === STAGE_II__FEE_EXEMPTED ? (<h2>Hello</h2>) :
         <>
+
           <Formik
+            innerRef={formikRef}
+            initialValues={initialValues}
+            enableReinitialize
+            validationSchema={C.st2.Amenities.ValSchema}
+            onSubmit={(values) => { console.log(values) }}
+          >
+            {({ handleSubmit, handleChange, values, errors, touched, setFieldValue }) => (
+
+              <FormContext.Provider value={{ handleSubmit, handleChange, values, errors, touched, setFieldValue }}>
+                <Form onSubmit={handleSubmit}>
+                  <Card className="custom-card border border-primary">
+                    <Card.Header>
+                      <div className="card-title" style={{ textTransform: "none" }}>
+                        <h5>Specifications of IT lab</h5>
+                      </div>
+                    </Card.Header>
+                    <Card.Body>
+
+                      <FieldArray name="particulars_1">
+                        {({ push, remove }) => (
+                          <Table >
+                            <thead>
+                              <tr>
+                                <th>Particulars</th>
+                                <th>Required Area</th>
+                                <th>Available Area</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {values.particulars_1.map((obj, index) => {
+                                return (
+                                  <tr key={index}>
+                                    <td>{obj?.particular}</td>
+                                    <td>{obj?.required_area} {obj?.AreaUnit}</td>
+                                    <td>
+                                      <Field
+                                        type="number"
+                                        name={`particulars_1[${index}].available_area`}
+                                        as={Form.Control}
+
+                                      />
+                                      <div className="text-danger">
+                                        <ErrorMessage name={`particulars_1[${index}].available_area`} />
+                                      </div>
+                                    </td>
+                                  </tr>
+                                )
+                              })}
+                            </tbody>
+                          </Table>
+                        )}
+                      </FieldArray>
+                      <hr />
+                      <FieldArray name="particulars_2">
+                        <Table >
+                          <thead>
+                            <tr>
+                              <th>Particulars</th>
+                              <th>Required</th>
+                              <th>Availibility</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {values.particulars_2.map((obj, index) => {
+                              return (
+                                <tr key={index}>
+                                  <td>{obj?.particular}</td>
+                                  <td>{obj?.instruction}</td>
+                                  <td>
+                                    <FileField2
+                                      // label="If Yes, Upload Supporting Government Notification/Order/Circular"
+                                      name={`particulars_2[${index}].document`}
+                                      mandatory
+                                      accept=".pdf,.jpg,.png"
+                                      context={FormContext}
+                                      onClickViewFileButton={() => viewFile(values.particulars_2[index].document)}
+                                    />
+
+                                  </td>
+                                </tr>
+                              )
+                            })}
+                          </tbody>
+                        </Table>
+                      </FieldArray>
+
+                    </Card.Body>
+                    <Card.Footer>
+                      <Navigations nav={nav} onNext={() => { onNext(); }} />
+                    </Card.Footer>
+                  </Card>
+                </Form>
+              </FormContext.Provider>
+            )}
+          </Formik>
+          {false && (<Formik
             innerRef={formikRef}
             initialValues={Building_Detail_initialValues}
             validationSchema={yup.object().shape(building_detail_yup_object)}
@@ -125,7 +290,7 @@ export const Amenities = ({ setActive }) => {
                           <th>Required</th>
                           <th>Required Area</th>
                           <th>Available Area</th>
-                          <th>Upload Geo Tagged Photo <ReqSign /></th>
+                          {/* <th>Upload Geo Tagged Photo <ReqSign /></th> */}
                         </tr>
                       </thead>
                       <tbody>
@@ -149,19 +314,20 @@ export const Amenities = ({ setActive }) => {
                                                             <ErrorMessage name={workshopAreaField} />
                                                         </div> */}
                               </td>
-                              <td>
-                                <input
-                                  type="file"
-                                  name="file"
-                                  className="form-control"
-                                // onChange={(event) => {
-                                //     setFieldValue(
-                                //         fileField,
-                                //         event.currentTarget.files[0]
-                                //     );
-                                // }}
-                                />
-                                {/* <div className="text-danger">
+                              {false && (
+                                <td>
+                                  <input
+                                    type="file"
+                                    name="file"
+                                    className="form-control"
+                                  // onChange={(event) => {
+                                  //     setFieldValue(
+                                  //         fileField,
+                                  //         event.currentTarget.files[0]
+                                  //     );
+                                  // }}
+                                  />
+                                  {/* <div className="text-danger">
                                                             <ErrorMessage
                                                                 name={fileField}
                                                                 component="div"
@@ -169,7 +335,8 @@ export const Amenities = ({ setActive }) => {
                                                             />
 
                                                         </div> */}
-                              </td>
+                                </td>
+                              )}
                             </tr>
                           )
                         })}
@@ -257,7 +424,7 @@ export const Amenities = ({ setActive }) => {
                 </Card>
               </Form>
             )}
-          </Formik>
+          </Formik>)}
         </>
       }
     </Fragment>
@@ -338,8 +505,6 @@ export const Assessment_Amenities = () => {
         </Col>
 
       </Row>
-
-
     </>
   );
 };
@@ -678,8 +843,8 @@ export const Assessment_Amenities = () => {
 //         "Document does not indicate the workshop for all trade/units, classrooms, IT Lab, Administrative area, Amenities area etc.",
 //     },
 //     {
-//       value: "Any other reason, please specify",
-//       label: "Any other reason, please specify",
+//       value: "other",
+//       label: "other",
 //     },
 //   ];
 
@@ -988,7 +1153,7 @@ export const Assessment_Amenities = () => {
 //                       )}
 
 //                       {formData.category ==
-//                         "Any other reason, please specify" && (
+//                         "other" && (
 //                           <Col md={12}>
 //                             <b>Reason:</b> <p>{formData.assessor_comments}</p>
 //                           </Col>
@@ -1130,8 +1295,8 @@ export const Assessment_Amenities = () => {
 //       label: "Construction of the building is incomplete",
 //     },
 //     {
-//       value: "Any other reason, please specify",
-//       label: "Any other reason, please specify",
+//       value: "other",
+//       label: "other",
 //     },
 //   ];
 
@@ -1470,7 +1635,7 @@ export const Assessment_Amenities = () => {
 //                       )}
 
 //                       {formData.category ==
-//                         "Any other reason, please specify" && (
+//                         "other" && (
 //                           <Col md={12}>
 //                             <b>Reason:</b> <p>{formData.assessor_comments}</p>
 //                           </Col>

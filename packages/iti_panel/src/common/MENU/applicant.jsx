@@ -5,7 +5,6 @@ export const MENUITEMS = [
     menuGroup: "dashboard",
   },
   {
-
     allowTo: ["applicant"],
     path: `${import.meta.env.BASE_URL}dashboard`,
     title: "Dashboard",
@@ -16,6 +15,17 @@ export const MENUITEMS = [
     dirchange: false,
     menuGroup: "dashboard",
   },
+  //     {
+  //   allowTo: ["applicant"],
+  //   path: `${import.meta.env.BASE_URL}dashboard/DstAffiliation`,
+  //   title: "Apply For DST affiliation",
+  //   icon: "ti-home",
+  //   type: "link",
+  //   active: false,
+  //   selected: false,
+  //   dirchange: false,
+  //   menuGroup: "dashboard",
+  // },
   {
     allowTo: ["applicant"],
     menutitle: "NEW REGISTRATION",

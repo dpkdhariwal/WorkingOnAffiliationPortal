@@ -1,0 +1,52 @@
+import React, { createContext, useRef, useContext, Fragment, useState, useEffect } from "react";
+import { Row, Col, Card, Form, Form as BootstrapForm, InputGroup, Button, Modal, Table, Accordion } from "react-bootstrap";
+import * as formik from "formik";
+import * as yup from "yup";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import Swal from "sweetalert2";
+import { Formik, Field, FieldArray, ErrorMessage } from "formik";
+
+import { useLocation } from "react-router-dom";
+import * as C from "affserver";
+import * as st from "@/services/state/index"
+
+import { st1documentuploads } from 'affserver';
+
+
+export const FunctionRegistryContext = createContext(null);
+export const useFunctionRegistry = () => useContext(FunctionRegistryContext);
+
+import { st1_da_landdocuments } from "affserver";
+import { formatedDate, viewFile } from "@/helpers";
+import { Navigations } from "@/components/Assessment/components";
+import SwalManager from "@/common/SwalManager";
+import { SelectField } from "@/components/formik/Inputs";
+
+import TradeUnits from "@/screens/state/assessor/AssessmentI/TradeUnits/views/TradeUnits";
+
+
+
+export const TradeUnitsView = ({ steps, step, view: viewProp = false, isView = false, nav }) => {
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const appId = queryParams.get("appId");
+
+    const onNext = async () => {
+        nav.next();
+    }
+
+    return (
+        <>
+            <TradeUnits appId={appId} />
+            <Navigations nav={nav} onNext={onNext} />
+        </>
+    );
+};
+
+
+
+
+
+

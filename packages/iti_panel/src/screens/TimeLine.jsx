@@ -62,11 +62,7 @@ const getSetStep = (info, i) => {
 }
 
 export const TimeLineFinalTest = () => {
-
   const AppFlow = useSelector((state) => state.AppliInfo);
-
-
-
   return (
     <Fragment>
       <Card className="border border-primary card custom-card">

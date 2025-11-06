@@ -1,14 +1,39 @@
 import { Fragment, useRef, useEffect, useState } from "react";
-import { Row, Col, Card, Form, Button, ListGroup, Alert, InputGroup, Modal } from "react-bootstrap";
+import { Row, Col, Card, Form, Button, ListGroup, Alert, InputGroup, Modal, ButtonGroup } from "react-bootstrap";
 
 import PropTypes from "prop-types";
 
 import { useContext } from "react";
 import { FormikHelpersContext } from "../FormikContext"; // adjust path
 
-export const ApplicantEntityEmailId = ({ values, touched, errors, handleChange }) => {
+export const ApplicantEntityEmailId = ({ values, touched, errors, handleChange, setFieldError }) => {
+
+  const { setFieldValue } = useContext(FormikHelpersContext);
+  const [modalShow, setModalShow] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+
+  useEffect(() => {
+    if (!values.ApplicantEntityEmailId) return;
+    const handler = setTimeout(() => {
+      console.log("Debounced Email:", values.ApplicantEntityEmailId);
+      console.log(errors.ApplicantEntityEmailId);
+      values.isApplicantEntityEmailIdVerified = false;
+      setFieldValue("isApplicantEntityEmailIdVerified", false);
+      
+
+    }, 500); // 500ms debounce
+
+    return () => {
+      clearTimeout(handler); // cleanup on next change
+    };
+  }, [values.ApplicantEntityEmailId]);
 
 
+  const openOtpBox = () => {
+    if (!values.isApplicantEntityEmailIdVerified) {
+      setModalShow(true);
+    }
+  }
 
   return (
     <>
@@ -27,15 +52,26 @@ export const ApplicantEntityEmailId = ({ values, touched, errors, handleChange }
           isInvalid={
             touched.ApplicantEntityEmailId &&
             !!errors.ApplicantEntityEmailId
-          } aria-describedby="basic-addon2" />
-        {/* <Button onClick={verifyEmail} variant="primary" id="button-addon2"> Verify </Button> */}
-        <OTPBox />
-        {touched.ApplicantEntityEmailId &&
-          errors.ApplicantEntityEmailId && (
-            <Form.Control.Feedback type="invalid">
-              {errors.ApplicantEntityEmailId}
-            </Form.Control.Feedback>
-          )}
+          }
+          aria-describedby="basic-addon2"
+          isValid={touched.ApplicantEntityEmailId && !errors.ApplicantEntityEmailId} // ✅ add this
+        // disabled={!editMode}
+        />
+
+
+        {errors.ApplicantEntityEmailId && (<ButtonGroup role="group" aria-label="Basic example">
+          <Button variant={values.isApplicantEntityEmailIdVerified ? "success" : "danger"} onClick={openOtpBox}>
+            {values.isApplicantEntityEmailIdVerified ? "Verified" : "Verify"}
+          </Button>
+          <Button onClick={() => { setEditMode(true), setFieldError("ApplicantEntityEmailId", "Email is required before verification"); }} variant="primary" className="btn-wave"> <i className="ri-edit-line"></i> </Button>
+        </ButtonGroup>)}
+
+
+
+
+        <MyVerticallyCenteredModal show={modalShow} onHide={() => setModalShow(false)} />
+
+        {touched.ApplicantEntityEmailId && errors.ApplicantEntityEmailId && (<Form.Control.Feedback type="invalid"> {errors.ApplicantEntityEmailId} </Form.Control.Feedback>)}
       </InputGroup>
     </>
   );
@@ -48,8 +84,6 @@ ApplicantEntityEmailId.propTypes = {
 export const OTPBox = () => {
   const [modalShow, setModalShow] = useState(false);
   const { values, errors } = useContext(FormikHelpersContext);
-
-  console.log(errors.ApplicantEntityEmailId);
 
   const openOtpBox = () => {
     if (!values.isApplicantEntityEmailIdVerified) {
@@ -65,7 +99,8 @@ export const OTPBox = () => {
       <MyVerticallyCenteredModal
         show={modalShow}
         onHide={() => setModalShow(false)}
-      /></>
+      />
+    </>
   )
 }
 const renderOtpInputs = (otpArray, setOtpArray, refs, onComplete) => (

@@ -14,8 +14,18 @@ import { land_info_yupObject } from "../../../../reducers/newAppReducer";
 import { setInstLandDetails } from "../../../../db/appList";
 import { useLocation } from "react-router-dom";
 import * as ap from "../../../../services/applicant/index";
+import { Navigations } from "../../../Assessment/components";
 
-const DetailsOfTheLandToBeUsedForTheITI = ({ step, setActive, refreshSteps }) => {
+import { landDetail } from "affserver";
+import { RadioField, TextField } from "../../../formik/Inputs";
+import { ContextMap } from "../../../formik/contexts";
+
+import { pid } from "affserver";
+
+
+const DetailsOfTheLandToBeUsedForTheITI = ({ step, setActive, refreshSteps, nav }) => {
+  const navigate = useNavigate();
+
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const appId = queryParams.get("appId");
@@ -25,67 +35,135 @@ const DetailsOfTheLandToBeUsedForTheITI = ({ step, setActive, refreshSteps }) =>
   const formRef2 = useRef();
   const dispatch = useDispatch();
   const formikRef = useRef();
-  const land_info_reducer = useSelector((state) => state.land_info_reducer);
+  // const land_info_reducer = useSelector((state) => state.land_info_reducer);
   const reg = useSelector((state) => state.reg);
 
-  const submit = (values) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to save the form data?",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonText: "Yes, save it!",
-      cancelButtonText: "Cancel",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // User confirmed – now show loading or save directly
-        Swal.fire({
-          title: "Saving...",
-          didOpen: () => {
-            // Swal.showLoading();
-            // dispatch({ type: UPDATE_LAND_INFO, payload: values });
-            Swal.showLoading();
-            // dispatch({ type: UPDATE_LAND_INFO, payload: values });
-            // dispatch({ type: "set_filled_step", payload: { step: 3 }, });
-            // dispatch({ type: "reg_set_active_step", payload: { step: 4 } });
-            // setActive(reg.steps[4]);
-            // let result = setInstLandDetails(values, appId, step, authUser);
-            let result = ap.setInstLandDetails(values, appId, step);
-            refreshSteps();
-            Swal.close();
-          },
-        });
-      } else {
-        console.log("User cancelled save");
+  // const submit = (values) => {
+  //   Swal.fire({
+  //     title: "Are you sure?",
+  //     text: "Do you want to save the form data?",
+  //     icon: "question",
+  //     showCancelButton: true,
+  //     confirmButtonText: "Yes, save it!",
+  //     cancelButtonText: "Cancel",
+  //   }).then((result) => {
+  //     if (result.isConfirmed) {
+  //       // User confirmed – now show loading or save directly
+  //       Swal.fire({
+  //         title: "Saving...",
+  //         didOpen: () => {
+  //           // Swal.showLoading();
+  //           // dispatch({ type: UPDATE_LAND_INFO, payload: values });
+  //           Swal.showLoading();
+  //           // dispatch({ type: UPDATE_LAND_INFO, payload: values });
+  //           // dispatch({ type: "set_filled_step", payload: { step: 3 }, });
+  //           // dispatch({ type: "reg_set_active_step", payload: { step: 4 } });
+  //           // setActive(reg.steps[4]);
+  //           // let result = setInstLandDetails(values, appId, step, authUser);
+  //           let result = ap.setInstLandDetails(values, appId, step);
+  //           refreshSteps();
+  //           Swal.close();
+  //         },
+  //       });
+  //     } else {
+  //       console.log("User cancelled save");
+  //     }
+  //   });
+  // };
+
+  const onNext = async () => {
+    try {
+      console.log(formikRef.current.validateForm());
+      console.log(formikRef.current.errors);
+      formikRef.current.setTouched(
+        Object.keys(formikRef.current.values).reduce(
+          (acc, key) => ({ ...acc, [key]: true }),
+          {}
+        )
+      );
+
+      if (formikRef.current.isValid != true) {
+        throw new Error("Please Submit Form");
       }
-    });
+
+      if (formikRef.current.isValid === true) {
+        console.log(formikRef.current.isValid, formikRef.current.errors);
+        const confirmResult = await Swal.fire({
+          title: "Are you sure?",
+          text: "Do you want to Proceed",
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonText: "Okay, Proceed",
+          cancelButtonText: "Cancel",
+        });
+        if (confirmResult.isConfirmed) {
+
+          let result, resp;
+
+          // Swal.fire({ title: "Saving...", text: "Please wait while we save your data.", allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+          result = ap.setInstLandDetails(formikRef.current.values, appId, step);
+          // Swal.close();
+
+          const result2 = await Swal.fire({ icon: "success", title: "Saved!", text: "Your form data has been saved successfully", confirmButtonText: "OK", });
+          if (result2.isConfirmed) {
+            nav.next();
+            // navigate(0);
+          }
+        }
+      }
+
+    } catch (error) {
+      console.error("Error while saving:", error);
+      Swal.close();
+      Swal.fire({
+        icon: "error", title: "Error", text: error.message || "Failed to save verification remarks."
+      });
+    }
   };
+
+
+  const loadData = async () => {
+    try {
+      const result = await ap.getInstLandDetails(appId);
+      formikRef.current.setValues(result.data);
+    } catch (error) {
+      console.log(error);
+      formikRef.current.setValues(pid.intiValues);
+    }
+  };
+  useEffect(() => {
+    loadData();
+  }, []);
 
   return (
     <Fragment>
       <Formik
+        enableReinitialize
         innerRef={formikRef}
         validateOnChange={true}
-        initialValues={land_info_reducer}
+        initialValues={landDetail.initialValues}
         validationSchema={yup.object().shape(land_info_yupObject)}
-        onSubmit={(values) => { submit(values) }}
+      // onSubmit={(values) => { submit(values) }}
       >
-        {({ handleSubmit, handleChange, values, errors, touched }) => (
-          <Card className="custom-card shadow">
-            <Card.Header>
-              <div className="card-title" style={{ textTransform: "none" }}>
-                <h4>Details of Land</h4>
-              </div>
-            </Card.Header>
-            <Card.Body>
-              <Form ref={formRef2} onSubmit={handleSubmit} validated>
-                <Row className="mb-3">
-                  <Form.Group as={Col} md="6" controlId="validationCustom01">
-                    <Form.Label>
-                      Possession of Land<span style={{ color: "red" }}>*</span>
-                    </Form.Label>
-                    <div>
-                      <Form.Check
+        {({ handleSubmit, handleChange, values, errors, touched, setFieldValue, handleBlur }) => (
+          <ContextMap.Stage1Form.Provider value={{ handleSubmit, handleChange, values, errors, touched, setFieldValue, handleBlur }} >
+            <Card className="custom-card shadow">
+              <Card.Header>
+                <div className="card-title" style={{ textTransform: "none" }}>
+                  <h4>Details of Land</h4>
+                </div>
+              </Card.Header>
+              <Card.Body>
+                <Form ref={formRef2} onSubmit={handleSubmit} validated>
+                  <Row className="mb-3">
+                    <Form.Group as={Col} md="6" controlId="validationCustom01">
+                      <Form.Label>
+                        Possession of Land<span style={{ color: "red" }}>*</span>
+                      </Form.Label>
+                      <div style={{ display: 'flex' }} >
+                        <RadioField inline label={`Owned`} name="possession_of_land" value={`owned`} contextName="Stage1Form" mandatory size="lg" />
+
+                        {/* <Form.Check
                         inline
                         type="radio"
                         label="Owned"
@@ -94,8 +172,8 @@ const DetailsOfTheLandToBeUsedForTheITI = ({ step, setActive, refreshSteps }) =>
                         onChange={handleChange}
                         checked={values.possession_of_land === "owned"}
                         isInvalid={touched.possession_of_land && !!errors.possession_of_land}
-                      />
-                      <Form.Check
+                      /> */}
+                        {/* <Form.Check
                         inline
                         type="radio"
                         label="Leased"
@@ -104,33 +182,54 @@ const DetailsOfTheLandToBeUsedForTheITI = ({ step, setActive, refreshSteps }) =>
                         onChange={handleChange}
                         checked={values.possession_of_land === "leased"}
                         isInvalid={touched.possession_of_land && !!errors.possession_of_land}
-                      />
-                    </div>
-                    {touched.possession_of_land && errors.possession_of_land && (
-                      <Form.Control.Feedback
-                        type="invalid"
-                        className="d-block"
-                      >
-                        {errors.possession_of_land}
-                      </Form.Control.Feedback>
-                    )}
-                  </Form.Group>
-                </Row>
+                      /> */}
+                        <RadioField inline label={`Leased`} name="possession_of_land" value={`leased`} contextName="Stage1Form" mandatory size="lg" />
 
-                {values.possession_of_land === "owned" ? (<Row className="mb-3">
-                  <Col md="12">
-                    <Card className="border border-info custom-card">
-                      <Card.Header>
-                        <div
-                          className="card-title"
-                          style={{ textTransform: "none" }}
+                      </div>
+                      {touched.possession_of_land && errors.possession_of_land && (
+                        <Form.Control.Feedback
+                          type="invalid"
+                          className="d-block"
                         >
-                          Owned Land
-                        </div>
-                      </Card.Header>
-                      <Card.Body>
-                        <Row className="mb-3">
-                          <Form.Group
+                          {errors.possession_of_land}
+                        </Form.Control.Feedback>
+                      )}
+                    </Form.Group>
+                  </Row>
+
+                  {values.possession_of_land === "owned" ? (<Row className="mb-3">
+                    <Col md="12">
+                      <Card className="border border-info custom-card">
+                        <Card.Header>
+                          <div
+                            className="card-title"
+                            style={{ textTransform: "none" }}
+                          >
+                            Owned Land
+                          </div>
+                        </Card.Header>
+                        <Card.Body>
+                          <Row className="mb-3">
+                            <Col md={6}>
+                              <TextField
+                                mandatory
+                                label="Land Owner’s Name"
+                                name="land_owner_name"
+                                type="text"
+                                contextName="Stage1Form"
+                                size="lg"
+                                onValueChange={(value, event) => {
+                                  // ✅ Allow only alphabets and spaces
+                                  const sanitized = value.replace(/[^a-zA-Z\s]/g, "");
+
+                                  // Update input and formik field
+                                  event.target.value = sanitized;
+                                  setFieldValue("land_owner_name", sanitized);
+                                }}
+                              />
+                            </Col>
+
+                            {/* <Form.Group
                             as={Col}
                             md="6"
                             controlId="validationCustom02"
@@ -156,9 +255,11 @@ const DetailsOfTheLandToBeUsedForTheITI = ({ step, setActive, refreshSteps }) =>
                                 {errors.land_owner_name}
                               </Form.Control.Feedback>
                             )}
-                          </Form.Group>
-
-                          <Form.Group
+                          </Form.Group> */}
+                            <Col md={6}>
+                              <TextField mandatory label="Land Registration Number" name="land_registration_number" type="text" contextName="Stage1Form" size="lg" />
+                            </Col>
+                            {/* <Form.Group
                             as={Col}
                             md="6"
                             controlId="validationCustom02"
@@ -184,33 +285,51 @@ const DetailsOfTheLandToBeUsedForTheITI = ({ step, setActive, refreshSteps }) =>
                                 {errors.land_registration_number}
                               </Form.Control.Feedback>
                             )}
-                          </Form.Group>
-                        </Row>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                </Row>) : values.possession_of_land === "leased" ? (<Row className="mb-3">
-                  <Col md="12">
-                    <Card className="border border-info custom-card">
-                      <Card.Header>
-                        <div
-                          className="card-title"
-                          style={{ textTransform: "none" }}
-                        >
-                          Leased Land
-                          <div>
-                            <p style={{ "font-weight": "400" }}>
-                              (For leased land, the lease deed should be
-                              registered between the lessor and lessee for a
-                              minimum period of six years from the date of the
-                              application.)
-                            </p>
+                          </Form.Group> */}
+                          </Row>
+                        </Card.Body>
+                      </Card>
+                    </Col>
+                  </Row>) : values.possession_of_land === "leased" ? (<Row className="mb-3">
+                    <Col md="12">
+                      <Card className="border border-info custom-card">
+                        <Card.Header>
+                          <div
+                            className="card-title"
+                            style={{ textTransform: "none" }}
+                          >
+                            Leased Land
+                            <div>
+                              <p style={{ "font-weight": "400" }}>
+                                (For leased land, the lease deed should be
+                                registered between the lessor and lessee for a
+                                minimum period of six years from the date of the
+                                application.)
+                              </p>
+                            </div>
                           </div>
-                        </div>
-                      </Card.Header>
-                      <Card.Body>
-                        <Row className="mb-3">
-                          <Form.Group
+                        </Card.Header>
+                        <Card.Body>
+                          <Row className="mb-3">
+                            <Col md={3}>
+                              <TextField 
+                                mandatory 
+                                label="Name of Lessor" 
+                                name="name_of_lessor" 
+                                type="text" 
+                                contextName="Stage1Form" 
+                                size="lg"
+                                onValueChange={(value, event) => {
+                                  // ✅ Allow only alphabets and spaces
+                                  const sanitized = value.replace(/[^a-zA-Z\s]/g, "");
+
+                                  // Update input and formik field
+                                  event.target.value = sanitized;
+                                  setFieldValue("name_of_lessor", sanitized);
+                                }}
+                                />
+                            </Col>
+                            {/* <Form.Group
                             as={Col}
                             md="3"
                             controlId="validationCustom02"
@@ -247,9 +366,29 @@ const DetailsOfTheLandToBeUsedForTheITI = ({ step, setActive, refreshSteps }) =>
                                 {errors.name_of_lessor}
                               </Form.Control.Feedback>
                             )}
-                          </Form.Group>
+                          </Form.Group> */}
 
-                          <Form.Group
+
+                            <Col md={3}>
+                              <TextField 
+                                mandatory 
+                                label="Name of Lessee" 
+                                name="name_of_lessee" 
+                                type="text" 
+                                contextName="Stage1Form" 
+                                size="lg"
+                                 onValueChange={(value, event) => {
+                                  // ✅ Allow only alphabets and spaces
+                                  const sanitized = value.replace(/[^a-zA-Z\s]/g, "");
+
+                                  // Update input and formik field
+                                  event.target.value = sanitized;
+                                  setFieldValue("name_of_lessee", sanitized);
+                                }}
+                                
+                                />
+                            </Col>
+                            {/* <Form.Group
                             as={Col}
                             md="3"
                             controlId="validationCustom02"
@@ -286,8 +425,13 @@ const DetailsOfTheLandToBeUsedForTheITI = ({ step, setActive, refreshSteps }) =>
                                 {errors.name_of_lessee}
                               </Form.Control.Feedback>
                             )}
-                          </Form.Group>
-                          <Form.Group
+                          </Form.Group> */}
+
+                            <Col md={3}>
+                              <TextField mandatory label="Lease Deed Number" name="lease_deed_number" type="text" contextName="Stage1Form" size="lg" />
+                            </Col>
+
+                            {/* <Form.Group
                             as={Col}
                             md="3"
                             controlId="validationCustom02"
@@ -326,69 +470,97 @@ of the lease agreement between the property owner and the lessee."
                                 {errors.lease_deed_number}
                               </Form.Control.Feedback>
                             )}
-                          </Form.Group>
-                          <Form.Group
-                            as={Col}
-                            md="3"
-                            controlId="validationCustom02"
-                          >
-                            <Form.Label>
-                              Date of Commencement
-                              <span style={{ color: "red" }}>*</span>
-                            </Form.Label>
-                            <Form.Control
-                              required
-                              type="date"
-                              placeholder="Date of Commencement"
-                              name="date_of_commencement"
-                              onChange={handleChange}
-                              value={values.date_of_commencement}
-                              isInvalid={touched.date_of_commencement && !!errors.date_of_commencement}
-                            />
-                            {touched.date_of_commencement && errors.date_of_commencement && (
-                              <Form.Control.Feedback
-                                type="invalid"
-                                className="d-block"
-                              >
-                                {errors.date_of_commencement}
-                              </Form.Control.Feedback>
-                            )}
-                          </Form.Group>
-                          <Form.Group
-                            as={Col}
-                            md="3"
-                            controlId="validationCustom03"
-                          >
-                            <Form.Label>
-                              Date of Expiry
-                              <span style={{ color: "red" }}>*</span>
-                            </Form.Label>
-                            <Form.Control
-                              required
-                              type="date"
-                              placeholder="Date of Expiry"
-                              name="date_of_expiry"
-                              onChange={handleChange}
-                              value={values.date_of_expiry}
-                              isInvalid={touched.date_of_expiry && !!errors.date_of_expiry}
-                            />
-                            {touched.date_of_expiry && errors.date_of_expiry && (
-                              <Form.Control.Feedback
-                                type="invalid"
-                                className="d-block"
-                              >
-                                {errors.date_of_expiry}
-                              </Form.Control.Feedback>
-                            )}
-                          </Form.Group>
-                        </Row>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                </Row>) : ''}
+                          </Form.Group> */}
 
-                <Row className="mb-3">
-                  <Form.Group as={Col} md="6" controlId="validationCustom02">
+                            <Col md={3}>
+                              <TextField mandatory label="Date of Commencement" name="date_of_commencement" type="date" contextName="Stage1Form" size="lg" />
+                            </Col>
+                            {/* <Form.Group
+                              as={Col}
+                              md="3"
+                              controlId="validationCustom02"
+                            >
+                              <Form.Label>
+                                Date of Commencement
+                                <span style={{ color: "red" }}>*</span>
+                              </Form.Label>
+                              <Form.Control
+                                required
+                                type="date"
+                                placeholder="Date of Commencement"
+                                name="date_of_commencement"
+                                onChange={handleChange}
+                                value={values.date_of_commencement}
+                                isInvalid={touched.date_of_commencement && !!errors.date_of_commencement}
+                              />
+                              {touched.date_of_commencement && errors.date_of_commencement && (
+                                <Form.Control.Feedback
+                                  type="invalid"
+                                  className="d-block"
+                                >
+                                  {errors.date_of_commencement}
+                                </Form.Control.Feedback>
+                              )}
+                            </Form.Group> */}
+
+                            <Col md={3}>
+                              <TextField mandatory label="Date of Expiry" name="date_of_expiry" type="date" contextName="Stage1Form" size="lg" />
+                            </Col>
+
+                            {/* <Form.Group
+                              as={Col}
+                              md="3"
+                              controlId="validationCustom03"
+                            >
+                              <Form.Label>
+                                Date of Expiry
+                                <span style={{ color: "red" }}>*</span>
+                              </Form.Label>
+                              <Form.Control
+                                required
+                                type="date"
+                                placeholder="Date of Expiry"
+                                name="date_of_expiry"
+                                onChange={handleChange}
+                                value={values.date_of_expiry}
+                                isInvalid={touched.date_of_expiry && !!errors.date_of_expiry}
+                              />
+                              {touched.date_of_expiry && errors.date_of_expiry && (
+                                <Form.Control.Feedback
+                                  type="invalid"
+                                  className="d-block"
+                                >
+                                  {errors.date_of_expiry}
+                                </Form.Control.Feedback>
+                              )}
+                            </Form.Group> */}
+                          </Row>
+                        </Card.Body>
+                      </Card>
+                    </Col>
+                  </Row>) : ''}
+
+                  <Row className="mb-3">
+                    <Col md={6}>
+                      <TextField mandatory
+                        label="Land Area (In Square Metres)"
+                        name="land_area_in_square_metres"
+                        type="text"
+                        contextName="Stage1Form"
+                        size="lg"
+                        onValueChange={(value, event) => {
+                          // ✅ Allow only digits, one decimal point, and optional minus sign (if needed)
+                          const sanitized = value
+                            .replace(/[^0-9.]/g, "")       // remove everything except digits and dot
+                            .replace(/(\..*)\./g, "$1");   // allow only one dot
+
+                          // Update input field & formik state
+                          event.target.value = sanitized;
+                          setFieldValue("land_area_in_square_metres", sanitized);
+                        }}
+                      />
+                    </Col>
+                    {/* <Form.Group as={Col} md="6" controlId="validationCustom02">
                     <Form.Label>
                       Land Area (In Square Metres)
                       <span style={{ color: "red" }}>*</span>
@@ -415,18 +587,22 @@ of the lease agreement between the property owner and the lessee."
                         {errors.land_area_in_square_metres}
                       </Form.Control.Feedback>
                     )}
-                  </Form.Group>
-                </Row>
-              </Form>
-            </Card.Body>
-            <Card.Footer>
+                  </Form.Group> */}
+                  </Row>
+                </Form>
+              </Card.Body>
+              {/* <Card.Footer>
               <div className="d-flex justify-content-between mb-3">
                 <Button className="p-2" variant="success" onClick={() => formikRef.current?.submitForm()} >Save & Continue </Button>
               </div>
-            </Card.Footer>
-          </Card>
+            </Card.Footer> */}
+            </Card>
+          </ContextMap.Stage1Form.Provider>
         )}
       </Formik>
+
+      <Navigations nav={nav} onNext={() => { onNext(); }} />
+
     </Fragment>
   );
 };

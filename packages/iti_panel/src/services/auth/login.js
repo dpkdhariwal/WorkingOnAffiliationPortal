@@ -1,10 +1,10 @@
-import axios from 'axios';
+
+import api_axios from "@/axios_custom";
 import DeviceDetector from 'device-detector-js';
-export const base_url = 'http://localhost:3000';
+export const API_BASE_URL = process.env.REACT_APP_API_URL;
 import * as cnf from "../config";
-export const api = axios.create({
-  baseURL: "http://localhost:3000/api",
-//   baseURL: "https://affiliation.dgt.gov.in/api",
+export const api = api_axios.create({
+  baseURL: API_BASE_URL,
   withCredentials: true 
 });
 

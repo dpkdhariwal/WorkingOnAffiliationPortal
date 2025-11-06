@@ -33,7 +33,7 @@ const App = () => {
             </div>
             <Footer />
           </div>
-          <Backtotop />
+          {/* <Backtotop /> */}
         </div>
       {/* </Provider> */}
     </Fragment>

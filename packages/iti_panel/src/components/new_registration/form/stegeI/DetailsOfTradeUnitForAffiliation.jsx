@@ -2,10 +2,10 @@ import { Fragment, useEffect, useRef, useState } from "react";
 import { Row, Col, Card, Form, Button } from "react-bootstrap";
 import { InputGroup, Modal } from "react-bootstrap";
 import { ChatMessage } from "../../../Assessment/ReviewTrail";
-import { Form as BootstrapForm } from "react-bootstrap";
+import { Form as BootstrapForm, Table } from "react-bootstrap";
 
 
-import { Formik, Field, FieldArray } from "formik";
+import { Formik, Field, FieldArray, ErrorMessage } from "formik";
 import * as formik from "formik";
 
 import * as yup from "yup";
@@ -31,8 +31,16 @@ import * as ap from "../../../../services/applicant/index";
 import * as gen from "../../../../services/general/index";
 import * as st from "../../../../services/state/index";
 
+import { trades } from "affserver";
+import { ContextMap } from "../../../formik/contexts";
+import { SelectField, TextField } from "../../../formik/Inputs";
 
-const DetailsOfDocumentsToBeUploaded = ({ step, setActive, refreshSteps }) => {
+import { useContext } from "react";
+
+
+const DetailsOfDocumentsToBeUploaded = ({ step, setActive, refreshSteps, nav }) => {
+  const navigate = useNavigate();
+
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const appId = queryParams.get("appId");
@@ -43,161 +51,189 @@ const DetailsOfDocumentsToBeUploaded = ({ step, setActive, refreshSteps }) => {
   const reg = useSelector((state) => state.reg);
 
   const dispatch = useDispatch();
-  const submit = (values) => {
-    console.log(values);
-    Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to save the form data?",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonText: "Yes, save it!",
-      cancelButtonText: "Cancel",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // User confirmed – now show loading or save directly
-        Swal.fire({
-          title: "Saving...",
-          didOpen: async () => {
-
-            Swal.showLoading();
-            // dispatch({ type: UPDATE_TRADE_UNIT, payload: values });
-            // dispatch({ type: "set_filled_step", payload: { step: 2 }, });
-            // dispatch({ type: "reg_set_active_step", payload: { step: 3 } });
-            // setActive(reg.steps[3]);
-
-
-            // let result = setInstTradeDetails(values, appId, step, authUser);
-            await ap.setInstTradeDetails(values, appId, step);
-            refreshSteps();
-            Swal.fire("Saved!", "Your form data has been saved.", "success");
-            Swal.close();
-          },
-        });
-      } else {
-        console.log("User cancelled save");
-      }
-    });
-  };
 
   const formikRef = useRef();
   const trade_unit_values = useSelector((state) => state.trade_unit_reducer);
 
+  const [masterTradeList, setMasterTradeList] = useState([]);
 
   const loadData = async () => {
-    // const data = await getProposedInstDetailsByUserId(appId);
-    const result = await ap.getInstTradeDetails(appId);
+    try {
+      const result = await ap.getInstTradeDetails(appId);
+      setMasterTradeList(result.data);
+
+      const result2 = await ap.getFilledTrades(appId);
+      console.log(result2.data);
+
+      formikRef.current.setValues(result2.data);
+
+    } catch (error) {
+      console.error(error);
+    }
   };
   useEffect(() => {
     loadData();
   }, []);
 
+  const onNext = async () => {
+    try {
+      await formikRef.current.validateForm();
+      console.log(formikRef.current.errors);
+      formikRef.current.setTouched(
+        Object.keys(formikRef.current.values).reduce(
+          (acc, key) => ({ ...acc, [key]: true }),
+          {}
+        )
+      );
+
+      if (formikRef.current.isValid != true) {
+        throw new Error("Please Submit Form");
+      }
+      console.log(formikRef.current.isValid, formikRef.current.errors);
+      const confirmResult = await Swal.fire({
+        title: "Are you sure?",
+        text: "Do you want to Proceed",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Okay, Proceed",
+        cancelButtonText: "Cancel",
+      });
+      if (confirmResult.isConfirmed) {
+        try {
+          let result, resp;
+          Swal.fire({ title: "Saving...", text: "Please wait while we save your data.", allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+          await ap.setInstTradeDetails(formikRef.current.values, appId, step);
+          Swal.close(); // close loading in case it’s still open
+
+          result = await Swal.fire("Saved!", "Your form data has been saved.", "success");
+          if (result.isConfirmed) {
+            nav.next();
+            // navigate(0); // reloads current route
+          }
+        } catch (error) {
+          console.error("Error while saving:", error);
+          Swal.close(); // close loading in case it’s still open
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: error.message || "Failed to save verification remarks."
+          });
+        }
+        return;
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <Fragment>
       <Formik
         enableReinitialize={true} // 👈 key line to re-sync with Redux
         innerRef={formikRef}
-        initialValues={trade_unit_values}
-        validationSchema={trade_unit_reducer_yupObject}
-        onSubmit={(values) => {
-          console.log("Form Values", values);
-          submit(values);
-        }}
+        initialValues={trades.intiValues}
+        validationSchema={trades.valSchema}
         validateOnChange={true}
       >
-        {({ handleSubmit, handleChange, setFieldValue, values, errors, touched }) => (
-          <Form noValidate onSubmit={handleSubmit}>
-            <Card className="custom-card border border-primary">
-              <Card.Header>
-                <div className="card-title" style={{ textTransform: "none" }}>
-                  Details of Trade(s)/Unit(s) for Affiliation
-                </div>
-              </Card.Header>
-              <Card.Body>
-                <FieldArray name="tradeList">
-                  <>
-                    {values.tradeList.map((_, index) => (
-                      <Row key={index} className="mb-3">
-                        <Col md={4}>
-                          <BootstrapForm.Label>
-                            Select Trade
-                          </BootstrapForm.Label>
-                          <BootstrapForm.Select
-                            size="lg"
-                            name={`tradeList[${index}]`}
-                            value={values.tradeList[index]}
-                            onChange={handleChange}
-                            isInvalid={
-                              touched.tradeList &&
-                              !!errors.tradeList
-                            }
-                          >
-                            <option value="">Select Trade</option>
-                            {ctsTrades.map((trade, i) => (
-                              <option key={i} value={trade}>{trade}</option>
-                            ))}
-                          </BootstrapForm.Select>
-                          <BootstrapForm.Control.Feedback type="invalid">
-                            {errors.tradeList?.[index]}
-                          </BootstrapForm.Control.Feedback>
-                        </Col>
+        {({ handleSubmit, handleChange, values, errors, touched, setFieldValue, handleBlur }) => (
+          <ContextMap.Stage1Form.Provider value={{ handleSubmit, handleChange, values, errors, touched, setFieldValue, handleBlur }} >
+            <Form noValidate onSubmit={handleSubmit}>
+              <Card className="custom-card border border-primary">
+                <Card.Header>
+                  <div className="card-title" style={{ textTransform: "none" }}>
+                    Details of Trade(s)/Unit(s) for Affiliation
+                  </div>
+                </Card.Header>
+                <Card.Body>
+                  <FieldArray name="trades">
+                    {({ push, remove }) => (
+                      <Card className="custom-card border border-primary">
+                        {errors.trades && typeof errors.trades === "string" && (
+                          <div className="alert alert-danger mt-2 mb-0" role="alert">
+                            {errors.trades}
+                          </div>
+                        )}
+                        <Card.Header>
+                          <div className="card-title" style={{ textTransform: "none" }}>
+                            Select Trades
+                          </div>
+                        </Card.Header>
+                        <Card.Body>
+                          <Table bordered hover>
+                            <thead>
+                              <tr>
+                                <th>#</th>
+                                <th>Select Trade <span style={{ color: "red" }}>*</span></th>
+                                <th>Unit in Shift 1 <span style={{ color: "red" }}>*</span></th>
+                                <th>Unit in Shift 2<span style={{ color: "red" }}>*</span></th>
+                                {/* <th>Unit in Shift 3<span style={{ color: "red" }}>*</span></th> */}
+                                {values.trades.length > 4 && (<th>Action</th>)}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {values.trades.map((doc, index) => {
+                                // get already selected trade_ids
+                                const selectedTrades = values.trades.map(p => p.trade);
+                                console.log(selectedTrades);
+                                // // allow all options except already selected ones (but keep current one selectable)
+                                const availableOptions = masterTradeList.filter(
+                                  opt => !selectedTrades.includes(opt.trade_id) || opt.trade_id === doc.trade
+                                );
 
-                        <Col md={4}>
-                          <BootstrapForm.Label>
-                            Enter Unit in Shift 1
-                          </BootstrapForm.Label>
-                          <BootstrapForm.Control
-                            type="number"
-                            name={`unit_in_shift1[${index}]`}
-                            value={values.unit_in_shift1[index]}
-                            onChange={handleChange}
-                            isInvalid={
-                              touched.unit_in_shift1?.[index] && !!errors.unit_in_shift1?.[index]
-                            }
-                            placeholder="Enter Number"
-                          />
-                          <BootstrapForm.Control.Feedback type="invalid">
-                            {errors.unit_in_shift1?.[index]}
-                          </BootstrapForm.Control.Feedback>
-                        </Col>
+                                return (
+                                  <tr
+                                    key={index}
+                                    style={{ marginBottom: "1rem", border: "1px solid #ccc", padding: "10px", }}
+                                  >
+                                    <td>{index + 1}</td>
+                                    <td>
+                                      <SelectField
+                                        // label="State"
+                                        name={`trades[${index}].trade`}
+                                        // mandatory
+                                        options={availableOptions}
+                                        contextName="Stage1Form"
+                                        // onValueChange={(val) => OnApplicantEntityStateChange(val, 'cmp_post_district')}
+                                        valueProp="trade_id"
+                                        labelProp="trade_name"
+                                        size="lg"
+                                      />
+                                    </td>
+                                    <td>
+                                      <TextField name={`trades[${index}].units_in_shift_1`} type="number" contextName="Stage1Form" size="lg" />
+                                    </td>
+                                    <td>
+                                      <TextField name={`trades[${index}].units_in_shift_2`} type="number" contextName="Stage1Form" size="lg" />
+                                    </td>
+                                    {/* <td>
+                                      <TextField name={`trades[${index}].units_in_shift_3`} type="number" contextName="Stage1Form" size="lg" />
+                                    </td> */}
 
-                        <Col md={4}>
-                          <BootstrapForm.Label>
-                            Enter Unit in Shift 2
-                          </BootstrapForm.Label>
-                          <BootstrapForm.Control
-                            type="number"
-                            name={`unit_in_shift2[${index}]`}
-                            value={values.unit_in_shift2[index]}
-                            onChange={handleChange}
-                            isInvalid={
-                              touched.unit_in_shift2?.[index] && !!errors.unit_in_shift2?.[index]
-                            }
-                            placeholder="Enter Number"
-                          />
-                          <BootstrapForm.Control.Feedback type="invalid">
-                            {errors.unit_in_shift2?.[index]}
-                          </BootstrapForm.Control.Feedback>
-                        </Col>
-                      </Row>
-                    ))}
+                                    {/* Remove Button */}
+                                    {values.trades.length > 4 && (
+                                      <td><Button variant="danger" size="sm" onClick={() => remove(index)}>Remove</Button></td>
+                                    )}
 
-                    <div className="d-flex flex-row-reverse">
-                      <div className="p-2">
-                        {" "}
-                        <Button
-                          type="button"
-                          className="mb-3"
-                          onClick={() => dispatch({ type: ADD_MORE_TRADE })}
-                        >
-                          Add More
-                        </Button>
-                      </div>
-                    </div>
-                  </>
-                </FieldArray>
-              </Card.Body>
-              <Card.Footer>
+                                  </tr>)
+                              })}
+                            </tbody>
+                          </Table>
+                        </Card.Body>
+                        <Card.Footer className="text-start">
+                          {values.trades.length < 25 && (
+                            <Button className="mb-3" onClick={() =>
+                              push({ trade: "", units_in_shift_1: "", units_in_shift_2: "", units_in_shift_3: "" })
+                            }>
+                              Add More
+                            </Button>
+                          )}
+
+                        </Card.Footer>
+                      </Card>
+                    )}
+                  </FieldArray>
+                </Card.Body>
+                {/* <Card.Footer>
                 <div className="d-flex justify-content-between mb-3">
                   <Button onClick={() => {
                     // setActive(reg.steps[0]);
@@ -212,11 +248,13 @@ const DetailsOfDocumentsToBeUploaded = ({ step, setActive, refreshSteps }) => {
                     Save & Continue
                   </Button>
                 </div>
-              </Card.Footer>
-            </Card>
-          </Form>
+              </Card.Footer> */}
+              </Card>
+            </Form>
+          </ContextMap.Stage1Form.Provider>
         )}
       </Formik>
+      <Navigations nav={nav} onNext={() => { onNext(); }} />
     </Fragment>
   );
 };
@@ -228,89 +266,95 @@ export const Assessment_DetailsOfDocumentsToBeUploaded = ({ step, view: viewProp
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const appId = queryParams.get("appId");
-  const MaxData = [
-    { value: "Document is not legible", label: "Document is not legible" },
-    { value: "Document is irrelevant", label: "Document is irrelevant" },
-    {
-      value: "Document lacks required information",
-      label: "Document lacks required information",
-    },
-    {
-      value:
-        "Document is not approved by the competent authority in the State/ UT",
-      label:
-        "Document is not approved by the competent authority in the State/ UT",
-    },
-    {
-      value:
-        "Address on the document does not match with the proposed land/ building address",
-      label:
-        "Address on the document does not match with the proposed land/ building address",
-    },
-    {
-      value:
-        "Document does not indicate the workshop for all trade/units, classrooms, IT Lab, Administrative area, Amenities area etc.",
-      label:
-        "Document does not indicate the workshop for all trade/units, classrooms, IT Lab, Administrative area, Amenities area etc.",
-    },
-    {
-      value: "Any other reason, please specify",
-      label: "Any other reason, please specify",
-    },
-  ];
+  // const MaxData = [
+  //   { value: "Document is not legible", label: "Document is not legible" },
+  //   { value: "Document is irrelevant", label: "Document is irrelevant" },
+  //   {
+  //     value: "Document lacks required information",
+  //     label: "Document lacks required information",
+  //   },
+  //   {
+  //     value:
+  //       "Document is not approved by the competent authority in the State/ UT",
+  //     label:
+  //       "Document is not approved by the competent authority in the State/ UT",
+  //   },
+  //   {
+  //     value:
+  //       "Address on the document does not match with the proposed land/ building address",
+  //     label:
+  //       "Address on the document does not match with the proposed land/ building address",
+  //   },
+  //   {
+  //     value:
+  //       "Document does not indicate the workshop for all trade/units, classrooms, IT Lab, Administrative area, Amenities area etc.",
+  //     label:
+  //       "Document does not indicate the workshop for all trade/units, classrooms, IT Lab, Administrative area, Amenities area etc.",
+  //   },
+  //   {
+  //     value: "other",
+  //     label: "other",
+  //   },
+  // ];
 
   const { Formik } = formik;
   const formRef2 = useRef();
   const dispatch = useDispatch();
 
-  const [showXlModal, setShowXlModal] = useState(false);
-  const [selectedSize, setSelectedSize] = useState("");
+  const Context = ContextMap['stageIAsmtDetails'] || ContextMap.default;
+  const { assessmentInfo } = useContext(Context);
 
-  const handleShowModal = (size) => {
-    switch (size) {
-      case "xl":
-        setShowXlModal(true);
-        break;
-      default:
-        break;
-    }
-    setSelectedSize(size);
-  };
+  console.log(assessmentInfo);
 
-  const handleCloseModal = () => {
-    setShowXlModal(false);
-    setSelectedSize("");
-  };
 
-  const [formData, setFormData] = useState({});
-  const [formSubmited, setFormSubmited] = useState(false);
+  // const [showXlModal, setShowXlModal] = useState(false);
+  // const [selectedSize, setSelectedSize] = useState("");
 
-  const messages = [
-    {
-      userType: "Assessor",
-      username: "Alice",
-      text: "Hello!",
-      datetime: "10:30 AM",
-      isUser: true,
-      comp: () => <AssessorRemarkHistory title="Building Plan" />,
-    },
-    {
-      userType: "Applicant",
-      username: "You",
-      text: "Hi Alice!",
-      datetime: "10:31 AM",
-      isUser: false,
-      comp: ItiRemarkHistory,
-    },
-    {
-      userType: "Assessor",
-      username: "Alice",
-      text: "Hello!",
-      datetime: "10:30 AM",
-      isUser: true,
-      comp: () => <AssessorRemarkHistory title="Building Plan" />,
-    },
-  ];
+  // const handleShowModal = (size) => {
+  //   switch (size) {
+  //     case "xl":
+  //       setShowXlModal(true);
+  //       break;
+  //     default:
+  //       break;
+  //   }
+  //   setSelectedSize(size);
+  // };
+
+  // const handleCloseModal = () => {
+  //   setShowXlModal(false);
+  //   setSelectedSize("");
+  // };
+
+  // const [formData, setFormData] = useState({});
+  // const [formSubmited, setFormSubmited] = useState(false);
+
+  // const messages = [
+  //   {
+  //     userType: "Assessor",
+  //     username: "Alice",
+  //     text: "Hello!",
+  //     datetime: "10:30 AM",
+  //     isUser: true,
+  //     comp: () => <AssessorRemarkHistory title="Building Plan" />,
+  //   },
+  //   {
+  //     userType: "Applicant",
+  //     username: "You",
+  //     text: "Hi Alice!",
+  //     datetime: "10:31 AM",
+  //     isUser: false,
+  //     comp: ItiRemarkHistory,
+  //   },
+  //   {
+  //     userType: "Assessor",
+  //     username: "Alice",
+  //     text: "Hello!",
+  //     datetime: "10:30 AM",
+  //     isUser: true,
+  //     comp: () => <AssessorRemarkHistory title="Building Plan" />,
+  //   },
+  // ];
   // const stageI1_info = useSelector((state) => state.theme.new_registration);
   const index = 1;
 
@@ -331,9 +375,10 @@ export const Assessment_DetailsOfDocumentsToBeUploaded = ({ step, view: viewProp
     if (result.isConfirmed) {
       try {
         // Set Flow if not exist
-        await setStageIAssessmentFlow(appId);
+        // await setStageIAssessmentFlow(appId);
         // await markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_TRADE_UNIT_FOR_AFFILIATION.step);
-        await st.markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_TRADE_UNIT_FOR_AFFILIATION.step);
+
+        await st.markAsCompleteStageAssessmentFlow(appId, C.ST1FC.DETAILS_OF_TRADE_UNIT_FOR_AFFILIATION.step, assessmentInfo.assessment_id, nav.step.slno);
 
         nav.next();
         // window.location.reload();
@@ -348,11 +393,28 @@ export const Assessment_DetailsOfDocumentsToBeUploaded = ({ step, view: viewProp
   const [tradeList, setTradeList] = useState([]);
 
   const getInfo = async () => {
-    // let res = await set.getDetails(appId);
-    // setTradeList(res?.new_insti_trade_list || []); // fallback to []
+    try {
 
-    let resp = await gen.getDetails(appId);
-    setTradeList(resp.data?.new_insti_trade_list || []); // fallback to []
+      Swal.fire({
+        title: "Loading...",
+        text: "Please wait while we fetch the data.",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
+      let resp = await gen.getDetails(appId);
+      // console.log(resp.data?.new_insti_trade_list);
+      setTradeList(resp.data?.new_insti_trade_list || []); // fallback to []
+      Swal.close();
+
+    } catch (error) {
+      console.error(error);
+      Swal.close();
+      console.error("Error fetching entity details:", error);
+      Swal.fire("Error", "Failed to fetch data.", "error");
+    }
   };
   useEffect(() => { getInfo() }, [appId]);
 
@@ -386,16 +448,19 @@ export const Assessment_DetailsOfDocumentsToBeUploaded = ({ step, view: viewProp
               <th style={{ border: "1px solid black" }}>Trade </th>
               <th style={{ border: "1px solid black" }}>Unit in Shift 1</th>
               <th style={{ border: "1px solid black" }}>Unit in Shift 2</th>
-              <th style={{ border: "1px solid black" }}>Unit in Shift 3</th>
+              {/* <th style={{ border: "1px solid black" }}>Unit in Shift 3</th> */}
             </tr>
-            {tradeList.map((trade, idx) => (
-              <tr key={idx}>
-                <td style={{ border: "1px solid black" }}>{trade.trade}</td>
-                <td style={{ border: "1px solid black" }}>{trade.us1}</td>
-                <td style={{ border: "1px solid black" }}>{trade.us2}</td>
-                <td style={{ border: "1px solid black" }}>{trade.us3}</td>
-              </tr>
-            ))}
+            {tradeList.map((trade, idx) => {
+
+              return (
+                <tr key={idx}>
+                  <td style={{ border: "1px solid black" }}>{trade.trade_name}</td>
+                  <td style={{ border: "1px solid black" }}>{trade.unit_in_shift1}</td>
+                  <td style={{ border: "1px solid black" }}>{trade.unit_in_shift2}</td>
+                  {/* <td style={{ border: "1px solid black" }}>{trade.unit_in_shift3}</td> */}
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </div>

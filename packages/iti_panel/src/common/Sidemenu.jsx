@@ -37,7 +37,6 @@ export const MENUITEMS = [
     menutitle: "Applications",
     menuGroup: "app_list",
   },
-  
   {
     allowTo: ["applicant", "state_assessor", "rdsde"],
     path: `${import.meta.env.BASE_URL}dashboard/AppList`,
@@ -49,6 +48,8 @@ export const MENUITEMS = [
     dirchange: false,
     menuGroup: "app_list",
   },
+
+  
   // {
   //   allowTo: ["test"],
   //   path: `${import.meta.env.BASE_URL}dashboard/new_registration`,

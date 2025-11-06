@@ -1,6 +1,6 @@
-import { Fragment, useEffect, useState, useRef } from "react";
+import { Fragment, useEffect, useState, useRef, createContext } from "react";
 import { Row, Col, Card, Form, Button, Table, Modal, Form as BForm, } from "react-bootstrap";
-import { Formik, Field, FieldArray } from "formik";
+import { Formik, Field, FieldArray, ErrorMessage } from "formik";
 import * as yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -17,15 +17,221 @@ import { UPDATE_BUILDING_DETAILS, STAGE_II__FEE_PAID, STAGE_II__FEE_EXEMPTED } f
 
 import { Form as BootstrapForm } from "react-bootstrap";
 
+import { useLocation } from "react-router-dom";
 
 
-export const SignageBoards = ({ setActive }) => {
+// export const SignageBoards = ({ setActive }) => {
+//   const stage = useSelector((state) => state.reg.stepsII);
+//   const dispatch = useDispatch();
+//   const navigate = useNavigate();
+//   const formikRef = useRef();
+//   const reg = useSelector((state) => state.reg);
+//   const stepInfo = reg.stepsII[0];
+
+//   useEffect(() => {
+//     console.log(stage);
+//   }, []);
+
+//   // const initialLandDocs = stage.stage_I.land_documents || [];
+//   // const lease_deed_document = stage.stage_I.lease_docs || [];
+
+//   const languages = [
+//     "",
+//     "Hindi",
+//     "English",
+//     "Bengali",
+//     "Telugu",
+//     "Marathi",
+//     "Tamil",
+//     "Urdu",
+//     "Gujarati",
+//     "Kannada",
+//     "Odia",
+//     "Malayalam",
+//     "Punjabi",
+//   ];
+
+//   const ID_Proof_Doc_list = [
+//     "Aadhaar Card",
+//     "PAN Card",
+//     "Passport",
+//     "Voter ID Card",
+//     "Driving License",
+//   ];
+
+//   const designation = ["Secretary", "Chairperson", "President"];
+
+
+//   const submit = (values) => {
+//     Swal.fire({
+//       title: "Are you sure?",
+//       text: "Do you want to save the form data?",
+//       icon: "question",
+//       showCancelButton: true,
+//       confirmButtonText: "Yes, save it!",
+//       cancelButtonText: "Cancel",
+//     }).then((result) => {
+//       if (result.isConfirmed) {
+//         // User confirmed – now show loading or save directly
+//         Swal.fire({
+//           title: "Saving...",
+//           didOpen: () => {
+//             Swal.showLoading();
+//             dispatch({ type: UPDATE_BUILDING_DETAILS, payload: values });
+//             dispatch({ type: "set_filled_step_II", payload: { step: 1 }, });
+//             dispatch({ type: "reg_set_active_stepII", payload: { step: 2 } });
+//             setActive(reg.stepsII[1]);
+//             Swal.close();
+//           },
+//         });
+//       } else {
+//         console.log("User cancelled save");
+//       }
+//     });
+//   };
+
+//   const Building_Detail_initialValues = useSelector((state) => state.building_detail_reducer);
+
+//   const AppliInfo = useSelector((state) => state.AppliInfo);
+
+//   return (
+//     <Fragment>
+//       {AppliInfo.stage_II_fee_status === STAGE_II__FEE_PAID || AppliInfo.stage_II_fee_status === STAGE_II__FEE_EXEMPTED ? (<h2>Hello</h2>) :
+//         <>
+//           <Formik
+//             innerRef={formikRef}
+//             initialValues={Building_Detail_initialValues}
+//             validationSchema={yup.object().shape(building_detail_yup_object)}
+//             onSubmit={(values) => {
+//               submit(values);
+//               console.log("Form Values", values);
+//             }}
+//           >
+//             {({ handleSubmit, handleChange, setFieldValue, values, errors, touched }) => (
+//               <Form onSubmit={handleSubmit}>
+//                 <Card className="custom-card border border-primary">
+//                   <Card.Header>
+//                     <div className="card-title" style={{ textTransform: "none" }}>
+//                       <h5> Signage Boards</h5>
+//                     </div>
+//                   </Card.Header>
+//                   <Card.Body>
+
+//                     {/*  className="text-nowrap" */}
+//                     <Table width={100} cellPadding="5px"
+//                       border={1}
+//                       style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
+//                     >
+//                       <thead>
+//                         <tr>
+//                           <th style={{ width: '20%' }}>Particulars</th>
+//                           <th style={{ width: '60%' }}>Required</th>
+//                           <th style={{ width: '20%' }}>Upload Geo Tagged Photo <ReqSign /></th>
+//                         </tr>
+//                       </thead>
+//                       <tbody>
+
+
+//                         {[
+
+//                           { key: "Signage Board on plot entrance", note: "The institute must display a signage board at the plot entrance as well as on the institute building, in accordance with the specifications provided in the guidelines below: \n Signage board to be made in English/Hindi/Regional language. The signage should be bilingual. The size of the font should be minimum 75 mm. The size of the board may vary from 2m x 1.5 m or 3m x 1.5 m or 4m x 2.0 m. \n Details needed: ITI's name, MIS code and full address and ITI logo, Skill India Logo & DGT logo." },
+//                           { key: "Signage Board on Institute building", note: "Details needed: ITI's name, MIS code*, ITI logo, Skill India Logo & DGT logo." },
+//                           { key: "Signage Boards", note: "i.	Directional boards must be displayed to indicate different sections of the building, such as the workshop, administrative building, hostel, scrap yard, etc. \n ii.	Signage boards for important safety information, including three-phase power supply, danger zones, and prohibited areas, must also be prominently displayed." },
+//                           { key: "Trade details board", note: "Trade details board shall display the list of DGT affiliated trades, seating capacity and number of trainees enrolled" },
+//                           { key: "Staff details board", note: "Staff details board shall display name, qualification/ designation and contact numbers of Principal and Group Instructor/Trade Instructor" },
+//                           { key: "Exit Board", note: "Emergency exit routes must be clearly marked with visible signage." },
+//                           { key: "Board indicating Danger Signs", note: "Boards indicating Danger Signs must be prominently displayed near: Transformer, Generator Set, heavy Electrical Installation/ Panels" },
+//                           { key: "Prohibited Area Indicators", note: "Near running machinery etc." },
+//                           { key: "Sexual Harassment Redressal Committee Notice", note: "Each ITI must prominently display information about the Sexual Harassment Redressal Committee on notice boards, ensuring awareness and fostering a safe, respectful environment for all students and staff." },
+//                         ].map((item, index) => {
+//                           return (<tr key={index}>
+//                             <td>{item.key}</td>
+//                             <td>{item.note}</td>
+//                             <td>
+//                               <input
+//                                 type="file"
+//                                 name="file"
+//                                 className="form-control"
+//                               // onChange={(event) => {
+//                               //     setFieldValue(
+//                               //         fileField,
+//                               //         event.currentTarget.files[0]
+//                               //     );
+//                               // }}
+//                               />
+//                               {/* <div className="text-danger">
+//                                                             <ErrorMessage
+//                                                                 name={fileField}
+//                                                                 component="div"
+//                                                                 className="text-danger"
+//                                                             />
+
+//                                                         </div> */}
+
+
+//                             </td>
+//                           </tr>);
+//                         })}
+
+
+//                       </tbody>
+//                     </Table>
+//                   </Card.Body>
+//                   <Card.Footer>
+//                     <div className="d-flex justify-content-between mb-3">
+//                       <Button
+//                         className="p-2"
+//                         variant="success"
+//                         onClick={() => formikRef.current?.submitForm()}
+//                       >
+//                         Save & Continue
+//                       </Button>
+
+//                       {stepInfo.filled === true && (
+//                         <Button
+//                           className="p-2"
+//                           variant="warning"
+//                           onClick={() => {
+//                             setActive(reg.stepsII[1]);
+//                           }}
+//                         >
+//                           Next
+//                         </Button>
+//                       )}
+//                     </div>
+//                   </Card.Footer>
+//                 </Card>
+//               </Form>
+//             )}
+//           </Formik>
+//         </>
+//       }
+//     </Fragment>
+//   );
+// };
+import * as C from "affserver";
+import * as ap from "@/services/applicant/index";
+import { Navigations } from "@/components/Assessment/components";
+import { viewFile } from "@/helpers";
+
+import { FileField2 } from "@/components/formik/Inputs/FileField2";
+export const FormContext = createContext();
+
+export const SignageBoards = ({ isView = false, nav }) => {
+
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const appId = queryParams.get("appId");
+
   const stage = useSelector((state) => state.reg.stepsII);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const formikRef = useRef();
   const reg = useSelector((state) => state.reg);
   const stepInfo = reg.stepsII[0];
+
+  const [initialValues, setInitialValues] = useState(C.st2.SignageBoards.initialValue);
+
 
   useEffect(() => {
     console.log(stage);
@@ -93,114 +299,140 @@ export const SignageBoards = ({ setActive }) => {
 
   const AppliInfo = useSelector((state) => state.AppliInfo);
 
+  const onNext = async () => {
+    console.log("Called Next");
+    const allValues = [];
+    const changeArray = [];
+    const isFormValid = [];
+    try {
+
+      const { values, errors } = formikRef.current;
+      console.log(formikRef.current);
+      await formikRef.current.submitForm();
+      await formikRef.current.validateForm();
+
+      const { isValid } = formikRef.current;
+      console.log(errors, isValid);
+
+      if (isValid === false) {
+        throw new Error("Form validation failed: form is not valid.");
+      }
+
+      Swal.fire({
+        title: "Are you sure?",
+        text: "Do you want to save the form data?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Yes, save it!",
+        cancelButtonText: "Cancel",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // User confirmed – now show loading or save directly
+          Swal.fire({
+            title: "Saving...",
+            didOpen: () => {
+              Swal.showLoading();
+              ap.saveSignageBoards(values, appId);
+              nav.next();
+              Swal.close();
+            },
+          });
+        } else {
+          console.log("User cancelled save");
+        }
+      });
+
+    } catch (error) {
+      console.log(error);
+      Swal.fire({
+        icon: "warning",
+        title: "Fill the form",
+        showConfirmButton: true,
+        confirmButtonText: "OK",
+        allowOutsideClick: false
+      });
+    }
+  }
+
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const resp = await ap.getSignageBoards(appId);
+        const data = resp.data;
+        setInitialValues(data);  // update initial values
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    loadData();
+  }, [appId]);
+
+
   return (
     <Fragment>
       {AppliInfo.stage_II_fee_status === STAGE_II__FEE_PAID || AppliInfo.stage_II_fee_status === STAGE_II__FEE_EXEMPTED ? (<h2>Hello</h2>) :
         <>
           <Formik
             innerRef={formikRef}
-            initialValues={Building_Detail_initialValues}
-            validationSchema={yup.object().shape(building_detail_yup_object)}
-            onSubmit={(values) => {
-              submit(values);
-              console.log("Form Values", values);
-            }}
+            initialValues={initialValues}
+            enableReinitialize
+            validationSchema={C.st2.SignageBoards.ValSchema}
+            onSubmit={(values) => { console.log(values) }}
           >
-            {({ handleSubmit, handleChange, setFieldValue, values, errors, touched }) => (
-              <Form onSubmit={handleSubmit}>
-                <Card className="custom-card border border-primary">
-                  <Card.Header>
-                    <div className="card-title" style={{ textTransform: "none" }}>
-                      <h5> Signage Boards</h5>
-                    </div>
-                  </Card.Header>
-                  <Card.Body>
+            {({ handleSubmit, handleChange, values, errors, touched, setFieldValue }) => (
 
-                    {/*  className="text-nowrap" */}
-                    <Table width={100} cellPadding="5px"
-                      border={1}
-                      style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
-                    >
-                      <thead>
-                        <tr>
-                          <th style={{ width: '20%' }}>Particulars</th>
-                          <th style={{ width: '60%' }}>Required</th>
-                          <th style={{ width: '20%' }}>Upload Geo Tagged Photo <ReqSign /></th>
-                        </tr>
-                      </thead>
-                      <tbody>
+              <FormContext.Provider value={{ handleSubmit, handleChange, values, errors, touched, setFieldValue }}>
+                <Form onSubmit={handleSubmit}>
+                  <Card className="custom-card border border-primary">
+                    <Card.Header>
+                      <div className="card-title" style={{ textTransform: "none" }}>
+                        <h5>Specifications of IT lab</h5>
+                      </div>
+                    </Card.Header>
+                    <Card.Body>
+                      <FieldArray name="signage_boards">
+                        <Table >
+                          <thead>
+                            <tr>
+                              <th>Particulars</th>
+                              <th>Required</th>
+                              <th>Document</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {values.signage_boards.map((obj, index) => {
+                              return (
+                                <tr key={index}>
+                                  <td>{obj?.particular}</td>
+                                  <td>{obj?.instruction}</td>
+                                  <td>
+                                    <FileField2
+                                      // label="If Yes, Upload Supporting Government Notification/Order/Circular"
+                                      name={`signage_boards[${index}].document`}
+                                      mandatory
+                                      accept=".pdf,.jpg,.png"
+                                      context={FormContext}
+                                      onClickViewFileButton={() => viewFile(values.signage_boards[index].document)}
+                                    />
 
+                                  </td>
+                                </tr>
+                              )
+                            })}
+                          </tbody>
+                        </Table>
+                      </FieldArray>
 
-                        {[
+                    </Card.Body>
+                    <Card.Footer>
+                      <Navigations nav={nav} onNext={() => { onNext(); }} />
+                    </Card.Footer>
+                  </Card>
+                </Form>
+              </FormContext.Provider>
 
-                          { key: "Signage Board on plot entrance", note: "The institute must display a signage board at the plot entrance as well as on the institute building, in accordance with the specifications provided in the guidelines below: \n Signage board to be made in English/Hindi/Regional language. The signage should be bilingual. The size of the font should be minimum 75 mm. The size of the board may vary from 2m x 1.5 m or 3m x 1.5 m or 4m x 2.0 m. \n Details needed: ITI's name, MIS code and full address and ITI logo, Skill India Logo & DGT logo." },
-                          { key: "Signage Board on Institute building", note: "Details needed: ITI's name, MIS code*, ITI logo, Skill India Logo & DGT logo." },
-                          { key: "Signage Boards", note: "i.	Directional boards must be displayed to indicate different sections of the building, such as the workshop, administrative building, hostel, scrap yard, etc. \n ii.	Signage boards for important safety information, including three-phase power supply, danger zones, and prohibited areas, must also be prominently displayed." },
-                          { key: "Trade details board", note: "Trade details board shall display the list of DGT affiliated trades, seating capacity and number of trainees enrolled" },
-                          { key: "Staff details board", note: "Staff details board shall display name, qualification/ designation and contact numbers of Principal and Group Instructor/Trade Instructor" },
-                          { key: "Exit Board", note: "Emergency exit routes must be clearly marked with visible signage." },
-                          { key: "Board indicating Danger Signs", note: "Boards indicating Danger Signs must be prominently displayed near: Transformer, Generator Set, heavy Electrical Installation/ Panels" },
-                          { key: "Prohibited Area Indicators", note: "Near running machinery etc." },
-                          { key: "Sexual Harassment Redressal Committee Notice", note: "Each ITI must prominently display information about the Sexual Harassment Redressal Committee on notice boards, ensuring awareness and fostering a safe, respectful environment for all students and staff." },
-                        ].map((item, index) => {
-                          return (<tr key={index}>
-                            <td>{item.key}</td>
-                            <td>{item.note}</td>
-                            <td>
-                              <input
-                                type="file"
-                                name="file"
-                                className="form-control"
-                              // onChange={(event) => {
-                              //     setFieldValue(
-                              //         fileField,
-                              //         event.currentTarget.files[0]
-                              //     );
-                              // }}
-                              />
-                              {/* <div className="text-danger">
-                                                            <ErrorMessage
-                                                                name={fileField}
-                                                                component="div"
-                                                                className="text-danger"
-                                                            />
-
-                                                        </div> */}
-
-
-                            </td>
-                          </tr>);
-                        })}
-
-
-                      </tbody>
-                    </Table>
-                  </Card.Body>
-                  <Card.Footer>
-                    <div className="d-flex justify-content-between mb-3">
-                      <Button
-                        className="p-2"
-                        variant="success"
-                        onClick={() => formikRef.current?.submitForm()}
-                      >
-                        Save & Continue
-                      </Button>
-
-                      {stepInfo.filled === true && (
-                        <Button
-                          className="p-2"
-                          variant="warning"
-                          onClick={() => {
-                            setActive(reg.stepsII[1]);
-                          }}
-                        >
-                          Next
-                        </Button>
-                      )}
-                    </div>
-                  </Card.Footer>
-                </Card>
-              </Form>
             )}
           </Formik>
         </>
@@ -208,6 +440,7 @@ export const SignageBoards = ({ setActive }) => {
     </Fragment>
   );
 };
+
 
 
 
@@ -598,8 +831,8 @@ export const Assessment_SignageBoards = () => {
 //         "Document does not indicate the workshop for all trade/units, classrooms, IT Lab, Administrative area, Amenities area etc.",
 //     },
 //     {
-//       value: "Any other reason, please specify",
-//       label: "Any other reason, please specify",
+//       value: "other",
+//       label: "other",
 //     },
 //   ];
 
@@ -908,7 +1141,7 @@ export const Assessment_SignageBoards = () => {
 //                       )}
 
 //                       {formData.category ==
-//                         "Any other reason, please specify" && (
+//                         "other" && (
 //                           <Col md={12}>
 //                             <b>Reason:</b> <p>{formData.assessor_comments}</p>
 //                           </Col>
@@ -1050,8 +1283,8 @@ export const Assessment_SignageBoards = () => {
 //       label: "Construction of the building is incomplete",
 //     },
 //     {
-//       value: "Any other reason, please specify",
-//       label: "Any other reason, please specify",
+//       value: "other",
+//       label: "other",
 //     },
 //   ];
 
@@ -1390,7 +1623,7 @@ export const Assessment_SignageBoards = () => {
 //                       )}
 
 //                       {formData.category ==
-//                         "Any other reason, please specify" && (
+//                         "other" && (
 //                           <Col md={12}>
 //                             <b>Reason:</b> <p>{formData.assessor_comments}</p>
 //                           </Col>

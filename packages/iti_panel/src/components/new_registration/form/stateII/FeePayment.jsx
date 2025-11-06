@@ -15,8 +15,8 @@ import { useLocation } from "react-router-dom";
 
 import { getStepStatus, getProposedInstDetailsByUserId, setAppFlow } from "../../../../db/users";
 
-
-const FeePayment = ({ setActive }) => {
+import * as ap from "@/services/applicant/index";
+const FeePayment = ({ isView = false, nav }) => {
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -52,13 +52,51 @@ const FeePayment = ({ setActive }) => {
   const formikRef = useRef();
   const reg = useSelector((state) => state.reg);
 
-  const submit = (values) => {
-    console.log(PropInstiInfo);
-      setAppFlow(appId, STAGE_II_FEE);
-    // dispatch({ type: UPDATE_STAGE_II_SET_FEE_STATUS, payload: PropInstiInfo });
-    dispatch({ type: "set_filled_step_II", payload: { step: 5 }, });
-    dispatch({ type: "reg_set_active_stepII", payload: { step: 6 } });
-    setActive(reg.stepsII[6]);
+  const submit = async (values) => {
+    // console.log(PropInstiInfo);
+    // setAppFlow(appId, STAGE_II_FEE);
+    // // dispatch({ type: UPDATE_STAGE_II_SET_FEE_STATUS, payload: PropInstiInfo });
+    // dispatch({ type: "set_filled_step_II", payload: { step: 5 }, });
+    // dispatch({ type: "reg_set_active_stepII", payload: { step: 6 } });
+    // setActive(reg.stepsII[6]);
+
+    try {
+      Swal.fire({
+        title: "Saving...",
+        didOpen: () => Swal.showLoading(),
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        showConfirmButton: false,
+      });
+
+      // ✅ Wait for API to finish
+      await ap.setAsExemptedStageII(values, appId);
+
+      nav.next();
+
+      Swal.close();
+
+      // ✅ Show success alert after saving
+      Swal.fire({
+        icon: "success",
+        title: "Saved Successfully!",
+        text: "Your data has been saved successfully.",
+        confirmButtonText: "OK",
+        allowOutsideClick: false,
+      }).then(() => {
+        console.log("OK");
+        // ✅ Navigate when user clicks OK
+        navigate(0); // ← change this to your route
+      });
+    } catch (error) {
+      Swal.close();
+      Swal.fire({
+        icon: "error",
+        title: "Save Failed",
+        text: "Something went wrong while saving. Please try again.",
+      });
+      console.error(error);
+    }
   };
 
   const AppliInfo = useSelector((state) => state.AppliInfo);
@@ -67,21 +105,41 @@ const FeePayment = ({ setActive }) => {
   const [proInstiInfo, setProInstiInfo] = useState({});
 
 
+  // useEffect(() => {
+  //   getStepStatus(appId, STAGE_II_FEE).then((data) => {
+  //     console.log(data[0]);
+  //     setStepInfo(data[0]);
+  //   });
+  //   getProposedInstDetailsByUserId(appId).then((data) => {
+  //     console.log(data);
+  //     setProInstiInfo(data);
+  //   })
+  // }, [])
+
+
+  const loadData = async () => {
+    try {
+      const resp = await ap.getAppStatus(appId);
+      const data = resp.data;
+      setStepInfo(resp.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
-    getStepStatus(appId, STAGE_II_FEE).then((data) => {
-      console.log(data[0]);
-      setStepInfo(data[0]);
-    });
-    getProposedInstDetailsByUserId(appId).then((data) => {
-      console.log(data);
-      setProInstiInfo(data);
-    })
-  }, [])
+    loadData();
+  }, [appId]);
+
+  useEffect(() => {
+    console.log(stepInfo);
+  }, [stepInfo]);
+
 
 
   return (
     <Fragment>
-      {stepInfo.status === STAGE_II__FEE_PAID ? (<StageIIPaidInfo />) : stepInfo.status === STAGE_II__FEE_EXEMPTED ? (<StageIIExemtedInfo />) :
+      {stepInfo?.stageII_fee_info?.status === STAGE_II__FEE_PAID ? (<StageIIPaidInfo />) : stepInfo?.stageII_fee_info?.status === STAGE_II__FEE_EXEMPTED ? (<StageIIExemtedInfo />) :
         <Formik
           innerRef={formikRef}
 
@@ -105,12 +163,13 @@ const FeePayment = ({ setActive }) => {
             </div>
           </Card.Header> */}
               <Card.Body>
-                <p><ul>
-                  <li>Please preview the application before fee payment. No editing in
-                    application would be allowed after fee payment.</li></ul></p>
-                <div className="d-grid gap-2 mb-4">
+
+                {false && (<div className="d-grid gap-2 mb-4">
+                  <p><ul>
+                    <li>Please preview the application before fee payment. No editing in
+                      application would be allowed after fee payment.</li></ul></p>
                   <ViewApplication />
-                </div>
+                </div>)}
 
                 <div className="form-check">
                   <BootstrapForm noValidate onSubmit={handleSubmit}>
@@ -133,7 +192,7 @@ const FeePayment = ({ setActive }) => {
                 </div>
 
 
-                {proInstiInfo?.pro_insti_details?.type_of_institute === "Government" ? (<Card
+                {stepInfo?.institute_info?.type_of_institute === "Government" ? (<Card
                   className="custom-card border border-primary"
                   style={{ marginTop: "1rem" }}
                 >
@@ -184,7 +243,7 @@ const FeePayment = ({ setActive }) => {
                   </Card.Body>
                 </Card>)
                   :
-                  proInstiInfo?.pro_insti_details?.type_of_institute === "Private" ? (
+                  stepInfo?.institute_info?.type_of_institute === "Private" ? (
                     <Card
                       className="custom-card border border-primary"
                       style={{ marginTop: "1rem" }}
@@ -248,12 +307,12 @@ const FeePayment = ({ setActive }) => {
 
               </Card.Body>
               <Card.Footer className="d-flex justify-content-end">
-                {proInstiInfo?.pro_insti_details?.type_of_institute === "Government" ? (
+                {stepInfo?.institute_info?.type_of_institute === "Government" ? (
                   <Button size="lg" variant="facebook" onClick={() => formikRef.current?.submitForm()}
                   >
                     Save & Next
                   </Button>
-                ) : proInstiInfo?.pro_insti_details?.type_of_institute === "Private" ? (
+                ) : stepInfo?.institute_info?.type_of_institute === "Private" ? (
                   <Button size="lg" variant="instagram" onClick={() => formikRef.current?.submitForm()} >
                     Pay
                   </Button>

@@ -3,7 +3,7 @@ import * as set from "../../db/forms/stageI/set/set";
 import { useLocation } from "react-router-dom";
 import React, { createContext, useRef, useContext, Fragment, useState, useEffect } from "react";
 import * as st from "../../services/state/index";
-export const Navigations = ({ nav, onPrev, onNext, onLast }) => {
+export const Navigations = ({ nav, onPrev, onNext, onLast, lastLabel = null, lastSize = null, nextLabel = null, lastVeriant = null, showLast = false }) => {
     console.log(onPrev);
     return (<>
         <div className={`d-flex justify-content-${nav?.currentIndex > 0 ? `between` : `end`} mb-3`} style={{ backgroundColor: "rgb(245, 245, 245)", margin: "10px 0px 0px", borderRadius: 6, borderStyle: "dashed", borderWidth: "thin", padding: "10px", }} >
@@ -12,9 +12,27 @@ export const Navigations = ({ nav, onPrev, onNext, onLast }) => {
                 <Button variant="warning" onClick={() => (onPrev ? onPrev() : nav?.previous())}> Previous </Button>
             </div>)}
 
-            {nav?.lastIndex == nav?.currentIndex ? (<div className="p-2">
-                <Button variant="success" onClick={() => (onLast ? onLast() : nav?.finish())}  > Finish </Button>
-            </div>) : nav?.currentIndex < nav?.lastIndex ? (<Button variant="success" onClick={() => (onNext ? onNext() : nav?.next())} > Save & Next </Button>) : ''}
+            {nav?.lastIndex === nav?.currentIndex ? (
+                showLast === true ? (
+                    <div className="p-2">
+                        <Button
+                            size={lastSize || 'md'}
+                            variant={lastVeriant || 'success'}
+                            onClick={() => (onLast ? onLast() : nav?.finish())}
+                        >
+                            {lastLabel || 'Finish'}
+                        </Button>
+                    </div>
+                ) : null
+            ) : nav?.currentIndex < nav?.lastIndex ? (
+                <Button
+                    variant="success"
+                    onClick={() => (onNext ? onNext() : nav?.next())}
+                >
+                    {nextLabel || 'Next'}
+                </Button>
+            ) : null}
+
         </div>
     </>);
 }

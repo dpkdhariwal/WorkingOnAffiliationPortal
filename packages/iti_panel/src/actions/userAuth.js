@@ -1,4 +1,4 @@
-import axios from "../axios";
+import axios from "../axios_custom";
 
 export const loginUser = (user) => (dispatch) => {
   console.log("User login action called with user:", user);

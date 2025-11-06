@@ -1,4 +1,4 @@
-import axios from "../axios";
+import axios from "../axios_custom";
 
 export const placeOrder = (token, subtotal) => async (dispatch, getState) => {
   dispatch({ type: "PLACE_ORDER_REQUEST" });

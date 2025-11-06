@@ -11,7 +11,7 @@ import {
 } from "react-bootstrap";
 import { Formik, Form as FormikForm, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import { CircularProgressbar } from "react-circular-progressbar";
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import ReqSign from "../comp/requiredSign"; // Make sure this component exists and is exported correctly
 
@@ -29,11 +29,15 @@ import {
   STAGE_II__FEE_PAID, STAGE_II__FEE_EXEMPTED, IN_ACTIVE, CIC, NOT_FILLED, FILLED,
   ACTIVE
 } from "affserver";
+import * as C from "affserver";
 
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
 
 export default function MultiStepWithIndividualForms({ setActive, step }) {
+
+  console.log(step);
+
   const [steps, setSteps] = useState([]);
   const [activeKey, setActiveKey] = useState();
   const dispatch = useDispatch();
@@ -121,10 +125,10 @@ export default function MultiStepWithIndividualForms({ setActive, step }) {
                     return (
                       <Nav.Item key={step.key} style={{ cursor: 'pointer' }} >
                         {/* className={`${step.status === FILLED ? 'navbar-success' : ''}`} */}
-                        <Nav.Link  style={{ marginTop: '5px' }} eventKey={step.step} disabled={step.stepStatus === IN_ACTIVE && step.status === NOT_FILLED}  >
+                        <Nav.Link style={{ marginTop: '5px' }} eventKey={step.step} disabled={step.stepStatus === IN_ACTIVE && step.status === NOT_FILLED}  >
                           <div className="d-flex justify-content-between align-items-center">
                             <span> <i className="ri-tools-line me-2 align-middle d-inline-block"></i> {step.label} </span>
-                            <div style={{ width: 30, height: 30 }}> <CircularProgressbar value={percentage} text={`${percentage}%`} /> </div>
+                            <div style={{ width: 30, height: 30 }}> <CircularProgressbar value={step.status == C.SL.FILLED ? 100 : 0} text={`${step.status == C.SL.FILLED ? 100 : 0}%`} /> </div>
                           </div>
                         </Nav.Link>
                       </Nav.Item>

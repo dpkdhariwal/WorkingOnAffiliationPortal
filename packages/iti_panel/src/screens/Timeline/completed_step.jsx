@@ -4,8 +4,11 @@ import React, { Children, useState, useEffect } from "react";
 import { useTranslation } from 'react-i18next';
 
 import * as cons from "affserver";
+import { useNavigate } from "react-router-dom";
+import { formatedDate } from "@/helpers";
 
 export const CompletedStep = ({ info, variant }) => {
+  const navigate = useNavigate();
 
   const [cardBorder, setCardBorder] = useState('border-warning');
   const [cardShadow, setCardShadow] = useState('shadow-warning');
@@ -69,7 +72,7 @@ export const CompletedStep = ({ info, variant }) => {
           // case cons.STAGE_I__SUBMIT_PENDING:
           //   return authUser.userType === 'applicant' ? <GoToStageIForm info={info} /> : ''
           case cons.STAGE_I__SUBMITED:
-            return <Button size="sm" variant="success" onClick={()=>{alert("To be continue....")}} >View Application</Button>
+            return <Button size="sm" variant="success" onClick={() => { navigate(`/dashboard/application_stage_1_form?appId=${info.appId}`) }} >View Application</Button>
           default:
             return "";
         }
@@ -112,7 +115,7 @@ export const CompletedStep = ({ info, variant }) => {
           // case cons.NOC_ISSUANCE_PENDING:
           //   return authUser.userType === 'state_assessor' ? <GoToNOCGenerateForm info={info} /> : ''
           case cons.NOC_ISSUANCE_ISSUED:
-            return <Button size="sm" variant="success" onClick={()=>{window.location.href = "https://affiliation.dgt.gov.in/affliation_portal_all_documents/sample/noc/No-Objection-Certificate.pdf";}} >View NOC</Button>
+            return <Button size="sm" variant="success" onClick={() => { window.location.href = "https://affiliation.dgt.gov.in/affliation_portal_all_documents/sample/noc/No-Objection-Certificate.pdf"; }} >View NOC</Button>
           case cons.NOC_ISSUANCE_REJECTED:
             return <h5>Noc Rejected</h5>
           default:
@@ -223,13 +226,13 @@ export const CompletedStep = ({ info, variant }) => {
 
   return (
     <Card className={`${cardArrow} border border-2 ${cardBorder}  card custom-card shadow-size-small ${cardShadow}`} style={{ position: "relative" }}>
+      <span className="text-bg-success timeline-date" >{formatedDate(info?.completedDate)}</span>
       <Card.Header style={{ padding: "0px" }}>{t(`AppFlow.${info.step}.title`)}</Card.Header>
       <Card.Body style={{ padding: "0px" }}>
         {t(`AppFlow.${info.step}.status.completed.${'COMMON'}`)}
         {/* {info?.stepMsg} */}
       </Card.Body>
       <Card.Footer style={{ padding: "2px" }} className=" d-flex justify-content-between btn-rounded" >
-        <i><span>22-07-2025</span></i>
         {getSetActions(info)}
         {/* <Button size="sm" >View</Button> */}
       </Card.Footer>

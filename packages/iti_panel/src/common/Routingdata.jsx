@@ -2,7 +2,7 @@ import Dashboard from "./../components/dashboard/Dashboard";
 // import New_registration from './../components/new_registration/new_registration';
 
 // Applicant Screens
-import { Start, SelectCategory } from "../screens/Applicant/Application";
+import { Start, SelectCategory, SelectAffCategoryForNewApp } from "../screens/Applicant/Application";
 
 import New_registration from "../components/new_registration/new_registration";
 
@@ -22,7 +22,7 @@ import StateDashboard from "../../../ui_layouts_collaborate/src/components/Asses
 import AddIcMember from "../../../ui_layouts_collaborate/src/components/Assessment/AddIcMember";
 
 import RdUser from "../../../ui_layouts_collaborate/src/components/Assessment/RdUser";
-import ViewApplicationStageOne from "../components/new_registration/application_view_stage_1";
+import ViewApplicationStageOne from "../screens/common_screens/StageI/ApplicationView/application_view_stage_1";
 import { NocGenerateForm } from "../components/new_registration/NocGenerateForm";
 import { AddStaffDetail } from "../components/new_registration/AddStaffDetail";
 import { InspectionSlotSelection } from "../components/new_registration/InspectionSlotSelection";
@@ -34,7 +34,12 @@ import { lazy } from "react";
 
 import { NewAppRegistration } from "../screens/RegNewApplication/NewAppRegistration";
 import { AddNewMemberByState } from "../screens/state/state_admin/add-new-member";
-import { ReviewAssessment } from "../screens/state/assessor/stage_I_assessment";
+// import { ReviewAssessment } from "../screens/state/assessor/stage_I_assessment";
+import DstAffiliation from "../components/DST/DstAffiliation";
+import { StageIDocumentUploads } from "../screens/Applicant/StageI/da/stageIDocumentUploads"
+import { RemoveAssessmentDeficiencies } from "@/screens/Applicant/StageII/da/AssessmentII";
+
+import { StageIAssessment } from "@/screens/Applicant/StageI/AssessmentI/stage_I_assessment";
 
 export const Routedata = [
   {
@@ -46,7 +51,7 @@ export const Routedata = [
         allowTo: "applicant",
         id: 1,
         path: `Application`,
-        elementName: <Start />,
+        elementName: <SelectAffCategoryForNewApp />,
       },
       {
         id: 1,
@@ -111,7 +116,18 @@ export const Routedata = [
       {
         id: 1,
         path: `Upload-Documents`,
-        elementName: <AssessmentI />,
+        elementName: <StageIDocumentUploads />,
+      },
+
+      {
+        id: 1,
+        path: `remove-deficiencies`,
+        elementName: <StageIAssessment />,
+      },
+      {
+        id: 1,
+        path: `Stage-II-Upload-Documents`,
+        elementName: <RemoveAssessmentDeficiencies />,
       },
       {
         id: 1,
@@ -179,10 +195,15 @@ export const Routedata = [
         elementName: <AddNewMemberByState />,
       },
 
+      // {
+      //   id: 1,
+      //   path: `viewAssessment`,
+      //   elementName: <ReviewAssessment />,
+      // },
       {
         id: 1,
-        path: `viewAssessment`,
-        elementName: <ReviewAssessment />,
+        path: "DstAffiliation",
+        elementName: <DstAffiliation />,
       },
     ],
   },

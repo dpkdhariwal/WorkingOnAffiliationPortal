@@ -13,7 +13,7 @@ import * as set from "../../../../../../../../db/forms/stageI/set/set";
 
 import * as gen from "../../../../../../../../services/general";
 
-export const AddressOfInstitute = () => {
+export const AddressOfInstitute = ({ pinstInfo }) => {
 
   // console.log(nav.next());
   const location = useLocation();
@@ -51,45 +51,80 @@ export const AddressOfInstitute = () => {
             borderRadius: 6,
             // borderStyle: "dashed",
             borderWidth: "thin",
-            padding: "10px",
+            // padding: "10px",
           }}
         >
           <Col xl={12} lg={12} md={12} sm={12}>
             <table
               width="98%"
               border={1}
-              style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
+              style={{
+                borderCollapse: "collapse",
+                marginTop: 15,
+                color: "black",
+              }}
               align="center"
               cellPadding="5px"
             >
               <tbody>
-                <tr>
-                  <td colSpan={7} style={{ border: "1px solid black" }}><b>Complete Postal Address of the Applicant Institute</b></td>
-                </tr>
                 <tr style={{ border: "1px solid black" }}>
-                  <th style={{ border: "1px solid black" }}>State</th>
-                  <th style={{ border: "1px solid black" }}>District</th>
-                  <th style={{ border: "1px solid black" }}>Town/City</th>
-                  <th style={{ border: "1px solid black" }}>Block/Tehsil</th>
+                  <th style={{ border: "1px solid black" }}>
+                    Applicant Entity State
+                  </th>
+                  <th style={{ border: "1px solid black" }}>
+                    Applicant Entity District
+                  </th>
+                  <th style={{ border: "1px solid black" }}>
+                    Applicant Entity Sub District
+                  </th>
+                  <th style={{ border: "1px solid black" }}>
+                    Applicant Entity Town/City
+                  </th>
                 </tr>
                 <tr>
-                  <td style={{ border: "1px solid black" }}>{info?.proposed_insti_addresses?.cmp_post_state}</td>
-                  <td style={{ border: "1px solid black" }}>{info?.proposed_insti_addresses?.cmp_post_district}</td>
-                  <td style={{ border: "1px solid black" }}>{info?.proposed_insti_addresses?.cmp_post_city}</td>
-                  <td style={{ border: "1px solid black" }}>{info?.proposed_insti_addresses?.cmp_post_block_or_tehsil}</td>
+                  <td style={{ border: "1px solid black" }}>
+                    {pinstInfo?.comp_postal_addres_of_inst?.state_detail?.stateNameEnglish}
+                  </td>
+                  <td style={{ border: "1px solid black" }}>
+                    {pinstInfo?.comp_postal_addres_of_inst?.district_detail?.districtNameEnglish}
+                  </td>
+                  <td style={{ border: "1px solid black" }}>
+                    {pinstInfo?.comp_postal_addres_of_inst?.sub_district?.subdistrictNameEnglish}
+                  </td>
+                  <td style={{ border: "1px solid black" }}>
+                    --
+                  </td>
                 </tr>
 
                 <tr style={{ border: "1px solid black" }}>
-                  <th style={{ border: "1px solid black" }}>Sector/Village</th>
-                  <th style={{ border: "1px solid black" }}>Pincode</th>
-                  <th style={{ border: "1px solid black" }}>Plot Number/Khasara Number/Gata Number</th>
-                  <th style={{ border: "1px solid black" }}>Landmark</th>
+                  <th style={{ border: "1px solid black" }}>
+                    Applicant Entity Village
+                  </th>
+                  <th style={{ border: "1px solid black" }}>
+                    Applicant Entity Pincode
+                  </th>
+                  <th style={{ border: "1px solid black" }}>
+                    Applicant Entity Plot Number/Khasara Number/Gata Number
+                  </th>
+                  <th style={{ border: "1px solid black" }}>
+                    Applicant Entity Landmark
+                  </th>
                 </tr>
                 <tr>
-                  <td style={{ border: "1px solid black" }}>{info?.proposed_insti_addresses?.cmp_post_sector_village}</td>
-                  <td style={{ border: "1px solid black" }}>{info?.proposed_insti_addresses?.cmp_post_pincode}</td>
-                  <td style={{ border: "1px solid black" }}>{info?.proposed_insti_addresses?.cmp_post_plot_number_khasara_number}</td>
-                  <td style={{ border: "1px solid black" }}>{info?.proposed_insti_addresses?.cmp_post_landmark}</td>
+                  <td style={{ border: "1px solid black" }}>
+                    {pinstInfo?.comp_postal_addres_of_inst?.village?.villageNameEnglish}
+                  </td>
+                  <td style={{ border: "1px solid black" }}>
+                    {pinstInfo?.comp_postal_addres_of_inst?.pincode}
+                  </td>
+                  <td style={{ border: "1px solid black" }}>
+                    {
+                      pinstInfo?.comp_postal_addres_of_inst?.plotNumber_khasaraNumber
+                    }
+                  </td>
+                  <td style={{ border: "1px solid black" }}>
+                    {pinstInfo?.comp_postal_addres_of_inst?.landmark}
+                  </td>
                 </tr>
               </tbody>
             </table>

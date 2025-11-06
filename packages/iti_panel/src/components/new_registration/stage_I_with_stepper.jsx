@@ -20,7 +20,7 @@ import { LandDocuments } from "./form/stegeI/view/stage_1/detail_of_proposed_ins
 
 import { Documents } from "./form/stegeI/view/stage_1/detail_of_proposed_institute/assessment_view/documents"
 
-import { STAGE_I__FEE_PAID, STAGE_I__FEE_EXEMPTED, STAGE_I__SUBMIT_PENDING, STAGE_I__FEE_PENDING, STAGE_I__SUBMITED, STAGE_I__DOCUMENT_PENDING, ACTIVE } from "affserver";
+import { STAGE_I__FEE_PAID, STAGE_I__FEE_EXEMPTED, STAGE_I__SUBMIT_PENDING, STAGE_I__FEE_PENDING, STAGE_I__SUBMITED, STAGE_I__DOCUMENT_PENDING, ACTIVE, IN_ACTIVE, NOT_FILLED } from "affserver";
 
 import { AppStatusContext } from "../../services/context";
 import { getAppCurrentStatus, getStage1FormFlow } from "../../db/users";
@@ -35,8 +35,8 @@ export const StageIForm = () => {
   const [steps, setSteps] = useState([]);
 
 
-  const goToSection = (step, index = null) => {
-    // setActiveStep(step);
+  const goToSection = (step, index) => {
+    setActiveStep(step);
   };
 
 
@@ -45,23 +45,67 @@ export const StageIForm = () => {
     if (step.stepStatus === ACTIVE || step.status === FILLED) { setActiveStep(index) }
   };
 
+  const [firstIndex, setFirstIndex] = useState(0);
+  const [lastIndex, setLastIndex] = useState(0);
+
+  const object = (step, stepIndex) => {
+    let obj = {
+      firstIndex: firstIndex,
+      lastIndex: lastIndex,
+      currentIndex: stepIndex,
+      step: step,
+      previous: () => { return previous(step, stepIndex); },
+      next: () => { return next(step, stepIndex); },
+      finish: () => { return finish(step, stepIndex); }
+    };
+    return obj;
+  }
+
+
+  const previous = (step, index) => {
+    console.log(step, index);
+    setActiveStep(--index);
+    return step;
+  }
+
+  const next = async (step, index) => {
+    const updated = steps.map((obj) => {
+      if (obj.step === step.step) {
+        obj = { ...obj, completed: obj.step === step.step, status: step.step === FILLED }
+      }
+      else if (step.step == obj.nextStep) {
+        obj = { ...obj, stepStatus: ACTIVE }
+      }
+      return obj;
+    });
+
+    await setSteps(updated);
+    await setActiveStep(++index);
+  }
+
+  const finish = (step, index) => {
+    console.log(step, index)
+  }
+
+
+
   const setStepContent = (step, stepIndex) => {
     console.log(step, stepIndex);
     try {
       switch (step.step) {
         case ST1FC.APPLICANT_ENTITY_DETAILS.step:
-          return <BasicDetailsofApplicantOrganization step={step} setActive={goToSection} refreshSteps={loadData} />
+          return <BasicDetailsofApplicantOrganization nav={object(step, stepIndex)} step={step} setActive={goToSection} refreshSteps={loadData} />
         case ST1FC.DETAILS_OF_THE_PROPOSED_INSTITUTE.step:
-          return <DetailsOfTheProposedInstitute step={step} setActive={goToSection} refreshSteps={loadData} />
+          return <DetailsOfTheProposedInstitute nav={object(step, stepIndex)} step={step} setActive={goToSection} refreshSteps={loadData} />
         case ST1FC.DETAILS_OF_TRADE_UNIT_FOR_AFFILIATION.step:
-          return <DetailsOfTradeUnitForAffiliation step={step} setActive={goToSection} refreshSteps={loadData} />
+          return <DetailsOfTradeUnitForAffiliation nav={object(step, stepIndex)} step={step} setActive={goToSection} refreshSteps={loadData} />
         case ST1FC.DETAILS_OF_THE_LAND_TO_BE_USED_FOR_THE_ITI.step:
-          return <DetailsOfTheLandToBeUsedForTheITI step={step} setActive={goToSection} refreshSteps={loadData} />
+          return <DetailsOfTheLandToBeUsedForTheITI nav={object(step, stepIndex)} step={step} setActive={goToSection} refreshSteps={loadData} />
         case ST1FC.FEE_PAYMENT.step:
-          return <FeePayment step={step} setActive={goToSection} refreshSteps={loadData} />
+          return <FeePayment nav={object(step, stepIndex)} step={step} setActive={goToSection} refreshSteps={loadData} />
         case ST1FC.DOCUMENTS_UPLOAD.step:
           console.log(step);
-          return <DetailsOfDocumentsToBeUploaded step={step} setActive={goToSection} refreshSteps={loadData} />
+          return <DetailsOfDocumentsToBeUploaded nav={object(step, stepIndex)} step={step} setActive={goToSection} refreshSteps={loadData} />
         default:
           return ''
       }
@@ -78,8 +122,24 @@ export const StageIForm = () => {
     const firstFilledIndex = steps.findIndex(step => step.status === FILLED || step.stepStatus === ACTIVE);
     const reversedIndex = [...steps].reverse().findIndex(step => step.status === FILLED || step.stepStatus === ACTIVE);
     const lastFilledIndex = reversedIndex !== -1 ? steps.length - 1 - reversedIndex : -1;
-    console.log(lastFilledIndex);
-    setActiveStep(lastFilledIndex);
+    const currentStep = firstFilledIndex !== -1 ? firstFilledIndex : 0;
+    // setActiveStep(currentStep);
+
+
+    // // Get the index of the first FILLED step
+    // const firstFilledIndex = steps.findIndex(step => step.status === FILLED || step.stepStatus === ACTIVE);
+    // // Get the index of the last FILLED step
+    // const reversedIndex = [...steps].reverse().findIndex(step => step.status === FILLED || step.stepStatus === ACTIVE);
+    // const lastFilledIndex = reversedIndex !== -1 ? steps.length - 1 - reversedIndex : -1;
+    // // Set activeStep to firstFilledIndex (or you can set lastFilledIndex)
+    // const currentStep = firstFilledIndex !== -1 ? firstFilledIndex : 0;
+
+    // // Debug/log
+    // console.log("First FILLED index:", firstFilledIndex);
+    // console.log("Last FILLED index:", lastFilledIndex);
+    // setActiveStep(currentStep);
+
+
   }
 
   useEffect(() => { getLastActiveStep() }, [steps])
@@ -96,13 +156,25 @@ export const StageIForm = () => {
     else {
       console.log(data.length);
       data = data.map((step) => { return { ...step, completed: step?.status === FILLED } });
-      console.log(data);
       setSteps(data);
+      const lastFilledIndex = data.findLastIndex((step) => step.stepStatus === ACTIVE);
+      console.log(lastFilledIndex);
+      setActiveStep(lastFilledIndex);
+
     }
+
+    const firstIndex = 0;                 // Always 0 for the first element
+    const lastIndex = data.length - 1;   // Length minus 1 for the last element
+    setFirstIndex(firstIndex);
+    setLastIndex(lastIndex);
+
   };
   useEffect(() => {
     loadData();
   }, []);
+
+
+
 
 
   return (

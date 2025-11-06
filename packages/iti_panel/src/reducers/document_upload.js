@@ -7,7 +7,7 @@ ADD_MORE_LEASE_DOCUMENT
 import * as yup from "yup";
 
 // @dpkdhariwal
-const fileRequired = (message) =>
+export const fileRequired = (message) =>
   yup
     .mixed()
     .required(message)
@@ -18,12 +18,10 @@ const fileRequired = (message) =>
 // @dpkdhariwal
 // Land Document Reducer
 export const land_documents_initialValues = {
-  land_documents_title: [""],
-  land_original_documents: [""],
-  land_documents_language: [""],
-  land_notarised_documents: [""],
-
-  
+  land_documents_title: [],
+  land_original_documents: [],
+  land_documents_language: [],
+  land_notarised_documents: [],
 };
 
 export const land_documents_reducer = (

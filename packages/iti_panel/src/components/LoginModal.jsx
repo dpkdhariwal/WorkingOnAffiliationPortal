@@ -165,7 +165,7 @@ const LoginModal = ({ show, handleClose, title, icon, gradient, onLoginSuccess }
   const dispatch = useDispatch();
   const navigate = useNavigate(); // initialize navigation
 
-  const LoginNow = async (values) => {
+  const LoginNow = async (values, handleClose) => {
     const { email, password } = values;
 
     console.log(values);
@@ -174,6 +174,7 @@ const LoginModal = ({ show, handleClose, title, icon, gradient, onLoginSuccess }
     let result, user;
     try {
       SwalManager.showLoading("Authenticating...");
+      handleClose();
       result = await loginByAuth(email, password);
       console.log(result.data.info.userType);
       user = result.data;
@@ -308,11 +309,11 @@ const LoginModal = ({ show, handleClose, title, icon, gradient, onLoginSuccess }
       </Modal.Header>
       {!isRegister ? (
         <Formik
-          initialValues={{ email: "", password: "" }}
+          initialValues={{ email: title === 'Applicant Login' ? "applicant@gmail.com" : "", password: title === 'Applicant Login' ? "123" : "" }}
           validationSchema={validationSchema}
           onSubmit={async (values, { setSubmitting }) => {
             setSubmitting(false);
-            await LoginNow(values);
+            await LoginNow(values, handleClose);
             // if (title === 'Applicant Login') {
             //   // const user = await loginAffiliation(values.email, values.password);
 

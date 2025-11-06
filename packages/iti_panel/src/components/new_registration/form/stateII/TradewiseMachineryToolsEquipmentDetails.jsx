@@ -23,9 +23,14 @@ import Stepper from "@keyvaluesystems/react-stepper";
 import ReqSign from "../comp/requiredSign";
 
 import MTE from "./component/machinery_form";
-import {setAppFlow} from "../../../../db/users";
+import { setAppFlow } from "../../../../db/users";
 import { useLocation } from "react-router-dom";
-import {STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS} from "affserver";
+import { STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS } from "affserver";
+import { STEPPER_STYLE } from "affserver";
+import * as C from "affserver";
+import { ItLabMte } from "./ItLabMte";
+import { MachineryToolEquipment } from "./MachineryToolEquipment";
+
 
 const schema = yup.object().shape({
   land_documents: yup.array().of(
@@ -49,171 +54,114 @@ export const Preference = [
   { value: "No", label: "no" },
 ];
 
-const TradewiseMachineryToolsEquipmentDetails = () => {
-  const stage = useSelector((state) => state.reg.stepsII);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [currentStep, setCurrentStep] = useState(0);
+const TradewiseMachineryToolsEquipmentDetails = ({ nav, step = {}, setActive, refreshSteps }) => {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const appId = queryParams.get("appId");
 
+  const [currentStep, setCurrentStep] = useState(0);
   const handleStepClick = (step, index) => setCurrentStep(index);
 
-  const initialStepsArr = [
-    {
-      stepLabel: "Fitter",
-      stepDescription: "Fill Machinery/Tools/Equipment Details",
-      completed: false,
-    },
-    {
-      stepLabel: "Electrician",
-      stepDescription: "Fill Machinery/Tools/Equipment Details",
-      completed: false,
-    },
-  ];
+  const [activeStep, setActiveStep] = useState(0);
 
+  const [firstIndex, setFirstIndex] = useState(0);
+  const [lastIndex, setLastIndex] = useState(0);
+
+  const prepareSteps = () => step.subSteps.map((step) => ({ ...step, stepLabel: step.stepTitle, completed: step.status === C.SL.FILLED }));
+  const [steps, setSteps] = useState(prepareSteps);
+
+
+  const loadData = async () => {
+    try {
+      let List;
+      List = step.subSteps.map((step) => ({ ...step, stepLabel: step.stepTitle, completed: step.status === C.SL.FILLED }))
+      console.log(List.length);
+      setSteps(List);
+      const firstIndex = 0;                 // Always 0 for the first element
+      const lastIndex = List.length - 1;   // Length minus 1 for the last element
+      setFirstIndex(firstIndex);
+      setLastIndex(lastIndex);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
-    console.log(stage);
+    loadData();
   }, []);
 
-  // const initialLandDocs = stage.stage_I.land_documents || [];
-  // const lease_deed_document = stage.stage_I.lease_docs || [];
 
-  const languages = [
-    "",
-    "Hindi",
-    "English",
-    "Bengali",
-    "Telugu",
-    "Marathi",
-    "Tamil",
-    "Urdu",
-    "Gujarati",
-    "Kannada",
-    "Odia",
-    "Malayalam",
-    "Punjabi",
-  ];
 
-  const ID_Proof_Doc_list = [
-    "Aadhaar Card",
-    "PAN Card",
-    "Passport",
-    "Voter ID Card",
-    "Driving License",
-  ];
+  const goToSection = (step, index) => {
+    setActiveStep(step);
+  };
 
-  const designation = ["Secretary", "Chairperson", "President"];
+  const object = (step, stepIndex) => {
+    let obj = {
+      firstIndex: firstIndex,
+      lastIndex: lastIndex,
+      currentIndex: stepIndex,
+      step: step,
+      previous: () => { return previous(step, stepIndex); },
+      next: () => { return next(step, stepIndex); },
+      finish: () => { return finish(step, stepIndex); }
+    };
+    return obj;
+  }
 
-   const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-    const appId = queryParams.get("appId");
+  const previous = (step, index) => {
+    console.log(step, index);
+    setActiveStep(--index);
+    return step;
+  }
+
+  const next = (step, index) => {
+    setActiveStep(++index);
+    console.log(step, index)
+  }
+
+  const finish = (step, index) => {
+    console.log(step, index)
+  }
+
+  const setStepContent = (step, stepIndex) => {
+    console.log(step);
+    switch (step.step) {
+      case C.CIK.SPECIFICATIONS_OF_IT_LAB:
+        return (<ItLabMte nav={object(step, stepIndex)} step={step} setActive={goToSection} refreshSteps={loadData} />)
+      case C.CIK.TRADEWISE_MACHINERY__TOOLS__EQUIPMENT_DETAILS:
+        return (<MachineryToolEquipment nav={object(step, stepIndex)} step={step} setActive={goToSection} refreshSteps={loadData} />)
+      default:
+        return (<h5>Sowething Went Wrong</h5>)
+    }
+  }
+
 
   return (
     <Fragment>
       {true && (
-        <Formik
-          initialValues={
-            {
-              // land_documents: initialLandDocs,
-              // lease_deed_document: lease_deed_document,
-            }
-          }
-          validationSchema={schema}
-          onSubmit={(values) => {
-            console.log("Form Values", values);
-                  setAppFlow(appId, STAGE_II_MACHINE_EQUIPEMENT_TOOL_DETAILS);
-            
-            // Swal.fire({
-            //   title: "Saving on Local Storage",
-            //   html: "Please wait...",
-            //   timer: 2000,
-            //   timerProgressBar: true,
-            //   didOpen: () => {
-            //     Swal.showLoading();
-            //     dispatch({ type: "set_comp_stateI_III", payload: values });
-            //   },
-            // }).then(() => {
-            //   navigate(
-            //     "?stage=1&form_id=Basic Details of Applicant  Organization"
-            //   );
-            // });
-          }}
-        >
-          {({ handleSubmit, setFieldValue, values, errors, touched }) => (
-            <Form noValidate onSubmit={handleSubmit}>
-              {false && (
-                <Card className="custom-card border border-primary">
-                  <Card.Header>
-                    <div
-                      className="card-title"
-                      style={{ textTransform: "none" }}
-                    >
-                      Tradewise Machinery/Tools/Equipment Details
-                    </div>
-                  </Card.Header>
-                  <Card.Body>
-                    <div>
-                      {/* className="table-responsive" */}
-                      <Table className="text-nowrap ">
-                        <thead>
-                          <tr>
-                            <th scope="col" style={{ textTransform: "none" }}>
-                              Trade Name
-                            </th>
-                            <th scope="col" style={{ textTransform: "none" }}>
-                              Name of Machinery / Tool / Equipment
-                            </th>
-                            <th scope="col" style={{ textTransform: "none" }}>
-                              Required as per norms
-                            </th>
-                            <th scope="col" style={{ textTransform: "none" }}>
-                              Availibility
-                            </th>
-                            <th scope="col" style={{ textTransform: "none" }}>
-                              Enter the Available Quantity
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr>
-                            <th scope="row">Fitter</th>
-                            <td>Pliers</td>
-                            <td>
-                              <Field
-                                type="number"
-                                name={`infra_structureffff`}
-                                as={Form.Control}
-                                value={10}
-                                disabled
-                              />
-                            </td>
-                            <td>
-                              <Select
-                                options={Preference}
-                                placeholder="Select Availibility"
-                                aria-label="Default select example"
-                                classNamePrefix="Select2"
-                                className="search-panel"
-                              />
-                            </td>
-                            <td>
-                              <Field
-                                type="number"
-                                name={`infra_structure`}
-                                as={Form.Control}
-                              />
-                            </td>
-                          </tr>
-                        </tbody>
-                      </Table>
-                    </div>
-                  </Card.Body>
-                </Card>
-              )}
+        <Card className="custom-card border border-primary">
+          <Card.Header>
+            <div className="card-title" style={{ textTransform: "none" }}>
+              Machinery/Tools/Equipment Details
+            </div>
+          </Card.Header>
+          <Card.Body>
+            <Stepper
+              styles={STEPPER_STYLE}
+              steps={steps}
+              currentStepIndex={activeStep}
+              // orientation="vertical"
+              orientation="horizontal"
+              labelPosition="center"
+              onStepClick={handleStepClick}
+              stepContent={setStepContent}
+            />
+          </Card.Body>
+          {/* <Card.Footer>
+                  <Button onClick={markascomplete}>Mark as Complete</Button>
+                </Card.Footer> */}
+        </Card>
 
-              {true && <MTE />}
-            </Form>
-          )}
-        </Formik>
       )}
     </Fragment>
   );

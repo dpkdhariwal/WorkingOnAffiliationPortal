@@ -1,5 +1,4 @@
-import axios from "../axios";
-
+import axios from "../axios_custom";
 export const registerUser = (user) => async (dispatch) => {
   dispatch({ type: "USER_REGIISTER_REQUEST" });
 

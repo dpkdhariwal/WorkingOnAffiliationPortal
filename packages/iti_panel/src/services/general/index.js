@@ -40,6 +40,22 @@ export const getAssessmentStageIFlowById = async (appId) => {
   })
 };
 
+export const getAssessmentStageIIFlowById = async (appId) => {
+  const formData = new FormData();
+  formData.append("appId", appId);
+  return new Promise((resolve, reject) => {
+    api.post("/state/getAssessmentStageIIFlowById", formData).then((res) => { resolve(res) }).catch((error) => { reject(error) });
+  })
+};
+export const getAsmtFlowForStageII = async (appId) => {
+  const formData = new FormData();
+  formData.append("appId", appId);
+  return new Promise((resolve, reject) => {
+    api.post("/state/getAsmtFlowForStageII", formData).then((res) => { resolve(res) }).catch((error) => { reject(error) });
+  })
+};
+
+
 export const setNewStatusOfAppByStep = async (appId, step, newStatus) => {
   const formData = new FormData();
   formData.append("step", step);
@@ -58,6 +74,15 @@ export const setStageIAssessmentFlow = async (appId) => {
   })
 };
 
+export const setStageIIAssessmentFlow = async (appId) => {
+  const formData = new FormData();
+  formData.append("appId", appId);
+  return new Promise((resolve, reject) => {
+    api.post("/state/setStageIIAssessmentFlow", formData).then((res) => { resolve(res) }).catch((error) => { reject(error) });
+  })
+};
+
+
 
 export const getDetails = async (appId) => {
   const formData = new FormData();
@@ -67,12 +92,45 @@ export const getDetails = async (appId) => {
   })
 };
 
+export const getEntityDetails = async (appId) => {
+  const formData = new FormData();
+  formData.append("appId", appId);
+  return new Promise((resolve, reject) => {
+    api.post("/general/getEntityDetails", formData).then((res) => { resolve(res) }).catch((error) => { reject(error) });
+  })
+};
+
+export const getProposedInstDetails = async (appId) => {
+  const formData = new FormData();
+  formData.append("appId", appId);
+  return new Promise((resolve, reject) => {
+    api.post("/general/getProposedInstDetails", formData).then((res) => { resolve(res) }).catch((error) => { reject(error) });
+  })
+};
+
+
+
 
 export const getAppFlowByAppId = async (appId) => {
   const formData = new FormData();
   formData.append("appId", appId);
   return new Promise((resolve, reject) => {
     api.post("/general/getAppFlowByAppId", formData).then((res) => { resolve(res) }).catch((error) => { reject(error) });
+  })
+};
+
+export const geLanguages = async () => {
+  const formData = new FormData();
+  return new Promise((resolve, reject) => {
+    api.post("/general/geLanguages", formData).then((res) => { resolve(res) }).catch((error) => { reject(error) });
+  })
+};
+
+export const getMasters = async (master) => {
+  const formData = new FormData();
+  formData.append("master", master);
+  return new Promise((resolve, reject) => {
+    api.post("/general/getMasters", formData).then((res) => { resolve(res) }).catch((error) => { reject(error) });
   })
 };
 

@@ -13,59 +13,7 @@ import * as set from "../../../../../../../../db/forms/stageI/set/set";
 import * as gen from "../../../../../../../../services/general";
 
 
-export const InstituteLocation = () => {
-  const MaxData = [
-    { value: "Document is not legible", label: "Document is not legible" },
-    { value: "Document is irrelevant", label: "Document is irrelevant" },
-    {
-      value: "Document lacks required information",
-      label: "Document lacks required information",
-    },
-    {
-      value:
-        "Document is not approved by the competent authority in the State/ UT",
-      label:
-        "Document is not approved by the competent authority in the State/ UT",
-    },
-    {
-      value:
-        "Address on the document does not match with the proposed land/ building address",
-      label:
-        "Address on the document does not match with the proposed land/ building address",
-    },
-    {
-      value:
-        "Document does not indicate the workshop for all trade/units, classrooms, IT Lab, Administrative area, Amenities area etc.",
-      label:
-        "Document does not indicate the workshop for all trade/units, classrooms, IT Lab, Administrative area, Amenities area etc.",
-    },
-    {
-      value: "Any other reason, please specify",
-      label: "Any other reason, please specify",
-    },
-  ];
-
-  const { Formik } = formik;
-  const formRef2 = useRef();
-  const dispatch = useDispatch();
-
-  const [showXlModal, setShowXlModal] = useState(false);
-  const [selectedSize, setSelectedSize] = useState("");
-
-  const handleShowModal = (size) => {
-    switch (size) {
-      case "xl":
-        setShowXlModal(true);
-        break;
-      default:
-        break;
-    }
-    setSelectedSize(size);
-  };
-
-
-  const [formData, setFormData] = useState({});
-  const [formSubmited, setFormSubmited] = useState(false);
+export const InstituteLocation = ({ pinstInfo }) => {
 
 
   // console.log(nav.next());
@@ -81,8 +29,8 @@ export const InstituteLocation = () => {
     let resp = await gen.getDetails(appId);
     setInfo(resp.data);
   }
-  useEffect(() => { getInfo() }, []);
 
+  useEffect(() => { getInfo() }, []);
   useEffect(() => { console.log(info); }, [info]);
 
   return (
@@ -109,7 +57,7 @@ export const InstituteLocation = () => {
               <th style={{ border: "1px solid black" }}>Type of Institute</th>
             </tr>
             <tr>
-              <td style={{ border: "1px solid black" }}>{info?.proposed_insti_details?.institute_location}</td>
+              <td style={{ border: "1px solid black" }}>{pinstInfo?.institute_location}</td>
             </tr>
           </tbody>
         </table>
@@ -124,11 +72,12 @@ export const InstituteLocation = () => {
           <tbody>
             <tr>
               <th style={{ border: "1px solid black" }}>Falls Under Hill Area/Hill?</th>
-              <td style={{ border: "1px solid black" }}>{info?.proposed_insti_details?.is_falls_under_hill_area_hill}</td>
+              <td style={{ border: "1px solid black" }}>{pinstInfo?.pInstDetail?.is_falls_under_hill_area_hill}</td>
             </tr>
-            {info?.proposed_insti_details?.is_falls_under_hill_area_hill == "yes" && (<tr>
+            {pinstInfo?.pInstDetail?.is_falls_under_hill_area_hill == "yes" && (<tr>
               <td style={{ border: "1px solid black" }}>Supporting Government Notification/Order/Circular</td>
-              <td style={{ border: "1px solid black" }}><Button>View</Button></td>
+              <td style={{ border: "1px solid black" }}>
+                <Button type="link" href={`${pinstInfo?.pInstDetail?.Falls_Under_Hill_Area_Hill__Supporting_Doc}`}>View</Button></td>
             </tr>)}
 
           </tbody>
@@ -144,11 +93,11 @@ export const InstituteLocation = () => {
           <tbody>
             <tr>
               <th style={{ border: "1px solid black" }}>Falls Under Border District</th>
-              <td style={{ border: "1px solid black" }}>{info?.proposed_insti_details?.is_falls_under_border_district}</td>
+              <td style={{ border: "1px solid black" }}>{pinstInfo?.pInstDetail?.is_falls_under_border_district}</td>
             </tr>
             {info?.proposed_insti_details?.is_falls_under_border_district == "yes" && (<tr>
               <td style={{ border: "1px solid black" }}>Supporting Government Notification/Order/Circular</td>
-              <td style={{ border: "1px solid black" }}><Button>View</Button></td>
+              <td style={{ border: "1px solid black" }}><Button type="link" href={`${pinstInfo?.pInstDetail?.Falls_Under_Border_District__Supporting_Doc}`}>View</Button></td>
             </tr>)}
           </tbody>
         </table>
@@ -179,8 +128,8 @@ export const InstituteLocation = () => {
 
             </tr>
             <tr>
-              <td style={{ border: "1px solid black" }}>{info?.proposed_insti_details?.under_msti_category}</td>
-              <td style={{ border: "1px solid black" }}>{info?.proposed_insti_details?.Whether_the_institute_is_exclusive_for_women_trainees}</td>
+              <td style={{ border: "1px solid black" }}>{pinstInfo?.pInstDetail?.under_msti_category}</td>
+              <td style={{ border: "1px solid black" }}>{pinstInfo?.pInstDetail?.Whether_the_institute_is_exclusive_for_women_trainees}</td>
 
             </tr>
 
@@ -212,8 +161,8 @@ export const InstituteLocation = () => {
 
             </tr>
             <tr>
-              <td style={{ border: "1px solid black" }}>{info?.proposed_insti_details?.latitude}</td>
-              <td style={{ border: "1px solid black" }}>{info?.proposed_insti_details?.Longitude}</td>
+              <td style={{ border: "1px solid black" }}>{pinstInfo?.pInstDetail?.latitude}</td>
+              <td style={{ border: "1px solid black" }}>{pinstInfo?.pInstDetail?.Longitude}</td>
 
             </tr>
 

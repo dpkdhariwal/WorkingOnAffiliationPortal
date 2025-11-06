@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState, useRef } from "react";
 import { Row, Col, Card, Form, Button, Table, Modal, Form as BForm, } from "react-bootstrap";
-import { Formik, Field, FieldArray } from "formik";
+import { Formik, Field, FieldArray, ErrorMessage } from "formik";
 import * as yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
@@ -11,15 +11,27 @@ import ReqSign from "../comp/requiredSign";
 import { ChatMessage } from "../../../Assessment/ReviewTrail";
 import Geotagged from "../../../geotagged";
 import ReactDOM from "react-dom/client";
+import { useLocation } from "react-router-dom";
 
 import { building_detail_yup_object } from "../../../../reducers/newAppReducer";
 import { UPDATE_BUILDING_DETAILS, STAGE_II__FEE_PAID, STAGE_II__FEE_EXEMPTED } from "affserver";
 
 import { Form as BootstrapForm } from "react-bootstrap";
+import { Navigations } from "@/components/Assessment/components";
 
+import * as C from "affserver";
 
+import * as ap from "@/services/applicant/index";
+import { formatLabel } from "@/helpers";
 
-export const ItLabMte = ({ setActive }) => {
+export const ItLabMte = ({ isView = false, nav }) => {
+
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const appId = queryParams.get("appId");
+  const [initialValues, setInitialValues] = useState(C.st2.ItLabSpecifications.initialValue);
+
+  console.log(nav);
   const stage = useSelector((state) => state.reg.stepsII);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -31,241 +43,184 @@ export const ItLabMte = ({ setActive }) => {
     console.log(stage);
   }, []);
 
+  const onNext = async () => {
+    console.log("Called Next");
+ 
+    try {
 
+      const { values, errors } = formikRef.current;
+      console.log(formikRef.current);
+      await formikRef.current.submitForm();
+      await formikRef.current.validateForm();
 
-  const submit = (values) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to save the form data?",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonText: "Yes, save it!",
-      cancelButtonText: "Cancel",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // User confirmed – now show loading or save directly
-        Swal.fire({
-          title: "Saving...",
-          didOpen: () => {
-            Swal.showLoading();
-            dispatch({ type: UPDATE_BUILDING_DETAILS, payload: values });
-            dispatch({ type: "set_filled_step_II", payload: { step: 1 }, });
-            dispatch({ type: "reg_set_active_stepII", payload: { step: 2 } });
-            setActive(reg.stepsII[1]);
-            Swal.close();
-          },
-        });
-      } else {
-        console.log("User cancelled save");
+      const { isValid } = formikRef.current;
+      console.log(errors, isValid);
+
+      if (isValid === false) {
+        throw new Error("Form validation failed: form is not valid.");
       }
-    });
-  };
 
-  const Building_Detail_initialValues = useSelector((state) => state.building_detail_reducer);
+      Swal.fire({
+        title: "Are you sure?",
+        text: "Do you want to save the form data?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Yes, save it!",
+        cancelButtonText: "Cancel",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // User confirmed – now show loading or save directly
+          Swal.fire({
+            title: "Saving...",
+            didOpen: () => {
+              Swal.showLoading();
+              ap.saveItLabSpecifications(values, appId);
+              nav.next();
+              Swal.close();
+            },
+          });
+        } else {
+          console.log("User cancelled save");
+        }
+      });
 
-  const AppliInfo = useSelector((state) => state.AppliInfo);
+    } catch (error) {
+      console.log(error);
+      Swal.fire({
+        icon: "warning",
+        title: "Fill the form",
+        showConfirmButton: true,
+        confirmButtonText: "OK",
+        allowOutsideClick: false
+      });
+    }
+  }
+
+
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const resp = await ap.getITLabSpecifications(appId);
+        const data = resp.data;
+        setInitialValues(data);  // update initial values
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    loadData();
+  }, [appId]);
 
   return (
     <Fragment>
-      {AppliInfo.stage_II_fee_status === STAGE_II__FEE_PAID || AppliInfo.stage_II_fee_status === STAGE_II__FEE_EXEMPTED ? (<h2>Hello</h2>) :
-        <>
-          <Formik
-            innerRef={formikRef}
-            initialValues={Building_Detail_initialValues}
-            validationSchema={yup.object().shape(building_detail_yup_object)}
-            onSubmit={(values) => {
-              submit(values);
-              console.log("Form Values", values);
-            }}
-          >
-            {({ handleSubmit, handleChange, setFieldValue, values, errors, touched }) => (
-              <Form onSubmit={handleSubmit}>
-                <Card className="custom-card border border-primary">
-                  <Card.Header>
-                    <div className="card-title" style={{ textTransform: "none" }}>
-                      <h5>Specifications of IT lab</h5>
-                    </div>
-                  </Card.Header>
-                  <Card.Body>
-                    <div className="table-responsive">
-                      <Table cellPadding="5px"
-                        border={1}
-                        style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
-                      >
-                        <thead>
-                          <tr>
-                            <th>Particulars</th>
-                            <th>Required</th>
-                            <th>Required Area</th>
-                            <th>Available Area</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {[
-                            { key: "Desktop computer with latest configuration", required_value: "10", note: "Each ITI shall be equipped with desktop computers of the latest configuration to ensure effective digital learning. \n i.	A minimum of 10 computers shall be required for an ITI having a seating capacity of up to 100 trainees in either the first or second shift. \n ii.	For every additional 20 trainees beyond the initial 100, 2 additional computers shall be required" },
-                          ].map((item, index) => {
-                            return (
-                              <tr key={index}>
-                                <td>{item.key}</td>
-                                <td>{item.note}</td>
-                                <td>{item.required_value}</td>
-                                <td>
-                                  <Field
-                                    type="number"
-                                    name="name"
-                                    as={BForm.Control}
+      <Formik
+        innerRef={formikRef}
+        initialValues={initialValues}
+        enableReinitialize
+        validationSchema={C.st2.ItLabSpecifications.ValSchema}
+        onSubmit={(values) => { console.log(values) }}
+      >
+        {({ handleSubmit, handleChange, setFieldValue, values, errors, touched }) => (
+          <Form onSubmit={handleSubmit}>
+            <Card className="custom-card border border-primary">
+              <Card.Header>
+                <div className="card-title" style={{ textTransform: "none" }}>
+                  <h5>Specifications of IT lab</h5>
+                </div>
+              </Card.Header>
+              <Card.Body>
 
-                                  />
-                                  {/* <div className="text-danger">
-                                                            <ErrorMessage name={workshopAreaField} />
-                                                        </div> */}
-                                </td>
-                              </tr>
-                            )
-                          })}
-
-
-
-                        </tbody>
-                      </Table>
-                    </div>
-                    <hr />
-
-
-                    {/*  className="text-nowrap" */}
-                    <Table width={100} cellPadding="5px"
-                      border={1}
-                      style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
-                    >
+                <FieldArray name="computers">
+                  {({ push, remove }) => (
+                    <Table >
                       <thead>
                         <tr>
-                          <th style={{ width: '20%' }}>Particulars</th>
-                          <th style={{ width: '60%' }}>Required</th>
-                          <th style={{ width: '20%' }}>Select</th>
+                          <th>Particulars</th>
+                          <th>Required</th>
+                          <th>Required Qty</th>
+                          <th>Available Qty</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {[
-                          {
-                            key: "Internet connection",
-                            note: "Minimum 40 Mbps connection or high speed Wifi connection"
-                          }
-                          ,
-                          {
-                            key: "Computer with multimedia, anti-virus software, latest operating software (Licensed software) with UPS"
-                            , note: "Mandatory"
-                          }
-                          ,
-                          {
-                            key: "LAN Cabling, LAN Switch"
-                            , note: "As required"
-                          }
-                          ,
-                          {
-                            key: "Printer (Laser)"
-                            , note: "As required"
-                          }
-                          ,
-                          {
-                            key: "Scanner"
-                            , note: "As required"
-                          }
-                          ,
-                          {
-                            key: "Server"
-                            , note: "As required"
-                          }
-                          ,
-                          {
-                            key: "External Hard Disk – 1TB"
-                            , note: "1 no."
-                          }
-                          ,
-                          {
-                            key: "Instructor/ Office Chair"
-                            , note: "1 no."
-                          }
-                          ,
-                          {
-                            key: "Instructor/ Office Table"
-                            , note: "1 no."
-                          }
-                          ,
-                          {
-                            key: "Trainees/Computer Chairs"
-                            , note: "20 nos."
-                          }
-                          ,
-                          {
-                            key: "Trainees/ Computer Tables"
-                            , note: "10 nos."
-                          }
-                          ,
-                          {
-                            key: "Black/ White Board 4X6 Feet"
-                            , note: "1 no."
-                          }
-                        ].map((item, index) => {
-                          return (<tr key={index}>
-                            <td>{item.key}</td>
-                            <td>{item.note}</td>
-                            <td>
-                              <div>
-                                    <Form.Check
-                                      inline
-                                      type="radio"
-                                      label="Yes"
-                                      name={item.key}
-                                      value="yes"
-                                      
-                                    />
-                                    <Form.Check
-                                      inline
-                                      type="radio"
-                                      label="No"
-                                      name={item.key}
-                                      value="no"
-                                    />
-                                  </div>
+                        {values.computers.map((obj, index) => {
+                          return (
+                            <tr key={index}>
+                              <td>{formatLabel(obj?.particular)}</td>
+                              <td>{obj?.instruction}</td>
+                              <td>{obj?.required_qty}</td>
+                              <td>
+                                <Field
+                                  type="number"
+                                  name={`computers[${index}].available_qty`}
+                                  as={Form.Control}
 
-
-                            </td>
-                          </tr>);
+                                />
+                                <div className="text-danger">
+                                  <ErrorMessage name={`computers[${index}].available_qty`} />
+                                </div>
+                              </td>
+                            </tr>
+                          )
                         })}
-
-
                       </tbody>
                     </Table>
-                  </Card.Body>
-                  <Card.Footer>
-                    <div className="d-flex justify-content-between mb-3">
-                      <Button
-                        className="p-2"
-                        variant="success"
-                        onClick={() => formikRef.current?.submitForm()}
-                      >
-                        Save & Continue
-                      </Button>
+                  )}
+                </FieldArray>
+                <hr />
+                <FieldArray name="equipments">
+                  <Table >
+                    <thead>
+                      <tr>
+                        <th>Particulars</th>
+                        <th>Required</th>
+                        <th>Availibility</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {values.equipments.map((obj, index) => {
+                        return (
+                          <tr key={index}>
+                            <td>{obj?.particular}</td>
+                            <td>{obj?.instruction}</td>
+                            <td>
+                              <label>
+                                <Field
+                                  type="radio"
+                                  name={`equipments[${index}].availability`}
+                                  value="yes"
+                                />
+                                Yes
+                              </label>
+                              <label style={{ marginLeft: "10px" }}>
+                                <Field
+                                  type="radio"
+                                  name={`equipments[${index}].availability`}
+                                  value="no"
+                                />
+                                No
+                              </label>
+                              <ErrorMessage
+                                name={`equipments[${index}].availability`}
+                                component="div"
+                                style={{ color: "red", fontSize: "0.8rem" }}
+                              />
+                            </td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </Table>
+                </FieldArray>
 
-                      {stepInfo.filled === true && (
-                        <Button
-                          className="p-2"
-                          variant="warning"
-                          onClick={() => {
-                            setActive(reg.stepsII[1]);
-                          }}
-                        >
-                          Next
-                        </Button>
-                      )}
-                    </div>
-                  </Card.Footer>
-                </Card>
-              </Form>
-            )}
-          </Formik>
-        </>
-      }
+              </Card.Body>
+              <Card.Footer>
+                <Navigations nextLabel="Save & Next" nav={nav} onNext={() => { onNext(); }} />
+              </Card.Footer>
+            </Card>
+          </Form>
+        )}
+      </Formik>
     </Fragment>
   );
 };
@@ -273,7 +228,7 @@ export const ItLabMte = ({ setActive }) => {
 
 
 export const Assessment_ItLabMte = () => {
-const MaxData = [
+  const MaxData = [
     { value: "Document is not legible", label: "Document is not legible" },
     { value: "Document is irrelevant", label: "Document is irrelevant" },
     {
@@ -299,8 +254,8 @@ const MaxData = [
         "Document does not indicate the workshop for all trade/units, classrooms, IT Lab, Administrative area, Amenities area etc.",
     },
     {
-      value: "Any other reason, please specify",
-      label: "Any other reason, please specify",
+      value: "other",
+      label: "other",
     },
   ];
 
@@ -330,382 +285,382 @@ const MaxData = [
   const [formData, setFormData] = useState({});
   const [formSubmited, setFormSubmited] = useState(false);
 
-    return (
-        <>
-            <Row
-                style={{
-                    backgroundColor: "rgb(245, 245, 245)",
-                    margin: "10px 0px 0px",
-                    borderRadius: 6,
-                    borderStyle: "dashed",
-                    borderWidth: "thin",
-                    padding: "10px",
-                    marginBottom:"10px"
-                }}
-            >
-                <Col xl={12} lg={12} md={12} sm={12}>
-                    <table className="custom-table">
-                        <thead>
-                          <tr>
-                            <th>Particulars</th>
-                            <th>Required</th>
-                            <th>Required Desktop</th>
-                            <th>Available Desktop</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {[
-                            { key: "Desktop computer with latest configuration", required_value: "10", note: "Each ITI shall be equipped with desktop computers of the latest configuration to ensure effective digital learning. \n i.	A minimum of 10 computers shall be required for an ITI having a seating capacity of up to 100 trainees in either the first or second shift. \n ii.	For every additional 20 trainees beyond the initial 100, 2 additional computers shall be required" },
-                          ].map((item, index) => {
-                            return (
-                              <tr key={index}>
-                                <td>{item.key}</td>
-                                <td>{item.note}</td>
-                                <td>{item.required_value}</td>
-                                <td>xyz</td>
-                              </tr>
-                            )
-                          })}
+  return (
+    <>
+      <Row
+        style={{
+          backgroundColor: "rgb(245, 245, 245)",
+          margin: "10px 0px 0px",
+          borderRadius: 6,
+          borderStyle: "dashed",
+          borderWidth: "thin",
+          padding: "10px",
+          marginBottom: "10px"
+        }}
+      >
+        <Col xl={12} lg={12} md={12} sm={12}>
+          <table className="custom-table">
+            <thead>
+              <tr>
+                <th>Particulars</th>
+                <th>Required</th>
+                <th>Required Desktop</th>
+                <th>Available Desktop</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { key: "Desktop computer with latest configuration", required_value: "10", note: "Each ITI shall be equipped with desktop computers of the latest configuration to ensure effective digital learning. \n i.	A minimum of 10 computers shall be required for an ITI having a seating capacity of up to 100 trainees in either the first or second shift. \n ii.	For every additional 20 trainees beyond the initial 100, 2 additional computers shall be required" },
+              ].map((item, index) => {
+                return (
+                  <tr key={index}>
+                    <td>{item.key}</td>
+                    <td>{item.note}</td>
+                    <td>{item.required_value}</td>
+                    <td>xyz</td>
+                  </tr>
+                )
+              })}
 
 
 
-                        </tbody>
-                      </table>
-                    <hr />
-                    <table className="custom-table">
-                      <thead>
-                        <tr>
-                          <th style={{ width: '20%' }}>Particulars</th>
-                          <th style={{ width: '60%' }}>Required</th>
-                          <th style={{ width: '20%' }}>Select</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {[
-                          {
-                            key: "Internet connection",
-                            note: "Minimum 40 Mbps connection or high speed Wifi connection"
-                          }
-                          ,
-                          {
-                            key: "Computer with multimedia, anti-virus software, latest operating software (Licensed software) with UPS"
-                            , note: "Mandatory"
-                          }
-                          ,
-                          {
-                            key: "LAN Cabling, LAN Switch"
-                            , note: "As required"
-                          }
-                          ,
-                          {
-                            key: "Printer (Laser)"
-                            , note: "As required"
-                          }
-                          ,
-                          {
-                            key: "Scanner"
-                            , note: "As required"
-                          }
-                          ,
-                          {
-                            key: "Server"
-                            , note: "As required"
-                          }
-                          ,
-                          {
-                            key: "External Hard Disk – 1TB"
-                            , note: "1 no."
-                          }
-                          ,
-                          {
-                            key: "Instructor/ Office Chair"
-                            , note: "1 no."
-                          }
-                          ,
-                          {
-                            key: "Instructor/ Office Table"
-                            , note: "1 no."
-                          }
-                          ,
-                          {
-                            key: "Trainees/Computer Chairs"
-                            , note: "20 nos."
-                          }
-                          ,
-                          {
-                            key: "Trainees/ Computer Tables"
-                            , note: "10 nos."
-                          }
-                          ,
-                          {
-                            key: "Black/ White Board 4X6 Feet"
-                            , note: "1 no."
-                          }
-                        ].map((item, index) => {
-                          return (<tr key={index}>
-                            <td>{item.key}</td>
-                            <td>{item.note}</td>
-                            <td>xyz</td>
-                          </tr>);
-                        })}
+            </tbody>
+          </table>
+          <hr />
+          <table className="custom-table">
+            <thead>
+              <tr>
+                <th style={{ width: '20%' }}>Particulars</th>
+                <th style={{ width: '60%' }}>Required</th>
+                <th style={{ width: '20%' }}>Select</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                {
+                  key: "Internet connection",
+                  note: "Minimum 40 Mbps connection or high speed Wifi connection"
+                }
+                ,
+                {
+                  key: "Computer with multimedia, anti-virus software, latest operating software (Licensed software) with UPS"
+                  , note: "Mandatory"
+                }
+                ,
+                {
+                  key: "LAN Cabling, LAN Switch"
+                  , note: "As required"
+                }
+                ,
+                {
+                  key: "Printer (Laser)"
+                  , note: "As required"
+                }
+                ,
+                {
+                  key: "Scanner"
+                  , note: "As required"
+                }
+                ,
+                {
+                  key: "Server"
+                  , note: "As required"
+                }
+                ,
+                {
+                  key: "External Hard Disk – 1TB"
+                  , note: "1 no."
+                }
+                ,
+                {
+                  key: "Instructor/ Office Chair"
+                  , note: "1 no."
+                }
+                ,
+                {
+                  key: "Instructor/ Office Table"
+                  , note: "1 no."
+                }
+                ,
+                {
+                  key: "Trainees/Computer Chairs"
+                  , note: "20 nos."
+                }
+                ,
+                {
+                  key: "Trainees/ Computer Tables"
+                  , note: "10 nos."
+                }
+                ,
+                {
+                  key: "Black/ White Board 4X6 Feet"
+                  , note: "1 no."
+                }
+              ].map((item, index) => {
+                return (<tr key={index}>
+                  <td>{item.key}</td>
+                  <td>{item.note}</td>
+                  <td>xyz</td>
+                </tr>);
+              })}
 
 
-                      </tbody>
-                    </table>
-                </Col>
-                {false && (<Col xl={6} lg={6} md={6} sm={6}>
-                    <div style={{ padding: 2, background: "#E0ECF5", borderRadius: 6 }}>
-                        <div className="form-container">
-                            {formSubmited == false ? (
-                                <Formik
-                                    validationSchema={yup.object().shape({
-                                        as_per_norms: yup
-                                            .string()
-                                            .required("Select whether Building plan is as per norms"),
+            </tbody>
+          </table>
+        </Col>
+        {false && (<Col xl={6} lg={6} md={6} sm={6}>
+          <div style={{ padding: 2, background: "#E0ECF5", borderRadius: 6 }}>
+            <div className="form-container">
+              {formSubmited == false ? (
+                <Formik
+                  validationSchema={yup.object().shape({
+                    as_per_norms: yup
+                      .string()
+                      .required("Select whether Building plan is as per norms"),
 
-                                        category: yup.string().when("as_per_norms", {
-                                            is: "no", // 🔄 change to "no" since category and comments are required when it's "no"
-                                            then: () =>
-                                                yup.string().required("Please select a category"),
-                                            otherwise: () => yup.string().notRequired(),
-                                        }),
+                    category: yup.string().when("as_per_norms", {
+                      is: "no", // 🔄 change to "no" since category and comments are required when it's "no"
+                      then: () =>
+                        yup.string().required("Please select a category"),
+                      otherwise: () => yup.string().notRequired(),
+                    }),
 
-                                        assessor_comments: yup.string().when("as_per_norms", {
-                                            is: "no",
-                                            then: () =>
-                                                yup.string().required("Please provide your comments"),
-                                            otherwise: () => yup.string().notRequired(),
-                                        }),
-                                    })}
-                                    validateOnChange={() => console.log("validateOnChange")}
-                                    onSubmit={(values) => {
-                                        console.log("Form submitted with values:", values);
-                                        setFormData(values);
-                                        setFormSubmited(true);
-                                        console.log(formData);
-                                    }}
-                                    initialValues={{
-                                        category: "",
-                                        as_per_norms: "no",
-                                        assessor_comments: "",
-                                    }}
-                                >
-                                    {({
-                                        handleSubmit,
-                                        handleChange,
-                                        submitForm,
-                                        values,
-                                        errors,
-                                        touched,
-                                    }) => (
-                                        <Card style={{ backgroundColor: "#eff3d6" }}>
-                                            <Card.Header>
-                                                <label
-                                                    className="main-content-label my-auto"
-                                                    style={{ textTransform: "none" }}
-                                                >
-                                                    Review Form
-                                                </label>
-                                                <div className="ms-auto  d-flex">
-                                                    <Button
-                                                        size="sm"
-                                                        onClick={() => handleShowModal("xl")}
-                                                        type="button"
-                                                        className="rounded-pill btn-wave btn-outline-dark"
-                                                        variant="btn-outline-dark"
-                                                    >
-                                                        Review Instructions
-                                                    </Button>
-                                                </div>
-                                            </Card.Header>
-                                            <Card.Body>
-                                                <Form ref={formRef2} onSubmit={handleSubmit} validated>
-                                                    <Row className="mb-3">
-                                                        <Form.Group>
-                                                            <Form.Label>
-                                                                Whether Building plan is as per norms?
-                                                                <span style={{ color: "red" }}>*</span>
-                                                            </Form.Label>
-                                                            <div>
-                                                                <Form.Check
-                                                                    inline
-                                                                    type="radio"
-                                                                    label="Yes"
-                                                                    name="as_per_norms"
-                                                                    value="yes"
-                                                                    onChange={handleChange}
-                                                                    checked={values.as_per_norms === "yes"}
-                                                                    isInvalid={
-                                                                        touched.as_per_norms &&
-                                                                        !!errors.as_per_norms
-                                                                    }
-                                                                />
-                                                                <Form.Check
-                                                                    inline
-                                                                    type="radio"
-                                                                    label="No"
-                                                                    name="as_per_norms"
-                                                                    value="no"
-                                                                    onChange={handleChange}
-                                                                    checked={values.as_per_norms === "no"}
-                                                                    isInvalid={
-                                                                        touched.as_per_norms &&
-                                                                        !!errors.as_per_norms
-                                                                    }
-                                                                />
-                                                            </div>
-
-                                                            <Form.Control.Feedback type="invalid">
-                                                                {errors.category}
-                                                            </Form.Control.Feedback>
-                                                        </Form.Group>
-                                                    </Row>
-                                                    {values.as_per_norms === "no" && (
-                                                        <Row className="mb-3">
-                                                            <Form.Group
-                                                                as={Col}
-                                                                md="12"
-                                                                controlId="validationCustom02"
-                                                            >
-                                                                <Form.Label>
-                                                                    Select the Reason(s) and Raise
-                                                                    Non-Conformities (NC)
-                                                                    <span style={{ color: "red" }}>*</span>
-                                                                </Form.Label>
-                                                                <Field
-                                                                    required
-                                                                    name="category"
-                                                                    as="select"
-                                                                    className="form-control"
-                                                                >
-                                                                    <option value="">Select</option>
-                                                                    {MaxData.map((lang, i) => {
-                                                                        return (
-                                                                            <option key={i} value={lang.value}>
-                                                                                {lang.label}
-                                                                            </option>
-                                                                        );
-                                                                    })}
-                                                                </Field>
-                                                                <Form.Control.Feedback>
-                                                                    Looks good!
-                                                                </Form.Control.Feedback>
-                                                            </Form.Group>
-
-                                                            <Form.Group
-                                                                required
-                                                                as={Col}
-                                                                md="12"
-                                                                controlId="text-area"
-                                                                style={{ marginTop: "1rem" }}
-                                                            >
-                                                                <Form.Label>
-                                                                    Any other reason, please specify{" "}
-                                                                    <span style={{ color: "red" }}>*</span>
-                                                                </Form.Label>
-                                                                <Form.Control
-                                                                    name="assessor_comments"
-                                                                    required
-                                                                    as="textarea"
-                                                                    rows={3}
-                                                                    className={`form-control ${touched.assessor_comments &&
-                                                                        errors.assessor_comments
-                                                                        ? "is-invalid"
-                                                                        : ""
-                                                                        }`}
-                                                                    value={values.assessor_comments}
-                                                                    onChange={handleChange}
-                                                                    isInvalid={
-                                                                        touched.assessor_comments &&
-                                                                        !!errors.assessor_comments
-                                                                    }
-                                                                />
-                                                                {touched.assessor_comments &&
-                                                                    errors.assessor_comments && (
-                                                                        <div className="invalid-feedback">
-                                                                            {errors.assessor_comments}
-                                                                        </div>
-                                                                    )}
-                                                            </Form.Group>
-                                                        </Row>
-                                                    )}
-                                                    <Button variant="primary" onClick={submitForm}>
-                                                        Submit
-                                                    </Button>
-                                                </Form>
-                                            </Card.Body>
-                                            <Card.Footer></Card.Footer>
-                                        </Card>
-                                    )}
-                                </Formik>
-                            ) : formSubmited == true ? (
-                                <Card
-                                    className="border-info"
-                                    style={
-                                        formData.as_per_norms == "yes"
-                                            ? { backgroundColor: "#d6f3e0" }
-                                            : { backgroundColor: "#f3d6d6" }
-                                    }
-                                >
-                                    <Card.Header>
-                                        <label
-                                            className="main-content-label my-auto"
-                                            style={{ textTransform: "none" }}
-                                        >
-                                            Assessor Comments
-                                        </label>
-                                        <div className="ms-auto  d-flex">
-                                            25th April 2025:10:20PM
-                                        </div>
-                                    </Card.Header>
-                                    <Card.Body>
-                                        <Row className="mb-3">
-                                            <Col md={12}>
-                                                <b>Whether Building plan is as per norms?:</b>{" "}
-                                                <span style={{ textTransform: "capitalize" }}>
-                                                    {formData.as_per_norms}
-                                                </span>
-                                            </Col>
-                                            {formData.as_per_norms == "no" && (
-                                                <Col md={12}>
-                                                    <b>Reason Category:</b>{" "}
-                                                    <span style={{ textTransform: "capitalize" }}>
-                                                        {formData.category}
-                                                    </span>
-                                                </Col>
-                                            )}
-
-                                            {formData.category ==
-                                                "Any other reason, please specify" && (
-                                                    <Col md={12}>
-                                                        <b>Reason:</b> <p>{formData.assessor_comments}</p>
-                                                    </Col>
-                                                )}
-                                        </Row>
-                                    </Card.Body>
-                                    <Card.Footer className="d-flex justify-content-between">
-                                        <Button
-                                            variant="primary"
-                                            onClick={() => {
-                                                setFormSubmited(false);
-                                                setFormData({});
-                                            }}
-                                        >
-                                            Edit
-                                        </Button>
-                                        {/* <Button variant="primary">Submit</Button> */}
-                                    </Card.Footer>
-                                </Card>
-                            ) : (
-                                <h1>No Data</h1>
-                            )}
+                    assessor_comments: yup.string().when("as_per_norms", {
+                      is: "no",
+                      then: () =>
+                        yup.string().required("Please provide your comments"),
+                      otherwise: () => yup.string().notRequired(),
+                    }),
+                  })}
+                  validateOnChange={() => console.log("validateOnChange")}
+                  onSubmit={(values) => {
+                    console.log("Form submitted with values:", values);
+                    setFormData(values);
+                    setFormSubmited(true);
+                    console.log(formData);
+                  }}
+                  initialValues={{
+                    category: "",
+                    as_per_norms: "no",
+                    assessor_comments: "",
+                  }}
+                >
+                  {({
+                    handleSubmit,
+                    handleChange,
+                    submitForm,
+                    values,
+                    errors,
+                    touched,
+                  }) => (
+                    <Card style={{ backgroundColor: "#eff3d6" }}>
+                      <Card.Header>
+                        <label
+                          className="main-content-label my-auto"
+                          style={{ textTransform: "none" }}
+                        >
+                          Review Form
+                        </label>
+                        <div className="ms-auto  d-flex">
+                          <Button
+                            size="sm"
+                            onClick={() => handleShowModal("xl")}
+                            type="button"
+                            className="rounded-pill btn-wave btn-outline-dark"
+                            variant="btn-outline-dark"
+                          >
+                            Review Instructions
+                          </Button>
                         </div>
-                    </div>
-                </Col>)}
-            </Row>
+                      </Card.Header>
+                      <Card.Body>
+                        <Form ref={formRef2} onSubmit={handleSubmit} validated>
+                          <Row className="mb-3">
+                            <Form.Group>
+                              <Form.Label>
+                                Whether Building plan is as per norms?
+                                <span style={{ color: "red" }}>*</span>
+                              </Form.Label>
+                              <div>
+                                <Form.Check
+                                  inline
+                                  type="radio"
+                                  label="Yes"
+                                  name="as_per_norms"
+                                  value="yes"
+                                  onChange={handleChange}
+                                  checked={values.as_per_norms === "yes"}
+                                  isInvalid={
+                                    touched.as_per_norms &&
+                                    !!errors.as_per_norms
+                                  }
+                                />
+                                <Form.Check
+                                  inline
+                                  type="radio"
+                                  label="No"
+                                  name="as_per_norms"
+                                  value="no"
+                                  onChange={handleChange}
+                                  checked={values.as_per_norms === "no"}
+                                  isInvalid={
+                                    touched.as_per_norms &&
+                                    !!errors.as_per_norms
+                                  }
+                                />
+                              </div>
 
-        </>
-    );
+                              <Form.Control.Feedback type="invalid">
+                                {errors.category}
+                              </Form.Control.Feedback>
+                            </Form.Group>
+                          </Row>
+                          {values.as_per_norms === "no" && (
+                            <Row className="mb-3">
+                              <Form.Group
+                                as={Col}
+                                md="12"
+                                controlId="validationCustom02"
+                              >
+                                <Form.Label>
+                                  Select the Reason(s) and Raise
+                                  Non-Conformities (NC)
+                                  <span style={{ color: "red" }}>*</span>
+                                </Form.Label>
+                                <Field
+                                  required
+                                  name="category"
+                                  as="select"
+                                  className="form-control"
+                                >
+                                  <option value="">Select</option>
+                                  {MaxData.map((lang, i) => {
+                                    return (
+                                      <option key={i} value={lang.value}>
+                                        {lang.label}
+                                      </option>
+                                    );
+                                  })}
+                                </Field>
+                                <Form.Control.Feedback>
+                                  Looks good!
+                                </Form.Control.Feedback>
+                              </Form.Group>
+
+                              <Form.Group
+                                required
+                                as={Col}
+                                md="12"
+                                controlId="text-area"
+                                style={{ marginTop: "1rem" }}
+                              >
+                                <Form.Label>
+                                  Any other reason, please specify{" "}
+                                  <span style={{ color: "red" }}>*</span>
+                                </Form.Label>
+                                <Form.Control
+                                  name="assessor_comments"
+                                  required
+                                  as="textarea"
+                                  rows={3}
+                                  className={`form-control ${touched.assessor_comments &&
+                                    errors.assessor_comments
+                                    ? "is-invalid"
+                                    : ""
+                                    }`}
+                                  value={values.assessor_comments}
+                                  onChange={handleChange}
+                                  isInvalid={
+                                    touched.assessor_comments &&
+                                    !!errors.assessor_comments
+                                  }
+                                />
+                                {touched.assessor_comments &&
+                                  errors.assessor_comments && (
+                                    <div className="invalid-feedback">
+                                      {errors.assessor_comments}
+                                    </div>
+                                  )}
+                              </Form.Group>
+                            </Row>
+                          )}
+                          <Button variant="primary" onClick={submitForm}>
+                            Submit
+                          </Button>
+                        </Form>
+                      </Card.Body>
+                      <Card.Footer></Card.Footer>
+                    </Card>
+                  )}
+                </Formik>
+              ) : formSubmited == true ? (
+                <Card
+                  className="border-info"
+                  style={
+                    formData.as_per_norms == "yes"
+                      ? { backgroundColor: "#d6f3e0" }
+                      : { backgroundColor: "#f3d6d6" }
+                  }
+                >
+                  <Card.Header>
+                    <label
+                      className="main-content-label my-auto"
+                      style={{ textTransform: "none" }}
+                    >
+                      Assessor Comments
+                    </label>
+                    <div className="ms-auto  d-flex">
+                      25th April 2025:10:20PM
+                    </div>
+                  </Card.Header>
+                  <Card.Body>
+                    <Row className="mb-3">
+                      <Col md={12}>
+                        <b>Whether Building plan is as per norms?:</b>{" "}
+                        <span style={{ textTransform: "capitalize" }}>
+                          {formData.as_per_norms}
+                        </span>
+                      </Col>
+                      {formData.as_per_norms == "no" && (
+                        <Col md={12}>
+                          <b>Reason Category:</b>{" "}
+                          <span style={{ textTransform: "capitalize" }}>
+                            {formData.category}
+                          </span>
+                        </Col>
+                      )}
+
+                      {formData.category ==
+                        "other" && (
+                          <Col md={12}>
+                            <b>Reason:</b> <p>{formData.assessor_comments}</p>
+                          </Col>
+                        )}
+                    </Row>
+                  </Card.Body>
+                  <Card.Footer className="d-flex justify-content-between">
+                    <Button
+                      variant="primary"
+                      onClick={() => {
+                        setFormSubmited(false);
+                        setFormData({});
+                      }}
+                    >
+                      Edit
+                    </Button>
+                    {/* <Button variant="primary">Submit</Button> */}
+                  </Card.Footer>
+                </Card>
+              ) : (
+                <h1>No Data</h1>
+              )}
+            </div>
+          </div>
+        </Col>)}
+      </Row>
+
+    </>
+  );
 };
 
 
@@ -1040,8 +995,8 @@ const MaxData = [
 //         "Document does not indicate the workshop for all trade/units, classrooms, IT Lab, Administrative area, Amenities area etc.",
 //     },
 //     {
-//       value: "Any other reason, please specify",
-//       label: "Any other reason, please specify",
+//       value: "other",
+//       label: "other",
 //     },
 //   ];
 
@@ -1350,7 +1305,7 @@ const MaxData = [
 //                       )}
 
 //                       {formData.category ==
-//                         "Any other reason, please specify" && (
+//                         "other" && (
 //                           <Col md={12}>
 //                             <b>Reason:</b> <p>{formData.assessor_comments}</p>
 //                           </Col>
@@ -1492,8 +1447,8 @@ const MaxData = [
 //       label: "Construction of the building is incomplete",
 //     },
 //     {
-//       value: "Any other reason, please specify",
-//       label: "Any other reason, please specify",
+//       value: "other",
+//       label: "other",
 //     },
 //   ];
 
@@ -1832,7 +1787,7 @@ const MaxData = [
 //                       )}
 
 //                       {formData.category ==
-//                         "Any other reason, please specify" && (
+//                         "other" && (
 //                           <Col md={12}>
 //                             <b>Reason:</b> <p>{formData.assessor_comments}</p>
 //                           </Col>

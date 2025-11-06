@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState, useRef } from "react";
+import { Fragment, useEffect, useState, useRef, createContext } from "react";
 import {
   Row,
   Col,
@@ -22,8 +22,24 @@ import { Electricity_Connection_yup_object as elec_conn_yup } from "../../../../
 import { UPDATE_ELECTRICTY_CONNECTION_DETAILS } from "affserver";
 import { STAGE_II__FEE_PAID, STAGE_II__FEE_EXEMPTED } from "affserver";
 
+import * as C from "affserver";
+import { viewFile } from "@/helpers";
+import { Navigations } from "@/components/Assessment/components";
 
-const ElectricityConnectionDetails = ({ setActive }) => {
+import * as ap from "@/services/applicant/index";
+import { useLocation } from "react-router-dom";
+
+
+import { FileField2 } from "@/components/formik/Inputs/FileField2";
+export const FormContext = createContext();
+const ElectricityConnectionDetails = ({ isView = false, nav }) => {
+
+
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const appId = queryParams.get("appId");
+  const [initialValues, setInitialValues] = useState(C.st2.ElectricityDetails.initialValue);
+
   const stage = useSelector((state) => state.reg.stepsII);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -33,360 +49,326 @@ const ElectricityConnectionDetails = ({ setActive }) => {
   }, []);
   const reg = useSelector((state) => state.reg);
   const stepInfo = reg.stepsII[0];
-  const languages = [
-    "",
-    "Hindi",
-    "English",
-    "Bengali",
-    "Telugu",
-    "Marathi",
-    "Tamil",
-    "Urdu",
-    "Gujarati",
-    "Kannada",
-    "Odia",
-    "Malayalam",
-    "Punjabi",
-  ];
-
-  const ID_Proof_Doc_list = [
-    "Aadhaar Card",
-    "PAN Card",
-    "Passport",
-    "Voter ID Card",
-    "Driving License",
-  ];
-
-  const designation = ["Secretary", "Chairperson", "President"];
 
   const electricity_conn_reducer = useSelector((state) => state.Electricity_Connection_Detail_reducer);
   const formikRef = useRef();
 
-  const submit = (values) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to save the form data?",
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonText: "Yes, save it!",
-      cancelButtonText: "Cancel",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // User confirmed – now show loading or save directly
-        Swal.fire({
-          title: "Saving...",
-          didOpen: () => {
-            Swal.showLoading();
-            dispatch({ type: UPDATE_ELECTRICTY_CONNECTION_DETAILS, payload: values });
-            dispatch({ type: "set_filled_step_II", payload: { step: 3 }, });
-            dispatch({ type: "reg_set_active_stepII", payload: { step: 4 } });
-            setActive(reg.stepsII[3]);
-            Swal.close();
-          },
-        });
-      } else {
-        console.log("User cancelled save");
-      }
-    });
-  };
+  const AppliInfo = useSelector((state) => state.AppliInfo);
 
-    const AppliInfo = useSelector((state) => state.AppliInfo);
-  
+  const onNext = async () => {
+    console.log("Called Next");
+    const allValues = [];
+    const changeArray = [];
+    const isFormValid = [];
+    try {
+
+      const { values, errors } = formikRef.current;
+      console.log(formikRef.current);
+      await formikRef.current.submitForm();
+      await formikRef.current.validateForm();
+
+      const { isValid } = formikRef.current;
+      console.log(errors, isValid);
+
+      if (isValid === false) {
+        throw new Error("Form validation failed: form is not valid.");
+      }
+      Swal.fire({
+        title: "Are you sure?",
+        text: "Do you want to save the form data?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Yes, save it!",
+        cancelButtonText: "Cancel",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // User confirmed – now show loading or save directly
+          Swal.fire({
+            title: "Saving...",
+            didOpen: () => {
+              Swal.showLoading();
+              ap.saveElectricityDetails(values, appId);
+              nav.next();
+              Swal.close();
+            },
+          });
+        } else {
+          console.log("User cancelled save");
+        }
+      });
+
+    } catch (error) {
+      console.log(error);
+      Swal.fire({
+        icon: "warning",
+        title: "Fill the form",
+        showConfirmButton: true,
+        confirmButtonText: "OK",
+        allowOutsideClick: false
+      });
+    }
+  }
+
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const resp = await ap.getElectricityDetails(appId);
+        const data = resp.data;
+        setInitialValues(data);  // update initial values
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    loadData();
+  }, [appId]);
+
+
   return (
     <Fragment>
-      {AppliInfo.stage_II_fee_status === STAGE_II__FEE_PAID || AppliInfo.stage_II_fee_status === STAGE_II__FEE_EXEMPTED ? (<ElectricityConnectionDetailsView />) :
-
-        <>
-        
-
-
-
       <Formik
         innerRef={formikRef}
-
-        initialValues={electricity_conn_reducer}
-        validationSchema={yup.object().shape(elec_conn_yup)}
+        initialValues={initialValues}
+        enableReinitialize
+        validationSchema={C.st2.ElectricityDetails.ValSchema}
         onSubmit={(values) => {
           console.log("Form Values", values);
-          submit(values);
+          // submit(values);
         }}
       >
-        {({ handleSubmit, handleChange, values, errors, touched }) => (
-          <Form noValidate onSubmit={handleSubmit}>
-            <Card className="custom-card border border-primary">
-              <Card.Header>
-                <div className="card-title" style={{ textTransform: "none" }}>
-                  Electricity Connection Details
-                </div>
-              </Card.Header>
-              <Card.Body>
-                <Row style={{ marginTop: "1rem" }}>
-                  <Col md={4}>
-                    <Form.Group>
-                      <Form.Label>
-                        Consumer Name
-                        <ReqSign />
-                      </Form.Label>
-                      <Field
-                        name="consumer_name"
-                        as={Form.Control}
-                        placeholder="Electricity Consumer Name"
-                        value={values.consumer_name}
-                        onChange={handleChange}
-                        isInvalid={
-                          touched.consumer_name &&
-                          !!errors.consumer_name
-                        }
-                      />
-                      {touched.consumer_name && errors.consumer_name && (
-                        <Form.Control.Feedback
-                          type="invalid"
-                          className="d-block"
-                        >
-                          {errors.consumer_name}
-                        </Form.Control.Feedback>
-                      )}
-                    </Form.Group>
-                  </Col>
-                  <Col md={4}>
-                    <Form.Group>
-                      <Form.Label>
-                        Consumer Number
-                        <ReqSign />
-                      </Form.Label>
-                      <Field
-                        name="consumer_number"
-                        as={Form.Control}
-                        placeholder="Electricity Consumer Number"
-                        value={values.consumer_number}
-                        onChange={handleChange}
-                        isInvalid={
-                          touched.consumer_number &&
-                          !!errors.consumer_number
-                        }
-                      />
-                      {touched.consumer_number && errors.consumer_number && (
-                        <Form.Control.Feedback
-                          type="invalid"
-                          className="d-block"
-                        >
-                          {errors.consumer_number}
-                        </Form.Control.Feedback>
-                      )}
-                    </Form.Group>
-                  </Col>
-
-                  <Col md={4}>
-                    <Form.Group>
-                      <Form.Label>
-                        Electricity Authority Name
-                        <ReqSign />
-                      </Form.Label>
-                      <Field
-                        name="electricity_authority_name"
-                        as={Form.Control}
-                        placeholder="Ex. Jaipur Vidyut Vitran Nigam Limited"
-                        value={values.electricity_authority_name}
-                        onChange={handleChange}
-                        isInvalid={
-                          touched.electricity_authority_name &&
-                          !!errors.electricity_authority_name
-                        }
-                      />
-                      {touched.electricity_authority_name && errors.electricity_authority_name && (
-                        <Form.Control.Feedback
-                          type="invalid"
-                          className="d-block"
-                        >
-                          {errors.electricity_authority_name}
-                        </Form.Control.Feedback>
-                      )}
-                    </Form.Group>
-                  </Col>
-                  <Col md={4}>
-                    <Form.Group>
-                      <Form.Label>
-                        Electricity Authority Website
-                        <ReqSign />
-                      </Form.Label>
-                      <Field
-                        name="electricity_authority_website"
-                        as={Form.Control}
-                        placeholder="Ex. https://www.bijlimitra.com/"
-                        value={values.electricity_authority_website}
-                        onChange={handleChange}
-                        isInvalid={
-                          touched.electricity_authority_website &&
-                          !!errors.electricity_authority_website
-                        }
-                      />
-                      {touched.electricity_authority_website && errors.electricity_authority_website && (
-                        <Form.Control.Feedback
-                          type="invalid"
-                          className="d-block"
-                        >
-                          {errors.electricity_authority_website}
-                        </Form.Control.Feedback>
-                      )}
-                    </Form.Group>
-                  </Col>
-                  <Col md={4}>
-                    <Form.Group controlId="validationCustom02">
-                      <Form.Label>
-                        Total Available/Sanction Load (in KW)
-                        <ReqSign />
-                      </Form.Label>
-                      <InputGroup>
-                        <Form.Control
-                          required
-                          type="number"
-                          placeholder="Total Available/Sanction load (in KW)"
-                          name="total_sanction_load_in_kw"
-                          value={values.total_sanction_load_in_kw}
+        {({ handleSubmit, handleChange, values, errors, touched, setFieldValue }) => (
+          <FormContext.Provider value={{ handleSubmit, handleChange, values, errors, touched, setFieldValue }}>
+            <Form noValidate onSubmit={handleSubmit}>
+              <Card className="custom-card border border-primary">
+                <Card.Header>
+                  <div className="card-title" style={{ textTransform: "none" }}>
+                    Electricity Connection Details
+                  </div>
+                </Card.Header>
+                <Card.Body>
+                  <Row style={{ marginTop: "1rem" }}>
+                    <Col md={4}>
+                      <Form.Group>
+                        <Form.Label>
+                          Consumer Name
+                          <ReqSign />
+                        </Form.Label>
+                        <Field
+                          name="consumer_name"
+                          as={Form.Control}
+                          placeholder="Electricity Consumer Name"
+                          value={values.consumer_name}
                           onChange={handleChange}
                           isInvalid={
-                            touched.total_sanction_load_in_kw &&
-                            !!errors.total_sanction_load_in_kw
+                            touched.consumer_name &&
+                            !!errors.consumer_name
                           }
                         />
-                        <Button variant="outline-secondary">In KW</Button>
-                      </InputGroup>
-                      {touched.total_sanction_load_in_kw && errors.total_sanction_load_in_kw && (
-                        <Form.Control.Feedback
-                          type="invalid"
-                          className="d-block"
-                        >
-                          {errors.total_sanction_load_in_kw}
-                        </Form.Control.Feedback>
-                      )}
-                    </Form.Group>
-                  </Col>
-                  <Col md={6}>
-                    <Form.Group>
-                      <Form.Label>
-                        Latest Electricity Bill / Meter Sealing Report (for new
-                        institute if bill is not available )<ReqSign />
-                      </Form.Label>
-                      {/* <div className="d-flex align-items-center gap-2"> */}
-                      <Form.Control type="file" name="latest_electricity_bill_sealing_report"
-                        onChange={handleChange}
-                        isInvalid={
-                          touched.latest_electricity_bill_sealing_report &&
-                          !!errors.latest_electricity_bill_sealing_report
-                        }
-                      />
-                      {/* <Button variant="primary">Upload</Button>
-                      </div> */}
-                      {touched.latest_electricity_bill_sealing_report &&
-                        errors.latest_electricity_bill_sealing_report && (
-                          <Form.Control.Feedback type="invalid">
-                            {errors.latest_electricity_bill_sealing_report}
+                        {touched.consumer_name && errors.consumer_name && (
+                          <Form.Control.Feedback
+                            type="invalid"
+                            className="d-block"
+                          >
+                            {errors.consumer_name}
                           </Form.Control.Feedback>
                         )}
-                    </Form.Group>
-                    <div className="invoice-notes text-danger">
+                      </Form.Group>
+                    </Col>
+                    <Col md={4}>
+                      <Form.Group>
+                        <Form.Label>
+                          Consumer Number
+                          <ReqSign />
+                        </Form.Label>
+                        <Field
+                          name="consumer_number"
+                          as={Form.Control}
+                          placeholder="Electricity Consumer Number"
+                          value={values.consumer_number}
+                          onChange={handleChange}
+                          isInvalid={
+                            touched.consumer_number &&
+                            !!errors.consumer_number
+                          }
+                        />
+                        {touched.consumer_number && errors.consumer_number && (
+                          <Form.Control.Feedback
+                            type="invalid"
+                            className="d-block"
+                          >
+                            {errors.consumer_number}
+                          </Form.Control.Feedback>
+                        )}
+                      </Form.Group>
+                    </Col>
+
+                    <Col md={4}>
+                      <Form.Group>
+                        <Form.Label>
+                          Electricity Authority Name
+                          <ReqSign />
+                        </Form.Label>
+                        <Field
+                          name="electricity_authority_name"
+                          as={Form.Control}
+                          placeholder="Ex. Jaipur Vidyut Vitran Nigam Limited"
+                          value={values.electricity_authority_name}
+                          onChange={handleChange}
+                          isInvalid={
+                            touched.electricity_authority_name &&
+                            !!errors.electricity_authority_name
+                          }
+                        />
+                        {touched.electricity_authority_name && errors.electricity_authority_name && (
+                          <Form.Control.Feedback
+                            type="invalid"
+                            className="d-block"
+                          >
+                            {errors.electricity_authority_name}
+                          </Form.Control.Feedback>
+                        )}
+                      </Form.Group>
+                    </Col>
+                    <Col md={4}>
+                      <Form.Group>
+                        <Form.Label>
+                          Electricity Authority Website
+                          <ReqSign />
+                        </Form.Label>
+                        <Field
+                          name="electricity_authority_website"
+                          as={Form.Control}
+                          placeholder="Ex. https://www.bijlimitra.com/"
+                          value={values.electricity_authority_website}
+                          onChange={handleChange}
+                          isInvalid={
+                            touched.electricity_authority_website &&
+                            !!errors.electricity_authority_website
+                          }
+                        />
+                        {touched.electricity_authority_website && errors.electricity_authority_website && (
+                          <Form.Control.Feedback
+                            type="invalid"
+                            className="d-block"
+                          >
+                            {errors.electricity_authority_website}
+                          </Form.Control.Feedback>
+                        )}
+                      </Form.Group>
+                    </Col>
+                    <Col md={4}>
+                      <Form.Group controlId="validationCustom02">
+                        <Form.Label>
+                          Total Available/Sanction Load (in KW)
+                          <ReqSign />
+                        </Form.Label>
+                        <InputGroup>
+                          <Form.Control
+                            required
+                            type="number"
+                            placeholder="Total Available/Sanction load (in KW)"
+                            name="total_available_sanction_load_in_kw"
+                            value={values.total_available_sanction_load_in_kw}
+                            onChange={handleChange}
+                            isInvalid={
+                              touched.total_available_sanction_load_in_kw &&
+                              !!errors.total_available_sanction_load_in_kw
+                            }
+                          />
+                          <Button variant="outline-secondary">In KW</Button>
+                        </InputGroup>
+                        {touched.total_available_sanction_load_in_kw && errors.total_available_sanction_load_in_kw && (
+                          <Form.Control.Feedback
+                            type="invalid"
+                            className="d-block"
+                          >
+                            {errors.total_available_sanction_load_in_kw}
+                          </Form.Control.Feedback>
+                        )}
+                      </Form.Group>
+                    </Col>
+                    <Col md={6}>
+
+                      <FileField2
+                        label="Latest Electricity Bill / Meter Sealing Report (for new institute if bill is not available )"
+                        name="latest_electricity_bill_meter_sealing_report"
+                        mandatory
+                        accept=".pdf,.jpg,.png"
+                        context={FormContext}
+                        onClickViewFileButton={() => viewFile(values.latest_electricity_bill_meter_sealing_report)}
+                      />
+                      {/* <div className="invoice-notes text-danger">
                       <p>
                         <ul>
                           <li>Upload Geo tagged photo of electricity meter</li>
                         </ul>
                       </p>
-                    </div>
-                  </Col>
-                </Row>
-                <Card className="custom-card border border-primary">
-                  <Card.Header>
-                    <div
-                      className="card-title"
-                      style={{ textTransform: "none" }}
-                    >
-                      Backup Power Supply
-                    </div>
-                  </Card.Header>
-                  <Card.Body>
-                    <Row>
-                      <Col md={6}>
-                        <Form.Group>
-                          <Form.Label>
-                            Photo of Backup Power
-                            <ReqSign />
-                          </Form.Label>
-                          {/* <div className="d-flex align-items-center gap-2"> */}
-                          <Form.Control type="file" name="photo_of_backup_power"
-                            onChange={handleChange}
-                            isInvalid={
-                              touched.photo_of_backup_power &&
-                              !!errors.photo_of_backup_power
-                            } />
-                          {/* <Button variant="primary">Upload</Button>
-                          </div> */}
-                          {touched.photo_of_backup_power &&
-                            errors.photo_of_backup_power && (
-                              <Form.Control.Feedback type="invalid">
-                                {errors.photo_of_backup_power}
-                              </Form.Control.Feedback>
-                            )}
-                        </Form.Group>
-                        <div className="invoice-notes text-danger">
-                          <p>
-                            <ul>
-                              <li>Upload Geo tagged photo</li>
-                            </ul>
-                          </p>
-                        </div>
-                      </Col>
-                      <Col md={6}>
-                        <Form.Group>
-                          <Form.Label>
-                            Purchase Related Documents
-                            <ReqSign />
-                          </Form.Label>
-                          {/* <div className="d-flex align-items-center gap-2"> */}
-                          <Form.Control type="file" name="purchase_related_documents"
-                            onChange={handleChange}
-                            isInvalid={
-                              touched.purchase_related_documents &&
-                              !!errors.purchase_related_documents
-                            } />
-                          {/* <Button variant="primary">Upload</Button>
-                          </div> */}
-                          {touched.purchase_related_documents &&
-                            errors.purchase_related_documents && (
-                              <Form.Control.Feedback type="invalid">
-                                {errors.purchase_related_documents}
-                              </Form.Control.Feedback>
-                            )}
-                        </Form.Group>
-                      </Col>
-                    </Row>
-                  </Card.Body>
-                </Card>
-                <Row>
-                  <Col md={6}>
-                    <Form.Group>
-                      <Form.Label>
-                        Fire and Safety Certificate
-                        <ReqSign />
-                      </Form.Label>
-                      {/* <div className="d-flex align-items-center gap-2"> */}
-                      <Form.Control type="file" name="fire_and_safety_certificate"
-                        onChange={handleChange}
-                        isInvalid={
-                          touched.fire_and_safety_certificate &&
-                          !!errors.fire_and_safety_certificate
-                        } />
-                      {/* <Button variant="primary">Upload</Button>
-                      </div> */}
-                      {touched.fire_and_safety_certificate &&
-                        errors.fire_and_safety_certificate && (
-                          <Form.Control.Feedback type="invalid">
-                            {errors.fire_and_safety_certificate}
-                          </Form.Control.Feedback>
-                        )}
-                    </Form.Group>
-                  </Col>
-                </Row>
-              </Card.Body>
-              <Card.Footer>
+                    </div> */}
+                    </Col>
+                  </Row>
+                  <Card className="custom-card border border-primary">
+                    <Card.Header>
+                      <div
+                        className="card-title"
+                        style={{ textTransform: "none" }}
+                      >
+                        Backup Power Supply
+                      </div>
+                    </Card.Header>
+                    <Card.Body>
+                      <Row>
+                        <Col md={6}>
+
+                          <FileField2
+                            label="Photo of Backup Power"
+                            name="power_supply_back_power"
+                            mandatory
+                            accept=".pdf,.jpg,.png"
+                            context={FormContext}
+                            onClickViewFileButton={() => viewFile(values.power_supply_back_power)}
+                          />
+
+
+                          <div className="invoice-notes text-danger">
+                            <p>
+                              <ul>
+                                <li>Upload Geo tagged photo</li>
+                              </ul>
+                            </p>
+                          </div>
+                        </Col>
+                        <Col md={6}>
+
+                          <FileField2
+                            label="Purchase Related Documents"
+                            name="power_supply_purchase_related_documents"
+                            mandatory
+                            accept=".pdf,.jpg,.png"
+                            context={FormContext}
+                            onClickViewFileButton={() => viewFile(values.power_supply_purchase_related_documents)}
+                          />
+
+                        </Col>
+                      </Row>
+                    </Card.Body>
+                  </Card>
+                  <Row>
+                    <Col md={6}>
+                      <FileField2
+                        label="Fire and Safety Certificate"
+                        name="fire_and_safety_certificate"
+                        mandatory
+                        accept=".pdf,.jpg,.png"
+                        context={FormContext}
+                        onClickViewFileButton={() => viewFile(values.fire_and_safety_certificate)}
+                      />
+                    </Col>
+                  </Row>
+                </Card.Body>
+                <Card.Footer>
+                  <Navigations nav={nav} onNext={() => { onNext(); }} />
+                </Card.Footer>
+                {/* <Card.Footer>
                 <div className="d-flex justify-content-between mb-3">
                   <Button
                     className="p-2"
@@ -408,13 +390,15 @@ const ElectricityConnectionDetails = ({ setActive }) => {
                     </Button>
                   )}
                 </div>
-              </Card.Footer>
-            </Card>
-          </Form>
+              </Card.Footer> */}
+              </Card>
+            </Form>
+          </FormContext.Provider>
+
+
         )}
-      </Formik></>
-      }
-      
+      </Formik>
+
     </Fragment>
   );
 };
@@ -426,81 +410,81 @@ export default ElectricityConnectionDetails;
 export const ElectricityConnectionDetailsView = (props) => {
   return (
 
-    <> 
-    <table
-      width="98%"
-      border={1}
-      style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
-      align="center"
-      cellPadding="5px"
-    >
-      <tbody>
-        <tr>
-          <th colSpan={7} style={{ border: "1px solid black" }}>Electricity Connection Details</th>
-        </tr>
-        <tr>
-          <th style={{ border: "1px solid black" }}>Consumer Name</th>
-          <th style={{ border: "1px solid black" }}>Consumer Number</th>
-          <th style={{ border: "1px solid black" }}>Electricity Authority Name</th>
-        </tr>
+    <>
+      <table
+        width="98%"
+        border={1}
+        style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
+        align="center"
+        cellPadding="5px"
+      >
+        <tbody>
+          <tr>
+            <th colSpan={7} style={{ border: "1px solid black" }}>Electricity Connection Details</th>
+          </tr>
+          <tr>
+            <th style={{ border: "1px solid black" }}>Consumer Name</th>
+            <th style={{ border: "1px solid black" }}>Consumer Number</th>
+            <th style={{ border: "1px solid black" }}>Electricity Authority Name</th>
+          </tr>
 
-        <tr>
-          <td style={{ border: "1px solid black" }}>ABCD</td>
-          <td style={{ border: "1px solid black" }}>XYZ01</td>
-          <td style={{ border: "1px solid black" }}>XYZ</td>
-        </tr>
+          <tr>
+            <td style={{ border: "1px solid black" }}>ABCD</td>
+            <td style={{ border: "1px solid black" }}>XYZ01</td>
+            <td style={{ border: "1px solid black" }}>XYZ</td>
+          </tr>
 
-        <tr>
-          <th style={{ border: "1px solid black" }}>Total Available/Sanction Load (in KW)*</th>
-          <th style={{ border: "1px solid black" }}>Latest Electricity Bill/Meter Sealing Report</th>
-          <th style={{ border: "1px solid black" }}>Electricity Authority Website</th>
-        </tr>
-        <tr>
-          <td style={{ border: "1px solid black" }}>ABCD</td>
-          <td style={{ border: "1px solid black" }}><Button size="sm" variant="primary">View Document</Button></td>
-          <td style={{ border: "1px solid black" }}>XYZ</td>
-        </tr>
-      </tbody>
-    </table>
+          <tr>
+            <th style={{ border: "1px solid black" }}>Total Available/Sanction Load (in KW)*</th>
+            <th style={{ border: "1px solid black" }}>Latest Electricity Bill/Meter Sealing Report</th>
+            <th style={{ border: "1px solid black" }}>Electricity Authority Website</th>
+          </tr>
+          <tr>
+            <td style={{ border: "1px solid black" }}>ABCD</td>
+            <td style={{ border: "1px solid black" }}><Button size="sm" variant="primary">View Document</Button></td>
+            <td style={{ border: "1px solid black" }}>XYZ</td>
+          </tr>
+        </tbody>
+      </table>
 
-    <table
-      width="98%"
-      border={1}
-      style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
-      align="center"
-      cellPadding="5px"
-    >
-      <tbody>
-        <tr>
-          <th colSpan={7} style={{ border: "1px solid black" }}>Backup Power Supply</th>
-        </tr>
-        <tr>
-          <th style={{ border: "1px solid black" }}>Photo of Backup Power</th>
-          <th style={{ border: "1px solid black" }}>Purchase Related Documents</th>
-        </tr>
-        <tr>
-          <td style={{ border: "1px solid black" }}><Button size="sm" variant="primary">View Document</Button></td>
-          <td style={{ border: "1px solid black" }}><Button size="sm" variant="primary">View Document</Button></td>
-        </tr>
-      </tbody>
-    </table>
+      <table
+        width="98%"
+        border={1}
+        style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
+        align="center"
+        cellPadding="5px"
+      >
+        <tbody>
+          <tr>
+            <th colSpan={7} style={{ border: "1px solid black" }}>Backup Power Supply</th>
+          </tr>
+          <tr>
+            <th style={{ border: "1px solid black" }}>Photo of Backup Power</th>
+            <th style={{ border: "1px solid black" }}>Purchase Related Documents</th>
+          </tr>
+          <tr>
+            <td style={{ border: "1px solid black" }}><Button size="sm" variant="primary">View Document</Button></td>
+            <td style={{ border: "1px solid black" }}><Button size="sm" variant="primary">View Document</Button></td>
+          </tr>
+        </tbody>
+      </table>
 
-    <table
-      width="98%"
-      border={1}
-      style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
-      align="center"
-      cellPadding="5px"
-    >
-      <tbody>
-        <tr>
-          <th colSpan={7} style={{ border: "1px solid black" }}>Fire and Safety Certificate Document</th>
-        </tr>
-        <tr>
-          <td style={{ border: "1px solid black" }}><Button size="sm" variant="primary">View Document</Button></td>
-        </tr>
-      </tbody>
-    </table>
+      <table
+        width="98%"
+        border={1}
+        style={{ borderCollapse: "collapse", marginTop: 15, color: 'black' }}
+        align="center"
+        cellPadding="5px"
+      >
+        <tbody>
+          <tr>
+            <th colSpan={7} style={{ border: "1px solid black" }}>Fire and Safety Certificate Document</th>
+          </tr>
+          <tr>
+            <td style={{ border: "1px solid black" }}><Button size="sm" variant="primary">View Document</Button></td>
+          </tr>
+        </tbody>
+      </table>
     </>
 
   );
@@ -525,7 +509,7 @@ export const ElectricityConnectionDetailsAction = () => {
       value: "6",
       label: "Document lacks required information",
     },
-    { value: "7", label: "Any other reason, please specify" },
+    { value: "7", label: "other" },
   ];
 
   const [isHidden, setisHidden] = useState([true]);
@@ -1096,7 +1080,7 @@ export const BackupPowerSupplyAction = () => {
       value: "6",
       label: "Document lacks required information",
     },
-    { value: "7", label: "Any other reason, please specify" },
+    { value: "7", label: "other" },
   ];
 
   const [isHidden, setisHidden] = useState([true]);
@@ -1655,7 +1639,7 @@ export const FireAndSafetyCertificateAction = () => {
     },
     {
       value: "6",
-      label: "Any other reason, please specify",
+      label: "other",
     },
   ];
 

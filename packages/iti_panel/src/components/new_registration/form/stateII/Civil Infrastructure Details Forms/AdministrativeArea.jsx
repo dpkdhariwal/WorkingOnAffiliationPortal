@@ -8,7 +8,7 @@ import {
     Form as BForm,
     Table,
 } from "react-bootstrap";
-import { Formik, Form as FormikForm, Field, ErrorMessage } from "formik";
+import { Formik, Form as FormikForm, Field, ErrorMessage, FieldArray } from "formik";
 import * as Yup from "yup";
 import "react-circular-progressbar/dist/styles.css";
 import ReqSign from "../../comp/requiredSign"; // Make sure this component exists and is exported correctly
@@ -26,169 +26,359 @@ import * as yup from "yup";
 import * as formik from "formik";
 import React from "react";
 
-import { Fragment, useEffect, useState, useRef } from "react";
+import { Fragment, useEffect, useState, useRef, createContext } from "react";
 import { useLocation } from "react-router-dom";
 import * as dbUser from "../../../../../db/users";
 import * as cons from "affserver";
 import { CIC } from "affserver";
+import * as C from "affserver";
+import * as ap from "@/services/applicant";
+import { viewFile } from "@/helpers";
+// export const AdministrativeArea = ({ steps, goPrevious, finish }) => {
 
-export const AdministrativeArea = ({ steps, goPrevious, finish }) => {
+//     const location = useLocation();
+//     const queryParams = new URLSearchParams(location.search);
+//     const appId = queryParams.get("appId");
+//     const authUser = useSelector((state) => state.loginUserReducer);
+
+//     const dispatch = useDispatch();
+
+
+
+//     const [list, setList] = useState([]);
+
+//     const loadData = async () => {
+//         let adminisList = [];
+//         for (const [index, obj] of cons.ADMINISTRATIVE_AREA.entries()) {
+//             let result = await dbUser.getCommonAreaByParticular(appId, obj.particular);
+//             adminisList.push(result[0]);
+//         }
+//         setList(adminisList)
+//     }
+
+//     useEffect(() => {
+//         prepare_initialValues(list);
+//     }, [list]);
+
+//     const [currentStep, setCurrentStep] = useState({});
+
+//     const [iniValue, setIniValue] = useState({});
+//     const [validationSchema, setValidationSchema] = useState({});
+
+
+//     const prepare_initialValues = (list) => {
+//         console.log(list);
+//         const obj = {
+//             ...Object.fromEntries(
+//                 list.map((item, index) => {
+//                     const { area } = getSetFieldsName(item);
+//                     return [`${area}`, ''];
+//                 })
+//             ),
+//             ...Object.fromEntries(
+//                 list.map((item, index) => {
+//                     const { photo } = getSetFieldsName(item);
+//                     return [`${photo}`, '']
+//                 })
+//             ),
+//         };
+//         console.log(obj);
+//         setIniValue(obj);
+//         return obj;
+//     }
+
+//     const getSetFieldsName = (item) => {
+//         console.log(item);
+//         const area = `area>${item?.particular}`;
+//         const photo = `photo>${item?.particular}`;
+//         return { area, photo };
+//     }
+
+//     const Schema = () => {
+//         let obj = {
+//             ...Object.fromEntries(
+//                 list.map((item, index) => {
+//                     const { area } = getSetFieldsName(item);
+//                     return [`${area}`, Yup.number().required("Enter Available Area").min(0, "Area must be positive"),];
+//                 })
+//             ),
+//             ...Object.fromEntries(
+//                 list.map((item, index) => {
+//                     const { photo } = getSetFieldsName(item);
+//                     return [`${photo}`, Yup.mixed().required("Select Geo Taged File")]
+//                 })
+//             ),
+//         };
+//         console.log(obj);
+//         setValidationSchema(Yup.object(obj))
+//     }
+
+//     useEffect(() => {
+//         loadData();
+//     }, [])
+
+//     useEffect(() => {
+//         console.log(iniValue);
+//         Schema();
+//     }, [iniValue])
+
+
+//     const prepareToSave = (values) => {
+//         console.log(values);
+//         // setTradewiseClassRooms(values, authUser, appId);
+//         // console.log(input);
+//         goNext(currentStep);
+//     };
+
+//     useEffect(() => {
+//         const currentStep = steps.subSteps.find(step => step.step === CIC.PLACEMENT_AND_COUNSELLING_ROOM);
+//         setCurrentStep(currentStep)
+//     }, [])
+
+
+
+//     return (
+//         <Formik
+//             enableReinitialize
+//             initialValues={iniValue}
+//             validationSchema={validationSchema}
+//             onSubmit={(values) => {
+//                 prepareToSave(values);
+//             }}
+//         >
+//             {({ handleSubmit, setFieldValue }) => (
+//                 <FormikForm onSubmit={handleSubmit}>
+//                     <Card>
+//                         <Card.Body>
+//                             <div className="table-responsive">
+//                                 <Table className="text-nowrap">
+//                                     <thead>
+//                                         <tr>
+//                                             <th>Particulars</th>
+//                                             <th>Required Area</th>
+//                                             <th>Available Area</th>
+//                                             <th>Upload Photo <ReqSign /></th>
+//                                         </tr>
+//                                     </thead>
+//                                     <tbody>
+//                                         {list.map((item, index) => {
+//                                             console.log(item);
+//                                             let fields = getSetFieldsName(item);
+//                                             return (
+//                                                 <tr key={index}>
+//                                                     <td>{item?.particular}</td>
+//                                                     <td>{item?.RequiredArea} {item?.AreaUnit}</td>
+//                                                     <td>
+//                                                         <Field type="number" name={fields.area} as={BForm.Control} />
+//                                                         <div className="text-danger"><ErrorMessage name={fields.area} /></div>
+//                                                     </td>
+//                                                     <td>
+//                                                         <input type="file" name={fields.photo} className="form-control" onChange={(event) => { setFieldValue(fields.photo, event.currentTarget.files[0]); }} />
+//                                                         <div className="text-danger"><ErrorMessage name={fields.photo} component="div" className="text-danger" /> </div>
+//                                                     </td>
+//                                                 </tr>
+//                                             );
+
+//                                         })}
+//                                     </tbody>
+//                                 </Table>
+//                             </div>
+//                         </Card.Body>
+//                         <Card.Footer className="d-flex justify-content-between">
+//                             <Button variant="secondary" onClick={goPrevious}>
+//                                 Previous
+//                             </Button>
+//                             <Button type="submit">Finish</Button>
+//                         </Card.Footer>
+//                     </Card>
+//                 </FormikForm>
+//             )}
+//         </Formik>
+//     );
+// };
+
+import { FileField2 } from "@/components/formik/Inputs/FileField2";
+
+export const FormContext = createContext();
+export const AdministrativeArea = ({ steps, goPrevious, goNext }) => {
+
+    console.log(steps);
+    const formikRef = useRef();
 
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const appId = queryParams.get("appId");
-    const authUser = useSelector((state) => state.loginUserReducer);
 
-    const dispatch = useDispatch();
-
-
-
-    const [list, setList] = useState([]);
-
-    const loadData = async () => {
-        let adminisList = [];
-        for (const [index, obj] of cons.ADMINISTRATIVE_AREA.entries()) {
-            let result = await dbUser.getCommonAreaByParticular(appId, obj.particular);
-            adminisList.push(result[0]);
-        }
-        setList(adminisList)
-    }
-
-    useEffect(() => {
-        prepare_initialValues(list);
-    }, [list]);
+    const [initialValues, setInitialValues] = useState(C.st2.CivilInfra.administrative_areas.initialValue);
 
     const [currentStep, setCurrentStep] = useState({});
 
-    const [iniValue, setIniValue] = useState({});
-    const [validationSchema, setValidationSchema] = useState({});
-
-
-    const prepare_initialValues = (list) => {
-        console.log(list);
-        const obj = {
-            ...Object.fromEntries(
-                list.map((item, index) => {
-                    const { area } = getSetFieldsName(item);
-                    return [`${area}`, ''];
-                })
-            ),
-            ...Object.fromEntries(
-                list.map((item, index) => {
-                    const { photo } = getSetFieldsName(item);
-                    return [`${photo}`, '']
-                })
-            ),
-        };
-        console.log(obj);
-        setIniValue(obj);
-        return obj;
-    }
-
-    const getSetFieldsName = (item) => {
-        console.log(item);
-        const area = `area>${item?.particular}`;
-        const photo = `photo>${item?.particular}`;
-        return { area, photo };
-    }
-
-    const Schema = () => {
-        let obj = {
-            ...Object.fromEntries(
-                list.map((item, index) => {
-                    const { area } = getSetFieldsName(item);
-                    return [`${area}`, Yup.number().required("Enter Available Area").min(0, "Area must be positive"),];
-                })
-            ),
-            ...Object.fromEntries(
-                list.map((item, index) => {
-                    const { photo } = getSetFieldsName(item);
-                    return [`${photo}`, Yup.mixed().required("Select Geo Taged File")]
-                })
-            ),
-        };
-        console.log(obj);
-        setValidationSchema(Yup.object(obj))
-    }
-
-    useEffect(() => {
-        loadData();
-    }, [])
-
-    useEffect(() => {
-        console.log(iniValue);
-        Schema();
-    }, [iniValue])
-
-
-    const prepareToSave = (values) => {
-        console.log(values);
-        // setTradewiseClassRooms(values, authUser, appId);
-        // console.log(input);
-        goNext(currentStep);
+    const prepareToSave = async (values) => {
+        try {
+            Swal.fire({
+                title: "Saving  Details ...",
+                text: "Please wait..",
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+            });
+            await ap.saveParticularDetails(values, appId, C.CIC.ADMINISTRATIVE_AREA);
+            // Close loader
+            Swal.close();
+            const result = await Swal.fire("Saved!", "Saved", "success");
+            if (result.isConfirmed) {
+                window.location.reload();
+            }
+        } catch (err) {
+            Swal.close();
+            await Swal.fire("Error", "Something Went Wrong", "error");
+            console.error("Error while saving:", err);
+        }
     };
 
     useEffect(() => {
-        const currentStep = steps.subSteps.find(step => step.step === CIC.PLACEMENT_AND_COUNSELLING_ROOM);
+        const currentStep = steps.subSteps.find(step => step.step === CIC.ADMINISTRATIVE_AREA);
         setCurrentStep(currentStep)
     }, [])
 
 
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                const resp = await ap.getParticulars(appId, C.CIC.ADMINISTRATIVE_AREA);
+                const data = resp.data;
+                const newValues = { administrative_areas: data };
+                console.log(newValues);
+                setInitialValues(newValues);  // update initial values
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        loadData();
+    }, [appId]);
+
 
     return (
         <Formik
+            innerRef={formikRef}
             enableReinitialize
-            initialValues={iniValue}
-            validationSchema={validationSchema}
+            initialValues={initialValues}
+            validationSchema={C.st2.CivilInfra.administrative_areas.ValSchema}
             onSubmit={(values) => {
                 prepareToSave(values);
             }}
         >
-            {({ handleSubmit, setFieldValue }) => (
+            {({ handleSubmit, handleChange, values, errors, touched, setFieldValue }) => (
                 <FormikForm onSubmit={handleSubmit}>
-                    <Card>
-                        <Card.Body>
-                            <div className="table-responsive">
-                                <Table className="text-nowrap">
-                                    <thead>
-                                        <tr>
-                                            <th>Particulars</th>
-                                            <th>Required Area</th>
-                                            <th>Available Area</th>
-                                            <th>Upload Photo <ReqSign /></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {list.map((item, index) => {
-                                            console.log(item);
-                                            let fields = getSetFieldsName(item);
-                                            return (
-                                                <tr key={index}>
-                                                    <td>{item?.particular}</td>
-                                                    <td>{item?.RequiredArea} {item?.AreaUnit}</td>
-                                                    <td>
-                                                        <Field type="number" name={fields.area} as={BForm.Control} />
-                                                        <div className="text-danger"><ErrorMessage name={fields.area} /></div>
-                                                    </td>
-                                                    <td>
-                                                        <input type="file" name={fields.photo} className="form-control" onChange={(event) => { setFieldValue(fields.photo, event.currentTarget.files[0]); }} />
-                                                        <div className="text-danger"><ErrorMessage name={fields.photo} component="div" className="text-danger" /> </div>
-                                                    </td>
-                                                </tr>
-                                            );
+                    <FormContext.Provider value={{ handleSubmit, handleChange, values, errors, touched, setFieldValue }}>
 
-                                        })}
-                                    </tbody>
-                                </Table>
-                            </div>
-                        </Card.Body>
-                        <Card.Footer className="d-flex justify-content-between">
-                            <Button variant="secondary" onClick={goPrevious}>
-                                Previous
-                            </Button>
-                            <Button type="submit">Finish</Button>
-                        </Card.Footer>
-                    </Card>
+
+
+                        <FieldArray name="administrative_areas">
+                            {({ push, remove }) => (
+                                <Card>
+                                    <Card.Body>
+                                        <div className="table-responsive">
+                                            <Table >
+                                                <thead>
+                                                    <tr>
+                                                        <th>Particulars</th>
+                                                        <th>Required Area</th>
+                                                        <th>Available Area</th>
+                                                        <th>Upload Photo <ReqSign /></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {values.administrative_areas.map((doc, index) => {
+                                                        { console.log(doc) }
+                                                        return (
+                                                            <tr key={index}>
+                                                                <td>{doc?.particular}</td>
+                                                                <td>{doc?.required_area} {doc?.RequiredArea?.AreaUnit}</td>
+                                                                <td>
+                                                                    <Field
+                                                                        type="number"
+                                                                        name={`administrative_areas[${index}].available_area`}
+                                                                        as={Form.Control}
+
+                                                                    />
+                                                                    <div className="text-danger">
+                                                                        <ErrorMessage name={`administrative_areas[${index}].available_area`} />
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+                                                                    <FileField2
+                                                                        //   label="If Yes, Upload Supporting Government Notification/Order/Circular"
+                                                                        name={`administrative_areas[${index}].document`}
+                                                                        mandatory
+                                                                        accept=".pdf,.jpg,.png"
+                                                                        context={FormContext}
+                                                                        onClickViewFileButton={() => viewFile(values.administrative_areas[index].document)}
+                                                                    />
+                                                                </td>
+                                                            </tr>
+                                                        )
+                                                    })}
+                                                </tbody>
+                                            </Table>
+                                        </div>
+                                    </Card.Body>
+                                    <Card.Footer className="d-flex justify-content-between">
+                                        <Button variant="secondary" onClick={goPrevious}>
+                                            Previous
+                                        </Button>
+                                        <Button type="submit">Save & Next</Button>
+                                    </Card.Footer>
+                                </Card>
+                            )}
+                        </FieldArray>
+
+                        {false && (<Card>
+                            <Card.Body>
+                                <div className="table-responsive">
+                                    <Table className="text-nowrap">
+                                        <thead>
+                                            <tr>
+                                                <th>Particulars</th>
+                                                <th>Required Area</th>
+                                                <th>Available Area</th>
+                                                <th>Upload Photo <ReqSign /></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {list.map((item, index) => {
+                                                console.log(item);
+                                                let fields = getSetFieldsName(item);
+                                                return (
+                                                    <tr key={index}>
+                                                        <td>{item.particular}</td>
+                                                        <td>{item.RequiredArea} {item.AreaUnit}</td>
+                                                        <td>
+                                                            <Field type="number" name={fields.area} as={BForm.Control} />
+                                                            <div className="text-danger"><ErrorMessage name={fields.area} /></div>
+                                                        </td>
+                                                        <td>
+                                                            <input type="file" name={fields.photo} className="form-control" onChange={(event) => { setFieldValue(fields.photo, event.currentTarget.files[0]); }} />
+                                                            <div className="text-danger"><ErrorMessage name={fields.photo} component="div" className="text-danger" /> </div>
+                                                        </td>
+                                                    </tr>
+                                                );
+
+                                            })}
+                                        </tbody>
+                                    </Table>
+                                </div>
+                            </Card.Body>
+                            <Card.Footer className="d-flex justify-content-between">
+                                <Button variant="secondary" onClick={goPrevious}>
+                                    Previous
+                                </Button>
+                                <Button type="submit">Save & Next</Button>
+                            </Card.Footer>
+                        </Card>)}
+
+                    </FormContext.Provider>
                 </FormikForm>
             )}
         </Formik>
@@ -222,8 +412,8 @@ export const Assessment_AdministrativeArea = () => {
                 "Document does not indicate the workshop for all trade/units, classrooms, IT Lab, Administrative area, Amenities area etc.",
         },
         {
-            value: "Any other reason, please specify",
-            label: "Any other reason, please specify",
+            value: "other",
+            label: "other",
         },
     ];
 
@@ -514,7 +704,7 @@ export const Assessment_AdministrativeArea = () => {
                                             )}
 
                                             {formData.category ==
-                                                "Any other reason, please specify" && (
+                                                "other" && (
                                                     <Col md={12}>
                                                         <b>Reason:</b> <p>{formData.assessor_comments}</p>
                                                     </Col>

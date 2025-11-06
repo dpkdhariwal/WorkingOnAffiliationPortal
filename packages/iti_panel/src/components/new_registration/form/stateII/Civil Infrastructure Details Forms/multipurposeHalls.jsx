@@ -21,7 +21,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { multipurposehall_info_to_be_filled, UPDATE_MULTIPURPOSEHALL_DETAILS } from "affserver";
 
 
-import { Fragment, useEffect, useState, useRef } from "react";
+import { Fragment, useEffect, useState, useRef, createContext } from "react";
 import { Form, Modal } from "react-bootstrap";
 import { FieldArray } from "formik";
 import * as yup from "yup";
@@ -36,107 +36,50 @@ import { setCheckListTradewiseClassrooms, getTradewiseClassRooms, setTradewiseCl
 import { useLocation } from "react-router-dom";
 import * as dbUser from "../../../../../db/users";
 import * as cons from "affserver";
-import { CIC } from "affserver";
+import * as C from "affserver";
 
+import { CIC } from "affserver";
+import { viewFile } from "@/helpers";
+
+import * as ap from "@/services/applicant/index";
+import { FileField2 } from "@/components/formik/Inputs/FileField2";
+
+export const FormContext = createContext();
 export const MultipurposeHall = ({ steps, goPrevious, goNext }) => {
 
     console.log(steps);
+    const formikRef = useRef();
 
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const appId = queryParams.get("appId");
-    const authUser = useSelector((state) => state.loginUserReducer);
 
-    const initialValues = useSelector((state) => state.TradeWiseWorkshopReducer);
-    const dispatch = useDispatch();
-
-
-    const submit = (values) => {
-        dispatch({ type: UPDATE_MULTIPURPOSEHALL_DETAILS, payload: values });
-        goNext();
-    };
-
-    const [list, setList] = useState([]);
-
-    const loadData = async () => {
-        console.log("dfadfadf");
-        let result = await dbUser.getCommonAreaByParticular(appId, cons.MULTIPURPOSE_HALL.particular);
-        setList(result)
-    }
-
-    useEffect(() => {
-        console.log(list);
-        prepare_initialValues(list);
-    }, [list]);
+    const [initialValues, setInitialValues] = useState(C.st2.CivilInfra.multipurposehall.initialValue);
 
     const [currentStep, setCurrentStep] = useState({});
 
-    const [iniValue, setIniValue] = useState({});
-    const [validationSchema, setValidationSchema] = useState({});
-
-
-    const prepare_initialValues = (list) => {
-        console.log(list);
-        const obj = {
-            ...Object.fromEntries(
-                list.map((item, index) => {
-                    const { area } = getSetFieldsName(item);
-                    return [`${area}`, ''];
-                })
-            ),
-            ...Object.fromEntries(
-                list.map((item, index) => {
-                    const { photo } = getSetFieldsName(item);
-                    return [`${photo}`, '']
-                })
-            ),
-        };
-        console.log(obj);
-        setIniValue(obj);
-        return obj;
-    }
-
-    const getSetFieldsName = (item) => {
-        console.log(item);
-        const area = `area>${item.particular}`;
-        const photo = `photo>${item.particular}`;
-        return { area, photo };
-    }
-
-    const Schema = () => {
-        let obj = {
-            ...Object.fromEntries(
-                list.map((item, index) => {
-                    const { area } = getSetFieldsName(item);
-                    return [`${area}`, Yup.number().required("Enter Available Area").min(0, "Area must be positive"),];
-                })
-            ),
-            ...Object.fromEntries(
-                list.map((item, index) => {
-                    const { photo } = getSetFieldsName(item);
-                    return [`${photo}`, Yup.mixed().required("Select Geo Taged File")]
-                })
-            ),
-        };
-        console.log(obj);
-        setValidationSchema(Yup.object(obj))
-    }
-
-    useEffect(() => {
-        loadData();
-    }, [])
-
-    useEffect(() => {
-        console.log(iniValue);
-        Schema();
-    }, [iniValue])
-
-
-    const prepareToSave = (values) => {
-        console.log(values);
-        setCommonCivilInfra(values, authUser, appId, CIC.MULTIPURPOSE_HALL);
-        // console.log(input);
-        goNext(currentStep);
+    const prepareToSave = async (values) => {
+        try {
+            Swal.fire({
+                title: "Saving  Details ...",
+                text: "Please wait..",
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+            });
+            await ap.saveParticularDetails(values, appId, C.CIK.MULTIPURPOSE_HALL);
+            // Close loader
+            Swal.close();
+            const result = await Swal.fire("Saved!", "Saved", "success");
+            if (result.isConfirmed) {
+                goNext(currentStep);
+            }
+        } catch (err) {
+            Swal.close();
+            await Swal.fire("Error", "Something Went Wrong", "error");
+            console.error("Error while saving:", err);
+        }
     };
 
     useEffect(() => {
@@ -145,18 +88,100 @@ export const MultipurposeHall = ({ steps, goPrevious, goNext }) => {
     }, [])
 
 
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                const resp = await ap.getParticulars(appId, C.CIK.MULTIPURPOSE_HALL);
+                const data = resp.data;
+                const newValues = { multipurposehall: data };
+                console.log(newValues);
+                setInitialValues(newValues);  // update initial values
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        loadData();
+    }, [appId]);
+
+
     return (
         <Formik
+            innerRef={formikRef}
             enableReinitialize
-            initialValues={iniValue}
-            validationSchema={validationSchema}
+            initialValues={initialValues}
+            validationSchema={C.st2.CivilInfra.multipurposehall.ValSchema}
             onSubmit={(values) => {
                 prepareToSave(values);
             }}
         >
-            {({ handleSubmit, setFieldValue }) => (
+            {({ handleSubmit, handleChange, values, errors, touched, setFieldValue }) => (
                 <FormikForm onSubmit={handleSubmit}>
-                    <Card>
+                    <FormContext.Provider value={{ handleSubmit, handleChange, values, errors, touched, setFieldValue }}>
+                        <FieldArray name="multipurposehall">
+                            {({ push, remove }) => (
+                                <Card>
+                                    <Card.Body>
+                                        <div className="table-responsive">
+                                            <Table >
+                                                <thead>
+                                                    <tr>
+                                                        <th>Particulars</th>
+                                                        <th>Required Area</th>
+                                                        <th>Available Area</th>
+                                                        <th>Upload Photo <ReqSign /></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {values.multipurposehall.map((doc, index) => {
+                                                        { console.log(doc) }
+                                                        return (
+                                                            <tr key={index}>
+                                                                <td>{doc?.particular}</td>
+                                                                <td>{doc?.required_area} {doc?.RequiredArea?.AreaUnit}</td>
+                                                                <td>
+                                                                    <Field
+                                                                        type="number"
+                                                                        name={`multipurposehall[${index}].available_area`}
+                                                                        as={Form.Control}
+
+                                                                    />
+                                                                    <div className="text-danger">
+                                                                        <ErrorMessage name={`multipurposehall[${index}].available_area`} />
+                                                                    </div>
+                                                                </td>
+                                                                <td>
+
+                                                                    <FileField2
+                                                                        //   label="If Yes, Upload Supporting Government Notification/Order/Circular"
+                                                                        name={`multipurposehall[${index}].document`}
+                                                                        mandatory
+                                                                        accept=".pdf,.jpg,.png"
+                                                                        context={FormContext}
+                                                                        onClickViewFileButton={() => viewFile(values.multipurposehall[index].document)}
+                                                                    />
+
+                                                                </td>
+                                                            </tr>
+                                                        )
+                                                    })}
+                                                </tbody>
+                                            </Table>
+                                        </div>
+                                    </Card.Body>
+                                    <Card.Footer className="d-flex justify-content-between">
+                                        <Button variant="secondary" onClick={goPrevious}>
+                                            Previous
+                                        </Button>
+                                        <Button type="submit">Save & Next</Button>
+                                    </Card.Footer>
+                                </Card>
+                            )}
+                        </FieldArray>
+                    </FormContext.Provider>
+
+
+
+                    {false && (<Card>
                         <Card.Body>
                             <div className="table-responsive">
                                 <Table className="text-nowrap">
@@ -198,7 +223,7 @@ export const MultipurposeHall = ({ steps, goPrevious, goNext }) => {
                             </Button>
                             <Button type="submit">Save & Next</Button>
                         </Card.Footer>
-                    </Card>
+                    </Card>)}
                 </FormikForm>
             )}
         </Formik>
@@ -234,8 +259,8 @@ export const Assessment_MultipurposeHall = () => {
                 "Document does not indicate the workshop for all trade/units, classrooms, IT Lab, Administrative area, Amenities area etc.",
         },
         {
-            value: "Any other reason, please specify",
-            label: "Any other reason, please specify",
+            value: "other",
+            label: "other",
         },
     ];
 
@@ -525,7 +550,7 @@ export const Assessment_MultipurposeHall = () => {
                                             )}
 
                                             {formData.category ==
-                                                "Any other reason, please specify" && (
+                                                "other" && (
                                                     <Col md={12}>
                                                         <b>Reason:</b> <p>{formData.assessor_comments}</p>
                                                     </Col>

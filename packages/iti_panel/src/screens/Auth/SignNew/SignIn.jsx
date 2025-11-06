@@ -3,7 +3,7 @@ import LoginModal from "../../../components/LoginModal";
 import { Building, PersonGear, Download, House } from "react-bootstrap-icons";
 import { Card, Form, Button, Navbar, Nav, NavDropdown } from "react-bootstrap";
 import { ArrowClockwise, People, Telephone, ExclamationCircle } from "react-bootstrap-icons";
-import {Footer,HeroCarousel} from 'layout';
+import { Footer, HeroCarousel } from 'layout';
 
 
 import './SignIn.css';
@@ -24,7 +24,7 @@ const Signin = ({ login }) => {
   const [signupEmailTimer, setSignupEmailTimer] = useState(0);
   const [signupMobileTimer, setSignupMobileTimer] = useState(0);
 
-    const newsItems = [
+  const newsItems = [
     "📢 Admission Open for Advanced Diploma Courses",
     "🔔 Affiliation Renewal Deadline: 31st March 2025",
     "📄 New ITI Affiliation Guidelines Released",
@@ -33,7 +33,7 @@ const Signin = ({ login }) => {
     "📞 24/7 Helpline Support Available: +91 94980 69086",
     "📚 E-Learning resources added to training portal",
   ];
- const [isTickerPaused, setIsTickerPaused] = useState(false);
+  const [isTickerPaused, setIsTickerPaused] = useState(false);
   const tickerDuration = Math.max(14, newsItems.length * 3); // seconds
   // Form states
   const [email, setEmail] = useState("");
@@ -416,7 +416,7 @@ const Signin = ({ login }) => {
           borderBottom: "5px solid #172052"
         }}
       >
-        <div className="container d-flex justify">
+        <div className="container-fluid d-flex justify">
           <table>
             <tbody>
               <tr>
@@ -436,11 +436,13 @@ const Signin = ({ login }) => {
             </tbody>
           </table>
         </div>
+
+
       </div>
 
       {/* Logo Section */}
       <section className="bg-white py-2 border-bottom">
-        <div className="container d-flex justify-content-between align-items-center flex-wrap">
+        <div className="container-fluid d-flex justify-content-between align-items-center flex-wrap">
           <a href="">
             <img src={logo} alt="DGT Header" />
           </a>
@@ -492,14 +494,14 @@ const Signin = ({ login }) => {
                   <span>Grievance</span>
                 </Nav.Link>
                 <NavDropdown
-                  title={<><Building className="me-2" size={18} color="white" /><span style={{color: 'white'}}>Login</span></>}
+                  title={<><Building className="me-2" size={18} color="white" /><span style={{ color: 'white' }}>Login</span></>}
                   id="login-dropdown"
                   menuVariant="dark"
                 >
-                  <NavDropdown.Item style={{color: 'white'}} onClick={() => setModalType('affiliation')}>Applicant Login</NavDropdown.Item>
-                  <NavDropdown.Item style={{color: 'white'}} onClick={() => setModalType('state')}>State Login</NavDropdown.Item>
-                  <NavDropdown.Item style={{color: 'white'}} onClick={() => setModalType('rdsde')}>RDSDE Login</NavDropdown.Item>
-                  <NavDropdown.Item style={{color: 'white'}} onClick={() => setModalType('dgt')}>DGT Login</NavDropdown.Item>
+                  <NavDropdown.Item style={{ color: 'white' }} onClick={() => setModalType('affiliation')}>Applicant Login</NavDropdown.Item>
+                  <NavDropdown.Item style={{ color: 'white' }} onClick={() => setModalType('state')}>State Login</NavDropdown.Item>
+                  <NavDropdown.Item style={{ color: 'white' }} onClick={() => setModalType('rdsde')}>RDSDE Login</NavDropdown.Item>
+                  <NavDropdown.Item style={{ color: 'white' }} onClick={() => setModalType('dgt')}>DGT Login</NavDropdown.Item>
                 </NavDropdown>
               </div>
             </Nav>
@@ -507,14 +509,14 @@ const Signin = ({ login }) => {
         </div>
       </Navbar>
 
-   
+
       {/* Main Content */}
       <div className="container-fluid mt-5">
         <div className="row">
           {/* Sign In Form Section */}
           <div className="col-lg-4 col-12 ">
             {/* {renderForm()} */}
-              <Card
+            <Card
               className={`news-ticker shadow-sm mb-4 ${isTickerPaused ? 'paused' : ''}`}
               onMouseEnter={() => setIsTickerPaused(true)}
               onMouseLeave={() => setIsTickerPaused(false)}
@@ -551,21 +553,21 @@ const Signin = ({ login }) => {
         handleClose={() => setModalType(null)}
         title={
           modalType === 'affiliation' ? 'Applicant Login' :
-          modalType === 'state' ? 'State Login' :
-          modalType === 'rdsde' ? 'RDSDE Login' :
-          modalType === 'dgt' ? 'DGT Login' : ''
+            modalType === 'state' ? 'State Login' :
+              modalType === 'rdsde' ? 'RDSDE Login' :
+                modalType === 'dgt' ? 'DGT Login' : ''
         }
         icon={
           modalType === 'affiliation' ? <Building size={28} color="white" /> :
-          modalType === 'state' ? <PersonGear size={28} color="white" /> :
-          modalType === 'rdsde' ? <Download size={28} color="white" /> :
-          modalType === 'dgt' ? <House size={28} color="white" /> : null
+            modalType === 'state' ? <PersonGear size={28} color="white" /> :
+              modalType === 'rdsde' ? <Download size={28} color="white" /> :
+                modalType === 'dgt' ? <House size={28} color="white" /> : null
         }
         gradient={
           modalType === 'affiliation' ? "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" :
-          modalType === 'state' ? "linear-gradient(135deg, #43cea2 0%, #185a9d 100%)" :
-          modalType === 'rdsde' ? "linear-gradient(135deg, #ff9966 0%, #ff5e62 100%)" :
-          modalType === 'dgt' ? "linear-gradient(135deg, #00c6ff 0%, #0072ff 100%)" : undefined
+            modalType === 'state' ? "linear-gradient(135deg, #43cea2 0%, #185a9d 100%)" :
+              modalType === 'rdsde' ? "linear-gradient(135deg, #ff9966 0%, #ff5e62 100%)" :
+                modalType === 'dgt' ? "linear-gradient(135deg, #00c6ff 0%, #0072ff 100%)" : undefined
         }
         onLoginSuccess={() => {
           const userData = JSON.parse(localStorage.getItem("currentUser"));
@@ -580,8 +582,8 @@ const Signin = ({ login }) => {
           }
         }}
       />
-  {/* Footer Component */}
-  <Footer />
+      {/* Footer Component */}
+      <Footer />
     </Fragment>
   );
 };

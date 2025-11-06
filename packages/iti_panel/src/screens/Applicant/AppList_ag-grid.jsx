@@ -17,6 +17,7 @@ import { GetSetAppAction } from "../../screens/action/getSetAppAction";
 
 // import { getAppsByUserId } from "../../db/appList";
 import { getAppListByUserId, getAppListByStateAssessor, getAppListByRdsde } from "../../db/users";
+import { formatLabel } from '@/helpers';
 
 
 export const PrimeReactDT = () => {
@@ -36,6 +37,7 @@ export const PrimeReactDT = () => {
 
     try {
       let resp = await getAppListByUserId(user.id);
+      console.log(resp.data);
       setProducts(resp.data);
     } catch (error) {
       console.log(error);
@@ -74,7 +76,6 @@ export const PrimeReactDT = () => {
 
   useEffect(() => {
     // alert(user.userType);
-
     loadData();
     // ProductService.getProductsMini().then(data => setProducts(data));
   }, []);
@@ -93,8 +94,8 @@ export const PrimeReactDT = () => {
     return v ? v : <span>Not Filled</span>;
   };
   const CurrentStatusBodyTemplate = (product) => {
-    const v = product.app_status;
-    return v ? v : <span>Not Filled</span>;
+    const v = product?.application_status?.status;
+    return v ? formatLabel(v) : <span>Not Filled</span>;
   };
 
   const InstTypeBodyTemplate = (product) => {

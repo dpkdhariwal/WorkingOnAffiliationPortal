@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef, createContext } from "react";
+// import React, { Fragment, useState, useRef, useEffect } from "react";
+
 import {
     Tab,
     Nav,
@@ -7,9 +9,9 @@ import {
     Button,
     Card,
     Form as BForm,
-    Table,
+    Table, Form
 } from "react-bootstrap";
-import { Formik, Form as FormikForm, Field, ErrorMessage } from "formik";
+import { Formik, Form as FormikForm, Field, ErrorMessage, FieldArray } from "formik";
 import * as Yup from "yup";
 import "react-circular-progressbar/dist/styles.css";
 import ReqSign from "../../comp/requiredSign"; // Make sure this component exists and is exported correctly
@@ -23,204 +25,149 @@ import { useLocation } from "react-router-dom";
 import { setCheckListTradewiseClassrooms, getTradewiseClassRooms, setTradewiseClassRooms } from "../../../../../db/users";
 import { useEffect } from "react";
 
+import * as C from "affserver"
+import { viewFile } from "@/helpers";
+import * as ap from "@/services/applicant/index";
+
+import { FileField2 } from "@/components/formik/Inputs/FileField2";
+export const FormContext = createContext();
 export const TradeWiseClassrooms = ({ goPrevious, goNext, steps }) => {
+    const formikRef = useRef();
 
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const appId = queryParams.get("appId");
     const authUser = useSelector((state) => state.loginUserReducer);
-
-    const initialValues = useSelector((state) => state.TradeWiseClassroomReducer);
-    const dispatch = useDispatch();
-
-    const submit = (values) => {
-        console.log(values);
-        // dispatch({ type: UPDATE_TRADEWISE_CLASSROOMS_DETAILS, payload: values });
-        // dispatch({ type: "set_filled_step_II", payload: { step: 2 }, });
-        // dispatch({ type: "reg_set_active_stepII", payload: { step: 3 } });
-        // finish();
-    };
+    const [initialValues, setInitialValues] = useState(C.st2.CivilInfra.tradewise_classroom.initialValue);
 
     const [currentStep, setCurrentStep] = useState({});
 
-    const prepareToSave = (values) => {
-        const input = values;
-        setTradewiseClassRooms(values, authUser, appId);
-        console.log(input);
-        goNext(currentStep);
+    const prepareToSave = async (values) => {
+        try {
+            Swal.fire({
+                title: "Saving TradeWise Classrooms Details ...",
+                text: "Please wait..",
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+            });
+            await ap.saveTradewiseClassRoom(values, appId);
+            // Close loader
+            Swal.close();
+            const result = await Swal.fire("Saved!", "Saved", "success");
+            if (result.isConfirmed) {
+                goNext(currentStep);
+            }
+            // const input = values;
+            // setTradewiseWorkShop(values, authUser, appId);
+            // console.log(input);
+        } catch (err) {
+            Swal.close();
+            await Swal.fire("Error", "Something Went Wrong", "error");
+            console.error("Error while saving:", err);
+        }
     };
 
-    const [classroomList, setClassroomList] = useState([]);
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                const resp = await ap.getTradewiseClassRooms(appId);
+                const data = resp.data;
+                const newValues = { tradewise_classrooms: data };
+                console.log(newValues);
+                setInitialValues(newValues);  // update initial values
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        loadData();
+    }, [appId]);
 
-    const loadData = async () => {
-        console.log("dfadfadf");
-        await setCheckListTradewiseClassrooms(authUser, appId);
-
-        await getTradewiseClassRooms(appId).then((data) => {
-            setClassroomList(data);
-            prepare_initialValues(data);
-        })
-
-    }
 
     useEffect(() => {
-        loadData();
+        const currentStep = steps.subSteps.find(step => step.step === CIC.TRADEWISE_CLASSROOMS);
+        setCurrentStep(currentStep)
     }, [])
-
-    const [iniValue, setIniValue] = useState([]);
-
-    const prepare_initialValues = (classRoomList) => {
-        console.log(classRoomList);
-        const obj = {
-            ...Object.fromEntries(
-                classRoomList.map((item, index) => {
-                    const { area } = getSetFieldsName(item);
-                    return [`${area}`, ''];
-                })
-            ),
-            ...Object.fromEntries(
-                classRoomList.map((item, index) => {
-                    const { photo } = getSetFieldsName(item);
-                    return [`${photo}`, '']
-                })
-            ),
-        };
-        console.log(classRoomList, obj);
-        setIniValue(obj);
-        return obj;
-    }
-
-    const getSetFieldsName = (item) => {
-        const area = `area>${item.tradeId}>${item.classroom}`;
-        const photo = `photo>${item.tradeId}>${item.classroom}`;
-        return { area, photo };
-    }
-
-    const validationSchema = (classroomList) => {
-        let obj = {
-            ...Object.fromEntries(
-                classroomList.map((item, index) => {
-                    const { area } = getSetFieldsName(item);
-                    return [`${area}`, Yup.number().required("Enter Available Area").min(0, "Area must be positive"),];
-                })
-            ),
-            ...Object.fromEntries(
-                classroomList.map((item, index) => {
-                    const { photo } = getSetFieldsName(item);
-                    return [`${photo}`, Yup.mixed().required("Select Geo Taged File")]
-                })
-            ),
-        };
-        console.log(obj);
-        return Yup.object(obj);
-    }
-
-     useEffect(() => {
-            const currentStep = steps.subSteps.find(step => step.step === CIC.TRADEWISE_CLASSROOMS);
-            setCurrentStep(currentStep)
-        }, [])
 
     return (
         <Formik
+            innerRef={formikRef}
             enableReinitialize
-            initialValues={iniValue}
-            validationSchema={validationSchema(classroomList)}
+            initialValues={initialValues}
+            validationSchema={C.st2.CivilInfra.tradewise_classroom.ValSchema}
             onSubmit={(values) => {
                 prepareToSave(values);
             }}
         >
-            {({ handleSubmit, setFieldValue }) => (
+            {({ handleSubmit, handleChange, values, errors, touched, setFieldValue }) => (
                 <FormikForm onSubmit={handleSubmit}>
-                    <Card>
-                        <Card.Body>
-                            <div className="table-responsive">
-                                <Table className="text-nowrap">
-                                    <thead>
-                                        <tr>
-                                            <th>Trade Name</th>
-                                            <th>Particulars</th>
-                                            <th>Required Area</th>
-                                            <th>Available Area</th>
-                                            <th>Upload Photo <ReqSign /></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {classroomList.map((item, index) => {
-                                            let fields = getSetFieldsName(item);
-                                            return (
-                                                <tr key={index}>
-                                                    <td>{item.tradeInfo.tradeName}</td>
-                                                    <td>{item.classroom}</td>
-                                                    <td>{item.tradeInfo.WorkshopAreaRequirment} {item.tradeInfo.WorkshopAreaUnit}</td>
-                                                    <td>
-                                                        <Field type="number" name={fields.area} as={BForm.Control} />
-                                                        <div className="text-danger"><ErrorMessage name={fields.area} /></div>
-                                                    </td>
-                                                    <td>
-                                                        <input type="file" name={fields.photo} className="form-control" onChange={(event) => { setFieldValue(fields.photo, event.currentTarget.files[0]); }} />
-                                                        <div className="text-danger"><ErrorMessage name={fields.photo} component="div" className="text-danger" /> </div>
-                                                    </td>
-                                                </tr>
-                                            );
+                    <FormContext.Provider value={{ handleSubmit, handleChange, values, errors, touched, setFieldValue }}>
 
-                                        })}
-                                        {/* {classrooms_info_to_be_filled.map((item, index) => {
-                                            const workshopAreaField = `${item.tradeId}_classroomArea_${index}`
-                                            const fileField = `${item.tradeId}_classroom_${index}`;
+                        <FieldArray name="tradewise_classrooms">
+                            {({ push, remove }) => (
+                                <Card>
+                                    <Card.Body>
+                                        <div className="table-responsive">
+                                            <Table >
+                                                <thead>
+                                                    <tr>
+                                                        <th>Trade Name</th>
+                                                        <th>Particulars</th>
+                                                        <th>Required Area</th>
+                                                        <th>Available Area</th>
+                                                        <th>Upload Photo <ReqSign /></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {values.tradewise_classrooms.map((doc, index) => {
+                                                        { console.log(doc) }
+                                                        return (
+                                                            <tr key={index}>
+                                                                <td>{doc?.tradeInfo?.trade_name}</td>
+                                                                <td>{doc?.clasroom}</td>
+                                                                <td>{doc?.required_area} {doc?.tradeInfo?.workshop_area_unit}</td>
+                                                                <td>
+                                                                    <Field
+                                                                        type="number"
+                                                                        name={`tradewise_classrooms[${index}].available_area`}
+                                                                        as={Form.Control}
 
-                                            return (
-                                                <tr key={index}>
-                                                    <td>{item.tradeName}</td>
-                                                    <td>{item.Particulars}</td>
-                                                    <td>{item.Required_Area_As_per_norms}</td>
-                                                    <td>
-                                                        <Field
-                                                            type="number"
-                                                            name={workshopAreaField}
-                                                            as={BForm.Control}
+                                                                    />
+                                                                    <div className="text-danger">
+                                                                        <ErrorMessage name={`tradewise_classrooms[${index}].available_area`} />
+                                                                    </div>
+                                                                </td>
+                                                                <td>
 
-                                                        />
-                                                        <div className="text-danger">
-                                                            <ErrorMessage name={workshopAreaField} />
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <input
-                                                            type="file"
-                                                            name={fileField}
-                                                            className="form-control"
-                                                            onChange={(event) => {
-                                                                setFieldValue(
-                                                                    fileField,
-                                                                    event.currentTarget.files[0]
-                                                                );
-                                                            }}
-                                                        />
-                                                        <div className="text-danger">
-                                                            <ErrorMessage
-                                                                name={fileField}
-                                                                component="div"
-                                                                className="text-danger"
-                                                            />
+                                                                    <FileField2
+                                                                        // label="If Yes, Upload Supporting Government Notification/Order/Circular"
+                                                                        name={`tradewise_classrooms[${index}].document`}
+                                                                        mandatory
+                                                                        accept=".pdf,.jpg,.png"
+                                                                        context={FormContext}
+                                                                        onClickViewFileButton={() => viewFile(values?.tradewise_classrooms[index].document)}
+                                                                    />
 
-                                                        </div>
+                                                                </td>
+                                                            </tr>
+                                                        )
+                                                    })}
+                                                </tbody>
+                                            </Table>
+                                        </div>
+                                    </Card.Body>
+                                    <Card.Footer className="d-flex justify-content-between">
+                                        <Button variant="secondary" onClick={goPrevious}>
+                                            Previous
+                                        </Button>
+                                        <Button type="submit">Save & Next</Button>
+                                    </Card.Footer>
+                                </Card>
+                            )}
+                        </FieldArray>
+                    </FormContext.Provider>
 
-
-                                                    </td>
-                                                </tr>
-                                            );
-                                        })} */}
-                                    </tbody>
-                                </Table>
-                            </div>
-                        </Card.Body>
-                        <Card.Footer className="d-flex justify-content-between">
-                            <Button variant="secondary" onClick={goPrevious}>
-                                Previous
-                            </Button>
-                            <Button type="submit">Save & Next</Button>
-                        </Card.Footer>
-                    </Card>
                 </FormikForm>
             )}
         </Formik>

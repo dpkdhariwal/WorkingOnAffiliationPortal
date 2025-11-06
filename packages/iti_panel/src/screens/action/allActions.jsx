@@ -2,22 +2,22 @@ import { Modal, Row, Col, Card, Form, InputGroup, Button, Table, Form as BForm }
 import { useState } from "react";
 import { useNavigate } from "react-router-dom"; // <-- Import this
 
-export const GoToStageIForm = ({info}) => {
+export const GoToStageIForm = ({ info }) => {
   const navigate = useNavigate(); // <-- Hook for navigation
-  
+
   const goNow = () => {
     console.log(info);
     navigate(`/dashboard/new_registration?appId=${info.appId}`); // <-- Your route here
   };
 
   return (
-    <Button onClick={goNow} size="sm"  variant='primary-gradient' className="rounded-pill btn-wave">
+    <Button onClick={goNow} size="sm" variant='primary-gradient' className="rounded-pill btn-wave">
       Go to Form
     </Button>
   );
 };
 
-export const GoToStageIAssessment = ({info}) => {
+export const GoToStageIAssessment = ({ info }) => {
   const navigate = useNavigate(); // <-- Hook for navigation
 
   const goNow = () => {
@@ -25,27 +25,43 @@ export const GoToStageIAssessment = ({info}) => {
   };
 
   return (
-    <Button onClick={goNow} size="sm"  variant='warning-gradient' className="rounded-pill btn-wave">
+    <Button onClick={goNow} size="sm" variant='warning-gradient' className="rounded-pill btn-wave">
       Go to Verfication
     </Button>
   );
 };
 
-export const GoToStageIAssessmentToUploadDocs = ({info}) => {
+
+export const GoToStageIAssessmentToUploadDocs = ({ info }) => {
   const navigate = useNavigate(); // <-- Hook for navigation
 
   const goNow = () => {
-    navigate(`/dashboard/Upload-Documents?appId=${info.appId}`); // <-- Your route here
+    navigate(`/dashboard/remove-deficiencies?appId=${info.appId}`); // <-- Your route here
   };
 
   return (
-    <Button onClick={goNow} size="sm"  variant='warning-gradient' className="rounded-pill btn-wave">
+    <Button onClick={goNow} size="sm" variant='warning-gradient' className="rounded-pill btn-wave">
       Upload Documents
     </Button>
   );
 };
 
-export const GoToNOCGenerateForm = ({info}) => {
+
+export const GoToStageIIAssessmentToUploadDocs = ({ info }) => {
+  const navigate = useNavigate(); // <-- Hook for navigation
+
+  const goNow = () => {
+    navigate(`/dashboard/Stage-II-Upload-Documents?appId=${info.appId}`); // <-- Your route here
+  };
+
+  return (
+    <Button onClick={goNow} size="sm" variant='warning-gradient' className="rounded-pill btn-wave">
+      Upload Documents
+    </Button>
+  );
+};
+
+export const GoToNOCGenerateForm = ({ info }) => {
   const navigate = useNavigate(); // <-- Hook for navigation
 
   const goNow = () => {
@@ -53,7 +69,7 @@ export const GoToNOCGenerateForm = ({info}) => {
   };
 
   return (
-    <Button onClick={goNow} size="sm"  variant='warning-gradient' className="rounded-pill btn-wave">
+    <Button onClick={goNow} size="sm" variant='warning-gradient' className="rounded-pill btn-wave">
       Go to NOC
     </Button>
   );
@@ -61,7 +77,7 @@ export const GoToNOCGenerateForm = ({info}) => {
 
 
 
-export const GoToStageIIForm = ({info}={}) => {
+export const GoToStageIIForm = ({ info } = {}) => {
   const navigate = useNavigate(); // <-- Hook for navigation
 
   console.log(info);
@@ -71,28 +87,27 @@ export const GoToStageIIForm = ({info}={}) => {
   };
 
   return (
-    <Button onClick={goNow} size="sm"  variant='primary-gradient' className="rounded-pill btn-wave">
+    <Button onClick={goNow} size="sm" variant='primary-gradient' className="rounded-pill btn-wave">
       Go to Form
     </Button>
   );
 };
 
 
-export const GoToStageIIAssessment = ({info}={}) => {
+export const GoToStageIIAssessment = ({ info } = {}) => {
   const navigate = useNavigate(); // <-- Hook for navigation
-
   const goNow = () => {
     navigate(`/dashboard/AssessmentII?appId=${info?.appId}`); // <-- Your route here
   };
 
   return (
-    <Button onClick={goNow} size="sm"  variant='warning-gradient' className="rounded-pill btn-wave">
+    <Button onClick={goNow} size="sm" variant='warning-gradient' className="rounded-pill btn-wave">
       Go to Verfication
     </Button>
   );
 };
 
-export const GoToStageIIStaffDetailForm = ({info}={}) => {
+export const GoToStageIIStaffDetailForm = ({ info } = {}) => {
   const navigate = useNavigate(); // <-- Hook for navigation
 
   const goNow = () => {
@@ -100,13 +115,13 @@ export const GoToStageIIStaffDetailForm = ({info}={}) => {
   };
 
   return (
-    <Button onClick={goNow} size="sm"  variant='warning-gradient' className="rounded-pill btn-wave">
+    <Button onClick={goNow} size="sm" variant='warning-gradient' className="rounded-pill btn-wave">
       Go to Form
     </Button>
   );
 };
 
-export const GoToInspectionSlotSelection = ({info}={}) => {
+export const GoToInspectionSlotSelection = ({ info } = {}) => {
   const navigate = useNavigate(); // <-- Hook for navigation
 
   const goNow = () => {
@@ -114,13 +129,13 @@ export const GoToInspectionSlotSelection = ({info}={}) => {
   };
 
   return (
-    <Button onClick={goNow} size="sm"  variant='warning-gradient' className="rounded-pill btn-wave">
+    <Button onClick={goNow} size="sm" variant='warning-gradient' className="rounded-pill btn-wave">
       Go to Form
     </Button>
   );
 };
 
-export const GoToBatchCreattion = ({info}={}) => {
+export const GoToBatchCreattion = ({ info } = {}) => {
   const navigate = useNavigate(); // <-- Hook for navigation
 
   const goNow = () => {
@@ -128,7 +143,7 @@ export const GoToBatchCreattion = ({info}={}) => {
   };
 
   return (
-    <Button onClick={goNow} size="sm"  variant='success-gradient' className="rounded-pill btn-wave">
+    <Button onClick={goNow} size="sm" variant='success-gradient' className="rounded-pill btn-wave">
       Create Batch
     </Button>
   );
