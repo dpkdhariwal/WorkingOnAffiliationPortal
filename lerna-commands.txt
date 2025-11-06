@@ -209,3 +209,6 @@ rm -rf .git/modules/packages/iti_panel
 rm -rf packages/iti_panel
 
 
+git submodule add https://github.com/itcelldgtmsde/affiliation.git packages/affiliation
+
+git submodule add https://github.com/itcelldgtmsde/affiliationWebBackend.git packages/affiliationWebBackend
