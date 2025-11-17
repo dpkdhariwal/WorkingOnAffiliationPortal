@@ -221,3 +221,5 @@ git submodule add https://github.com/itcelldgtmsde/affiliationWebBackend.git pac
 
 npm i react-otp-input --workspace=packages/affiliation
 npm i react-toastify --workspace=packages/affiliation
+
+npm install dayjs --workspace=packages/affiliationWebBackend
