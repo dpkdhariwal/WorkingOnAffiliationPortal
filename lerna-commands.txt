@@ -215,7 +215,6 @@ rm -rf packages/iti_panel
 
 
 git submodule add https://github.com/itcelldgtmsde/affiliation.git packages/affiliation
-
 git submodule add https://github.com/itcelldgtmsde/affiliationWebBackend.git packages/affiliationWebBackend
 
 
@@ -223,3 +222,45 @@ npm i react-otp-input --workspace=packages/affiliation
 npm i react-toastify --workspace=packages/affiliation
 
 npm install dayjs --workspace=packages/affiliationWebBackend
+
+
+
+
+✅ Fix: Make submodule files appear
+1️⃣ Initialize submodules
+Run this once after cloning a repo containing submodules:
+
+git submodule init
+
+2️⃣ Update and pull submodule content
+
+This actually downloads the submodule files:
+
+git submodule update
+
+
+or combine both:
+
+git submodule update --init
+
+3️⃣ If you want all nested submodules too
+git submodule update --init --recursive
+
+4️⃣ If the submodule path is empty/missing
+
+Run:
+
+git submodule update --init --force
+
+5️⃣ For fresh clone, best command
+
+Instead of normal clone, use:
+
+git clone --recursive <repo-url>
+
+6️⃣ Check submodule status
+git submodule status
+
+7️⃣ If submodule URL changed
+git submodule sync
+git submodule update --init --recursive
