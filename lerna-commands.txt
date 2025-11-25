@@ -186,6 +186,8 @@ This is a classic cascading select inside Formik’s FieldArray.
 # MySQL Command
 mysql -u root -p affliationdb < C:\Users\dpkdh\Downloads\state_district_village.sql
 
+mysql -u root -p db_10_7_2025 < "C:\Users\dpkdh\Downloads\ddb_10_7_2025.sql\ddb_10_7_2025.sql"
+
 SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE DATA_TYPE = 'datetime' ORDER BY TABLE_SCHEMA, TABLE_NAME;
 
 
