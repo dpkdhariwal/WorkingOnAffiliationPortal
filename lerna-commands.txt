@@ -225,6 +225,8 @@ npm i react-toastify --workspace=packages/affiliation
 
 npm install dayjs --workspace=packages/affiliationWebBackend
 
+npm install exif-js --workspace=packages/affiliation
+npm install exifr --workspace=packages/affiliation
 
 
 
