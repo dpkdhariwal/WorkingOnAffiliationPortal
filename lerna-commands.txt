@@ -196,6 +196,10 @@ SELECT TABLE_SCHEMA, TABLE_NAME, COLUMN_NAME, DATA_TYPE FROM INFORMATION_SCHEMA.
 
 mysql -u root -p affiliationdb < "C:\Users\dpkdh\Downloads\affiliationdb_10_9_2025.sql"
 
+
+
+
+
 # deinit - command
 git submodule deinit -f packages/apiserver
 git submodule deinit -f packages/backend
@@ -224,6 +228,10 @@ npm i react-otp-input --workspace=packages/affiliation
 npm i react-toastify --workspace=packages/affiliation
 
 npm install dayjs --workspace=packages/affiliationWebBackend
+
+
+
+npm install winston --workspace=packages/affiliationWebBackend
 
 npm install exif-js --workspace=packages/affiliation
 npm install exifr --workspace=packages/affiliation
@@ -272,3 +280,9 @@ git submodule update --init --recursive
 
 git fetch --all
 git reset --hard origin/<branch-name>
+
+
+mysql -u root -p 12_4_2025 < "C:\Users\dpkdh\Downloads\db_10_7_2025 (1).sql"
+mysql -u root -p dhariwal testdb < "C:\Users\dpkdh\Downloads\db_10_7_2025\db_10_7_2025.sql"
+
+mysql -u root -p testdb -e "source C:\Users\dpkdh\Downloads\db_10_7_2025\db_10_7_2025.sql"
