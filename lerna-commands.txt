@@ -280,6 +280,8 @@ git submodule update --init --recursive
 
 git fetch --all
 git reset --hard origin/<branch-name>
+git reset --hard origin/staging
+
 
 
 mysql -u root -p 12_4_2025 < "C:\Users\dpkdh\Downloads\db_10_7_2025 (1).sql"
