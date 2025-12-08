@@ -238,6 +238,9 @@ npm install exifr --workspace=packages/affiliation
 
 
 
+npm install react-datepicker date-fns --workspace=packages/affiliation
+
+
 ✅ Fix: Make submodule files appear
 1️⃣ Initialize submodules
 Run this once after cloning a repo containing submodules:
