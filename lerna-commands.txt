@@ -240,6 +240,11 @@ npm install exifr --workspace=packages/affiliation
 
 npm install react-datepicker date-fns --workspace=packages/affiliation
 
+npm install primereact --workspace=packages/affiliation
+
+npm install primereact primeicons --workspace=packages/affiliation
+
+
 
 ✅ Fix: Make submodule files appear
 1️⃣ Initialize submodules
