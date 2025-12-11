@@ -1,44 +1,14 @@
-# Table of contents
-- [Introduction](#introduction)
-- [Quick Start](#quick-start)
-    - [Prerequisites](#prerequisites)
-    - [Install](#install)
-- [Usage](#usage)
-- [Features](#features)
-- [Notes](#notes)
-
-## Introduction
-A short example document demonstrating heading links and lists in Markdown.
-
-## Quick Start
-
-### Prerequisites
-- Git
-- A modern text editor (VS Code, Sublime, etc.)
-
-### Install
-1. Clone the repo:
-     1. git clone https://example.com/repo.git
-2. Open the folder in your editor.
-3. Install dependencies:
-     - npm install
-     - or yarn install
-
-## Usage
-- Open the app:
-    - Run `npm start` (development)
-    - Run `npm run build` (production)
-- Navigate to http://localhost:3000
-
-## Features
-- Core features:
-    - Fast live reload
-    - Simple configuration
-- Planned:
-    - [ ] Authentication
-    - [ ] Automated tests
-    - [x] Basic routing
-
-## Notes
-- Use descriptive commit messages.
-- Keep components small and focused.
+### General Process for Development
+1. Get/Priffiled
+    1. Show Loading/Saving/Getting While Fetching.
+    2. Show/Lock Place Holder Inplace of Forms
+    3. Action Button Must be Inactive/Hidden 
+2. Set
+    1. Show Saving/Sending/etc While Sending Data to Server.
+    2. Show/Lock form Inputs While Processing OR show Place Holder Inplace of Forms
+    3. Action Button Must be Inactive/Hidden 
+3. Send
+4. Recieve on Server
+5. Processs
+6. Response
+6. Set.
