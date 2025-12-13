@@ -296,3 +296,4 @@ mysql -u root -p 12_4_2025 < "C:\Users\dpkdh\Downloads\db_10_7_2025 (1).sql"
 mysql -u root -p dhariwal testdb < "C:\Users\dpkdh\Downloads\db_10_7_2025\db_10_7_2025.sql"
 
 mysql -u root -p testdb -e "source C:\Users\dpkdh\Downloads\db_10_7_2025\db_10_7_2025.sql"
+mysql -u root -p affdev -e "source C:\Users\dpkdh\Downloads\12_13_2025\db_10_7_2025.sql"
