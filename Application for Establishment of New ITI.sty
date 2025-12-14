@@ -1,0 +1,24 @@
+Application for Establishment of New ITI
+-------------------------------------------
+1. Applicant Entity Details:
+	(a) Input Required: Details of Chairperson/President/Principal/Secretary, 
+      When: [
+              entityCategoriesKeys.Society_Trust.key,
+              entityCategoriesKeys.Private_Limited_Company.key,
+              entityCategoriesKeys.Public_Limited_Company.key,
+              entityCategoriesKeys.Public_Sector_Undertaking.key,
+            ]
+      condition: C.socity_trust_companies.includes(values?.category) && (INPUT)
+  (b) Input Required: is running any other ITI
+      When: [
+              entityCategoriesKeys.Society_Trust.key,
+              entityCategoriesKeys.Private_Limited_Company.key,
+              entityCategoriesKeys.Public_Limited_Company.key,
+              entityCategoriesKeys.Sole_Proprietor.key,
+              entityCategoriesKeys.Private_Institution_Individual.key,
+              entityCategoriesKeys.Public_Sector_Undertaking.key,
+            ] 
+      condition: C.applicableForEnterRunningITIs.includes(values?.category) && (INPUT)
+2. Details of the Proposed Institute:
+  (b)  
+    
