@@ -12,3 +12,13 @@
 5. Processs
 6. Response
 6. Set.
+
+
+
+
+-----------
+
+delete from assessment_status where appId=1765861948127 and stage='STAGE_I';
+delete from da_stage_i_verifications where appId=1765861948127;
+delete from da_stage_i_verifications_checklist where appId=1765861948127;
+delete from app_assessment_flow_stage_i where appId=1765861948127;
