@@ -7,9 +7,9 @@
   "scripts": {
     "dev": "npx lerna run dev",
     "dev_server": "npx lerna run dev --scope=affserver",
-    "pro_server": "npx lerna run start --scope=affserver",
     "dev_frontend": "npx lerna run dev --scope=affiliation",
-    "frontend-build": "npx lerna run build --scope=affiliation"
+    "frontend-build": "npx lerna run build --scope=affiliation",
+    "pro_server": "npx lerna run start --scope=affserver"
   },
   "dependencies": {
     "animate.css": "^4.1.1",
