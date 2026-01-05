@@ -1,0 +1,14 @@
+  <SelectField2
+                                                                                        label="Language"
+                                                                                        name={`onwed_land_documents[${index}].land_documents_language`}
+                                                                                        mandatory
+                                                                                        size="lg"
+                                                                                        FormContext={FormContext}
+                                                                                    >
+                                                                                        <option value="">Select Language</option>
+                                                                                        {language.map((item, i) => (
+                                                                                            <option key={i} value={item.language}>
+                                                                                                {item.language}
+                                                                                            </option>
+                                                                                        ))}
+                                                                                    </SelectField2>
