@@ -169,6 +169,9 @@ npm install --save-dev cross-env --workspace=packages/backend
 
 npm install busboy --workspace=packages/backend
 
+
+npm install animate.css --workspace=packages/affiliation
+
 npm i zustand
 
 
