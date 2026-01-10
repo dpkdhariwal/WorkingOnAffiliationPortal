@@ -301,4 +301,4 @@ mysql -u root -p dhariwal testdb < "C:\Users\dpkdh\Downloads\db_10_7_2025\db_10_
 mysql -u root -p testdb -e "source C:\Users\dpkdh\Downloads\db_10_7_2025\db_10_7_2025.sql"
 mysql -u root -p affdev -e "source C:\Users\dpkdh\Downloads\12_13_2025\db_10_7_2025.sql"
 
-
+mysql -u root -p new_2026 < "C:\Users\dpkdh\Downloads\db_10_7_2026\db_10_7_2026.sql"
