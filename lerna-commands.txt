@@ -303,5 +303,5 @@ mysql -u root -p affdev -e "source C:\Users\dpkdh\Downloads\12_13_2025\db_10_7_2
 
 mysql -u root -p 1_16_2026 < "c:\Users\dpkdh\Downloads\db_10_7_2026 (1).sql\db_10_7_2026.sql"
 
-mysql -u root -p db_1_24_2026 < "c:\Users\dpkdh\Downloads\new_db_10_7_2\db_10_7_2026.sql"
+mysql -u root -p db_1_24_2026 < "c:\Users\NIMI\Downloads\db_10_7_2026\db_10_7_2026.sql"
 
