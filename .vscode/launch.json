@@ -1,11 +1,11 @@
 {
-    "configurations": [
+  "configurations": [
     {
-        "name": "Debug Aff Frontend",
-        "request": "launch",
-        "type": "chrome",
-        "url": "http://localhost:5173",
-        "webRoot": "${workspaceFolder}/packages/affiliation/src"
-    }
-    ]
+      "name": "Debug Aff Frontend",
+      "request": "launch",
+      "type": "chrome",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/packages/affiliation/src"
+    },
+  ]
 }
