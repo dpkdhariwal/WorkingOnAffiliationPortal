@@ -4,3 +4,6 @@
 [submodule "packages/affiliationWebBackend"]
 	path = packages/affiliationWebBackend
 	url = https://github.com/itcelldgtmsde/affiliationWebBackend.git
+[submodule "packages/affiliationdocs"]
+	path = packages/affiliationdocs
+	url = https://github.com/dpkdhariwal/affiliationdocs.git
