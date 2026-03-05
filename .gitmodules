@@ -7,3 +7,9 @@
 [submodule "packages/affiliationdocs"]
 	path = packages/affiliationdocs
 	url = https://github.com/dpkdhariwal/affiliationdocs.git
+[submodule "packages/affiliationMobileAppFrontend"]
+	path = packages/affiliationMobileAppFrontend
+	url = https://github.com/itcelldgtmsde/affiliationMobileAppFrontend.git
+[submodule "packages/affiliationMobileBackend"]
+	path = packages/affiliationMobileBackend
+	url = https://github.com/itcelldgtmsde/affiliationMobileBackend.git
