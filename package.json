@@ -23,6 +23,7 @@
     "swiper": "^11.2.8"
   },
   "devDependencies": {
+    "eslint-plugin-import": "^2.32.0",
     "lerna": "^8.2.0"
   }
 }
