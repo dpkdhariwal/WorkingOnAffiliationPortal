@@ -1,0 +1,22 @@
+1️⃣ Check karo SSH key already hai ya nahi
+ls ~/.ssh
+2️⃣ Agar key nahi hai to generate karo
+ssh-keygen -t ed25519 -C "your_email@example.com"
+Phir SSH agent start karo:
+eval "$(ssh-agent -s)"
+Key add karo:
+ssh-add ~/.ssh/id_ed25519
+3️⃣ Public key copy karo
+cat ~/.ssh/id_ed25519.pub
+4️⃣ GitHub me add karo
+Open → https://github.com/settings/keys
+New SSH Key click karo
+Title kuch bhi likh do (e.g. "Laptop")
+Public key paste karo
+Save
+5️⃣ Test karo
+ssh -T git@github.com
+Agar sab sahi hua to message aayega:
+Hi username! You've successfully authenticated.
+6️⃣ Fir dubara clone karo
+git clone git@github.com:dpkdhariwal/WorkingOnAffiliationPortal.git
