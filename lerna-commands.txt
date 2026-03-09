@@ -332,3 +332,5 @@ git rm -f packages/Clone_affiliation
 git rm -f packages/Clone_affiliationWebBackend
 git rm -f packages/Clone_affiliationMobileAppFrontend
 git rm -f packages/Clone_affiliationMobileBackend
+
+mysqldump -u root -p test02 > "D:\Deepak Dhariwal All Work\affiliation db backups\backup.sql"
