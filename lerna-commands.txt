@@ -247,6 +247,8 @@ npm install primereact --workspace=packages/affiliation
 
 npm install primereact primeicons --workspace=packages/affiliation
 
+npm install eslint eslint-plugin-import --save-dev --workspace=packages/affiliation
+
 
 
 ✅ Fix: Make submodule files appear
